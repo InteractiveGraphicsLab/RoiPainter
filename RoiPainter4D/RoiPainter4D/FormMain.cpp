@@ -65,20 +65,20 @@ int main()
   //だたしこのタイミングでは、Formを生成しshowしてはだめ．
   ImageCore::GetInst();
   CrssecCore::GetInst();
-  ModeCore::getInst();
-  ModeVizMask::getInst();
-  ModeVizNormal::getInst();
+  ModeCore::GetInst();
+  ModeVizMask::GetInst();
+  ModeVizNormal::GetInst();
   ModeSegRGrow::GetInst();
-  ModeSegPixPaint::getInst();
-  ModeSegRigidICP::GetInstance();
-  ModeSegClosestPix::getInst();
-  ModeSegLocalRGrow::getInst();
+  ModeSegPixPaint::GetInst();
+  ModeSegRigidICP::GetInst();
+  ModeSegClosestPix::GetInst();
+  ModeSegLocalRGrow::GetInst();
   ModeSegSwallowOrgans::GetInst();
-	FormSegBolus::getInst();
-  ModeRefStrokeTrim::getInst();
+  ModeRefStrokeTrim::GetInst();
+  FormSegBolus::GetInst();
 
   std::cout << "FormMain::getInst()->ShowDialog() \n";
-  FormMain::getInst()->ShowDialog();
+  FormMain::GetInst()->ShowDialog();
   return 0;
 }
 
@@ -128,20 +128,20 @@ OglForCLI* FormMain::GetOgl()
 //managedクラスはここで初期化する
 void FormMain::InitializeSingletons()
 {
-  FormVisParam::getInst()->InitAllItemsForNewImg();
-  FormVisParam::getInst()->Show();
-  FormVisParam::getInst()->Location = Point(this->Location.X + this->Width, this->Location.Y);
+  FormVisParam::GetInst()->InitAllItemsForNewImg();
+  FormVisParam::GetInst()->Show();
+  FormVisParam::GetInst()->Location = Point(this->Location.X + this->Width, this->Location.Y);
 
   //一度Showし Hideする(そうしないと移動が効かない)
-  FormVisNorm       ::getInst()->Show();
-  FormVisMask       ::getInst()->Show();
-  FormSegRGrow      ::getInst()->Show();
-  FormSegPixPaint   ::getInst()->Show();
-  FormSegRigidICP   ::getInst()->Show();
-  FormSegClosestPix ::getInst()->Show();
-  FormSegLocalRGrow ::getInst()->Show();
-	FormSegBolus      ::getInst()->Show();
-  FormRefStrokeTrim ::getInst()->Show();
+  FormVisNorm::GetInst()->Show();
+  FormVisMask::GetInst()->Show();
+  FormSegRGrow::GetInst()->Show();
+  FormSegPixPaint::GetInst()->Show();
+  FormSegRigidICP::GetInst()->Show();
+  FormSegClosestPix::GetInst()->Show();
+  FormSegLocalRGrow::GetInst()->Show();
+  FormSegBolus::GetInst()->Show();
+  FormRefStrokeTrim::GetInst()->Show();
   FormSegSwallowOrgans::GetInst()->Show();
   FormSegSwallowOrganTimeline::GetInst()->Show();
   FormSegJointTracker::GetInst()->Show();
@@ -150,38 +150,38 @@ void FormMain::InitializeSingletons()
 
   ReplaceOtherForms();
 
-  FormVisNorm       ::getInst()->Hide();
-  FormVisMask       ::getInst()->Hide();
-  FormSegRGrow      ::getInst()->Hide();
-  FormSegPixPaint   ::getInst()->Hide();
-  FormSegRigidICP   ::getInst()->Hide();
-  FormSegClosestPix ::getInst()->Hide();
-  FormSegLocalRGrow ::getInst()->Hide();
-  FormSegBolus      ::getInst()->Hide();
-  FormRefStrokeTrim ::getInst()->Hide();
+  FormVisNorm::GetInst()->Hide();
+  FormVisMask::GetInst()->Hide();
+  FormSegRGrow::GetInst()->Hide();
+  FormSegPixPaint::GetInst()->Hide();
+  FormSegRigidICP::GetInst()->Hide();
+  FormSegClosestPix::GetInst()->Hide();
+  FormSegLocalRGrow::GetInst()->Hide();
+  FormSegBolus::GetInst()->Hide();
+  FormRefStrokeTrim::GetInst()->Hide();
   FormSegSwallowOrgans::GetInst()->Hide();
   FormSegSwallowOrganTimeline::GetInst()->Hide();
   FormSegJointTracker::GetInst()->Hide();
   FormSegBronchi::GetInst()->Hide();
-  
-  FormVisParam      ::getInst()->Owner= this;
-  FormVisNorm       ::getInst()->Owner= this;
-  FormVisMask       ::getInst()->Owner= this;
-  FormSegRGrow      ::getInst()->Owner= this;
-  FormSegPixPaint   ::getInst()->Owner= this;
-  FormSegRigidICP   ::getInst()->Owner= this;
-  FormSegClosestPix ::getInst()->Owner= this;
-  FormSegLocalRGrow ::getInst()->Owner= this;
-	FormSegBolus      ::getInst()->Owner= this;
-  FormRefStrokeTrim ::getInst()->Owner= this;
-  FormSegSwallowOrgans::GetInst()->Owner= this;
-  FormSegSwallowOrganTimeline::GetInst()->Owner= this;
+
+  FormVisParam::GetInst()->Owner = this;
+  FormVisNorm::GetInst()->Owner = this;
+  FormVisMask::GetInst()->Owner = this;
+  FormSegRGrow::GetInst()->Owner = this;
+  FormSegPixPaint::GetInst()->Owner = this;
+  FormSegRigidICP::GetInst()->Owner = this;
+  FormSegClosestPix::GetInst()->Owner = this;
+  FormSegLocalRGrow::GetInst()->Owner = this;
+  FormSegBolus::GetInst()->Owner = this;
+  FormRefStrokeTrim::GetInst()->Owner = this;
+  FormSegSwallowOrgans::GetInst()->Owner = this;
+  FormSegSwallowOrganTimeline::GetInst()->Owner = this;
   FormSegJointTracker::GetInst()->Owner = this;
   FormSegBronchi::GetInst()->Owner = this;
 }
 
 
-static void t_drawFrame(const EVec3f &c)
+static void t_DrawFrame(const EVec3f &c)
 {
   glDisable(GL_LIGHTING);
   glLineWidth(2);
@@ -212,7 +212,7 @@ static void t_drawFrame(const EVec3f &c)
 }
 
 
-static void initializeLights()
+static void InitializeLights()
 {
   GLfloat pos0 [4] = {0,0, 3000,1};
   GLfloat pos1 [4] = {0,0,-3000,1};
@@ -269,7 +269,7 @@ void FormMain::RedrawMainPanel()
     isFirst = false;
     //このタイミングで 他のformを生成し, Show()も読んでOK
     InitializeSingletons();
-    ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
   }
 
   EVec3f cuboid = ImageCore::GetInst()->GetCuboidF();
@@ -283,16 +283,15 @@ void FormMain::RedrawMainPanel()
 
   m_ogl->OnDrawBegin(pw, ph, 45.0, nearDist, farDist);
 
-  initializeLights();
-  if (FormVisParam::getInst()->bRendFrame()) t_drawFrame(cuboid);
-  ModeCore::getInst()->drawScene(cuboid, cam_pos, cam_cnt);
-  if (FormVisParam::getInst()->bRendIndi())
+  InitializeLights();
+  if (FormVisParam::GetInst()->bRendFrame()) t_DrawFrame(cuboid);
+  ModeCore::GetInst()->drawScene(cuboid, cam_pos, cam_cnt);
+  if (FormVisParam::GetInst()->bRendIndi())
   {
     ViewIndiCore::getInst()->DrawIndicator(pw, ph, cam_pos, cam_cnt, cam_up);
   }
   m_ogl->OnDrawEnd();
 }
-
 
 
 void FormMain::InitCameraPosition()
@@ -304,20 +303,24 @@ void FormMain::InitCameraPosition()
   m_ogl->SetCam(camP, camC, camY);
 }
 
+
 void FormMain::SetBackColor(float r, float g, float b, float a) 
 { 
   m_ogl->SetBgColor(r, g, b, a);
 }
+
 
 void FormMain::SetCursorNESW() 
 { 
   this->Cursor = Cursors::SizeNESW; 
 }
 
+
 void FormMain::SetCursorDefault() 
 { 
   this->Cursor = Cursors::Default; 
 }
+
 
 void FormMain::SetProgressValue(float value0to1)
 {
@@ -333,11 +336,9 @@ void FormMain::SetProgressValue(float value0to1)
 }
 
 
-
-
 bool FormMain::PickViewIndicator(int px, int py)
 {
-  if (!FormVisParam::getInst()->bRendIndi()) return false;
+  if (!FormVisParam::GetInst()->bRendIndi()) return false;
 
   int curViewW = FormMainPanel->Width;
   int curViewH = FormMainPanel->Height;
@@ -373,23 +374,21 @@ void FormMain::ReplaceOtherForms()
   const int thisX = this->Location.X;
   const int thisY = this->Location.Y;
   const int thisW = this->Width;
-  const int dlgH = FormVisParam::getInst()->Height;
-  FormVisParam::getInst()->Location = Point(thisX + thisW, thisY);
-  FormVisNorm::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormVisMask::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegRGrow::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegPixPaint::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegRigidICP::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegClosestPix::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegLocalRGrow::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormRefStrokeTrim::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegBolus::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  const int dlgH = FormVisParam::GetInst()->Height;
+  FormVisParam::GetInst()->Location = Point(thisX + thisW, thisY);
+  FormVisNorm::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormVisMask::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegRGrow::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegPixPaint::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegRigidICP::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegClosestPix::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegLocalRGrow::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormRefStrokeTrim::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegBolus::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegSwallowOrgans::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegJointTracker::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegBronchi::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
 }
-
-
 
 
 
@@ -412,61 +411,61 @@ void t_info(const char* fmt, ...)
 
 System::Void FormMain::switch_visNorm_Click(System::Object^  sender, System::EventArgs^  e) 
 {
-  ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
   RedrawMainPanel();
 }
 
 System::Void FormMain::switch_visMask_Click(System::Object^  sender, System::EventArgs^  e) 
 {
-  ModeCore::getInst()->ModeSwitch(MODE_VIS_MASK);
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   RedrawMainPanel();
 }
 
 System::Void FormMain::switch_segPaint_Click(System::Object^  sender, System::EventArgs^  e) 
 {
-  ModeCore::getInst()->ModeSwitch(MODE_SEG_PIXPAINT);
+  ModeCore::GetInst()->ModeSwitch(MODE_SEG_PIXPAINT);
   RedrawMainPanel();
 }
 
 System::Void FormMain::switch_visRegionGrow_Click(System::Object^  sender, System::EventArgs^  e) 
 {
-  ModeCore::getInst()->ModeSwitch(MODE_SEG_REGGROW);
+  ModeCore::GetInst()->ModeSwitch(MODE_SEG_REGGROW);
   RedrawMainPanel();
 }
 
 System::Void FormMain::switch_segRigidICP_Click(System::Object^  sender, System::EventArgs^  e) 
 {
-  ModeCore::getInst()->ModeSwitch(MODE_SEG_RIGIDICP);
+  ModeCore::GetInst()->ModeSwitch(MODE_SEG_RIGIDICP);
   RedrawMainPanel();
 }
 
 System::Void FormMain::switch_segClosestPix_Click(System::Object^  sender, System::EventArgs^  e) 
 {
-  ModeCore::getInst()->ModeSwitch(MODE_SEG_CLOSESTPIX);
+  ModeCore::GetInst()->ModeSwitch(MODE_SEG_CLOSESTPIX);
   RedrawMainPanel();
 }
 
 
 System::Void FormMain::switch_segLocalRrow_Click(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeCore::getInst()->ModeSwitch(MODE_SEG_LCLRGROW);
+  ModeCore::GetInst()->ModeSwitch(MODE_SEG_LCLRGROW);
   RedrawMainPanel();
 }
 
 System::Void FormMain::switch_segSwallowOrgans_Click(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeCore::getInst()->ModeSwitch(MODE_SEG_SWALLOW );
+  ModeCore::GetInst()->ModeSwitch(MODE_SEG_SWALLOW );
   RedrawMainPanel();
 }
 
 System::Void FormMain::switch_refStrokeTrim_Click(System::Object^  sender, System::EventArgs^  e) {
-  ModeCore::getInst()->ModeSwitch(MODE_REF_STRKTRIM);
+  ModeCore::GetInst()->ModeSwitch(MODE_REF_STRKTRIM);
   RedrawMainPanel();
 }
 
 System::Void FormMain::switch_SegBolus_Click(System::Object^  sender, System::EventArgs^  e)
 {
-	ModeCore::getInst()->ModeSwitch(MODE_SEG_BOLUS);
+	ModeCore::GetInst()->ModeSwitch(MODE_SEG_BOLUS);
 	RedrawMainPanel();
 }
 
@@ -477,19 +476,19 @@ System::Void FormMain::switch_deformHC_Click(System::Object^  sender, System::Ev
 
 System::Void FormMain::switch_segJointTracker_Click(System::Object^  sender, System::EventArgs^  e) 
 {
-	ModeCore::getInst()->ModeSwitch(MODE_SEG_JTRACKER);
+	ModeCore::GetInst()->ModeSwitch(MODE_SEG_JTRACKER);
 	RedrawMainPanel();    
 }
 
 System::Void FormMain::switch_segBronchi_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	ModeCore::getInst()->ModeSwitch(MODE_SEG_BRONCHI);
+	ModeCore::GetInst()->ModeSwitch(MODE_SEG_BRONCHI);
 	RedrawMainPanel();    
 }
 
 System::Void FormMain::switch_segSwallowTempGen_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeCore::getInst()->ModeSwitch(MODE_SEG_SWLTMPGEN);
+  ModeCore::GetInst()->ModeSwitch(MODE_SEG_SWLTMPGEN);
   RedrawMainPanel();
 }
 
@@ -541,9 +540,9 @@ System::Void  FormMain::file_dcm3d_Click(
   {
     std::vector<std::vector<std::string>> tmp;
     ImageCore::GetInst()->load4DCT(fNames, tmp, FT_3D_DICOM_FLIES);
-    FormVisParam::getInst()->InitAllItemsForNewImg();
+    FormVisParam::GetInst()->InitAllItemsForNewImg();
     InitCameraPosition();
-    ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
 
     RedrawMainPanel();
   }
@@ -563,7 +562,7 @@ System::Void  FormMain::file_traw3d_Click(
   if (fNames.size() == 1 || formSortFiles_showModalDialog(fNames, fDates)) {
     std::vector<std::vector<std::string>> tmp;
     ImageCore::GetInst()->load4DCT(fNames, tmp, FT_TRAW3D);
-    FormVisParam::getInst()->InitAllItemsForNewImg();
+    FormVisParam::GetInst()->InitAllItemsForNewImg();
     InitCameraPosition();
     RedrawMainPanel();
   }
@@ -583,7 +582,7 @@ System::Void FormMain::file_raw8bit_Click(
   if (fNames.size() == 1 || formSortFiles_showModalDialog(fNames, fDates)) {
     std::vector<std::vector<std::string>> tmp;
     ImageCore::GetInst()->load4DCT(fNames, tmp, FT_RAW8BIT);
-    FormVisParam::getInst()->InitAllItemsForNewImg();
+    FormVisParam::GetInst()->InitAllItemsForNewImg();
     InitCameraPosition();
     RedrawMainPanel();
   }
@@ -679,7 +678,7 @@ System::Void FormMain::file_dcm2D_Click
 
   //3. load file
   ImageCore::GetInst()->load4DCT(std::vector<std::string>(), fnamesInDirs_trimed, FT_2D_DICOM_FLIES);
-  FormVisParam::getInst()->InitAllItemsForNewImg();
+  FormVisParam::GetInst()->InitAllItemsForNewImg();
   InitCameraPosition();
   RedrawMainPanel();
 }
@@ -710,10 +709,10 @@ System::Void FormMain::file_loadMask_Click(System::Object^  sender, System::Even
   IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
   std::string fname = static_cast<const char*>(mptr.ToPointer());
 
-  const int frameI = FormVisParam::getInst()->GetframeI();
+  const int frameI = FormVisParam::GetInst()->GetframeI();
 
   ImageCore::GetInst()->LoadMask(fname, frameI);
-  ModeCore::getInst()->ModeSwitch(MODE_VIS_MASK);
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   RedrawMainPanel();
 }
 
@@ -732,17 +731,17 @@ System::Void FormMain::FormMain_KeyDown (
     System::Windows::Forms::KeyEventArgs^  e)
 {
   if (m_prevKeyID == (int)e->KeyCode) return;
-  if (      (int)e->KeyCode == 37) FormVisParam::getInst()->ChangeFrameI(-1);
-  else if ( (int)e->KeyCode == 39) FormVisParam::getInst()->ChangeFrameI(+1);
+  if (      (int)e->KeyCode == 37) FormVisParam::GetInst()->ChangeFrameI(-1);
+  else if ( (int)e->KeyCode == 39) FormVisParam::GetInst()->ChangeFrameI(+1);
 
-  ModeCore::getInst()->keyDown((int)e->KeyCode);
+  ModeCore::GetInst()->keyDown((int)e->KeyCode);
   m_prevKeyID = (int)e->KeyCode;
   RedrawMainPanel();
 }
 
 System::Void FormMain::FormMain_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e)
 {
-  ModeCore::getInst()->keyUp((int)e->KeyCode);
+  ModeCore::GetInst()->keyUp((int)e->KeyCode);
   m_prevKeyID = -1;
   RedrawMainPanel();
 }
@@ -767,23 +766,24 @@ System::Void FormMain::FormMainPanel_Resize(
   if (m_ogl != 0) RedrawMainPanel();
 }
 
+
 System::Void FormMain::FormMainPanel_MouseUp(
     System::Object^ sender, 
     System::Windows::Forms::MouseEventArgs^ e)
 {
   if (e->Button == System::Windows::Forms::MouseButtons::Left) 
-    ModeCore::getInst()->LBtnUp(EVec2i(e->X, e->Y), m_ogl);
+    ModeCore::GetInst()->LBtnUp(EVec2i(e->X, e->Y), m_ogl);
   if (e->Button == System::Windows::Forms::MouseButtons::Middle) 
-    ModeCore::getInst()->MBtnUp(EVec2i(e->X, e->Y), m_ogl);
+    ModeCore::GetInst()->MBtnUp(EVec2i(e->X, e->Y), m_ogl);
   if (e->Button == System::Windows::Forms::MouseButtons::Right) 
-    ModeCore::getInst()->RBtnUp(EVec2i(e->X, e->Y), m_ogl);
+    ModeCore::GetInst()->RBtnUp(EVec2i(e->X, e->Y), m_ogl);
 }
 
 System::Void FormMain::FormMainPanel_MouseMove(
     System::Object^ sender, 
     System::Windows::Forms::MouseEventArgs^ e)
 {
-  ModeCore::getInst()->MouseMove(EVec2i(e->X, e->Y), m_ogl);
+  ModeCore::GetInst()->MouseMove(EVec2i(e->X, e->Y), m_ogl);
 }
 
 System::Void FormMain::FormMainPanel_MouseDown(
@@ -791,11 +791,11 @@ System::Void FormMain::FormMainPanel_MouseDown(
     System::Windows::Forms::MouseEventArgs^ e)
 {
   if (e->Button == System::Windows::Forms::MouseButtons::Left) 
-    ModeCore::getInst()->LBtnDown(EVec2i(e->X, e->Y), m_ogl);
+    ModeCore::GetInst()->LBtnDown(EVec2i(e->X, e->Y), m_ogl);
   if (e->Button == System::Windows::Forms::MouseButtons::Middle) 
-    ModeCore::getInst()->MBtnDown(EVec2i(e->X, e->Y), m_ogl);
+    ModeCore::GetInst()->MBtnDown(EVec2i(e->X, e->Y), m_ogl);
   if (e->Button == System::Windows::Forms::MouseButtons::Right) 
-    ModeCore::getInst()->RBtnDown(EVec2i(e->X, e->Y), m_ogl);
+    ModeCore::GetInst()->RBtnDown(EVec2i(e->X, e->Y), m_ogl);
 }
 
 System::Void FormMain::FormMainPanel_DblClick(
@@ -804,10 +804,10 @@ System::Void FormMain::FormMainPanel_DblClick(
 {
   if (e->Button == System::Windows::Forms::MouseButtons::Left)
   {
-    if (!PickViewIndicator(e->X, e->Y)) ModeCore::getInst()->LBtnDblClk(EVec2i(e->X, e->Y), m_ogl);
+    if (!PickViewIndicator(e->X, e->Y)) ModeCore::GetInst()->LBtnDblClk(EVec2i(e->X, e->Y), m_ogl);
   }
-  if (e->Button == System::Windows::Forms::MouseButtons::Middle) ModeCore::getInst()->MBtnDblClk(EVec2i(e->X, e->Y), m_ogl);
-  if (e->Button == System::Windows::Forms::MouseButtons::Right) ModeCore::getInst()->RBtnDblClk(EVec2i(e->X, e->Y), m_ogl);
+  if (e->Button == System::Windows::Forms::MouseButtons::Middle) ModeCore::GetInst()->MBtnDblClk(EVec2i(e->X, e->Y), m_ogl);
+  if (e->Button == System::Windows::Forms::MouseButtons::Right) ModeCore::GetInst()->RBtnDblClk(EVec2i(e->X, e->Y), m_ogl);
 }
 
 System::Void FormMain::FormMain_MouseWheel(
@@ -816,7 +816,7 @@ System::Void FormMain::FormMain_MouseWheel(
 {
   int x = e->X - this->FormMainPanel->Location.X;
   int y = e->Y - this->FormMainPanel->Location.Y;
-  ModeCore::getInst()->MouseWheel(EVec2i(x, y), e->Delta, m_ogl);
+  ModeCore::GetInst()->MouseWheel(EVec2i(x, y), e->Delta, m_ogl);
 }
 
 

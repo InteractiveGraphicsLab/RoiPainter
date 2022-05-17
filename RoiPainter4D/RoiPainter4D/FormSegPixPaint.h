@@ -37,7 +37,7 @@ namespace RoiPainter4D {
     static FormSegPixPaint^ m_singleton;
 
   public:
-    static FormSegPixPaint^ getInst() {
+    static FormSegPixPaint^ GetInst() {
       if (m_singleton == nullptr) {
         m_singleton = gcnew FormSegPixPaint();
       }
@@ -230,10 +230,10 @@ namespace RoiPainter4D {
 };
 
 
-  inline void formSegPixPaint_Show() { FormSegPixPaint::getInst()->Show(); }
-  inline void formSegPixPaint_Hide() { FormSegPixPaint::getInst()->Hide(); }
-  inline bool formSegPixPaint_bPaintMode   () { return FormSegPixPaint::getInst()->bPaintMode   (); }
-  inline bool formSegPixPaint_bLassoMode   () { return FormSegPixPaint::getInst()->bLassoMode   (); }
-  inline bool formSegPixPaint_bLassoAllMode() { return FormSegPixPaint::getInst()->bLassoAllMode(); }
+  inline void formSegPixPaint_Show() { FormSegPixPaint::GetInst()->Show(); }
+  inline void formSegPixPaint_Hide() { FormSegPixPaint::GetInst()->Hide(); }
+  inline bool formSegPixPaint_bPaintMode   () { return FormSegPixPaint::GetInst()->bPaintMode   (); }
+  inline bool formSegPixPaint_bLassoMode   () { return FormSegPixPaint::GetInst()->bLassoMode   (); }
+  inline bool formSegPixPaint_bLassoAllMode() { return FormSegPixPaint::GetInst()->bLassoAllMode(); }
 
 }

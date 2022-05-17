@@ -64,7 +64,7 @@ namespace RoiPainter4D {
 
     static FormVisParam^ m_singleton;
   public:
-    static FormVisParam^ getInst() {
+    static FormVisParam^ GetInst() {
       if (m_singleton == nullptr) {
         m_singleton = gcnew FormVisParam();
       }
@@ -636,21 +636,21 @@ private:
   System::Void pitchY_TextChanged(System::Object^  sender, System::EventArgs^  e) ;
   System::Void pitchZ_TextChanged(System::Object^  sender, System::EventArgs^  e);
 };
-  inline bool  formVisParam_bPlaneXY() { return FormVisParam::getInst()->bPlaneXY(); }
-  inline bool  formVisParam_bPlaneYZ() { return FormVisParam::getInst()->bPlaneYZ(); }
-  inline bool  formVisParam_bPlaneZX() { return FormVisParam::getInst()->bPlaneZX(); }
-  inline bool  formVisParam_bRendVol() { return FormVisParam::getInst()->bRendVol(); }
-  inline bool  formVisParam_bGradMag() { return FormVisParam::getInst()->bGradMag(); }
-  inline bool  formVisParam_bDoPsued() { return FormVisParam::getInst()->bDoPsued(); }
-  inline bool  formVisParam_bRendIndi(){ return FormVisParam::getInst()->bRendIndi(); }
-  inline float formVisParam_getAlpha() { return FormVisParam::getInst()->GetAlpha(); }
+  inline bool  formVisParam_bPlaneXY() { return FormVisParam::GetInst()->bPlaneXY(); }
+  inline bool  formVisParam_bPlaneYZ() { return FormVisParam::GetInst()->bPlaneYZ(); }
+  inline bool  formVisParam_bPlaneZX() { return FormVisParam::GetInst()->bPlaneZX(); }
+  inline bool  formVisParam_bRendVol() { return FormVisParam::GetInst()->bRendVol(); }
+  inline bool  formVisParam_bGradMag() { return FormVisParam::GetInst()->bGradMag(); }
+  inline bool  formVisParam_bDoPsued() { return FormVisParam::GetInst()->bDoPsued(); }
+  inline bool  formVisParam_bRendIndi(){ return FormVisParam::GetInst()->bRendIndi(); }
+  inline float formVisParam_getAlpha() { return FormVisParam::GetInst()->GetAlpha(); }
 
-  inline int   formVisParam_getframeI()   { return FormVisParam::getInst()->GetframeI(); }
-  inline int   formVisParam_getWinLvMin() { return FormVisParam::getInst()->GetWinLvMin(); }
-  inline int   formVisParam_getWinLvMax() { return FormVisParam::getInst()->GetWinLvMax(); }
-  inline int   formVisParam_getSliceNum() { return FormVisParam::getInst()->GetSliceNum(); }
-  inline bool  formVisParam_bOnManip()    { return FormVisParam::getInst()->bOnManip(); }
-  inline void  formVisParam_bindTfImg()   { FormVisParam::getInst()->BindImgTf(); }
-  inline void  formVisParam_bindPsuImg()  { FormVisParam::getInst()->BindImgPsu(); }
+  inline int   formVisParam_getframeI()   { return FormVisParam::GetInst()->GetframeI(); }
+  inline int   formVisParam_getWinLvMin() { return FormVisParam::GetInst()->GetWinLvMin(); }
+  inline int   formVisParam_getWinLvMax() { return FormVisParam::GetInst()->GetWinLvMax(); }
+  inline int   formVisParam_getSliceNum() { return FormVisParam::GetInst()->GetSliceNum(); }
+  inline bool  formVisParam_bOnManip()    { return FormVisParam::GetInst()->bOnManip(); }
+  inline void  formVisParam_bindTfImg()   { FormVisParam::GetInst()->BindImgTf(); }
+  inline void  formVisParam_bindPsuImg()  { FormVisParam::GetInst()->BindImgPsu(); }
 }
 

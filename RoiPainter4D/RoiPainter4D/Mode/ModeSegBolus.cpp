@@ -113,7 +113,7 @@ void ModeSegBolus::cancelSegmentation()
   if( m_vol_cyl != 0 ) delete[] m_vol_cyl;
   m_vol_cyl = 0;
 
-	ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+	ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
 	formMain_RedrawMainPanel();
 }
 
@@ -157,7 +157,7 @@ void ModeSegBolus::FinishSegmentation()
 	
   m_b_updated_cylinder = false;
 
-	ModeCore::getInst()->ModeSwitch(MODE_VIS_MASK);
+	ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
 	formMain_RedrawMainPanel();
 }
 ////////////////////////////////////////////////////////////////////

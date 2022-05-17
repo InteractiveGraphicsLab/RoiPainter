@@ -69,49 +69,49 @@ System::Void FormVisParam::isRendFrame_CheckedChanged(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 System::Void FormVisParam::isRendVolume_CheckedChanged(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 System::Void FormVisParam::isRendPseudo_CheckedChanged(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 System::Void FormVisParam::isRendIndi_CheckedChanged(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 System::Void FormVisParam::isRendPlaneXY_CheckedChanged(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 System::Void FormVisParam::isRendPlaneYZ_CheckedChanged(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 System::Void FormVisParam::isRendPlaneZX_CheckedChanged(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 
@@ -119,38 +119,38 @@ System::Void FormVisParam::isGray_CheckedChanged(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  FormMain::getInst()->SetBackColor(0.3f, 0.3f, 0.3f, 0.5f);
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->SetBackColor(0.3f, 0.3f, 0.3f, 0.5f);
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 System::Void FormVisParam::isBlack_CheckedChanged(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  FormMain::getInst()->SetBackColor(0.f, 0.f, 0.f, 0.5f);
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->SetBackColor(0.f, 0.f, 0.f, 0.5f);
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 System::Void FormVisParam::isWhite_CheckedChanged(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  FormMain::getInst()->SetBackColor(1.0f, 1.0f, 1.0f, 0.5f);
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->SetBackColor(1.0f, 1.0f, 1.0f, 0.5f);
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 System::Void FormVisParam::transBar_Scroll(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 System::Void FormVisParam::sliceBar_Scroll(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 
@@ -269,7 +269,7 @@ System::Void FormVisParam::pictBox_MouseMove(
 
   trans_func->SetUpdated();
   RedrawTransFuncPictBox();
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 
@@ -294,10 +294,10 @@ void FormVisParam::ChangeFrameI(int ofst)
     timeLabel->Text = timeSlider->Value.ToString();
   }
   //TODO 本来は ModeCore経由で通知したい(大幅なrefactoringが必用)
-  if ( ModeCore::getInst()->getCurrentMode() == MODE_SEG_LCLRGROW )
+  if ( ModeCore::GetInst()->getCurrentMode() == MODE_SEG_LCLRGROW )
     FormSegLocalRGrow_FrameIdxChanged();
 
-  else if ( ModeCore::getInst()->getCurrentMode() == MODE_SEG_SWALLOW)
+  else if ( ModeCore::GetInst()->getCurrentMode() == MODE_SEG_SWALLOW)
   {
     FormSegSwallowOrgans_FitCrssecToSelectedCageVtx();
     FormSegSwallowTimeline_RedrawPanel();
@@ -333,7 +333,7 @@ System::Void FormVisParam::winLevelMinBar_MouseUp(
   ImageCore::GetInst()->UpdateVisVolume(winLevelMinBar->Value, winLevelMaxBar->Value, timeSlider->Value);
   UpdateHistogramBmp();
   RedrawTransFuncPictBox();
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 System::Void FormVisParam::winLevelMaxBar_MouseUp(
@@ -346,7 +346,7 @@ System::Void FormVisParam::winLevelMaxBar_MouseUp(
   ImageCore::GetInst()->UpdateVisVolume(winLevelMinBar->Value, winLevelMaxBar->Value, timeSlider->Value);
   UpdateHistogramBmp();
   RedrawTransFuncPictBox();
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 
@@ -356,7 +356,7 @@ System::Void FormVisParam::scrollTime(
 {
   timeLabel->Text = timeSlider->Value.ToString();
   FormVisParam::ChangeFrameI(0);
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 // TODO !! 変更したpitchを反映させなければ...

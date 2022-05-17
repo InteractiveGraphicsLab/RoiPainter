@@ -134,7 +134,7 @@ void ModeSegBronchi::FinishSegmentation()
 
 
   ImageCore::GetInst()->mask_storeCurrentForeGround();
-  ModeCore::getInst()->ModeSwitch(MODE_VIS_MASK);
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
 }

@@ -127,7 +127,7 @@ class ModeSegLocalRGrow : public ModeInterface
 
 public:
   ~ModeSegLocalRGrow();
-  static ModeSegLocalRGrow* getInst() {
+  static ModeSegLocalRGrow* GetInst() {
     static ModeSegLocalRGrow p;
     return &p;
   }

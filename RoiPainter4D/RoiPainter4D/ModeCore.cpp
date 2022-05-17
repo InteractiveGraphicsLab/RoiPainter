@@ -39,7 +39,7 @@ ModeCore::ModeCore()
 {
   std::cout << "ModeCore Constructor\n";
 
-  m_mode = ModeVizNormal::getInst();
+  m_mode = ModeVizNormal::GetInst();
   //m_mode->startMode();
 
   std::cout << "ModeCore Constructor Done \n";
@@ -59,19 +59,19 @@ void ModeCore::ModeSwitch(MODE_ID m)
   if (!m_mode->canEndMode()) return;
 
   if      (m == MODE_VIS_MASK      ) 
-    m_mode = ModeVizMask::getInst();
+    m_mode = ModeVizMask::GetInst();
   else if (m == MODE_SEG_REGGROW   ) 
     m_mode = ModeSegRGrow::GetInst();
   else if (m == MODE_SEG_PIXPAINT  ) 
-    m_mode = ModeSegPixPaint::getInst();
+    m_mode = ModeSegPixPaint::GetInst();
   else if (m == MODE_SEG_RIGIDICP  ) 
-    m_mode = ModeSegRigidICP::GetInstance();
+    m_mode = ModeSegRigidICP::GetInst();
   else if (m == MODE_SEG_CLOSESTPIX) 
-    m_mode = ModeSegClosestPix::getInst();
+    m_mode = ModeSegClosestPix::GetInst();
   //else if (m == MODE_SEG_PARACONT  ) 
   //  m_mode = ModeSegParaConts::getInst();
   else if (m == MODE_SEG_LCLRGROW  ) 
-    m_mode = ModeSegLocalRGrow::getInst();
+    m_mode = ModeSegLocalRGrow::GetInst();
 	else if (m == MODE_SEG_BOLUS     ) 
     m_mode = ModeSegBolus::getInst(); 
   else if (m == MODE_SEG_SWALLOW   ) 
@@ -79,13 +79,13 @@ void ModeCore::ModeSwitch(MODE_ID m)
   else if (m == MODE_SEG_SWLTMPGEN)
     m_mode = ModeSegSwallowTempGen::getInst();
   else if (m == MODE_REF_STRKTRIM  )
-    m_mode = ModeRefStrokeTrim::getInst();
+    m_mode = ModeRefStrokeTrim::GetInst();
   else if (m == MODE_SEG_JTRACKER  ) 
     m_mode = ModeSegJointTracker::GetInst();
   else if (m == MODE_SEG_BRONCHI ) 
     m_mode = ModeSegBronchi::GetInst();
   else	
-    m_mode = ModeVizNormal::getInst();
+    m_mode = ModeVizNormal::GetInst();
 
   // Hide all Forms
   formVisMask_Hide();

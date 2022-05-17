@@ -52,7 +52,7 @@ private:
     static FormSegRGrow^ m_singleton;
 
   public:
-    static FormSegRGrow^ getInst() {
+    static FormSegRGrow^ GetInst() {
       if (m_singleton == nullptr) {
         m_singleton = gcnew FormSegRGrow();
       }
@@ -430,10 +430,10 @@ private:
   }
 };
 
-  inline void formSegRGrow_Show() { FormSegRGrow::getInst()->Show(); }
-  inline void formSegRGrow_Hide() { FormSegRGrow::getInst()->Hide(); }
+  inline void formSegRGrow_Show() { FormSegRGrow::GetInst()->Show(); }
+  inline void formSegRGrow_Hide() { FormSegRGrow::GetInst()->Hide(); }
   inline void formSegRGrow_InitAllItems(int volmin, int volmax)
   { 
-    FormSegRGrow::getInst()->InitAllItems(volmin, volmax); 
+    FormSegRGrow::GetInst()->InitAllItems(volmin, volmax); 
   }
 }

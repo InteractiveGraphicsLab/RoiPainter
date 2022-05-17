@@ -51,7 +51,7 @@ namespace RoiPainter4D {
 
     static FormSegRigidICP^ m_singleton;
   public:
-    static FormSegRigidICP^ getInst() {
+    static FormSegRigidICP^ GetInst() {
       if (m_singleton == nullptr) {
         m_singleton = gcnew FormSegRigidICP();
       }
@@ -62,9 +62,9 @@ namespace RoiPainter4D {
     void ReusePrevIsoSurface( const int isovalue );
 
 
-    bool isTrans()   { return FormSegRigidICP::getInst()->radiobutton_translate_ ->Checked; };
-    bool isRot()     { return FormSegRigidICP::getInst()->radiobutton_rotate_    ->Checked; };
-    bool isTransPiv(){ return FormSegRigidICP::getInst()->radiobutton_transpivot_->Checked; };
+    bool isTrans()   { return FormSegRigidICP::GetInst()->radiobutton_translate_ ->Checked; };
+    bool isRot()     { return FormSegRigidICP::GetInst()->radiobutton_rotate_    ->Checked; };
+    bool isTransPiv(){ return FormSegRigidICP::GetInst()->radiobutton_transpivot_->Checked; };
 
   private:
     bool b_loaded_source_surface_;
@@ -410,16 +410,16 @@ namespace RoiPainter4D {
 };
 
 
-  inline void FormSegRigidICPShow()			 { FormSegRigidICP::getInst()->Show(); }
-  inline void FormSegRigidICPHide()			 { FormSegRigidICP::getInst()->Hide(); }
-  inline void FormSegRigidICPInitializeParameters() { FormSegRigidICP::getInst()->InitializeParameters(); }
-  inline bool FormSegRigidICPBTrans()		 { return FormSegRigidICP::getInst()->isTrans(); }
-  inline bool FormSegRigidICPBRot()			 { return FormSegRigidICP::getInst()->isRot(); }
-  inline bool FormSegRigidICPBTransPiv() { return FormSegRigidICP::getInst()->isTransPiv(); }
+  inline void FormSegRigidICPShow()			 { FormSegRigidICP::GetInst()->Show(); }
+  inline void FormSegRigidICPHide()			 { FormSegRigidICP::GetInst()->Hide(); }
+  inline void FormSegRigidICPInitializeParameters() { FormSegRigidICP::GetInst()->InitializeParameters(); }
+  inline bool FormSegRigidICPBTrans()		 { return FormSegRigidICP::GetInst()->isTrans(); }
+  inline bool FormSegRigidICPBRot()			 { return FormSegRigidICP::GetInst()->isRot(); }
+  inline bool FormSegRigidICPBTransPiv() { return FormSegRigidICP::GetInst()->isTransPiv(); }
 
 
   inline void FormSegRigidICP_ReusePrevIsoSurface( const int isovalue ){
-    FormSegRigidICP::getInst()->ReusePrevIsoSurface(isovalue);
+    FormSegRigidICP::GetInst()->ReusePrevIsoSurface(isovalue);
   }
 
 }

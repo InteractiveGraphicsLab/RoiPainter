@@ -306,7 +306,7 @@ System::Void FormSegSwallowOrganTimeline::m_panel_Paint(
 
   //1. draw timeline
   int num_frames = ImageCore::GetInst()->GetNumFrames();
-  int idx_frames = FormVisParam::getInst()->GetframeI();
+  int idx_frames = FormVisParam::GetInst()->GetframeI();
   {
     int t = ChartPos_Time( W, num_frames, idx_frames);
     g->DrawLine( pen_r, t, chart_top[0], t, chart_btm[0] ); 

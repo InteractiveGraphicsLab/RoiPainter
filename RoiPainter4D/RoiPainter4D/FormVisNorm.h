@@ -33,7 +33,7 @@ namespace RoiPainter4D {
 
     static FormVisNorm^ m_singleton;
   public:
-    static FormVisNorm^ getInst() {
+    static FormVisNorm^ GetInst() {
       if (m_singleton == nullptr) {
         m_singleton = gcnew FormVisNorm();
       }
@@ -182,10 +182,10 @@ namespace RoiPainter4D {
 #pragma endregion
   };
 
-  inline void formVisNorm_Show() { FormVisNorm::getInst()->Show(); }
-  inline void formVisNorm_Hide() { FormVisNorm::getInst()->Hide(); }
+  inline void formVisNorm_Show() { FormVisNorm::GetInst()->Show(); }
+  inline void formVisNorm_Hide() { FormVisNorm::GetInst()->Hide(); }
   inline void formVisNorm_setVoxelVis(short v){
-    FormVisNorm::getInst()->setVolumeValVis(v);
+    FormVisNorm::GetInst()->setVolumeValVis(v);
   }
 
 }

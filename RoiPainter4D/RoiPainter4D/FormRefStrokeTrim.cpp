@@ -9,10 +9,10 @@ using namespace RoiPainter4D;
 
 System::Void FormRefStrokeTrim::btn_ok_Click(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeRefStrokeTrim::getInst()->finishTrim();
+  ModeRefStrokeTrim::GetInst()->finishTrim();
 }
 
 System::Void FormRefStrokeTrim::btn_cancel_Click(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeRefStrokeTrim::getInst()->cancelBtnClick();
+  ModeRefStrokeTrim::GetInst()->cancelBtnClick();
 }

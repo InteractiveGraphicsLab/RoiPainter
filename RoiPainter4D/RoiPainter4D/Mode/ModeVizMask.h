@@ -12,7 +12,7 @@ class ModeVizMask : public ModeInterface
   ModeVizMask();
 public:
   ~ModeVizMask();
-  static ModeVizMask* getInst() { static ModeVizMask p; return &p; }
+  static ModeVizMask* GetInst() { static ModeVizMask p; return &p; }
 
   // overload functions ---------------------------------------------
   MODE_ID getModeID() { return MODE_VIS_MASK; }

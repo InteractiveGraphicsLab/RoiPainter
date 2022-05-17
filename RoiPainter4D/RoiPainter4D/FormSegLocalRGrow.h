@@ -59,7 +59,7 @@ namespace RoiPainter4D {
     }
 
   public:
-    static FormSegLocalRGrow^ getInst() {
+    static FormSegLocalRGrow^ GetInst() {
       if (m_singleton == nullptr) m_singleton = gcnew FormSegLocalRGrow();
       return m_singleton;
     }
@@ -480,28 +480,28 @@ namespace RoiPainter4D {
 
 };
 
-  inline void  FormSegLocalRGrow_Show() { FormSegLocalRGrow::getInst()->Show(); }
-  inline void  FormSegLocalRGrow_Hide() { FormSegLocalRGrow::getInst()->Hide(); }
+  inline void  FormSegLocalRGrow_Show() { FormSegLocalRGrow::GetInst()->Show(); }
+  inline void  FormSegLocalRGrow_Hide() { FormSegLocalRGrow::GetInst()->Hide(); }
   inline void  FormSegLocalRGrow_InitAllItems(float max_radius, int volmin, int volmax)
   { 
-    FormSegLocalRGrow::getInst()->InitAllItems(max_radius, volmin, volmax);
+    FormSegLocalRGrow::GetInst()->InitAllItems(max_radius, volmin, volmax);
   }
-  inline bool  FormSegLocalRGrow_DoSetSamePosForAllFrame   () { return FormSegLocalRGrow::getInst()->IsSamePositionAllFrame(); }
-  inline bool  FormSegLocalRGrow_DoSetSameThreshForAllFrame() { return FormSegLocalRGrow::getInst()->IsSameThreshAllFrame  (); }
-  inline bool  FormSegLocalRGrow_DoSetSameRadForAllFrame   () { return FormSegLocalRGrow::getInst()->IsSameRadiusAllFrame  (); }
+  inline bool  FormSegLocalRGrow_DoSetSamePosForAllFrame   () { return FormSegLocalRGrow::GetInst()->IsSamePositionAllFrame(); }
+  inline bool  FormSegLocalRGrow_DoSetSameThreshForAllFrame() { return FormSegLocalRGrow::GetInst()->IsSameThreshAllFrame  (); }
+  inline bool  FormSegLocalRGrow_DoSetSameRadForAllFrame   () { return FormSegLocalRGrow::GetInst()->IsSameRadiusAllFrame  (); }
   inline void  FormSegLocalRGrow_UpdateSeedSelection() { 
-    FormSegLocalRGrow::getInst()->UpdateSeedInfoItems(); 
-    FormSegLocalRGrow::getInst()->UpdateSeedList(); 
+    FormSegLocalRGrow::GetInst()->UpdateSeedInfoItems(); 
+    FormSegLocalRGrow::GetInst()->UpdateSeedList(); 
   }
   inline void  FormSegLocalRGrow_FrameIdxChanged() { 
-    FormSegLocalRGrow::getInst()->UpdateSeedInfoItems(); 
-    FormSegLocalRGrow::getInst()->UpdateSeedList(); 
+    FormSegLocalRGrow::GetInst()->UpdateSeedInfoItems(); 
+    FormSegLocalRGrow::GetInst()->UpdateSeedList(); 
   }
 
 
 
   inline void ForlSegLocalRGrow_SetChecboxState(const bool usesamerad, const bool usesamepos, const bool usesamethresh){
-    FormSegLocalRGrow::getInst()->SetChecboxState(usesamerad, usesamepos, usesamethresh);
+    FormSegLocalRGrow::GetInst()->SetChecboxState(usesamerad, usesamepos, usesamethresh);
   }
 
 }

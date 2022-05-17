@@ -112,7 +112,7 @@ public:
 
 
 void t_drawAxis();
-void t_drawFrame(const EVec3f &cuboid);
+void t_DrawFrame(const EVec3f &cuboid);
 void t_drawSlices(const int slineNum, const EVec3f &camP, const EVec3f &camF, const EVec3f &cuboid);
 
 #endif

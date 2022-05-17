@@ -22,7 +22,7 @@ class ModeSegClosestPix : public ModeInterface
 public:
   ~ModeSegClosestPix();
 
-  static ModeSegClosestPix* getInst() { static ModeSegClosestPix p; return &p; }
+  static ModeSegClosestPix* GetInst() { static ModeSegClosestPix p; return &p; }
 
   // overload functions ---------------------------------------------
   MODE_ID getModeID() { return MODE_SEG_CLOSESTPIX; }

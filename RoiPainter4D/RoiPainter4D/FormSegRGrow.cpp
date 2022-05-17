@@ -46,7 +46,7 @@ System::Void FormSegRGrow::btn_runRegionGrow_Click(System::Object^  sender, Syst
 
 System::Void FormSegRGrow::btn_runThresholding_1frame_Click(System::Object^  sender, System::EventArgs^  e)
 {
-  int   frameI = FormVisParam::getInst()->GetframeI();
+  int   frameI = FormVisParam::GetInst()->GetframeI();
   short minV = minThresholdBar->Value;
   short maxV = maxThresholdBar->Value;
   ModeSegRGrow::GetInst()->RunThresholding_OneFrame(minV, maxV, frameI);
@@ -54,7 +54,7 @@ System::Void FormSegRGrow::btn_runThresholding_1frame_Click(System::Object^  sen
 
 System::Void FormSegRGrow::btn_runRegionGrow_1frame_Click(System::Object^  sender, System::EventArgs^  e)
 {
-  int   frameI = FormVisParam::getInst()->GetframeI();
+  int   frameI = FormVisParam::GetInst()->GetframeI();
   short minV = minThresholdBar->Value;
   short maxV = maxThresholdBar->Value;
   ModeSegRGrow::GetInst()->RunRegionGrow6_OneFrame(minV, maxV, frameI);

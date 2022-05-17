@@ -69,7 +69,7 @@ void ModeSegLocalRGrow::FinishSegmentation()
 
   //SaveSeedInfo("");
   ImageCore::GetInst()->mask_storeCurrentForeGround();
-  ModeCore::getInst()->ModeSwitch(MODE_VIS_MASK);
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
 
   m_seeds.clear();
   m_active_seed_id = -1;
@@ -89,7 +89,7 @@ void ModeSegLocalRGrow::CancelSegmentation()
 {
   if (ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Cancel?"))
   {
-    ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
     formMain_RedrawMainPanel();
   }
 }

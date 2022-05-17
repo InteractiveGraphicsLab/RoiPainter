@@ -15,7 +15,7 @@ class ModeCore
 public:
   ~ModeCore();
 
-  static ModeCore* getInst() {
+  static ModeCore* GetInst() {
     static ModeCore p;
     return &p;
   }

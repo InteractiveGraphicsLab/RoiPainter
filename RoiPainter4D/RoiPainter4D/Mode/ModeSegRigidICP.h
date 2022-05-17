@@ -42,7 +42,7 @@ class ModeSegRigidICP : public ModeInterface
 public:
   ~ModeSegRigidICP();
 
-  static ModeSegRigidICP* GetInstance() { static ModeSegRigidICP p; return &p; }
+  static ModeSegRigidICP* GetInst() { static ModeSegRigidICP p; return &p; }
 
   // overload functions ---------------------------------------------
   MODE_ID getModeID() { return MODE_SEG_RIGIDICP; }

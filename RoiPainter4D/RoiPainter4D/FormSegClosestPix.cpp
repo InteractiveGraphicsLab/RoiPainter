@@ -24,12 +24,12 @@ System::Void FormSegClosestPix::btnGo_Click(System::Object^  sender, System::Eve
 }
 
 System::Void FormSegClosestPix::btnOk_Click(System::Object^  sender, System::EventArgs^  e) {
-  ModeSegClosestPix::getInst()->finishSegmentation();
+  ModeSegClosestPix::GetInst()->finishSegmentation();
 }
 
 System::Void FormSegClosestPix::btnCancel_Click(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeSegClosestPix::getInst()->cancelSegmentation();
+  ModeSegClosestPix::GetInst()->cancelSegmentation();
 }
 
 System::Void FormSegClosestPix::startFrameUpDown_ValueChanged(System::Object^  sender, System::EventArgs^  e) {

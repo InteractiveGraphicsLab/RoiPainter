@@ -55,7 +55,7 @@ namespace RoiPainter4D {
     FormMain(void);
 
   public:
-    static FormMain^ getInst()
+    static FormMain^ GetInst()
     {
       if (m_singleton == nullptr) m_singleton = gcnew FormMain();
       return m_singleton;
@@ -404,30 +404,30 @@ namespace RoiPainter4D {
 
   inline void formMain_RedrawMainPanel()
   {
-    FormMain::getInst()->RedrawMainPanel();
+    FormMain::GetInst()->RedrawMainPanel();
   }
 
   inline void formMain_setBackColorBlack(float r, float g, float b, float a)
   {
-    FormMain::getInst()->SetBackColor(r, g, b, a);
+    FormMain::GetInst()->SetBackColor(r, g, b, a);
   }
 
   inline void formMain_setCursorNESW()
   {
-    FormMain::getInst()->SetCursorNESW();
+    FormMain::GetInst()->SetCursorNESW();
   }
 
   inline void formMain_setCursorDefault()
   {
-    FormMain::getInst()->SetCursorDefault();
+    FormMain::GetInst()->SetCursorDefault();
   }
 
   inline OglForCLI* formMain_GetOgl(){
-    return FormMain::getInst()->GetOgl();
+    return FormMain::GetInst()->GetOgl();
   }
 
   inline void formMain_SetProgressValue(float value0to1)
   {
-    FormMain::getInst()->SetProgressValue(value0to1);
+    FormMain::GetInst()->SetProgressValue(value0to1);
   }
 }

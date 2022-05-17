@@ -73,7 +73,7 @@ namespace RoiPainter4D {
     static FormSegBolus^ m_singleton_ = nullptr;
 
 	public:
-		static FormSegBolus^ getInst() 
+		static FormSegBolus^ GetInst() 
 		{
 			if(m_singleton_==nullptr) m_singleton_ = gcnew FormSegBolus();
 			return m_singleton_;
@@ -761,22 +761,22 @@ namespace RoiPainter4D {
 };
 
   //外部から呼び出すための関数郡
-  inline void formSegBolus_Show()           { FormSegBolus::getInst()->Show();      }
-	inline void formSegBolus_Hide()           { FormSegBolus::getInst()->Hide();      }
-  inline bool formSegBolus_IsDrawOBB()      { return FormSegBolus::getInst()->IsDrawOBB();       }
-	inline bool formSegBolus_IsNormalVolRend(){ return FormSegBolus::getInst()->IsNormalVolRend(); }
-  inline int  formSegBolus_GetLockAreaBand(){ return FormSegBolus::getInst()->GetLockAreaBand(); }
+  inline void formSegBolus_Show()           { FormSegBolus::GetInst()->Show();      }
+	inline void formSegBolus_Hide()           { FormSegBolus::GetInst()->Hide();      }
+  inline bool formSegBolus_IsDrawOBB()      { return FormSegBolus::GetInst()->IsDrawOBB();       }
+	inline bool formSegBolus_IsNormalVolRend(){ return FormSegBolus::GetInst()->IsNormalVolRend(); }
+  inline int  formSegBolus_GetLockAreaBand(){ return FormSegBolus::GetInst()->GetLockAreaBand(); }
 
   inline float formSegBolus_GetCylinderTransparency(){
-    return FormSegBolus::getInst()->GetCylinderAlpha();
+    return FormSegBolus::GetInst()->GetCylinderAlpha();
   }
   inline void formSegBolus_InitAllItems(
       int volmin, int volmax, float radmin, float radmax)
   { 
-    FormSegBolus::getInst()->InitAllItems(volmin, volmax, radmin, radmax);
+    FormSegBolus::GetInst()->InitAllItems(volmin, volmax, radmin, radmax);
   }
 	inline void formSegBolus_SetItemsForCylinderPropaty(bool is_active, float radius1, float radius2, float angle){
-		FormSegBolus::getInst()->SetItemsForCylinderProparty( is_active, radius1, radius2, angle);
+		FormSegBolus::GetInst()->SetItemsForCylinderProparty( is_active, radius1, radius2, angle);
 	}
 }
 
