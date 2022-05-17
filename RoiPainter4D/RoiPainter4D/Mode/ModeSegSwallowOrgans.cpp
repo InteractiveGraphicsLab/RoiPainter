@@ -178,7 +178,7 @@ void ModeSegSwallowOrgans::FinishSegmentation()
   m_meshseq.Clear();
   
   //NOTE: do not clear (m_isovalue and m_isosurfaces)
-  ModeCore::getInst()->ModeSwitch(MODE_VIS_MASK);
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   formMain_RedrawMainPanel();
 }
 
@@ -189,7 +189,7 @@ void ModeSegSwallowOrgans::CancelSegmentation()
   if( !m_meshseq.IsInitialized() || 
     ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "cancel?") )
   {
-    ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
     formMain_RedrawMainPanel();
   }
 }

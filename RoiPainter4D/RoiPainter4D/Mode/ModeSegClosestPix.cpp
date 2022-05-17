@@ -267,7 +267,7 @@ void ModeSegClosestPix::cancelSegmentation()
 {
 	if (ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "cancel?"))
 	{
-		ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+		ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
 		formMain_RedrawMainPanel();
 	}
 }

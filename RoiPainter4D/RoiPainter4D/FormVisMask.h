@@ -54,7 +54,7 @@ namespace RoiPainter4D {
     }
 
   public:
-    static FormVisMask^ getInst() {
+    static FormVisMask^ GetInst() {
       if (m_singleton == nullptr) {
         m_singleton = gcnew FormVisMask();
       }
@@ -409,7 +409,7 @@ namespace RoiPainter4D {
   private: System::Void maskList_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
   }
   };
-  inline void formVisMask_Show() { FormVisMask::getInst()->Show(); }
-  inline void formVisMask_Hide() { FormVisMask::getInst()->Hide(); }
-  inline void formVisMask_updateList() { FormVisMask::getInst()->updateList(); }
+  inline void formVisMask_Show() { FormVisMask::GetInst()->Show(); }
+  inline void formVisMask_Hide() { FormVisMask::GetInst()->Hide(); }
+  inline void formVisMask_updateList() { FormVisMask::GetInst()->updateList(); }
 }

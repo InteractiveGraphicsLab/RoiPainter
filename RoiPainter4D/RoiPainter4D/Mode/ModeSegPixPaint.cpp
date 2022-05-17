@@ -73,7 +73,7 @@ void ModeSegPixPaint::FinishSegmentation()
 
   //このタイミングでisModified = false (しないとcanEndModeでダイアログが表示される)
   m_b_modified = false;
-  ModeCore::getInst()->ModeSwitch(MODE_VIS_MASK);
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   formMain_RedrawMainPanel();
 }
 
@@ -84,7 +84,7 @@ void ModeSegPixPaint::CancelSegmentation()
   if (!m_b_modified || ShowMsgDlgYesNo("現在の分割結果を破棄してよいですか\nDo you want to cancel current segmentation?", "cancel?"))
   {
     m_b_modified = false;
-    ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
     formMain_RedrawMainPanel();
   }
 }

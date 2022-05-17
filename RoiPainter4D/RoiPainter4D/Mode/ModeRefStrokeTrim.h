@@ -37,7 +37,7 @@ class ModeRefStrokeTrim: public ModeInterface
 	ModeRefStrokeTrim();
 public:
 	~ModeRefStrokeTrim();
-	static ModeRefStrokeTrim* getInst(){ static ModeRefStrokeTrim p; return &p; }
+	static ModeRefStrokeTrim* GetInst(){ static ModeRefStrokeTrim p; return &p; }
 
 	// overload functions ---------------------------------------------
 	MODE_ID getModeID() { return MODE_REF_STRKTRIM; }

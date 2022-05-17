@@ -37,7 +37,7 @@ namespace RoiPainter4D {
     static FormSegClosestPix^ m_singleton;
 
   public:
-    static FormSegClosestPix^ getInst() {
+    static FormSegClosestPix^ GetInst() {
       if (m_singleton == nullptr) {
         m_singleton = gcnew FormSegClosestPix();
       }
@@ -197,7 +197,7 @@ namespace RoiPainter4D {
   };
 
 
-  inline void formSegClosestPix_Show() { FormSegClosestPix::getInst()->Show(); }
-  inline void formSegClosestPix_Hide() { FormSegClosestPix::getInst()->Hide(); }
+  inline void formSegClosestPix_Show() { FormSegClosestPix::GetInst()->Show(); }
+  inline void formSegClosestPix_Hide() { FormSegClosestPix::GetInst()->Hide(); }
 
 }

@@ -16,7 +16,7 @@ class ModeVizNormal : public ModeInterface
   ModeVizNormal();
 public:
   ~ModeVizNormal();
-  static ModeVizNormal* getInst() 
+  static ModeVizNormal* GetInst() 
   { 
     static ModeVizNormal p; 
     return &p; 

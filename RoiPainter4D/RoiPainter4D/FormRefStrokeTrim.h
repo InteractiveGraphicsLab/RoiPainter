@@ -33,7 +33,7 @@ namespace RoiPainter4D {
 
     static FormRefStrokeTrim^ m_singleton;
   public:
-    static FormRefStrokeTrim^ getInst() {
+    static FormRefStrokeTrim^ GetInst() {
       if (m_singleton == nullptr) {
         m_singleton = gcnew FormRefStrokeTrim();
       }
@@ -178,15 +178,15 @@ namespace RoiPainter4D {
 
   inline void formRefStrokeTrim_Hide()
   {
-    FormRefStrokeTrim::getInst()->Hide();
+    FormRefStrokeTrim::GetInst()->Hide();
   }
   inline void formRefStrokeTrim_Show()
   {
-    FormRefStrokeTrim::getInst()->Show();
+    FormRefStrokeTrim::GetInst()->Show();
   }
   
   inline bool FormRefStrokeTrim_bUseRoughRend() { 
-    return FormRefStrokeTrim::getInst()->DoVisSurf(); 
+    return FormRefStrokeTrim::GetInst()->DoVisSurf(); 
   }
 
 }

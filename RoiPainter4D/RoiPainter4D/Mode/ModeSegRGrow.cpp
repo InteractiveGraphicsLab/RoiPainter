@@ -69,7 +69,7 @@ void ModeSegRGrow::FinishSegmentation()
   m_b_modified = false;
 
   ImageCore::GetInst()->mask_storeCurrentForeGround(  );
-  ModeCore::getInst()->ModeSwitch(MODE_VIS_MASK);
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   formMain_RedrawMainPanel();
 }
 
@@ -78,7 +78,7 @@ void ModeSegRGrow::cancelSegmentation()
 {
   if (ShowMsgDlgYesNo("Œ»Ý‚Ì•ªŠ„Œ‹‰Ê‚ð”jŠü‚µ‚Ä‚æ‚¢‚Å‚·‚©\nDo you want to cancel current segmentation?", "cancel?"))
   {
-    ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
     formMain_RedrawMainPanel();
   }
 }

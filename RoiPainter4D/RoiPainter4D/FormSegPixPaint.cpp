@@ -9,11 +9,11 @@ using namespace RoiPainter4D;
 
 System::Void FormSegPixPaint::okButton_Click(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeSegPixPaint::getInst()->FinishSegmentation();
+  ModeSegPixPaint::GetInst()->FinishSegmentation();
 }
 
 System::Void FormSegPixPaint::cancelButton_Click(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeSegPixPaint::getInst()->CancelSegmentation();
+  ModeSegPixPaint::GetInst()->CancelSegmentation();
 }
 

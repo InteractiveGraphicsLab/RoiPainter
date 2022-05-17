@@ -15,9 +15,9 @@ using namespace System::Runtime::InteropServices;
 
 void FormSegRigidICP::InitializeParameters()
 {
-  trackbar_setisoValue_->SetRange(FormVisParam::getInst()->GetWinLvMin(), FormVisParam::getInst()->GetWinLvMax());
+  trackbar_setisoValue_->SetRange(FormVisParam::GetInst()->GetWinLvMin(), FormVisParam::GetInst()->GetWinLvMax());
   trackbar_setisoValue_->Value = trackbar_setisoValue_->Minimum;
-  textbox_setisovalue_->Text   = FormVisParam::getInst()->GetWinLvMin().ToString();
+  textbox_setisovalue_->Text   = FormVisParam::GetInst()->GetWinLvMin().ToString();
   
   b_loaded_source_surface_     = false;
   b_generated_all_isosurfaces_ = false;
@@ -55,7 +55,7 @@ System::Void FormSegRigidICP::BtnGenIsoSurfClick(System::Object^  sender, System
     button_runicp_allPara_->Enabled = true;
   }
 
-	ModeSegRigidICP::GetInstance()->IsosurfaceGenerateAllFrame(trackbar_setisoValue_->Value);
+	ModeSegRigidICP::GetInst()->IsosurfaceGenerateAllFrame(trackbar_setisoValue_->Value);
 	formMain_RedrawMainPanel();
 }
 
@@ -86,7 +86,7 @@ System::Void FormSegRigidICP::BtnLoadSurfaceClick(System::Object^  sender, Syste
 
 	IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
 	std::string fname = static_cast<const char*>(mptr.ToPointer());
-	ModeSegRigidICP::GetInstance()->LoadSourceSurfaceObj(fname);
+	ModeSegRigidICP::GetInst()->LoadSourceSurfaceObj(fname);
 
 	formMain_RedrawMainPanel();
 }
@@ -107,7 +107,7 @@ System::Void FormSegRigidICP::BtnRunICPClick(System::Object^  sender, System::Ev
 
   int   numLv    = 6;		// m_spin_ICPnumLv.GetPos32();
   float rejScale = 2.5;	// (float)m_spin_ICPrejectScale.GetPos32();
-  ModeSegRigidICP::GetInstance()->PerformTracking(rejScale, numLv, startI, endI, false);
+  ModeSegRigidICP::GetInst()->PerformTracking(rejScale, numLv, startI, endI, false);
   formMain_RedrawMainPanel();
 }
 
@@ -121,7 +121,7 @@ System::Void FormSegRigidICP::BtnRunICPAllParaClick(System::Object^  sender, Sys
 
   int   numLv    = 6;		// m_spin_ICPnumLv.GetPos32();
   float rejScale = 2.5;	// (float)m_spin_ICPrejectScale.GetPos32();
-  ModeSegRigidICP::GetInstance()->PerformTracking(rejScale, numLv, startI, endI, true);
+  ModeSegRigidICP::GetInst()->PerformTracking(rejScale, numLv, startI, endI, true);
 
   formMain_RedrawMainPanel();
 }
@@ -134,7 +134,7 @@ System::Void FormSegRigidICP::BtnRunICPCurrentClick(System::Object^  sender, Sys
   
   int   numLv    = 6;		// m_spin_ICPnumLv.GetPos32();
   float rejScale = 2.5;	// (float)m_spin_ICPrejectScale.GetPos32();
-  ModeSegRigidICP::GetInstance()->PerformTracking(rejScale, numLv, cur_frames, cur_frames, false);
+  ModeSegRigidICP::GetInst()->PerformTracking(rejScale, numLv, cur_frames, cur_frames, false);
 
   formMain_RedrawMainPanel();
 }
@@ -149,7 +149,7 @@ System::Void FormSegRigidICP::BtnFinishandStoreCurrentFrameClick(
 {
   button_finish_->Enabled = false;
   button_finish_currentframe->Enabled = false;
-  ModeSegRigidICP::GetInstance()->FinishSegmentation(false);
+  ModeSegRigidICP::GetInst()->FinishSegmentation(false);
 }
 
 
@@ -167,7 +167,7 @@ static void ExportICPMatrixSequence()
   {
 	  IntPtr mptr = System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(dlg->FileName);
     std::string fname = static_cast<const char*>(mptr.ToPointer());
-	  ModeSegRigidICP::GetInstance()->ExportMatrixSequence(fname);
+	  ModeSegRigidICP::GetInst()->ExportMatrixSequence(fname);
   }
 }
 
@@ -193,7 +193,7 @@ System::Void FormSegRigidICP::button_import_mats__Click(
 
   IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
   std::string fname = static_cast<const char*>(mptr.ToPointer());
-  ModeSegRigidICP::GetInstance()->ImportMatrixSequence(fname);
+  ModeSegRigidICP::GetInst()->ImportMatrixSequence(fname);
 }
 
 
@@ -208,13 +208,13 @@ System::Void FormSegRigidICP::BtnFinishandStoreAllFrameClick(
   {
     ExportICPMatrixSequence();
   }
-  ModeSegRigidICP::GetInstance()->FinishSegmentation(true);
+  ModeSegRigidICP::GetInst()->FinishSegmentation(true);
 }
 
 
 System::Void FormSegRigidICP::BtnCancelClick(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeSegRigidICP::GetInstance()->CancelSegmentation();
+  ModeSegRigidICP::GetInst()->CancelSegmentation();
 }
 
 
@@ -255,7 +255,7 @@ System::Void FormSegRigidICP::btnGenTest_Click(System::Object^  sender, System::
   button_runicp_current_->Enabled = false;
   button_runicp_allPara_->Enabled = false;
 
-  ModeSegRigidICP::GetInstance()->IsosurfaceGenerateOneFrame(trackbar_setisoValue_->Value, formVisParam_getframeI());
+  ModeSegRigidICP::GetInst()->IsosurfaceGenerateOneFrame(trackbar_setisoValue_->Value, formVisParam_getframeI());
   formMain_RedrawMainPanel();
 }
 

@@ -57,8 +57,8 @@ void FormSegLocalRGrow::UpdateSeedInfoItems( )
   std::cout << "UpdateSeedInfoItems\n";
   m_item_updating = true;
 
-  const std::vector<LocalSeed> &seeds = ModeSegLocalRGrow::getInst()->getSeedList();
-  const int select_idx = ModeSegLocalRGrow::getInst()->GetSelectedSeedId();
+  const std::vector<LocalSeed> &seeds = ModeSegLocalRGrow::GetInst()->getSeedList();
+  const int select_idx = ModeSegLocalRGrow::GetInst()->GetSelectedSeedId();
 
   if (select_idx < 0 || static_cast<int>(seeds.size()) <= select_idx ) return;
 
@@ -83,8 +83,8 @@ void FormSegLocalRGrow::UpdateSeedList()
   std::cout << "UpdateSeedList\n";
   m_item_updating = true;
 
-  const std::vector<LocalSeed> &seeds = ModeSegLocalRGrow::getInst()->getSeedList();
-  const int select_idx = ModeSegLocalRGrow::getInst()->GetSelectedSeedId();
+  const std::vector<LocalSeed> &seeds = ModeSegLocalRGrow::GetInst()->getSeedList();
+  const int select_idx = ModeSegLocalRGrow::GetInst()->GetSelectedSeedId();
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
   const int frame_idx  = formVisParam_getframeI();
 
@@ -122,9 +122,9 @@ void FormSegLocalRGrow::UpdateSeedList()
 System::Void FormSegLocalRGrow::SeedListSelectionChanged(System::Object^  sender, System::EventArgs^  e)
 {
   if (m_item_updating) return;
-  ModeSegLocalRGrow::getInst()->SetSelectedSeedId( m_list_seeds->CurrentCell->RowIndex );
+  ModeSegLocalRGrow::GetInst()->SetSelectedSeedId( m_list_seeds->CurrentCell->RowIndex );
   UpdateSeedInfoItems( );
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 }
 
 
@@ -138,10 +138,10 @@ System::Void FormSegLocalRGrow::BarRadiusScroll( System::Object^ sender, System:
   const float radius    = m_bar_radius->Value / 10.0f; 
   m_text_radius->Text   = radius.ToString("F1");
   
-  ModeSegLocalRGrow::getInst()->SelectSeed_SetRadius( radius );
-  ModeSegLocalRGrow::getInst()->SelectSeed_RunInterpolation();
+  ModeSegLocalRGrow::GetInst()->SelectSeed_SetRadius( radius );
+  ModeSegLocalRGrow::GetInst()->SelectSeed_RunInterpolation();
   UpdateSeedList();
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
 
   m_item_updating = false;
 }
@@ -152,8 +152,8 @@ System::Void FormSegLocalRGrow::BarThreshMinScroll(System::Object^  sender, Syst
   if (m_item_updating) return;
   m_item_updating = true;
 
-  ModeSegLocalRGrow::getInst()->SelectSeed_SetThreshMin( m_bar_threshmin->Value);
-  ModeSegLocalRGrow::getInst()->SelectSeed_RunInterpolation();
+  ModeSegLocalRGrow::GetInst()->SelectSeed_SetThreshMin( m_bar_threshmin->Value);
+  ModeSegLocalRGrow::GetInst()->SelectSeed_RunInterpolation();
   m_text_threshmin->Text =  m_bar_threshmin->Value.ToString();
   UpdateSeedList();
 
@@ -167,8 +167,8 @@ System::Void FormSegLocalRGrow::BarThreshMaxScroll(System::Object^  sender, Syst
   m_item_updating = true;
   
   std::cout  << "BarThreshMaxScroll\n";
-  ModeSegLocalRGrow::getInst()->SelectSeed_SetThreshMax( m_bar_threshmax->Value);
-  ModeSegLocalRGrow::getInst()->SelectSeed_RunInterpolation();
+  ModeSegLocalRGrow::GetInst()->SelectSeed_SetThreshMax( m_bar_threshmax->Value);
+  ModeSegLocalRGrow::GetInst()->SelectSeed_RunInterpolation();
   m_text_threshmax->Text =  m_bar_threshmax->Value.ToString();
   UpdateSeedList();
   std::cout  << "BarThreshMaxScroll_done\n";
@@ -194,10 +194,10 @@ void FormSegLocalRGrow::TextboxRadiusChangedLeave(bool b_Leave)
   m_bar_radius ->Value = (int)( x * 10.0f);
   if(b_Leave) m_text_radius->Text = (x).ToString("F1");
   
-  ModeSegLocalRGrow::getInst()->SelectSeed_SetRadius( m_bar_radius->Value / 10.0f );
-  ModeSegLocalRGrow::getInst()->SelectSeed_RunInterpolation();
+  ModeSegLocalRGrow::GetInst()->SelectSeed_SetRadius( m_bar_radius->Value / 10.0f );
+  ModeSegLocalRGrow::GetInst()->SelectSeed_RunInterpolation();
   UpdateSeedList();
-  FormMain::getInst()->RedrawMainPanel();
+  FormMain::GetInst()->RedrawMainPanel();
   
   m_item_updating = false;
 }
@@ -240,8 +240,8 @@ System::Void FormSegLocalRGrow::textboxThreshMaxChanged(System::Object^  sender,
   m_bar_threshmax->Value = x;
   m_text_threshmax->Text = (x).ToString();
 
-  ModeSegLocalRGrow::getInst()->SelectSeed_SetThreshMax( m_bar_threshmax->Value );
-  ModeSegLocalRGrow::getInst()->SelectSeed_RunInterpolation();
+  ModeSegLocalRGrow::GetInst()->SelectSeed_SetThreshMax( m_bar_threshmax->Value );
+  ModeSegLocalRGrow::GetInst()->SelectSeed_RunInterpolation();
   UpdateSeedList();
   std::cout  << "textboxThreshMaxChanged_done\n";
  
@@ -273,8 +273,8 @@ System::Void FormSegLocalRGrow::textboxThreshMinChanged(System::Object^  sender,
   m_bar_threshmin->Value = x;
   m_text_threshmin->Text = (x).ToString();
 
-  ModeSegLocalRGrow::getInst()->SelectSeed_SetThreshMin( m_bar_threshmin->Value );
-  ModeSegLocalRGrow::getInst()->SelectSeed_RunInterpolation();
+  ModeSegLocalRGrow::GetInst()->SelectSeed_SetThreshMin( m_bar_threshmin->Value );
+  ModeSegLocalRGrow::GetInst()->SelectSeed_RunInterpolation();
   UpdateSeedList();
 
   m_item_updating = false;
@@ -284,24 +284,24 @@ System::Void FormSegLocalRGrow::textboxThreshMinChanged(System::Object^  sender,
 //cancelボタンクリック
 System::Void FormSegLocalRGrow::BtnCancelClick(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeSegLocalRGrow::getInst()->CancelSegmentation();
+  ModeSegLocalRGrow::GetInst()->CancelSegmentation();
 }
 
 //OKボタン
 System::Void FormSegLocalRGrow::BtnFinishClick(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeSegLocalRGrow::getInst()->FinishSegmentation();
+  ModeSegLocalRGrow::GetInst()->FinishSegmentation();
 }
 
 //シード成長
 System::Void FormSegLocalRGrow::BtnRunLocalRGrowAllFrameClick(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeSegLocalRGrow::getInst()->RunLocalRegionGrow_Allframe();
+  ModeSegLocalRGrow::GetInst()->RunLocalRegionGrow_Allframe();
 }
 
 System::Void FormSegLocalRGrow::BtnRunLocalRGrowCurrentFrameClick(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeSegLocalRGrow::getInst()->RunLocalRegionGrow_OnlyCurrentFrame();
+  ModeSegLocalRGrow::GetInst()->RunLocalRegionGrow_OnlyCurrentFrame();
 }
 
 
@@ -317,7 +317,7 @@ System::Void FormSegLocalRGrow::BtnLoadSeedInfoClick(System::Object^  sender, Sy
   std::string fname = static_cast<const char*>(mptr.ToPointer());
   std::cout << fname;
 
-	ModeSegLocalRGrow::getInst()->LoadSeedInfo(fname);
+	ModeSegLocalRGrow::GetInst()->LoadSeedInfo(fname);
 	formMain_RedrawMainPanel();
 }
 
@@ -335,7 +335,7 @@ System::Void FormSegLocalRGrow::BtnSaveSeedInfoClick(System::Object^  sender, Sy
   std::string fname = static_cast<const char*>(mptr.ToPointer());
   std::cout << fname;
 
-	ModeSegLocalRGrow::getInst()->SaveSeedInfo(fname);
+	ModeSegLocalRGrow::GetInst()->SaveSeedInfo(fname);
 	formMain_RedrawMainPanel();
 }
 

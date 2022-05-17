@@ -115,7 +115,7 @@ void ModeSegRigidICP::FinishSegmentation(const bool b_storeallframes)
   //このタイミングでisModified = false (しないとcanEndModeでダイアログが表示される)
   m_b_modified = false;
 
-  ModeCore::getInst()->ModeSwitch(MODE_VIS_MASK);
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   formMain_RedrawMainPanel();
 }
 
@@ -133,7 +133,7 @@ void ModeSegRigidICP::CancelSegmentation()
     //m_isosurfaces.clear();
 
     m_b_modified = false;
-    ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
     formMain_RedrawMainPanel();
   }
 }

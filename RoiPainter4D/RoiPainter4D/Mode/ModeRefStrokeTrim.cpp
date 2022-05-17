@@ -56,14 +56,14 @@ void ModeRefStrokeTrim::startMode ()
 
 	if (maskID == -1 )
 	{
-		ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+		ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
 		return;
 	}
 
 	if (maskID == 0 ) 
   {
 		ShowMsgDlg_OK("0th region (background) cannot be trimmed", "caution");
-		ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+		ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
 		return;
 	}
 
@@ -455,7 +455,7 @@ void ModeRefStrokeTrim::finishTrim()
   formMain_SetProgressValue(0);
 
 	ImageCore::GetInst()->mask_storeCurrentForeGround();
-	ModeCore::getInst()->ModeSwitch(MODE_VIS_MASK);
+	ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
 	formMain_RedrawMainPanel();
 }
 
@@ -465,7 +465,7 @@ void ModeRefStrokeTrim::cancelBtnClick()
 	if (ShowMsgDlgYesNo("現在のトリム結果を破棄してよいですか\nDo you want to cancel current Trimming?", "cancel?"))
 	{
 		m_bModified = false;
-		ModeCore::getInst()->ModeSwitch(MODE_VIS_NORMAL);
+		ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
 		formMain_RedrawMainPanel();
 	}
 }

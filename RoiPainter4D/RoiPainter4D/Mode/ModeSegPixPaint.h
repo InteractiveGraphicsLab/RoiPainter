@@ -44,7 +44,7 @@ class ModeSegPixPaint : public ModeInterface
 public:
   ~ModeSegPixPaint();
 
-  static ModeSegPixPaint* getInst() { static ModeSegPixPaint p; return &p; }
+  static ModeSegPixPaint* GetInst() { static ModeSegPixPaint p; return &p; }
 
   // overload functions ---------------------------------------------
   MODE_ID getModeID() { return MODE_SEG_PIXPAINT; }
