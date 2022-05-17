@@ -31,7 +31,6 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
-3rdParty/*
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
