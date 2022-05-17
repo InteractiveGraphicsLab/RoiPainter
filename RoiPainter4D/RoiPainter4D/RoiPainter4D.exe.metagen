@@ -1,0 +1,146 @@
+  RoiPainter4D.FormLoadFrameIdx.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter4D.FormMain.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter4D.FormRefStrokeTrim.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter4D.FormSegClosestPix.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter4D.FormSegLocalRGrow.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter4D.FormSegParaConts.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter4D.FormSegRGrow.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter4D.FormSegRigidICP.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter4D.FormSelectMskId.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter4D.FormSortFiles.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter4D.FormVisMask.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter4D.FormVisNorm.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter4D.FormVisParam.resources - Embedded, ContainedInManifestFile, 
+ImageRuntimeVersion: v4.0.30319
+Assembly RoiPainter4D, Version=0.0.*, Culture=ロケールに依存しない言語 (ロケールに依存しない国): 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a: 
+	hash=None, flags=None
+Assembly System.Windows.Forms.DataVisualization, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35: 
+	hash=None, flags=None
+Assembly System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Class RoiPainter4D.FormLoadFrameIdx: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(Int32*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Methods:
+    setIndex(Int32* IsImplicitlyDereferenced, Int32* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+Class RoiPainter4D.FormMain: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    RedrawMainPanel(): PrivateScope, Public, HideBySig
+    initCameraPosition(Matrix<float\,3\,1\,0\,3\,1>* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+    setBackColor(Single, Single, Single, Single): PrivateScope, Public, HideBySig
+    setCursorNESW(): PrivateScope, Public, HideBySig
+    setCursorDefault(): PrivateScope, Public, HideBySig
+Class RoiPainter4D.FormVisParam: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Fields:
+    OglImage1D<4>* m_imgTf : Public
+    OglImage1D<4>* m_imgPsu : Public
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    initAllItemsForNewImg(): PrivateScope, Public, HideBySig
+    getframeI(): PrivateScope, Public, HideBySig
+    getWinLvMax(): PrivateScope, Public, HideBySig
+    getWinLvMin(): PrivateScope, Public, HideBySig
+    getTimeSliderMax(): PrivateScope, Public, HideBySig
+    changeFrameI(Int32): PrivateScope, Public, HideBySig
+    getWinLvRange(Matrix<int\,2\,1\,0\,2\,1>*): PrivateScope, Public, HideBySig
+    getAlpha(): PrivateScope, Public, HideBySig
+    getSliceNum(): PrivateScope, Public, HideBySig
+    bRendFrame(): PrivateScope, Public, HideBySig
+    bRendVol(): PrivateScope, Public, HideBySig
+    bDoPsued(): PrivateScope, Public, HideBySig
+    bRendIndi(): PrivateScope, Public, HideBySig
+    bGradMag(): PrivateScope, Public, HideBySig
+    bOnManip(): PrivateScope, Public, HideBySig
+    bPlaneXY(): PrivateScope, Public, HideBySig
+    bPlaneYZ(): PrivateScope, Public, HideBySig
+    bPlaneZX(): PrivateScope, Public, HideBySig
+Class RoiPainter4D.FormVisNorm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+Class RoiPainter4D.FormVisMask: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    updateList(): PrivateScope, Public, HideBySig
+Class RoiPainter4D.FormSegRGrow: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    InitAllItems(): PrivateScope, Public, HideBySig
+Class RoiPainter4D.FormSegPixPaint: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    bPaintMode(): PrivateScope, Public, HideBySig
+    bLassoMode(): PrivateScope, Public, HideBySig
+Class RoiPainter4D.FormSegRigidICP: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    InitializeParameters(): PrivateScope, Public, HideBySig
+    isTrans(): PrivateScope, Public, HideBySig
+    isRot(): PrivateScope, Public, HideBySig
+Class RoiPainter4D.FormSegClosestPix: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    initItems(Int32* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+Class RoiPainter4D.FormSegParaConts: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Fields:
+    RoiPainter4D.FormSegParaConts m_singleton : Public, Static
+  Methods:
+    bRendAllFrame(): PrivateScope, Public, HideBySig
+    bRendMesh(): PrivateScope, Public, HideBySig
+    bRendAllContours(): PrivateScope, Public, HideBySig
+    bRendEdges(): PrivateScope, Public, HideBySig
+    bArea(): PrivateScope, Public, HideBySig
+    bArcLen(): PrivateScope, Public, HideBySig
+    bModeAddCP(): PrivateScope, Public, HideBySig
+    bModeTrans(): PrivateScope, Public, HideBySig
+    bModeRot(): PrivateScope, Public, HideBySig
+    startMode(Int32, Int32, Int32, Int32, Int32, Int32, Int32): PrivateScope, Public, HideBySig
+    setStep1Sliders(Int32, Int32, Int32, Int32): PrivateScope, Public, HideBySig
+    endMode(): PrivateScope, Public, HideBySig
+    getInst(): PrivateScope, Public, Static, HideBySig
+    updateItemStetsAsStep1(): PrivateScope, Public, HideBySig
+    updateItemStetsAsStep2(): PrivateScope, Public, HideBySig
+Class RoiPainter4D.FormSegLocalRGrow: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    InitAllItems(): PrivateScope, Public, HideBySig
+    updateList(): PrivateScope, Public, HideBySig
+    UpdateSeedInfoItems(Int32): PrivateScope, Public, HideBySig
+    getRadiusMax(): PrivateScope, Public, HideBySig
+    getThAllFrameCheck(): PrivateScope, Public, HideBySig
+    getRadiusAllFrameCheck(): PrivateScope, Public, HideBySig
+Class RoiPainter4D.FormRefStrokeTrim: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+Class RoiPainter4D.FormSortFiles: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(std.vector<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::allocator<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> > > >*, std.vector<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::allocator<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> > > >*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Methods:
+    copyNameList(vector<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::allocator<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> > > >* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+Class RoiPainter4D.FormSelectMskId: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Methods:
+    initList(): PrivateScope, Public, HideBySig
+    getTrgtID(): PrivateScope, Public, HideBySig

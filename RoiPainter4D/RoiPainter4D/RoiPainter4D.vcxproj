@@ -1,0 +1,376 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{F0015F88-A1F7-4E6E-911B-DBEA79CD09A7}</ProjectGuid>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <Keyword>ManagedCProj</Keyword>
+    <RootNamespace>RoiPainter4D</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <ManagedAssembly>true</ManagedAssembly>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies />
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>./3rdParty/Eigen;./COMMON;./3rdParty/glew/include;./;./3rdParty/dcmtk/include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>glew32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>./3rdParty/glew/lib/Release/x64;./3rdParty/dcmtk/staticlibMD;../packages\opencvcontrib.3.1.0/build/native/lib/x64/v140/Release</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies />
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>./;../../3rdParty/glew/include;../../3rdParty/dcmtk/include;../../3rdParty/Eigen;../../COMMON</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles>stdafx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
+      <MinimalRebuild>false</MinimalRebuild>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>glew32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../3rdParty/glew/lib/Release/x64;../../3rdParty/dcmtk/staticlibMD;../packages\opencvcontrib.3.1.0/build/native/lib/x64/v140/Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\3rdParty\dcmtk\tdcmtk.cpp" />
+    <ClCompile Include="..\..\COMMON\HarmCoord3D.cpp" />
+    <ClCompile Include="..\..\COMMON\OglImage.cpp" />
+    <ClCompile Include="..\..\COMMON\tmarchingcubes.cpp" />
+    <ClCompile Include="..\..\COMMON\tmesh.cpp" />
+    <ClCompile Include="..\..\COMMON\ttrianglesoup.cpp" />
+    <ClCompile Include="CagedMeshSequence.cpp" />
+    <ClCompile Include="CrsSecCore.cpp" />
+    <ClCompile Include="FormLoadFrameIdx.cpp" />
+    <ClCompile Include="FormMain.cpp" />
+    <ClCompile Include="FormRefStrokeTrim.cpp" />
+    <ClCompile Include="FormSegBolus.cpp" />
+    <ClCompile Include="FormSegBronchi.cpp" />
+    <ClCompile Include="FormSegClosestPix.cpp" />
+    <ClCompile Include="FormSegJointTracker.cpp" />
+    <ClCompile Include="FormSegLocalRGrow.cpp" />
+    <ClCompile Include="FormSegPixPaint.cpp" />
+    <ClCompile Include="FormSegRGrow.cpp" />
+    <ClCompile Include="FormSegRigidICP.cpp" />
+    <ClCompile Include="FormSegSwallowOrgans.cpp" />
+    <ClCompile Include="FormSegSwallowOrganTimeline.cpp" />
+    <ClCompile Include="FormSegSwallowTempGen.cpp" />
+    <ClCompile Include="FormSelectMskId.cpp" />
+    <ClCompile Include="FormSortFiles.cpp" />
+    <ClCompile Include="FormVisMask.cpp" />
+    <ClCompile Include="FormVisNorm.cpp" />
+    <ClCompile Include="FormVisParam.cpp" />
+    <ClCompile Include="GeneralizedCylinder.cpp" />
+    <ClCompile Include="ImageCore.cpp" />
+    <ClCompile Include="ModeCore.cpp" />
+    <ClCompile Include="Mode\GlslShader.cpp" />
+    <ClCompile Include="Mode\ModeCommonTools.cpp" />
+    <ClCompile Include="Mode\ModeInterface.cpp" />
+    <ClCompile Include="Mode\ModeRefStrokeTrim.cpp" />
+    <ClCompile Include="Mode\ModeSegBolus.cpp" />
+    <ClCompile Include="Mode\ModeSegBronchi.cpp" />
+    <ClCompile Include="Mode\ModeSegClosestPix.cpp" />
+    <ClCompile Include="Mode\ModeSegJointTracker.cpp" />
+    <ClCompile Include="Mode\ModeSegLocalRGrow.cpp" />
+    <ClCompile Include="Mode\ModeSegPixPaint.cpp" />
+    <ClCompile Include="Mode\ModeSegRGrow.cpp" />
+    <ClCompile Include="Mode\ModeSegRigidICP.cpp" />
+    <ClCompile Include="Mode\ModeSegSwallowOrgans.cpp" />
+    <ClCompile Include="Mode\ModeSegSwallowTempGen.cpp" />
+    <ClCompile Include="Mode\ModeVizMask.cpp" />
+    <ClCompile Include="Mode\ModeVizNormal.cpp" />
+    <ClCompile Include="SplineCurve_3D.cpp" />
+    <ClCompile Include="ViewIndiCore.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\3rdParty\dcmtk\tdcmtk.h" />
+    <ClInclude Include="..\..\COMMON\HarmCoord3D.h" />
+    <ClInclude Include="..\..\COMMON\kcurves.h" />
+    <ClInclude Include="..\..\COMMON\OglForCLI.h" />
+    <ClInclude Include="..\..\COMMON\OglImage.h" />
+    <ClInclude Include="..\..\COMMON\thandle3d.h" />
+    <ClInclude Include="..\..\COMMON\timageloader.h" />
+    <ClInclude Include="..\..\COMMON\tmarchingcubes.h" />
+    <ClInclude Include="..\..\COMMON\tmath.h" />
+    <ClInclude Include="..\..\COMMON\tmesh.h" />
+    <ClInclude Include="..\..\COMMON\tqueue.h" />
+    <ClInclude Include="..\..\COMMON\ttrianglesoup.h" />
+    <ClInclude Include="CagedMeshSequence.h" />
+    <ClInclude Include="CliMessageBox.h" />
+    <ClInclude Include="CrsSecCore.h" />
+    <ClInclude Include="FormLoadFrameIdx.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormMain.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormRefStrokeTrim.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegBolus.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegBronchi.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegClosestPix.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegJointTracker.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegLocalRGrow.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegPixPaint.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegRGrow.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegRigidICP.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegSwallowOrgans.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegSwallowOrganTimeline.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegSwallowTempGen.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSelectMskId.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSortFiles.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormVisMask.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormVisNorm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormVisParam.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="GeneralizedCylinder.h" />
+    <ClInclude Include="ImageCore.h" />
+    <ClInclude Include="ModeCore.h" />
+    <ClInclude Include="Mode\GlslShader.h" />
+    <ClInclude Include="Mode\ModeCommonTools.h" />
+    <ClInclude Include="Mode\ModeInterface.h" />
+    <ClInclude Include="Mode\ModeRefStrokeTrim.h" />
+    <ClInclude Include="Mode\ModeSegBolus.h" />
+    <ClInclude Include="Mode\ModeSegBronchi.h" />
+    <ClInclude Include="Mode\ModeSegClosestPix.h" />
+    <ClInclude Include="Mode\ModeSegJointTracker.h" />
+    <ClInclude Include="Mode\ModeSegLocalRGrow.h" />
+    <ClInclude Include="Mode\ModeSegPixPaint.h" />
+    <ClInclude Include="Mode\ModeSegRGrow.h" />
+    <ClInclude Include="Mode\ModeSegRigidICP.h" />
+    <ClInclude Include="Mode\ModeSegSwallowOrgans.h" />
+    <ClInclude Include="Mode\ModeSegSwallowTempGen.h" />
+    <ClInclude Include="Mode\ModeVizMask.h" />
+    <ClInclude Include="Mode\ModeVizNormal.h" />
+    <ClInclude Include="SplineCurve_3D.h" />
+    <ClInclude Include="ViewIndiCore.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FormLoadFrameIdx.resx">
+      <DependentUpon>FormLoadFrameIdx.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormMain.resx">
+      <DependentUpon>FormMain.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormRefStrokeTrim.resx">
+      <DependentUpon>FormRefStrokeTrim.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegBolus.resx">
+      <DependentUpon>FormSegBolus.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegBronchi.resx">
+      <DependentUpon>FormSegBronchi.h</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegClosestPix.resx">
+      <DependentUpon>FormSegClosestPix.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegJointTracker.resx">
+      <DependentUpon>FormSegJointTracker.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegLocalRGrow.resx">
+      <DependentUpon>FormSegLocalRGrow.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegPixPaint.resx">
+      <DependentUpon>FormSegPixPaint.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegRGrow.resx">
+      <DependentUpon>FormSegRGrow.h</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegRigidICP.resx">
+      <DependentUpon>FormSegRigidICP.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegSwallowOrgans.resx">
+      <DependentUpon>FormSegSwallowOrgans.h</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegSwallowOrganTimeline.resx">
+      <DependentUpon>FormSegSwallowOrganTimeline.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegSwallowTempGen.resx">
+      <DependentUpon>FormSegSwallowTempGen.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSelectMskId.resx">
+      <DependentUpon>FormSelectMskId.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSortFiles.resx">
+      <DependentUpon>FormSortFiles.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormVisMask.resx">
+      <DependentUpon>FormVisMask.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormVisNorm.resx">
+      <DependentUpon>FormVisNorm.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormVisParam.resx">
+      <DependentUpon>FormVisParam.h</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\opencvcontrib.redist.3.1.0\build\native\opencvcontrib.redist.targets" Condition="Exists('..\packages\opencvcontrib.redist.3.1.0\build\native\opencvcontrib.redist.targets')" />
+    <Import Project="..\packages\opencvcontrib.3.1.0\build\native\opencvcontrib.targets" Condition="Exists('..\packages\opencvcontrib.3.1.0\build\native\opencvcontrib.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\opencvcontrib.redist.3.1.0\build\native\opencvcontrib.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\opencvcontrib.redist.3.1.0\build\native\opencvcontrib.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\opencvcontrib.3.1.0\build\native\opencvcontrib.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\opencvcontrib.3.1.0\build\native\opencvcontrib.targets'))" />
+  </Target>
+</Project>

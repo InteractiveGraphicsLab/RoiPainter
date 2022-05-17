@@ -1,0 +1,402 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="COMMON">
+      <UniqueIdentifier>{cd8f6167-bd04-4881-b406-cca0f8983a15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode">
+      <UniqueIdentifier>{4bba0819-fecc-4763-aa39-cc506d6b2ab5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{673eae79-7c6a-4c92-9f57-930ed2f250b6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FormMain.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ModeCore.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeVizNormal.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\GlslShader.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeVizMask.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageCore.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="CrsSecCore.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FormVisParam.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeSegRGrow.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSegRGrow.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSegPixPaint.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FormVisNorm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeSegPixPaint.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="FormVisMask.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeSegClosestPix.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeSegRigidICP.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSegClosestPix.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSegRigidICP.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FormLoadFrameIdx.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeRefStrokeTrim.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="FormRefStrokeTrim.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSelectMskId.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewIndiCore.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeInterface.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeSegLocalRGrow.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSegLocalRGrow.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSortFiles.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeSegBolus.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSegBolus.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SplineCurve_3D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneralizedCylinder.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSegSwallowOrgans.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeSegSwallowOrgans.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="CagedMeshSequence.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSegSwallowOrganTimeline.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeSegJointTracker.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSegJointTracker.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeSegBronchi.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSegBronchi.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSegSwallowTempGen.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeSegSwallowTempGen.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeCommonTools.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rdParty\dcmtk\tdcmtk.cpp">
+      <Filter>3rdparty</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\COMMON\HarmCoord3D.cpp">
+      <Filter>COMMON</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\COMMON\OglImage.cpp">
+      <Filter>COMMON</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\COMMON\tmarchingcubes.cpp">
+      <Filter>COMMON</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\COMMON\tmesh.cpp">
+      <Filter>COMMON</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\COMMON\ttrianglesoup.cpp">
+      <Filter>COMMON</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FormMain.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ModeCore.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeVizNormal.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeInterface.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\GlslShader.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeVizMask.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageCore.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="CrsSecCore.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FormVisParam.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeSegRGrow.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSegRGrow.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSegPixPaint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FormVisNorm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeSegPixPaint.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="FormVisMask.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeSegClosestPix.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeSegRigidICP.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSegClosestPix.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSegRigidICP.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FormLoadFrameIdx.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeRefStrokeTrim.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="FormRefStrokeTrim.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSelectMskId.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="CliMessageBox.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewIndiCore.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeSegLocalRGrow.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSegLocalRGrow.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSortFiles.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeSegBolus.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSegBolus.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SplineCurve_3D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralizedCylinder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSegSwallowOrgans.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeSegSwallowOrgans.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="CagedMeshSequence.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSegSwallowOrganTimeline.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeSegJointTracker.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSegJointTracker.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeSegBronchi.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSegBronchi.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSegSwallowTempGen.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeSegSwallowTempGen.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeCommonTools.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdParty\dcmtk\tdcmtk.h">
+      <Filter>3rdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\HarmCoord3D.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\kcurves.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\OglForCLI.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\OglImage.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\thandle3d.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\timageloader.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\tmarchingcubes.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\tmath.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\tmesh.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\tqueue.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\ttrianglesoup.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FormMain.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormVisParam.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegRGrow.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormLoadFrameIdx.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegClosestPix.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegRigidICP.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormVisMask.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormVisNorm.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormRefStrokeTrim.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSelectMskId.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegParaConts.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegLocalRGrow.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSortFiles.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegBolus.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegPixPaint.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegSwallowOrgans.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegSwallowOrganTimeline.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegJointTracker.resx">
+      <Filter>リソース ファイル</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegBronchi.resx">
+      <Filter>ヘッダー ファイル</Filter>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="cpp.hint" />
+  </ItemGroup>
+</Project>
