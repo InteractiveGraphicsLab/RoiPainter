@@ -15,7 +15,23 @@ enum OGL_IMAGE_CH
 };
 
 
-void t_FlipVolumeInZ(const int W, const int H, const int D, byte* vol);
+template<class T>
+void t_FlipVolumeInZ(const int W, const int H, const int D, T* vol)
+{
+  const int WH = W * H;
+
+  T* tmp = new T[WH];
+
+  for (int z = 0; z < D / 2; ++z)
+  {
+    memcpy(tmp, &vol[z * WH], sizeof(T) * WH);
+    memcpy(&vol[z * WH], &vol[(D - 1 - z) * WH], sizeof(T) * WH);
+    memcpy(&vol[(D - 1 - z) * WH], tmp, sizeof(T) * WH);
+  }
+  delete[] tmp;
+}
+
+
 
 //voxel value (input/output)
 //  0:never change 
@@ -23,11 +39,15 @@ void t_FlipVolumeInZ(const int W, const int H, const int D, byte* vol);
 //255:foreground
 void t_Erode3D(const int& W, const int& H, const int& D, byte* vol);
 void t_Dilate3D(const int& W, const int& H, const int& D, byte* vol);
+void t_Erode3D(const EVec3i& reso, byte* vol);
+void t_Dilate3D(const EVec3i& reso, byte* vol);
+
 
 //voxel value (input/output)
 //  0 : background
 //255 : foreground
 void t_FillHole3D(const int& W, const int& H, const int& D, byte* vol);
+void t_FillHole3D(const EVec3i& reso, byte* vol);
 
 
 
@@ -207,13 +227,13 @@ public:
 
   inline void SetUpdated() { m_is_updated = true; }
 
-  const int GetW() { return m_resolution[0]; }
-  const int GetH() { return m_resolution[1]; }
-  const int GetD() { return m_resolution[2]; }
+  const int GetW() const { return m_resolution[0]; }
+  const int GetH() const { return m_resolution[1]; }
+  const int GetD() const { return m_resolution[2]; }
   GLubyte* GetVolumePtr() { return m_volume; }
 
   void FlipInZ() {
-    t_FlipVolumeInZ(m_resolution[0], m_resolution[1], m_resolution[2], m_volume);
+    t_FlipVolumeInZ<GLubyte>(m_resolution[0], m_resolution[1], m_resolution[2], m_volume);
   }
 };
 
@@ -287,7 +307,7 @@ public:
   //bmp/png/tif/jpeg (only 24 bit color image) are supported
   //画像左上が原点となるので、OpenGL利用の際はflipする
   bool Allocate(const char *fname);
-  bool SaveAs(const char *fname, int flg_BmpJpgPngTiff);
+  bool SaveAs(const char *fname);
 
 
   //should be wglMakeCurrent
@@ -495,10 +515,11 @@ void t_Dilate3D(OglImage3D& v);
 void t_FillHole3D(OglImage3D& v);
 
 
-template<class T>
-void t_sobel3D(const int W, const int H, const int D, const T* vol, T* res)
+
+template<class T1, class T2>
+void t_Sobel3D(const int W, const int H, const int D, const T1* vol, T2* res)
 {
-  const T sblX[3][3][3] = { 
+  const T1 sblX[3][3][3] = {
     { {-1,  0, +1},
       {-2,  0, +2},
       {-1,  0, +1} }, { {-2,  0,  2},
@@ -506,7 +527,7 @@ void t_sobel3D(const int W, const int H, const int D, const T* vol, T* res)
                         {-2,  0,  2} }, { {-1,  0,  1},
                                           {-2,  0,  2},
                                           {-1,  0,  1}} };
-  static T sblY[3][3][3] = { 
+  static T1 sblY[3][3][3] = {
     {{-1, -2, -1},
     { 0,  0,  0},
     { 1,  2,  1}},   {{-2, -4, -2},
@@ -514,7 +535,7 @@ void t_sobel3D(const int W, const int H, const int D, const T* vol, T* res)
                      { 2,  4,  2}}, {{-1, -2, -1},
                                     { 0,  0,  0},
                                     { 1,  2,  1}} };
-  static T sblZ[3][3][3] = { 
+  static T1 sblZ[3][3][3] = {
     {{-1, -2, -1},
     {-2, -4, -2},
     {-1, -2, -1}},  {{ 0,  0,  0},
@@ -523,7 +544,7 @@ void t_sobel3D(const int W, const int H, const int D, const T* vol, T* res)
                                      { 2,  4,  2},
                                      { 1,  2,  1}} };
 
-  const int WH = W*H, WHD = WH*D;
+  const int WH = W * H, WHD = WH * D;
 
 #pragma omp parallel for
   for (int i = 0; i < WHD; ++i)
@@ -532,13 +553,13 @@ void t_sobel3D(const int W, const int H, const int D, const T* vol, T* res)
     const int y = (i - z * WH) / W;
     const int x = (i - z * WH - y * W);
 
-    T gx = 0, gy = 0, gz = 0;
+    double gx = 0, gy = 0, gz = 0;
 
     for (int zz = -1; zz < 2; ++zz) if (0 <= z + zz && z + zz < D)
       for (int yy = -1; yy < 2; ++yy) if (0 <= y + yy && y + yy < H)
         for (int xx = -1; xx < 2; ++xx) if (0 <= x + xx && x + xx < W)
         {
-          int I = i + xx + yy*W + zz*WH;
+          int I = i + xx + yy * W + zz * WH;
           gx += sblX[zz + 1][yy + 1][xx + 1] * vol[I];
           gy += sblY[zz + 1][yy + 1][xx + 1] * vol[I];
           gz += sblZ[zz + 1][yy + 1][xx + 1] * vol[I];
@@ -548,11 +569,13 @@ void t_sobel3D(const int W, const int H, const int D, const T* vol, T* res)
     if (x == 0 || x == W - 1) gx = 0;
     if (y == 0 || y == H - 1) gy = 0;
     if (z == 0 || z == D - 1) gz = 0;
-    res[i] = (T)sqrt((double)gx * gx + gy * gy + gz * gz) / 16.0f;
+    res[i] = (T2)sqrt(gx * gx + gy * gy + gz * gz) / 16.0f;
 
     if (res[i] > 40000) std::cout << x << " " << y << " " << z << "\n";
   }
 }
+
+
 
 #endif
 

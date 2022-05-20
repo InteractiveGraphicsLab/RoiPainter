@@ -1,0 +1,339 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{47DB5BB1-2DE9-491C-BE08-897F107363F1}</ProjectGuid>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <Keyword>ManagedCProj</Keyword>
+    <RootNamespace>RoiPainter3D</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies />
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>./;../../3rdparty/glew/include;../../3rdparty/Eigen;../../3rdparty/dcmtk/include;../../COMMON/</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>glew32.lib</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>./3rdparty/dcmtk/staticlibMD;./3rdparty/glew/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies />
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>./;../../3rdparty/glew/include;../../3rdparty/Eigen;../../3rdparty/dcmtk/include;../../COMMON;../../3rdparty/dcmtk;../../3rdparty/vvv</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>glew32.lib</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>../../3rdParty/dcmtk/staticlibMD;../../3rdParty/glew/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\3rdParty\dcmtk\tdcmtk.h" />
+    <ClInclude Include="..\..\3rdParty\riken\TMaxFlow_BK4.h" />
+    <ClInclude Include="..\..\3rdParty\riken\TWatershedEx.h" />
+    <ClInclude Include="..\..\3rdParty\vvv\ddsbase.h" />
+    <ClInclude Include="..\..\COMMON\HarmCoord3D.h" />
+    <ClInclude Include="..\..\COMMON\kcurves.h" />
+    <ClInclude Include="..\..\COMMON\OglForCLI.h" />
+    <ClInclude Include="..\..\COMMON\OglImage.h" />
+    <ClInclude Include="..\..\COMMON\thandle3d.h" />
+    <ClInclude Include="..\..\COMMON\timageloader.h" />
+    <ClInclude Include="..\..\COMMON\tmarchingcubes.h" />
+    <ClInclude Include="..\..\COMMON\tmath.h" />
+    <ClInclude Include="..\..\COMMON\tmesh.h" />
+    <ClInclude Include="..\..\COMMON\tqueue.h" />
+    <ClInclude Include="..\..\COMMON\ttrianglesoup.h" />
+    <ClInclude Include="climessagebox.h" />
+    <ClInclude Include="CrsSecCore.h" />
+    <ClInclude Include="FormIntegerSelection.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormMain.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormMaskIDselection.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormRefStrokeTrim.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegGCut.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegLocalRGrow.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegParallelWires.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegRGrow.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegThreshfieldPaint.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSegVoxelPaint.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormStackOrder.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormSubView.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormVisMask.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormVisNorm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormVisParam.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="ImageCore.h" />
+    <ClInclude Include="LogCore.h" />
+    <ClInclude Include="MaskData.h" />
+    <ClInclude Include="ModeCore.h" />
+    <ClInclude Include="mode\GlslShader.h" />
+    <ClInclude Include="mode\ModeCommonTools.h" />
+    <ClInclude Include="mode\ModeInterface.h" />
+    <ClInclude Include="mode\ModeRefStrokeTrim.h" />
+    <ClInclude Include="mode\ModeSegGCut.h" />
+    <ClInclude Include="mode\ModeSegLocalRGrow.h" />
+    <ClInclude Include="mode\ModeSegParallelWires.h" />
+    <ClInclude Include="mode\ModeSegRGrow.h" />
+    <ClInclude Include="mode\ModeSegThreshfieldPaint.h" />
+    <ClInclude Include="mode\ModeSegVoxelPaint.h" />
+    <ClInclude Include="mode\ModeVizMask.h" />
+    <ClInclude Include="mode\ModeVizNormal.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ViewAngleCore.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="app.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\3rdParty\dcmtk\tdcmtk.cpp" />
+    <ClCompile Include="..\..\3rdParty\vvv\ddsbase.cpp" />
+    <ClCompile Include="..\..\COMMON\HarmCoord3D.cpp" />
+    <ClCompile Include="..\..\COMMON\OglImage.cpp" />
+    <ClCompile Include="..\..\COMMON\tmarchingcubes.cpp" />
+    <ClCompile Include="..\..\COMMON\tmesh.cpp" />
+    <ClCompile Include="..\..\COMMON\ttrianglesoup.cpp" />
+    <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="CrsSecCore.cpp" />
+    <ClCompile Include="FormIntegerSelection.cpp" />
+    <ClCompile Include="FormMain.cpp" />
+    <ClCompile Include="FormMaskIDselection.cpp" />
+    <ClCompile Include="FormRefStrokeTrim.cpp" />
+    <ClCompile Include="FormSegGCut.cpp" />
+    <ClCompile Include="FormSegLocalRGrow.cpp" />
+    <ClCompile Include="FormSegParallelWires.cpp" />
+    <ClCompile Include="FormSegRGrow.cpp" />
+    <ClCompile Include="FormSegThreshfieldPaint.cpp" />
+    <ClCompile Include="FormSegVoxelPaint.cpp" />
+    <ClCompile Include="FormStackOrder.cpp" />
+    <ClCompile Include="FormSubView.cpp" />
+    <ClCompile Include="FormVisMask.cpp" />
+    <ClCompile Include="FormVisNorm.cpp" />
+    <ClCompile Include="FormVisParam.cpp" />
+    <ClCompile Include="ImageCore.cpp" />
+    <ClCompile Include="LogCore.cpp" />
+    <ClCompile Include="ModeCore.cpp" />
+    <ClCompile Include="mode\GlslShader.cpp" />
+    <ClCompile Include="mode\ModeCommonTools.cpp" />
+    <ClCompile Include="mode\ModeInterface.cpp" />
+    <ClCompile Include="mode\ModeRefStrokeTrim.cpp" />
+    <ClCompile Include="mode\ModeSegGCut.cpp" />
+    <ClCompile Include="mode\ModeSegLocalRGrow.cpp" />
+    <ClCompile Include="mode\ModeSegParallelWires.cpp" />
+    <ClCompile Include="mode\ModeSegRGrow.cpp" />
+    <ClCompile Include="mode\ModeSegThreshfieldPaint.cpp" />
+    <ClCompile Include="mode\ModeSegVoxelPaint.cpp" />
+    <ClCompile Include="mode\ModeVizMask.cpp" />
+    <ClCompile Include="mode\ModeVizNormal.cpp" />
+    <ClCompile Include="RoiPainter3D.cpp" />
+    <ClCompile Include="ViewAngleCore.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="app.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FormIntegerSelection.resx">
+      <DependentUpon>FormIntegerSelection.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormMain.resx">
+      <DependentUpon>FormMain.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormMaskIDselection.resx">
+      <DependentUpon>FormMaskIDselection.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormRefStrokeTrim.resx">
+      <DependentUpon>FormRefStrokeTrim.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegGCut.resx">
+      <DependentUpon>FormSegGCut.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegLocalRGrow.resx">
+      <DependentUpon>FormSegLocalRGrow.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegParallelWires.resx">
+      <DependentUpon>FormSegParallelWires.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegRGrow.resx">
+      <DependentUpon>FormSegRGrow.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegVoxelPaint.resx">
+      <DependentUpon>FormSegVoxelPaint.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormStackOrder.resx">
+      <DependentUpon>FormStackOrder.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSubView.resx">
+      <DependentUpon>FormSubView.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormVisMask.resx">
+      <DependentUpon>FormVisMask.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormVisNorm.resx">
+      <DependentUpon>FormVisNorm.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormVisParam.resx">
+      <DependentUpon>FormVisParam.h</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

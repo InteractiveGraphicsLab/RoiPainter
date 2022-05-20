@@ -861,6 +861,38 @@ void TMesh::DrawSphere
 }
 
 
+void TMesh::DrawIcosaHedron(
+  const float r,
+  const float* diff,
+  const float* ambi,
+  const float* spec,
+  const float* shin)
+{
+  static TMesh m;
+  if (m.m_vSize == 0) m.InitializeIcosaHedron(1);
+
+  glEnable(GL_NORMALIZE);
+  glPushMatrix();
+  glScalef(r, r, r);
+  m.Draw(diff, ambi, spec, shin);
+  glPopMatrix();
+  glDisable(GL_NORMALIZE);
+}
+
+
+void TMesh::DrawIcosaHedron(
+  const EVec3f& p,
+  const float r,
+  const float* diff,
+  const float* ambi,
+  const float* spec,
+  const float* shin)
+{
+  glTranslated(p[0], p[1], p[2]);
+  DrawIcosaHedron(r, diff, ambi, spec, shin);
+  glTranslated(-p[0], -p[1], -p[2]);
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
