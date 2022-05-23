@@ -361,4 +361,90 @@ inline ORTHO_HANDLE_ID t_PickHandleOrthoCircles
 }
 
 
+
+
+
+
+//old function from roi painter3d
+// TODO REMOVE
+
+inline void t_drawCylinder
+(
+  const EVec3f& p1,
+  const EVec3f& p2,
+  const float  R
+)
+{
+  const int N = 20;
+
+  EVec3f dir = (p2 - p1).normalized();
+  EVec3f zAxis(0, 0, 1);
+  EVec3f axis = zAxis.cross(dir).normalized();
+
+  float theta = acos(zAxis.dot(dir));
+  Eigen::AngleAxisf Rot(theta, axis);
+
+
+  std::vector <EVec3f> v1(N + 1), v2(N + 1), norm(N + 1);
+  for (int i = 0; i <= N; i++)
+  {
+    float t = i * ((float)M_PI * 2.0f / N);
+    float x = cos(t);
+    float y = sin(t);
+    norm[i] = Rot * EVec3f(x, y, 0);
+    v1[i] = Rot * EVec3f(R * x, R * y, 0) + p1;
+    v2[i] = Rot * EVec3f(R * x, R * y, 0) + p2;
+  }
+
+  glBegin(GL_TRIANGLE_STRIP);
+  for (int i = 0; i <= N; ++i)
+  {
+    glNormal3fv(norm[i].data());
+    glVertex3fv(v2[i].data());
+    glVertex3fv(v1[i].data());
+  }
+  glEnd();
+}
+
+inline void t_drawSphere
+(
+  const EVec3f& pos, //場所
+  const float radius
+)
+{
+  const int M = 20;
+  const int N = 20;
+
+  glPushMatrix();
+  glTranslated(pos[0], pos[1], pos[2]);
+
+  for (int j = 0; j < N; j++)
+  {
+    glBegin(GL_TRIANGLE_STRIP);
+    for (int i = 0; i <= M; i++)
+    {
+      double theta = i * M_PI * 2 / M;
+      double phi, x, y, z;
+
+      phi = (j + 1) * (M_PI / (double)N) - M_PI * 0.5;
+      x = cos(phi) * cos(theta);
+      y = cos(phi) * sin(theta);
+      z = sin(phi);
+      glNormal3d(x, y, z);
+      glVertex3d(radius * x, radius * y, radius * z);
+
+      phi = j * M_PI / N - M_PI * 0.5;
+      x = cos(phi) * cos(theta);
+      y = cos(phi) * sin(theta);
+      z = sin(phi);
+      glNormal3d(x, y, z);
+      glVertex3d(radius * x, radius * y, radius * z);
+    }
+    glEnd();
+  }
+
+  glPopMatrix();
+}
+
+
 #endif

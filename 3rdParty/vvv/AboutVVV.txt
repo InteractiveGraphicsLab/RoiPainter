@@ -1,0 +1,10 @@
+three files are copied from VVV project distributed in GPL v3 license.
+
+https://github.com/csuzhangxc/vvv/tree/master/viewer
+
+these files are for loading .pvm file distributed in 
+http://www9.informatik.uni-erlangen.de/External/vollib/.
+
+
+
+

@@ -5,20 +5,6 @@
 
 
 
-void t_FlipVolumeInZ(const int W, const int H, const int D, byte* vol)
-{
-  const int WH = W * H;
-  byte* tmp = new byte[WH];
-  for (int z = 0; z < D / 2; ++z)
-  {
-    memcpy(tmp             , &vol[z * WH    ], sizeof(byte) * WH);
-    memcpy(&vol[z * WH    ], &vol[(D-1-z)*WH], sizeof(byte) * WH);
-    memcpy(&vol[(D-1-z)*WH], tmp             , sizeof(byte) * WH);
-  }
-  delete[] tmp;
-}
-
-
 
 
 // voxel value (input/output)
@@ -155,7 +141,20 @@ void t_FillHole3D(OglImage3D& v)
 }
 
 
+void t_Erode3D(const EVec3i& reso, byte* vol)
+{
+  t_Erode3D(reso[0], reso[1], reso[1], vol);
+}
 
+void t_Dilate3D(const EVec3i& reso, byte* vol)
+{
+  t_Dilate3D(reso[0], reso[1], reso[1], vol);
+}
+
+void t_FillHole3D(const EVec3i& reso, byte* vol)
+{
+  t_FillHole3D(reso[0], reso[1], reso[1], vol);
+}
 
 
 
@@ -183,11 +182,18 @@ bool OglImage2D<CH_RGBA>::Allocate(const char* fname)
 }
 
 
-bool OglImage2D<CH_RGBA>::SaveAs(const char* fname, int flg_BmpJpgPngTiff)
+bool OglImage2D<CH_RGBA>::SaveAs(const char* fname)
 {
   t_saveImage(fname, m_resolution[0], m_resolution[1], m_image);
   return true;
 }
+
+bool OglImage2D<CH_INTES>::SaveAs(const char* fname)
+{
+  t_saveImage_gray(fname, m_resolution[0], m_resolution[1], m_image);
+  return true;
+}
+
 
 void OglImage2D<CH_RGBA>::SetGrayValue_normalize(float* image)
 {

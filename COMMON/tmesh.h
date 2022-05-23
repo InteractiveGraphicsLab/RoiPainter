@@ -121,6 +121,21 @@ public:
                        const int nearest_vid,
                        EVec3f& pos_onsurf, 
                        double& dist) const;
+
+  static void DrawIcosaHedron(
+    const float r,
+    const float* diff,
+    const float* ambi,
+    const float* spec,
+    const float* shin);
+
+  static void DrawIcosaHedron(
+    const EVec3f& p,
+    const float r,
+    const float* diff,
+    const float* ambi,
+    const float* spec,
+    const float* shin);
 };
 
 
