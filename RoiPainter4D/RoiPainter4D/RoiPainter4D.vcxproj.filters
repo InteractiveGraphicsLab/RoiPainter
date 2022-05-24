@@ -168,6 +168,12 @@
     <ClCompile Include="..\..\COMMON\ttrianglesoup.cpp">
       <Filter>COMMON</Filter>
     </ClCompile>
+    <ClCompile Include="Mode\ModeSegStrokeFfd.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="FormSegStrokeFfd.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FormMain.h">
@@ -335,6 +341,12 @@
     <ClInclude Include="..\..\COMMON\ttrianglesoup.h">
       <Filter>COMMON</Filter>
     </ClInclude>
+    <ClInclude Include="Mode\ModeSegStrokeFfd.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="FormSegStrokeFfd.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FormMain.resx">
@@ -365,9 +377,6 @@
       <Filter>リソース ファイル</Filter>
     </EmbeddedResource>
     <EmbeddedResource Include="FormSelectMskId.resx">
-      <Filter>リソース ファイル</Filter>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormSegParaConts.resx">
       <Filter>リソース ファイル</Filter>
     </EmbeddedResource>
     <EmbeddedResource Include="FormSegLocalRGrow.resx">

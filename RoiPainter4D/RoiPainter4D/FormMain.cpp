@@ -16,6 +16,7 @@
 #include "FormSegBronchi.h"
 #include "FormLoadFrameIdx.h"
 #include "FormSortFiles.h"
+#include "FormSegStrokeFfd.h"
 
 #pragma unmanaged
 #include "OglForCLI.h"
@@ -34,6 +35,7 @@
 #include "Mode/ModeSegSwallowOrgans.h"
 #include "Mode/ModeSegJointTracker.h"
 #include "Mode/ModeRefStrokeTrim.h"
+#include "Mode/ModeSegStrokeFfd.h"
 #include <string>
 #include <vector>
 #pragma managed
@@ -146,7 +148,7 @@ void FormMain::InitializeSingletons()
   FormSegSwallowOrganTimeline::GetInst()->Show();
   FormSegJointTracker::GetInst()->Show();
   FormSegBronchi::GetInst()->Show();
-
+  FormSegStrokeFfd::GetInst()->Show();
 
   ReplaceOtherForms();
 
@@ -163,6 +165,7 @@ void FormMain::InitializeSingletons()
   FormSegSwallowOrganTimeline::GetInst()->Hide();
   FormSegJointTracker::GetInst()->Hide();
   FormSegBronchi::GetInst()->Hide();
+  FormSegStrokeFfd::GetInst()->Hide();
 
   FormVisParam::GetInst()->Owner = this;
   FormVisNorm::GetInst()->Owner = this;
@@ -175,6 +178,7 @@ void FormMain::InitializeSingletons()
   FormSegBolus::GetInst()->Owner = this;
   FormRefStrokeTrim::GetInst()->Owner = this;
   FormSegSwallowOrgans::GetInst()->Owner = this;
+  FormSegStrokeFfd::GetInst()->Owner = this;
   FormSegSwallowOrganTimeline::GetInst()->Owner = this;
   FormSegJointTracker::GetInst()->Owner = this;
   FormSegBronchi::GetInst()->Owner = this;
@@ -388,6 +392,7 @@ void FormMain::ReplaceOtherForms()
   FormSegSwallowOrgans::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegJointTracker::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegBronchi::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegStrokeFfd::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
 }
 
 
@@ -491,6 +496,13 @@ System::Void FormMain::switch_segSwallowTempGen_Click(System::Object^ sender, Sy
   ModeCore::GetInst()->ModeSwitch(MODE_SEG_SWLTMPGEN);
   RedrawMainPanel();
 }
+
+System::Void FormMain::switch_segStrokeFFD_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeCore::GetInst()->ModeSwitch(MODE_SEG_STROKEFFD);
+  RedrawMainPanel();
+}
+
 
 static void n_marshalString(String ^ s, std::string& os) {
   const char* chars = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();

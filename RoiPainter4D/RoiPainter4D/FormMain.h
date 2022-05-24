@@ -19,36 +19,38 @@ namespace RoiPainter4D {
     OglForCLI *m_ogl;
 
   private:
-    System::Windows::Forms::Panel^              FormMainPanel;
-    System::Windows::Forms::MenuStrip^          mainmenu;
-    System::Windows::Forms::ToolStripMenuItem^  menu_file;
-    System::Windows::Forms::ToolStripMenuItem^  file_dcm3d;
-    System::Windows::Forms::ToolStripMenuItem^  file_dcm2D;
-    System::Windows::Forms::ToolStripMenuItem^  modeSwitchToolStripMenuItem;
-    System::Windows::Forms::ToolStripMenuItem^  switch_visNorm;
-    System::Windows::Forms::ToolStripMenuItem^  switch_visMask;
-    System::Windows::Forms::ToolStripMenuItem^  switch_segPaint;
-    System::Windows::Forms::ToolStripMenuItem^  switch_visRegionGrow;
-    System::Windows::Forms::ToolStripMenuItem^  switch_segRigidICP;
-    System::Windows::Forms::ToolStripMenuItem^  switch_segClosestPix;
-    System::Windows::Forms::ToolStripMenuItem^  switch_refStrokeTrim;
+    System::Windows::Forms::Panel^ FormMainPanel;
+    System::Windows::Forms::MenuStrip^ mainmenu;
+    System::Windows::Forms::ToolStripMenuItem^ menu_file;
+    System::Windows::Forms::ToolStripMenuItem^ file_dcm3d;
+    System::Windows::Forms::ToolStripMenuItem^ file_dcm2D;
+    System::Windows::Forms::ToolStripMenuItem^ modeSwitchToolStripMenuItem;
+    System::Windows::Forms::ToolStripMenuItem^ switch_visNorm;
+    System::Windows::Forms::ToolStripMenuItem^ switch_visMask;
+    System::Windows::Forms::ToolStripMenuItem^ switch_segPaint;
+    System::Windows::Forms::ToolStripMenuItem^ switch_visRegionGrow;
+    System::Windows::Forms::ToolStripMenuItem^ switch_segRigidICP;
+    System::Windows::Forms::ToolStripMenuItem^ switch_segClosestPix;
+    System::Windows::Forms::ToolStripMenuItem^ switch_refStrokeTrim;
+    System::Windows::Forms::ToolStripMenuItem^ switch_segStrokeFFD;
+    System::Windows::Forms::ToolStripMenuItem^ switch_segLocalRrow;
 
-    System::Windows::Forms::ToolStripMenuItem^  switch_segLocalRrow;
-    System::Windows::Forms::ToolStripMenuItem^  file_traw3d;
-    System::Windows::Forms::ToolStripMenuItem^  file_saveMask;
-    System::Windows::Forms::ToolStripMenuItem^  switch_segBolus;
+    System::Windows::Forms::ToolStripMenuItem^ file_traw3d;
+    System::Windows::Forms::ToolStripMenuItem^ file_saveMask;
+    System::Windows::Forms::ToolStripMenuItem^ switch_segBolus;
 
-    System::Windows::Forms::ToolStripSeparator^  toolStripSeparator1;
-    System::Windows::Forms::ToolStripSeparator^  toolStripSeparator2;
-    System::Windows::Forms::ToolStripSeparator^  toolStripSeparator3;
-    System::Windows::Forms::ProgressBar^         m_progressbar;
-    System::Windows::Forms::ToolStripMenuItem^  switch_segSwallowOrgans;
-    System::Windows::Forms::ToolStripMenuItem^  switch_segJointTracker;
-    System::Windows::Forms::ToolStripMenuItem^  segBronchiToolStripMenuItem;
+    System::Windows::Forms::ToolStripSeparator^ toolStripSeparator1;
+    System::Windows::Forms::ToolStripSeparator^ toolStripSeparator2;
+    System::Windows::Forms::ToolStripSeparator^ toolStripSeparator3;
+    System::Windows::Forms::ProgressBar^ m_progressbar;
+    System::Windows::Forms::ToolStripMenuItem^ switch_segSwallowOrgans;
+    System::Windows::Forms::ToolStripMenuItem^ switch_segJointTracker;
+    System::Windows::Forms::ToolStripMenuItem^ segBronchiToolStripMenuItem;
     System::Windows::Forms::ToolStripMenuItem^ open3D8bitRawrawToolStripMenuItem;
     System::Windows::Forms::ToolStripMenuItem^ switch_segSwallowTempGen;
     System::Windows::Forms::ToolStripMenuItem^ switch_segBronchi;
     System::Windows::Forms::ToolStripMenuItem^ file_loadMask;
+
 
   private:
     static FormMain^ m_singleton;
@@ -114,11 +116,12 @@ namespace RoiPainter4D {
       this->switch_segRigidICP = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->switch_segLocalRrow = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->switch_segBolus = (gcnew System::Windows::Forms::ToolStripMenuItem());
-      this->switch_segSwallowOrgans = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->toolStripSeparator2 = (gcnew System::Windows::Forms::ToolStripSeparator());
       this->switch_refStrokeTrim = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->toolStripSeparator3 = (gcnew System::Windows::Forms::ToolStripSeparator());
+      this->switch_segStrokeFFD = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->switch_segBronchi = (gcnew System::Windows::Forms::ToolStripMenuItem());
+      this->switch_segSwallowOrgans = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->switch_segSwallowTempGen = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->switch_segClosestPix = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->switch_segJointTracker = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -207,11 +210,12 @@ namespace RoiPainter4D {
       // 
       // modeSwitchToolStripMenuItem
       // 
-      this->modeSwitchToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(16) {
+      this->modeSwitchToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(17) {
         this->switch_visNorm,
           this->switch_visMask, this->toolStripSeparator1, this->switch_segPaint, this->switch_visRegionGrow, this->switch_segRigidICP,
           this->switch_segLocalRrow, this->switch_segBolus, this->toolStripSeparator2, this->switch_refStrokeTrim, this->toolStripSeparator3,
-          this->switch_segBronchi, this->switch_segSwallowOrgans, this->switch_segSwallowTempGen, this->switch_segClosestPix, this->switch_segJointTracker
+          this->switch_segStrokeFFD, this->switch_segBronchi, this->switch_segSwallowOrgans, this->switch_segSwallowTempGen, this->switch_segClosestPix,
+          this->switch_segJointTracker
       });
       this->modeSwitchToolStripMenuItem->Name = L"modeSwitchToolStripMenuItem";
       this->modeSwitchToolStripMenuItem->Size = System::Drawing::Size(86, 20);
@@ -271,13 +275,6 @@ namespace RoiPainter4D {
       this->switch_segBolus->Text = L"Seg Local Region Growing (curved cylinder)";
       this->switch_segBolus->Click += gcnew System::EventHandler(this, &FormMain::switch_SegBolus_Click);
       // 
-      // switch_segSwallowOrgans
-      // 
-      this->switch_segSwallowOrgans->Name = L"switch_segSwallowOrgans";
-      this->switch_segSwallowOrgans->Size = System::Drawing::Size(304, 22);
-      this->switch_segSwallowOrgans->Text = L"Seg Swallow Organs";
-      this->switch_segSwallowOrgans->Click += gcnew System::EventHandler(this, &FormMain::switch_segSwallowOrgans_Click);
-      // 
       // toolStripSeparator2
       // 
       this->toolStripSeparator2->Name = L"toolStripSeparator2";
@@ -295,12 +292,26 @@ namespace RoiPainter4D {
       this->toolStripSeparator3->Name = L"toolStripSeparator3";
       this->toolStripSeparator3->Size = System::Drawing::Size(301, 6);
       // 
+      // switch_segStrokeFFD
+      // 
+      this->switch_segStrokeFFD->Name = L"switch_segStrokeFFD";
+      this->switch_segStrokeFFD->Size = System::Drawing::Size(304, 22);
+      this->switch_segStrokeFFD->Text = L"Seg Stroke FFD";
+      this->switch_segStrokeFFD->Click += gcnew System::EventHandler(this, &FormMain::switch_segStrokeFFD_Click);
+      // 
       // switch_segBronchi
       // 
       this->switch_segBronchi->Name = L"switch_segBronchi";
       this->switch_segBronchi->Size = System::Drawing::Size(304, 22);
       this->switch_segBronchi->Text = L"Seg Bronchi";
       this->switch_segBronchi->Click += gcnew System::EventHandler(this, &FormMain::switch_segBronchi_Click);
+      // 
+      // switch_segSwallowOrgans
+      // 
+      this->switch_segSwallowOrgans->Name = L"switch_segSwallowOrgans";
+      this->switch_segSwallowOrgans->Size = System::Drawing::Size(304, 22);
+      this->switch_segSwallowOrgans->Text = L"Seg Swallow Organs";
+      this->switch_segSwallowOrgans->Click += gcnew System::EventHandler(this, &FormMain::switch_segSwallowOrgans_Click);
       // 
       // switch_segSwallowTempGen
       // 
@@ -390,6 +401,7 @@ namespace RoiPainter4D {
     System::Void switch_segJointTracker_Click(System::Object^  sender, System::EventArgs^  e) ;
     System::Void switch_segSwallowTempGen_Click(System::Object^ sender, System::EventArgs^ e);
     System::Void switch_segBronchi_Click(System::Object^ sender, System::EventArgs^ e);
+    System::Void switch_segStrokeFFD_Click(System::Object^ sender, System::EventArgs^ e);
 
   //edit shionozaki
 		System::Void switch_SegBolus_Click(System::Object^  sender, System::EventArgs^  e) ;

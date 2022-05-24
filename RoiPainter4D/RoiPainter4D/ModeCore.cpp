@@ -14,6 +14,7 @@
 #include "Mode/ModeSegJointTracker.h"
 #include "Mode/ModeSegBronchi.h"
 #include "Mode/ModeSegSwallowTempGen.h"
+#include "Mode/ModeSegStrokeFfd.h"
 
 #pragma managed
 #include "FormVisMask.h"
@@ -30,6 +31,7 @@
 #include "FormSegBronchi.h"
 #include "FormSegSwallowTempGen.h"
 #include "FormRefStrokeTrim.h"
+#include "FormSegStrokeFfd.h"
 #pragma unmanaged
 
 using namespace RoiPainter4D;
@@ -58,30 +60,32 @@ void ModeCore::ModeSwitch(MODE_ID m)
 
   if (!m_mode->canEndMode()) return;
 
-  if      (m == MODE_VIS_MASK      ) 
+  if (m == MODE_VIS_MASK)
     m_mode = ModeVizMask::GetInst();
-  else if (m == MODE_SEG_REGGROW   ) 
+  else if (m == MODE_SEG_REGGROW)
     m_mode = ModeSegRGrow::GetInst();
-  else if (m == MODE_SEG_PIXPAINT  ) 
+  else if (m == MODE_SEG_PIXPAINT)
     m_mode = ModeSegPixPaint::GetInst();
-  else if (m == MODE_SEG_RIGIDICP  ) 
+  else if (m == MODE_SEG_RIGIDICP)
     m_mode = ModeSegRigidICP::GetInst();
-  else if (m == MODE_SEG_CLOSESTPIX) 
+  else if (m == MODE_SEG_CLOSESTPIX)
     m_mode = ModeSegClosestPix::GetInst();
   //else if (m == MODE_SEG_PARACONT  ) 
   //  m_mode = ModeSegParaConts::getInst();
-  else if (m == MODE_SEG_LCLRGROW  ) 
+  else if (m == MODE_SEG_LCLRGROW)
     m_mode = ModeSegLocalRGrow::GetInst();
-	else if (m == MODE_SEG_BOLUS     ) 
-    m_mode = ModeSegBolus::getInst(); 
-  else if (m == MODE_SEG_SWALLOW   ) 
+  else if (m == MODE_SEG_BOLUS)
+    m_mode = ModeSegBolus::getInst();
+  else if (m == MODE_SEG_SWALLOW)
     m_mode = ModeSegSwallowOrgans::GetInst();
   else if (m == MODE_SEG_SWLTMPGEN)
     m_mode = ModeSegSwallowTempGen::getInst();
-  else if (m == MODE_REF_STRKTRIM  )
+  else if (m == MODE_REF_STRKTRIM)
     m_mode = ModeRefStrokeTrim::GetInst();
-  else if (m == MODE_SEG_JTRACKER  ) 
+  else if (m == MODE_SEG_JTRACKER)
     m_mode = ModeSegJointTracker::GetInst();
+  else if (m == MODE_SEG_STROKEFFD)
+    m_mode = ModeSegStrokeFfd::GetInst();
   else if (m == MODE_SEG_BRONCHI ) 
     m_mode = ModeSegBronchi::GetInst();
   else	
@@ -102,6 +106,7 @@ void ModeCore::ModeSwitch(MODE_ID m)
   FormSegSwallowTimeline_Hide();
   formSegBronchi_Hide();
   FormSegSwallowTempGen_Hide();
+  FormSegStrokeFfd_Hide();
   m_mode->startMode();
 }
 

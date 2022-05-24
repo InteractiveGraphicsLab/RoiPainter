@@ -373,8 +373,8 @@ void FormVisParam::InitAllItemsForNewImg()
   EVec3i reso   = ImageCore::GetInst()->GetReso();
   EVec3f pitch  = ImageCore::GetInst()->GetPitch();
   EVec2i winLv  = ImageCore::GetInst()->GetVolumeMinMax();
-  winLv[0] = std::max(-3000, winLv[0]);
-  winLv[1] = std::min( 3000, winLv[1]);
+  winLv[0] = std::max(-5000, winLv[0]);
+  winLv[1] = std::min( 5000, winLv[1]);
 
 
   std::cout << "New4DCTLoaded frameN=" << frameN << "\n";

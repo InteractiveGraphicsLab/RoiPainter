@@ -16,18 +16,17 @@ enum MODE_ID
 
 	MODE_SEG_PIXPAINT  , // ModeSegPixPaint
 	MODE_SEG_REGGROW   , // ModeSegRegGrow     
-	MODE_SEG_RIGIDICP  , // ModeSegRigidICP   (SJTrackerより)
-
-	MODE_SEG_CLOSESTPIX, // ModeSegClosestPix (SproutViewerより TODO Tomofumi Narita)
-	//MODE_SEG_PARACONT ,   // ModeSegParaConts   (Parallel Contours by Chika Tomiyama, Removed 20220517)
-	MODE_SEG_LCLRGROW ,   // ModeSegLocalRGrow  (Local Region Growing by Hikaru Shionozaki)
-	MODE_SEG_BOLUS    ,   // ModeSegBolus    ( by shionzaki )
-  MODE_SEG_JTRACKER ,   // ModeJontTracker (For Hokkaidou Univ)
-	MODE_REF_STRKTRIM ,   // ModeRefStrkTrim     
-  MODE_SEG_SWALLOW  ,   // ModeSegSwallowOrgans
-  MODE_SEG_SWLTMPGEN,   // ModeSegSallowTemGen 
-  MODE_SEG_BRONCHI ,   // ModeSegBronchi (by Takata) FormSegModeBronchi
-
+	MODE_SEG_RIGIDICP  , // ModeSegRigidICP    (SJTrackerより)
+	MODE_SEG_CLOSESTPIX, // ModeSegClosestPix  (SproutViewerより TODO Tomofumi Narita)
+	//MODE_SEG_PARACONT ,// ModeSegParaConts(Parallel Contours by Chika Tomiyama, Removed 20220517)
+	MODE_SEG_LCLRGROW ,  // ModeSegLocalRGrow (Local Region Growing by Hikaru Shionozaki)
+	MODE_SEG_BOLUS    ,  // ModeSegBolus      (by shionzaki )
+  MODE_SEG_JTRACKER ,  // ModeJontTracker   (For Hokkaidou Univ)
+	MODE_REF_STRKTRIM ,  // ModeRefStrkTrim     
+  MODE_SEG_SWALLOW  ,  // ModeSegSwallowOrgans
+  MODE_SEG_SWLTMPGEN,  // ModeSegSallowTemGen 
+  MODE_SEG_BRONCHI  ,  // ModeSegBronchi   (by Takata) FormSegModeBronchi
+	MODE_SEG_STROKEFFD   // ModeSegStrokeFfd, FormSegStrokeFfd (by Yuki Kimura, 20220524)
 	//MODE_SEG_GCUT   ,  // ModeSegGGut           
 	//MODE_SEG_THRESHPNT,// ModeSegTreshPnt      
 };

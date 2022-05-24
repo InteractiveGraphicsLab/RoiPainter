@@ -170,6 +170,7 @@
     <ClCompile Include="FormSegPixPaint.cpp" />
     <ClCompile Include="FormSegRGrow.cpp" />
     <ClCompile Include="FormSegRigidICP.cpp" />
+    <ClCompile Include="FormSegStrokeFfd.cpp" />
     <ClCompile Include="FormSegSwallowOrgans.cpp" />
     <ClCompile Include="FormSegSwallowOrganTimeline.cpp" />
     <ClCompile Include="FormSegSwallowTempGen.cpp" />
@@ -193,6 +194,7 @@
     <ClCompile Include="Mode\ModeSegPixPaint.cpp" />
     <ClCompile Include="Mode\ModeSegRGrow.cpp" />
     <ClCompile Include="Mode\ModeSegRigidICP.cpp" />
+    <ClCompile Include="Mode\ModeSegStrokeFfd.cpp" />
     <ClCompile Include="Mode\ModeSegSwallowOrgans.cpp" />
     <ClCompile Include="Mode\ModeSegSwallowTempGen.cpp" />
     <ClCompile Include="Mode\ModeVizMask.cpp" />
@@ -249,6 +251,9 @@
     <ClInclude Include="FormSegRigidICP.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="FormSegStrokeFfd.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="FormSegSwallowOrgans.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -288,6 +293,7 @@
     <ClInclude Include="Mode\ModeSegPixPaint.h" />
     <ClInclude Include="Mode\ModeSegRGrow.h" />
     <ClInclude Include="Mode\ModeSegRigidICP.h" />
+    <ClInclude Include="Mode\ModeSegStrokeFfd.h" />
     <ClInclude Include="Mode\ModeSegSwallowOrgans.h" />
     <ClInclude Include="Mode\ModeSegSwallowTempGen.h" />
     <ClInclude Include="Mode\ModeVizMask.h" />
@@ -330,6 +336,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormSegRigidICP.resx">
       <DependentUpon>FormSegRigidICP.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSegStrokeFfd.resx">
+      <DependentUpon>FormSegStrokeFfd.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormSegSwallowOrgans.resx">
       <DependentUpon>FormSegSwallowOrgans.h</DependentUpon>
