@@ -143,17 +143,17 @@ void t_FillHole3D(OglImage3D& v)
 
 void t_Erode3D(const EVec3i& reso, byte* vol)
 {
-  t_Erode3D(reso[0], reso[1], reso[1], vol);
+  t_Erode3D(reso[0], reso[1], reso[2], vol);
 }
 
 void t_Dilate3D(const EVec3i& reso, byte* vol)
 {
-  t_Dilate3D(reso[0], reso[1], reso[1], vol);
+  t_Dilate3D(reso[0], reso[1], reso[2], vol);
 }
 
 void t_FillHole3D(const EVec3i& reso, byte* vol)
 {
-  t_FillHole3D(reso[0], reso[1], reso[1], vol);
+  t_FillHole3D(reso[0], reso[1], reso[2], vol);
 }
 
 
