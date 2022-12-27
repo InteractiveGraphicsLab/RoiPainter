@@ -125,13 +125,6 @@ System::Void FormVisMask::trackbar_alpha_Scroll (
 }
 
 
-static void updateImageCoreVisVolumes()
-{
-  const EVec2i minmax = ImageCore::GetInst()->GetVolMinMax();
-  ImageCore::GetInst()->UpdateOGLVolume(minmax[0], minmax[1]);
-}
-
-
 //DELETE/MARGE/
 System::Void FormVisMask::btnDelete_Click(
     System::Object^  sender, 
@@ -139,8 +132,6 @@ System::Void FormVisMask::btnDelete_Click(
 {
   ImageCore::GetInst()->ActiveMask_Delete();
   updateList();
-
-  updateImageCoreVisVolumes();
   RedrawScene();
 }
 
@@ -166,7 +157,6 @@ System::Void FormVisMask::btnMargeTo_Click(
   ImageCore::GetInst()->MargeMaskIDs(trgt_ids);
   
   updateList();
-  updateImageCoreVisVolumes();
   RedrawScene();
 }
 
@@ -178,7 +168,6 @@ System::Void FormVisMask::btnErode_Click(
     System::EventArgs^  e)
 {
   ImageCore::GetInst()->ActiveMask_Erode();
-  updateImageCoreVisVolumes();
   updateList();
   RedrawScene();
 }
@@ -190,7 +179,6 @@ System::Void FormVisMask::btnDilate_Click(
     System::EventArgs^  e)
 {
   ImageCore::GetInst()->ActiveMask_Dilate();
-  updateImageCoreVisVolumes();
   updateList();
   RedrawScene();
 }
@@ -216,7 +204,6 @@ System::Void FormVisMask::btnFillHole_Click(
   }
 
   ImageCore::GetInst()->FillHole( trgt_ids );
-  updateImageCoreVisVolumes();
   updateList();
   RedrawScene();
 }
@@ -275,7 +262,6 @@ System::Void FormVisMask::btnSmartFillHole_Click(
 
   ImageCore::GetInst()->SmartFillHole(trgt_ids, dilation_size);
   updateList();
-  updateImageCoreVisVolumes();
   RedrawScene();
 }
 

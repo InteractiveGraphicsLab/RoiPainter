@@ -571,7 +571,7 @@ void t_Sobel3D(const int W, const int H, const int D, const T1* vol, T2* res)
     if (z == 0 || z == D - 1) gz = 0;
     res[i] = (T2)sqrt(gx * gx + gy * gy + gz * gz) / 16.0f;
 
-    if (res[i] > 40000) std::cout << x << " " << y << " " << z << "\n";
+    //if (res[i] > 40000) std::cout << x << " " << y << " " << z << "\n";
   }
 }
 
