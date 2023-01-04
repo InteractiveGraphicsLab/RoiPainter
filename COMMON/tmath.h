@@ -46,6 +46,10 @@ typedef unsigned char byte;
 #define max3id(a,b,c)    ((a>=b&&a>=c)?0:(b>=c)?1:2)
 #endif
 
+#ifndef min3id
+#define min3id(a,b,c)    ((a<=b&&a<=c)?0:(b<=c)?1:2)
+#endif
+
 
 template<class T>
 inline T t_crop(const T &minV, const T &maxV, const T &v)
@@ -403,6 +407,27 @@ inline bool t_IntersectRayYToTriangle(
   return true;
 }
 
+inline bool t_intersectRayToPlane(
+    const EVec3f &ray_pos,
+    const EVec3f &ray_dir,
+    const EVec3f &plane_pos, 
+    const EVec3f &plane_norm,
+    EVec3f &pos)
+{
+  float d_n = ray_dir.dot(plane_norm);
+  if (abs(d_n) <= 0.000001f)
+  {
+    pos << 0, 0, 0;
+    return false;
+  }
+
+  float t = -plane_norm.dot(ray_pos - plane_pos) / d_n;
+  pos = ray_pos + t * ray_dir;
+  return true;
+}
+
+
+
 
 
 template<class T>
@@ -425,9 +450,42 @@ template<class T>
 inline T t_CalcCentroid(const std::vector<T> &vs)
 {
   T gc(0, 0, 0);
+  if (vs.size() == 0) return gc;
+
   for (const auto &p : vs) gc += p;
   gc /= (float)vs.size();
   return gc;
+}
+
+
+inline EVec3f t_CalcGravityCenter(const std::vector<EVec3f>& vs)
+{
+  EVec3f gc(0, 0, 0);
+  if (vs.size() == 0) return gc;
+
+  for (const auto& p : vs) gc += p;
+  gc /= (float)vs.size();
+  return gc;
+}
+
+
+inline EMat3f t_CalcCovMatrix(const std::vector<EVec3f>& vs)
+{
+  EVec3f c = t_CalcGravityCenter(vs);
+  EMat3f A;
+  A << 0, 0, 0, 0, 0, 0, 0, 0, 0;
+
+  for (auto &p : vs)
+  {
+    float x = p[0] - c[0];
+    float y = p[1] - c[1];
+    float z = p[2] - c[2];
+    A(0, 0) += x * x;  A(0, 1) += x * y;  A(0, 2) += x * z;
+    A(1, 0) += y * x;  A(1, 1) += y * y;  A(1, 2) += y * z;
+    A(2, 0) += z * x;  A(2, 1) += z * y;  A(2, 2) += z * z;
+  }
+  A /= (float)vs.size();
+  return A;
 }
 
 
@@ -662,6 +720,19 @@ inline double t_CalcAngle(const EVec2d& d1, const EVec2d& d2)
     return  acos(cosT);
   else
     return -acos(cosT);
+}
+
+
+
+inline EVec3f t_projectPointToPlane(
+  const EVec3f &plane_pos, 
+  const EVec3f &plane_norm,
+  const EVec3f &point)
+{
+  float n2 = plane_norm.squaredNorm();
+  if (n2 == 0) return EVec3f(0, 0, 0);
+  float t = plane_norm.dot(plane_pos - point) / n2;
+  return point + t * plane_norm;
 }
 
 

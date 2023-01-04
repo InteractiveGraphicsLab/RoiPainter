@@ -11,6 +11,7 @@
 #include "FormSegLocalRGrow.h"
 #include "FormSegParallelWires.h"
 #include "FormRefStrokeTrim.h"
+#include "FormRefSplitByPlane.h"
 #include "formMaskIdSelection.h"
 #include "FormIntegerSelection.h"
 #include "climessagebox.h"
@@ -196,6 +197,7 @@ void FormMain::replaceOtherForms()
   FormSegLocalRGrow   ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegVoxelPaint   ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormRefStrokeTrim   ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormRefSplitByPlane ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegParallelWires::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegThreshfieldPaint::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
 }
@@ -217,9 +219,10 @@ void FormMain::initializeOtherForms()
   FormVisMask ::getInst()->Show();
   FormSegRGrow::getInst()->Show();
   FormSegGCut ::getInst()->Show();
-  FormSegLocalRGrow ::getInst()->Show();
-  FormSegVoxelPaint ::getInst()->Show();
-  FormRefStrokeTrim ::getInst()->Show();
+  FormSegLocalRGrow  ::getInst()->Show();
+  FormSegVoxelPaint  ::getInst()->Show();
+  FormRefStrokeTrim  ::getInst()->Show();
+  FormRefSplitByPlane::getInst()->Show();
   FormSegParallelWires::GetInst()->Show();
   FormSegThreshfieldPaint::getInst()->Show();
 
@@ -229,9 +232,10 @@ void FormMain::initializeOtherForms()
   FormVisMask ::getInst()->Hide();
   FormSegRGrow::getInst()->Hide();
   FormSegGCut ::getInst()->Hide();
-  FormSegLocalRGrow ::getInst()->Hide();
-  FormSegVoxelPaint ::getInst()->Hide();
-  FormRefStrokeTrim ::getInst()->Hide();
+  FormSegLocalRGrow   ::getInst()->Hide();
+  FormSegVoxelPaint   ::getInst()->Hide();
+  FormRefStrokeTrim   ::getInst()->Hide();
+  FormRefSplitByPlane ::getInst()->Hide();
   FormSegParallelWires::GetInst()->Hide();
   FormSegThreshfieldPaint::getInst()->Hide();
 
@@ -703,6 +707,11 @@ System::Void FormMain::refinementStrokeTrimingToolStripMenuItem_Click(System::Ob
   ModeCore::GetInst()->ModeSwitch(MODE_REF_STRKTRIM);
   redrawMainPanel();
 }
+System::Void FormMain::refinementSplitByPlaneToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+  ModeCore::GetInst()->ModeSwitch(MODE_REF_SPLITPLANE);
+  redrawMainPanel();
+}
+
 
 System::Void FormMain::segmentationToolStripMenuItem1_Click(System::Object^  sender, System::EventArgs^  e) {
   ModeCore::GetInst()->ModeSwitch(MODE_SEG_LCLRGROW);

@@ -14,6 +14,7 @@
 #include "mode/ModeSegThreshfieldPaint.h"
 #include "mode/ModeSegVoxelPaint.h"
 #include "mode/ModeRefStrokeTrim.h"
+#include "mode/ModeRefSplitByPlane.h"
 
 #pragma managed 
 
@@ -44,6 +45,7 @@ int main()
   ModeSegThreshfieldPaint::getInst();
   ModeSegVoxelPaint::GetInst();
   ModeRefStrokeTrim::GetInst();
+  ModeRefSplitByPlane::GetInst();
 
   std::cout << "FormMain::getInst()->ShowDialog() \n";
   FormMain::getInst()->ShowDialog();

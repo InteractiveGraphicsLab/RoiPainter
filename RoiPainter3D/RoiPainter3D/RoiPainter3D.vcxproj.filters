@@ -180,6 +180,12 @@
     <ClInclude Include="..\..\3rdParty\dcmtk\tdcmtk.h">
       <Filter>3rdparty</Filter>
     </ClInclude>
+    <ClInclude Include="mode\ModeRefSplitByPlane.h">
+      <Filter>MODE</Filter>
+    </ClInclude>
+    <ClInclude Include="FormRefSplitByPlane.h">
+      <Filter>Forms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -309,6 +315,12 @@
     </ClCompile>
     <ClCompile Include="..\..\3rdParty\dcmtk\tdcmtk.cpp">
       <Filter>3rdparty</Filter>
+    </ClCompile>
+    <ClCompile Include="mode\ModeRefSplitByPlane.cpp">
+      <Filter>MODE</Filter>
+    </ClCompile>
+    <ClCompile Include="FormRefSplitByPlane.cpp">
+      <Filter>Forms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
