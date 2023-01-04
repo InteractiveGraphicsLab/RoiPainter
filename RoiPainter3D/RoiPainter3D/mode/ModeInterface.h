@@ -32,7 +32,8 @@ enum MODE_ID
   MODE_SEG_PARAWIRE  , // ModeSegParallelWires
 	MODE_SEG_THRESHPNT , // ModeSegThreshfieldPaint (UIST paper by Takeo Igarashi, NOT YET IMPLEMENTED)
 	MODE_REF_STRKTRIM  , // ModeRefStrokeTrim
-	MODE_REF_VOXPAINT    // ModeSegVoxelPaint
+	MODE_REF_VOXPAINT  , // ModeSegVoxelPaint
+	MODE_REF_SPLITPLANE  // ModeRefSplitByPlane
 };
 
 

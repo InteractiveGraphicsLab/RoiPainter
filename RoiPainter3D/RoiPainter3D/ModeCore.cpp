@@ -6,6 +6,7 @@
 #include "Mode/ModeSegGCut.h"
 #include "Mode/ModeSegVoxelPaint.h"
 #include "Mode/ModeRefStrokeTrim.h"
+#include "Mode/ModeRefSplitByPlane.h"
 #include "Mode/ModeSegLocalRGrow.h"
 #include "Mode/ModeSegParallelWires.h"
 #include <iostream>
@@ -19,6 +20,7 @@
 #include "FormSegLocalRGrow.h"
 #include "FormSegParallelWires.h"
 #include "FormRefStrokeTrim.h"
+#include "FormRefSplitByPlane.h"
 
 #pragma unmanaged
 
@@ -52,6 +54,7 @@ void ModeCore::ModeSwitch(MODE_ID m)
   else if (m == MODE_REF_STRKTRIM  ) { m_mode = ModeRefStrokeTrim   ::GetInst(); m_mode_id = m; }
   else if (m == MODE_REF_VOXPAINT  ) { m_mode = ModeSegVoxelPaint   ::GetInst(); m_mode_id = m; }
   else if (m == MODE_SEG_LCLRGROW  ) { m_mode = ModeSegLocalRGrow   ::GetInst(); m_mode_id = m; }
+  else if (m == MODE_REF_SPLITPLANE) { m_mode = ModeRefSplitByPlane ::GetInst(); m_mode_id = m; }
   else	                             { m_mode = ModeVizNormal::getInst(); m_mode_id = MODE_VIS_NORMAL; }
 
   //// Hide all Forms
@@ -63,6 +66,7 @@ void ModeCore::ModeSwitch(MODE_ID m)
   formRefStrokeTrim_Hide();
   FormSegParallelWires_Hide();
   formSegLocalRGrow_Hide();
+  formRefSplitByPlane_Hide();
 
   // start new mode
   m_mode->StartMode();

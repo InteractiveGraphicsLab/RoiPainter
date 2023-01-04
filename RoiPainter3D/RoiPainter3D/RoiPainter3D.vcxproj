@@ -185,6 +185,9 @@
     <ClInclude Include="FormMaskIDselection.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="FormRefSplitByPlane.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="FormRefStrokeTrim.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -228,6 +231,7 @@
     <ClInclude Include="mode\GlslShader.h" />
     <ClInclude Include="mode\ModeCommonTools.h" />
     <ClInclude Include="mode\ModeInterface.h" />
+    <ClInclude Include="mode\ModeRefSplitByPlane.h" />
     <ClInclude Include="mode\ModeRefStrokeTrim.h" />
     <ClInclude Include="mode\ModeSegGCut.h" />
     <ClInclude Include="mode\ModeSegLocalRGrow.h" />
@@ -256,6 +260,7 @@
     <ClCompile Include="FormIntegerSelection.cpp" />
     <ClCompile Include="FormMain.cpp" />
     <ClCompile Include="FormMaskIDselection.cpp" />
+    <ClCompile Include="FormRefSplitByPlane.cpp" />
     <ClCompile Include="FormRefStrokeTrim.cpp" />
     <ClCompile Include="FormSegGCut.cpp" />
     <ClCompile Include="FormSegLocalRGrow.cpp" />
@@ -274,6 +279,7 @@
     <ClCompile Include="mode\GlslShader.cpp" />
     <ClCompile Include="mode\ModeCommonTools.cpp" />
     <ClCompile Include="mode\ModeInterface.cpp" />
+    <ClCompile Include="mode\ModeRefSplitByPlane.cpp" />
     <ClCompile Include="mode\ModeRefStrokeTrim.cpp" />
     <ClCompile Include="mode\ModeSegGCut.cpp" />
     <ClCompile Include="mode\ModeSegLocalRGrow.cpp" />
@@ -298,6 +304,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormMaskIDselection.resx">
       <DependentUpon>FormMaskIDselection.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormRefSplitByPlane.resx">
+      <DependentUpon>FormRefSplitByPlane.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormRefStrokeTrim.resx">
       <DependentUpon>FormRefStrokeTrim.h</DependentUpon>
