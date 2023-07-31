@@ -53,6 +53,7 @@ namespace RoiPainter4D {
   private: System::Windows::Forms::ToolStripSeparator^ toolStripSeparator4;
   private: System::Windows::Forms::ToolStripMenuItem^ export4dcttrawssToolStripMenuItem;
   private: System::Windows::Forms::ToolStripMenuItem^ exportMasktrawubToolStripMenuItem;
+  private: System::Windows::Forms::ToolStripMenuItem^ file_loadMaskMha;
 
 
 
@@ -134,6 +135,7 @@ namespace RoiPainter4D {
       this->switch_segClosestPix = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->switch_segJointTracker = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->m_progressbar = (gcnew System::Windows::Forms::ProgressBar());
+      this->file_loadMaskMha = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->mainmenu->SuspendLayout();
       this->SuspendLayout();
       // 
@@ -166,10 +168,10 @@ namespace RoiPainter4D {
       // 
       // menu_file
       // 
-      this->menu_file->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(9) {
+      this->menu_file->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(10) {
         this->file_dcm3d,
-          this->file_dcm2D, this->file_traw3d, this->file_saveMask, this->file_loadMask, this->open3D8bitRawrawToolStripMenuItem, this->toolStripSeparator4,
-          this->export4dcttrawssToolStripMenuItem, this->exportMasktrawubToolStripMenuItem
+          this->file_dcm2D, this->file_traw3d, this->file_saveMask, this->file_loadMask, this->file_loadMaskMha, this->open3D8bitRawrawToolStripMenuItem,
+          this->toolStripSeparator4, this->export4dcttrawssToolStripMenuItem, this->exportMasktrawubToolStripMenuItem
       });
       this->menu_file->Name = L"menu_file";
       this->menu_file->Size = System::Drawing::Size(37, 20);
@@ -371,6 +373,13 @@ namespace RoiPainter4D {
       this->m_progressbar->Size = System::Drawing::Size(118, 23);
       this->m_progressbar->TabIndex = 2;
       // 
+      // file_loadMaskMha
+      // 
+      this->file_loadMaskMha->Name = L"file_loadMaskMha";
+      this->file_loadMaskMha->Size = System::Drawing::Size(198, 22);
+      this->file_loadMaskMha->Text = L"Load Mask (.mha)";
+      this->file_loadMaskMha->Click += gcnew System::EventHandler(this, &FormMain::file_loadMaskMha_Click);
+      // 
       // FormMain
       // 
       this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
@@ -415,6 +424,7 @@ namespace RoiPainter4D {
     System::Void file_traw3d_Click(System::Object^  sender, System::EventArgs^  e);
     System::Void file_saveMask_Click(System::Object^  sender, System::EventArgs^  e);
     System::Void file_loadMask_Click(System::Object^  sender, System::EventArgs^  e);
+    System::Void file_loadMaskMha_Click(System::Object^ sender, System::EventArgs^ e);
     System::Void file_raw8bit_Click(System::Object^ sender, System::EventArgs^ e);
     System::Void file_export4dcttraw_Click(System::Object^ sender, System::EventArgs^ e);
     System::Void file_exportMasktrawub_Click(System::Object^ sender, System::EventArgs^ e);

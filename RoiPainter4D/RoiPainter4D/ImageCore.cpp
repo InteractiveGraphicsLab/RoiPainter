@@ -14,6 +14,18 @@ using namespace RoiPainter4D;
 using namespace marchingcubes;
 
 
+static const int ColPalletN = 14;
+static const EVec3i ColPallet[ColPalletN] = {
+  EVec3i(255,0  ,0) , EVec3i(0  ,0,255),
+  EVec3i(  0,255,255), EVec3i(255,0,255), EVec3i(255,255,0),
+  EVec3i(  0,128,128), EVec3i(128,0,128), EVec3i(128,128, 0),
+  EVec3i(255,128,0) , EVec3i(0,255,128), EVec3i(128,0,255),
+  EVec3i(128,255,0) , EVec3i(0,128,255), EVec3i(255, 0, 128) ,
+
+};
+
+
+
 ImageCore::ImageCore()
 {
   std::cout << "constructure ImageCore-----\n";
@@ -907,13 +919,6 @@ void ImageCore::SaveImg4DAsTRawFiles(std::string fname)
 
 
 
-
-
-
-
-
-
-
 void ImageCore::LoadMask(std::string fname, int timeI)
 {
   FILE* fp = fopen(fname.c_str(), "rb");
@@ -981,6 +986,131 @@ void ImageCore::LoadMask(std::string fname, int timeI)
 }
 
 
+//mha header
+//ObjectType = Image
+//NDims = 3
+//BinaryData = True
+//BinaryDataByteOrderMSB = False
+//CompressedData = False
+//TransformMatrix = 1 0 0 0 1 0 0 0 1
+//Offset = 0 0 0
+//CenterOfRotation = 0 0 0
+//AnatomicalOrientation = RAI
+//ElementSpacing = 0.46800000000000003 0.46800000000000003 0.5
+//DimSize = 512 512 320
+//ElementType = MET_UCHAR
+//ElementDataFile = LOCAL
+static bool ReadMha(
+  const char* fname,
+  EVec3i &res  ,
+  EVec3f &pitch, 
+  std::unique_ptr<byte[]>& msk_data
+  )
+{
+  std::ifstream ifs(fname, std::ios::binary);
+  if (!ifs)
+  {
+    std::cout << "can't open mha file " << fname << "\n";
+    return false;
+  }
+  
+  //Read header 
+  int rx, ry, rz;
+  float px, py, pz;
+  int n_dim, m0, m1, m2, m3, m4, m5, m6, m7, m8, o0, o1, o2, r0, r1, r2;
+  byte b1[256], b2[256], b3[256], obj_type[256];
+  
+  ifs >> b1 >> b2 >> obj_type;      // ObjectType = Image
+  ifs >> b1 >> b2 >> n_dim;         // NDims = 3
+  ifs >> b1 >> b2 >> b3;            // BinaryData = True
+  ifs >> b1 >> b2 >> b3;            // BinaryDataByteOrderMSB = False
+  ifs >> b1 >> b2 >> b3;            // CompressedData = False
+  ifs >> b1 >> b2 >> m0 >> m1 >> m2 
+                  >> m3 >> m4 >> m5
+                  >> m6 >> m7 >> m8;//TransformMatrix = 1 0 0 0 1 0 0 0 1
+  ifs >> b1 >> b2 >> o0 >> o1 >> o2;//Offset = 0 0 0
+  ifs >> b1 >> b2 >> r0 >> r1 >> r2;//CenterOfRotation = 0 0 0
+
+
+  ifs >> b1 >> b2 >> b3;            //AnatomicalOrientation = RAI
+  ifs >> b1 >> b2 >> px >> py >> pz;//ElementSpacing = 0.46800000000000003 0.46800000000000003 0.5
+  ifs >> b1 >> b2 >> rx >> ry >> rz;//DimSize = 512 512 320
+  ifs >> b1 >> b2 >> b3;  //ElementType = MET_UCHAR
+  ifs >> b1 >> b2 >> b3;  //ElementDataFile = LOCAL
+
+  std::cout << "resolution " << rx << " " << ry << " " << rz << "\n";
+  std::cout << "pitch      " << px << " " << py << " " << pz << "\n";
+  res << rx, ry, rz;  
+  pitch << px, py, pz;
+
+  msk_data.reset(new byte[rx * ry * rz]);
+  if (!ifs.read(reinterpret_cast<char*>(msk_data.get()), rx * ry * rz))
+  {
+    return false;
+  }
+  return true;
+} 
+
+
+
+
+void ImageCore::LoadMaskMha(std::vector<std::string> fnames, int timeI)
+{
+  int W, H, D, WH, WHD;
+  std::tie(W, H, D, WH, WHD) = GetResolution5();
+  int NUM_FRM = GetNumFrames();
+ 
+  if (NUM_FRM != fnames.size())
+  {
+    ShowMsgDlg_OK("strange frame count", "caution");
+    return;
+  }
+
+  std::vector<std::unique_ptr<byte[]>> masks;
+  //check resolution 
+  for (auto f : fnames)
+  {
+    EVec3f pitch;
+    EVec3i reso ;
+    std::unique_ptr<byte[]> d;
+    if (!ReadMha(f.c_str(), reso, pitch, d))
+    {
+      std::cout << "Fail to read mha files\n";
+    }
+    if (reso[0] != W || reso[1] != H || reso[2] != D)
+    {
+      ShowMsgDlg_OK("strange resolution", "caution");
+      return;
+    }
+    masks.push_back(std::move(d)); //所有権を masksに渡す
+  }
+  
+  int max_mask_id = 0;
+  for (int f = 0; f < NUM_FRM; ++f)
+  {
+    memcpy(m_mask4d[f], masks[f].get(), sizeof(byte) * WHD);
+    t_FlipVolumeInZ<byte>(W, H, D, m_mask4d[f]);
+
+    byte *m = m_mask4d[f];
+    for( int i=0; i < WHD; ++i) max_mask_id = max(max_mask_id, m[i]);
+  }
+  
+  //generate mask 
+  m_mask_data.clear();
+  m_mask_data.push_back(MaskData("bckGrnd", EVec3i(0, 0, 0), 0, 0));
+  for( int c = 1; c < max_mask_id; ++c)
+    m_mask_data.push_back(MaskData("region", ColPallet[c % ColPalletN], 0.1, false, true));
+
+  m_vol_mask.SetValue(m_mask4d[timeI]);
+}
+
+
+
+
+
+
+
+
 
 void ImageCore::UpdateVisVolume(int winlv_min, int winlv_max, int frame_idx)
 {
@@ -1010,15 +1140,6 @@ void ImageCore::UpdateImgMaskColor()
 
 
 
-static const int ColPalletN = 14;
-static const EVec3i ColPallet[ColPalletN] = {
-  EVec3i(255,0  ,0) , EVec3i(0  ,0,255),
-  EVec3i(0,255,255), EVec3i(255,0,255), EVec3i(255,255,0),
-  EVec3i(0, 128,128), EVec3i(128,0,128), EVec3i(128,128, 0),
-  EVec3i(255,128,0) , EVec3i(0,255,128), EVec3i(128,0,255),
-  EVec3i(128,255,0) , EVec3i(0,128,255), EVec3i(255, 0, 128) ,
-
-};
 
 
 

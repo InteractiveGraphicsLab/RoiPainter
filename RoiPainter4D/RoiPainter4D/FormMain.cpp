@@ -729,6 +729,32 @@ System::Void FormMain::file_loadMask_Click(System::Object^  sender, System::Even
 }
 
 
+System::Void FormMain::file_loadMaskMha_Click(System::Object^ sender, System::EventArgs^ e)
+{
+
+  OpenFileDialog^ dlg = gcnew OpenFileDialog();
+  dlg->Filter = "3D masks (*.mha)|*.mha";
+  dlg->Multiselect = true;
+
+  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
+
+  std::vector<std::string> fnames;
+  for each (auto it in  dlg->FileNames)
+  {
+    std::string fName;
+    n_marshalString(it, fName);
+    fnames.push_back(fName);
+  }
+
+  const int frameI = FormVisParam::GetInst()->GetframeI();
+
+  ImageCore::GetInst()->LoadMaskMha(fnames, frameI);
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
+  RedrawMainPanel();
+}
+
+
+
 
 System::Void FormMain::file_export4dcttraw_Click(
   System::Object^ sender, 
