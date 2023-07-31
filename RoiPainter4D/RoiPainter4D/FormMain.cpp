@@ -728,6 +728,49 @@ System::Void FormMain::file_loadMask_Click(System::Object^  sender, System::Even
   RedrawMainPanel();
 }
 
+
+
+System::Void FormMain::file_export4dcttraw_Click(
+  System::Object^ sender, 
+  System::EventArgs^ e)
+{
+  SaveFileDialog^ dlg = gcnew SaveFileDialog();
+  dlg->Filter = "4D mask traw3d_ss |*";
+
+  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
+
+  IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
+  std::string fname = static_cast<const char*>(mptr.ToPointer());
+
+  ImageCore::GetInst()->SaveImg4DAsTRawFiles(fname);
+}
+
+
+
+System::Void FormMain::file_exportMasktrawub_Click(
+  System::Object^ sender,
+  System::EventArgs^ e)
+{
+  SaveFileDialog^ dlg = gcnew SaveFileDialog();
+  dlg->Filter = "4D image traw3d_ss |*";
+
+  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
+
+  IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
+  std::string fname = static_cast<const char*>(mptr.ToPointer());
+
+  ImageCore::GetInst()->SaveMaskAsTRawFiles(fname);
+
+}
+
+
+
+
+
+
+
+
+
 System::Void FormMain::FormMain_Resize(System::Object^  sender, System::EventArgs^  e)
 {
   ReplaceOtherForms();

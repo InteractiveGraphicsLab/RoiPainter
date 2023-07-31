@@ -50,6 +50,11 @@ namespace RoiPainter4D {
     System::Windows::Forms::ToolStripMenuItem^ switch_segSwallowTempGen;
     System::Windows::Forms::ToolStripMenuItem^ switch_segBronchi;
     System::Windows::Forms::ToolStripMenuItem^ file_loadMask;
+  private: System::Windows::Forms::ToolStripSeparator^ toolStripSeparator4;
+  private: System::Windows::Forms::ToolStripMenuItem^ export4dcttrawssToolStripMenuItem;
+  private: System::Windows::Forms::ToolStripMenuItem^ exportMasktrawubToolStripMenuItem;
+
+
 
 
   private:
@@ -107,6 +112,9 @@ namespace RoiPainter4D {
       this->file_saveMask = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->file_loadMask = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->open3D8bitRawrawToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+      this->toolStripSeparator4 = (gcnew System::Windows::Forms::ToolStripSeparator());
+      this->export4dcttrawssToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+      this->exportMasktrawubToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->modeSwitchToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->switch_visNorm = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->switch_visMask = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -158,9 +166,10 @@ namespace RoiPainter4D {
       // 
       // menu_file
       // 
-      this->menu_file->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(6) {
+      this->menu_file->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(9) {
         this->file_dcm3d,
-          this->file_dcm2D, this->file_traw3d, this->file_saveMask, this->file_loadMask, this->open3D8bitRawrawToolStripMenuItem
+          this->file_dcm2D, this->file_traw3d, this->file_saveMask, this->file_loadMask, this->open3D8bitRawrawToolStripMenuItem, this->toolStripSeparator4,
+          this->export4dcttrawssToolStripMenuItem, this->exportMasktrawubToolStripMenuItem
       });
       this->menu_file->Name = L"menu_file";
       this->menu_file->Size = System::Drawing::Size(37, 20);
@@ -207,6 +216,25 @@ namespace RoiPainter4D {
       this->open3D8bitRawrawToolStripMenuItem->Size = System::Drawing::Size(198, 22);
       this->open3D8bitRawrawToolStripMenuItem->Text = L"Open 3D 8bit raw (.raw)";
       this->open3D8bitRawrawToolStripMenuItem->Click += gcnew System::EventHandler(this, &FormMain::file_raw8bit_Click);
+      // 
+      // toolStripSeparator4
+      // 
+      this->toolStripSeparator4->Name = L"toolStripSeparator4";
+      this->toolStripSeparator4->Size = System::Drawing::Size(195, 6);
+      // 
+      // export4dcttrawssToolStripMenuItem
+      // 
+      this->export4dcttrawssToolStripMenuItem->Name = L"export4dcttrawssToolStripMenuItem";
+      this->export4dcttrawssToolStripMenuItem->Size = System::Drawing::Size(198, 22);
+      this->export4dcttrawssToolStripMenuItem->Text = L"Export 4dct .traw_ss";
+      this->export4dcttrawssToolStripMenuItem->Click += gcnew System::EventHandler(this, &FormMain::file_export4dcttraw_Click);
+      // 
+      // exportMasktrawubToolStripMenuItem
+      // 
+      this->exportMasktrawubToolStripMenuItem->Name = L"exportMasktrawubToolStripMenuItem";
+      this->exportMasktrawubToolStripMenuItem->Size = System::Drawing::Size(198, 22);
+      this->exportMasktrawubToolStripMenuItem->Text = L"Export Mask (traw_ub)";
+      this->exportMasktrawubToolStripMenuItem->Click += gcnew System::EventHandler(this, &FormMain::file_exportMasktrawub_Click);
       // 
       // modeSwitchToolStripMenuItem
       // 
@@ -388,6 +416,8 @@ namespace RoiPainter4D {
     System::Void file_saveMask_Click(System::Object^  sender, System::EventArgs^  e);
     System::Void file_loadMask_Click(System::Object^  sender, System::EventArgs^  e);
     System::Void file_raw8bit_Click(System::Object^ sender, System::EventArgs^ e);
+    System::Void file_export4dcttraw_Click(System::Object^ sender, System::EventArgs^ e);
+    System::Void file_exportMasktrawub_Click(System::Object^ sender, System::EventArgs^ e);
 
     System::Void switch_visNorm_Click(System::Object^  sender, System::EventArgs^  e);
     System::Void switch_visMask_Click(System::Object^  sender, System::EventArgs^  e);
@@ -411,7 +441,6 @@ namespace RoiPainter4D {
     System::Void FormMain_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e);
     System::Void FormMain_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e);
     System::Void FormMain_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e);
-
 };
 
   inline void formMain_RedrawMainPanel()

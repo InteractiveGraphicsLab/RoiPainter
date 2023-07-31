@@ -833,6 +833,87 @@ void ImageCore::SaveMask(std::string fname)
 
 
 
+void ImageCore::SaveMaskAsTRawFiles(std::string fname)
+{
+  const int W = m_reso[0];
+  const int H = m_reso[1];
+  const int D = m_reso[2];
+  const double px = m_pitch[0];
+  const double py = m_pitch[1];
+  const double pz = m_pitch[2];
+
+  const int F = (int)m_img4d.size();
+
+  for (int i = 0; i < F; ++i)
+  {
+    std::string f = (i < 10) ? std::string("0") + std::to_string(i) : std::to_string(i);
+    f = fname + f + std::string(".traw3D_ub");
+
+    FILE* fp = fopen(f.c_str(), "wb");
+    if (fp == 0) return;
+
+    fwrite(&W, sizeof(int), 1, fp);
+    fwrite(&H, sizeof(int), 1, fp);
+    fwrite(&D, sizeof(int), 1, fp);
+    fwrite(&px, sizeof(double), 1, fp);
+    fwrite(&py, sizeof(double), 1, fp);
+    fwrite(&pz, sizeof(double), 1, fp);
+
+    fwrite(m_mask4d[i], sizeof(byte), W*H*D, fp);
+
+    fclose(fp);
+  }
+
+}
+
+
+
+
+
+void ImageCore::SaveImg4DAsTRawFiles(std::string fname)
+{
+  const int W = m_reso[0];
+  const int H = m_reso[1];
+  const int D = m_reso[2];
+  const double px = m_pitch[0];
+  const double py = m_pitch[1];
+  const double pz = m_pitch[2];
+
+  const int F = (int)m_img4d.size();
+
+  for (int i = 0; i < F; ++i)
+  {
+    std::string f = (i < 10) ? std::string("0") + std::to_string(i) : std::to_string(i);
+    f = fname + f + std::string(".traw3D_ss");
+
+    FILE* fp = fopen(f.c_str(), "wb");
+    if (fp == 0) return;
+
+    fwrite(&W, sizeof(int), 1, fp);
+    fwrite(&H, sizeof(int), 1, fp);
+    fwrite(&D, sizeof(int), 1, fp);
+    fwrite(&px, sizeof(double), 1, fp);
+    fwrite(&py, sizeof(double), 1, fp);
+    fwrite(&pz, sizeof(double), 1, fp);
+    
+    fwrite(m_img4d[i], sizeof(short), W * H * D, fp);
+
+    fclose(fp);
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 void ImageCore::LoadMask(std::string fname, int timeI)
 {
   FILE* fp = fopen(fname.c_str(), "rb");
