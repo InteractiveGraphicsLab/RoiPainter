@@ -17,6 +17,7 @@
 #include "FormLoadFrameIdx.h"
 #include "FormSortFiles.h"
 #include "FormSegStrokeFfd.h"
+#include "FormPlaceCPs.h"
 
 #pragma unmanaged
 #include "OglForCLI.h"
@@ -36,6 +37,7 @@
 #include "Mode/ModeSegJointTracker.h"
 #include "Mode/ModeRefStrokeTrim.h"
 #include "Mode/ModeSegStrokeFfd.h"
+#include "Mode/ModePlaceCPs.h"
 #include <string>
 #include <vector>
 #pragma managed
@@ -149,6 +151,7 @@ void FormMain::InitializeSingletons()
   FormSegJointTracker::GetInst()->Show();
   FormSegBronchi::GetInst()->Show();
   FormSegStrokeFfd::GetInst()->Show();
+  FormPlaceCPs::GetInst()->Show();
 
   ReplaceOtherForms();
 
@@ -166,6 +169,9 @@ void FormMain::InitializeSingletons()
   FormSegJointTracker::GetInst()->Hide();
   FormSegBronchi::GetInst()->Hide();
   FormSegStrokeFfd::GetInst()->Hide();
+  FormPlaceCPs::GetInst()->Hide();
+
+
 
   FormVisParam::GetInst()->Owner = this;
   FormVisNorm::GetInst()->Owner = this;
@@ -380,19 +386,21 @@ void FormMain::ReplaceOtherForms()
   const int thisW = this->Width;
   const int dlgH = FormVisParam::GetInst()->Height;
   FormVisParam::GetInst()->Location = Point(thisX + thisW, thisY);
-  FormVisNorm::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormVisMask::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormVisNorm ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormVisMask ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormPlaceCPs::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+
   FormSegRGrow::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegPixPaint::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegRigidICP::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegPixPaint  ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegRigidICP  ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegClosestPix::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegLocalRGrow::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormRefStrokeTrim::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegBolus::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegLocalRGrow   ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormRefStrokeTrim   ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegBolus        ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegSwallowOrgans::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegJointTracker::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegBronchi::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegStrokeFfd::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegJointTracker ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegBronchi      ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegStrokeFfd    ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
 }
 
 
@@ -502,6 +510,14 @@ System::Void FormMain::switch_segStrokeFFD_Click(System::Object^ sender, System:
   ModeCore::GetInst()->ModeSwitch(MODE_SEG_STROKEFFD);
   RedrawMainPanel();
 }
+
+System::Void FormMain::switch_placeCPs_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeCore::GetInst()->ModeSwitch(MODE_PLC_CPS);
+  RedrawMainPanel();
+}
+
+
 
 
 static void n_marshalString(String ^ s, std::string& os) {

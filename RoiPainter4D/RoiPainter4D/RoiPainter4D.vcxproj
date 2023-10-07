@@ -161,6 +161,7 @@
     <ClCompile Include="CrsSecCore.cpp" />
     <ClCompile Include="FormLoadFrameIdx.cpp" />
     <ClCompile Include="FormMain.cpp" />
+    <ClCompile Include="FormPlaceCPs.cpp" />
     <ClCompile Include="FormRefStrokeTrim.cpp" />
     <ClCompile Include="FormSegBolus.cpp" />
     <ClCompile Include="FormSegBronchi.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="Mode\GlslShader.cpp" />
     <ClCompile Include="Mode\ModeCommonTools.cpp" />
     <ClCompile Include="Mode\ModeInterface.cpp" />
+    <ClCompile Include="Mode\ModePlaceCPs.cpp" />
     <ClCompile Include="Mode\ModeRefStrokeTrim.cpp" />
     <ClCompile Include="Mode\ModeSegBolus.cpp" />
     <ClCompile Include="Mode\ModeSegBronchi.cpp" />
@@ -222,6 +224,9 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="FormMain.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormPlaceCPs.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="FormRefStrokeTrim.h">
@@ -284,6 +289,7 @@
     <ClInclude Include="Mode\GlslShader.h" />
     <ClInclude Include="Mode\ModeCommonTools.h" />
     <ClInclude Include="Mode\ModeInterface.h" />
+    <ClInclude Include="Mode\ModePlaceCPs.h" />
     <ClInclude Include="Mode\ModeRefStrokeTrim.h" />
     <ClInclude Include="Mode\ModeSegBolus.h" />
     <ClInclude Include="Mode\ModeSegBronchi.h" />
@@ -307,6 +313,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormPlaceCPs.resx">
+      <DependentUpon>FormPlaceCPs.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormRefStrokeTrim.resx">
       <DependentUpon>FormRefStrokeTrim.h</DependentUpon>

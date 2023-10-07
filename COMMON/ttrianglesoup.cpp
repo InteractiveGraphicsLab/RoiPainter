@@ -261,6 +261,37 @@ void TTriangleSoup::CalcBoundBox(EVec3f& BBmin, EVec3f& BBmax) const
 }
 
 
+bool TTriangleSoup::PickByRay(
+    const EVec3f& rayP, 
+    const EVec3f& rayD, 
+    EVec3f& pos, 
+    int& pid) const
+{
+  float depth = FLT_MAX;
+  EVec3f tmpPos;
+  pid = -1;
+
+  for (int t = 0; t < m_num_triangles; ++t)
+  {
+    if (t_intersectRayToTriangle(rayP, rayD, 
+                                  m_triangles[t].m_verts[0], 
+                                  m_triangles[t].m_verts[1], 
+                                  m_triangles[t].m_verts[2], tmpPos))
+    {
+      float d = (tmpPos - rayP).norm();
+      if (d < depth)
+      {
+        depth = d;
+        pos = tmpPos;
+        pid = t;
+      }
+    }
+  }
+  return depth != FLT_MAX;
+}
+
+
+
 
 // cast ray in Y axis ( divide ZX plane )  
 void GenBinaryVolumeFromMesh_Y
