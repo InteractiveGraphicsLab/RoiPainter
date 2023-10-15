@@ -108,18 +108,19 @@ bool ModePlaceCPs::pick_planes_isosurf(const EVec3f& ray_pos, const EVec3f& ray_
 
 
 //return -1 if fails
-int ModePlaceCPs::pick_cps(const EVec3f& ray_pos, const EVec3f& ray_dir)
+static int pick_cps(
+  const EVec3f& ray_pos,
+  const EVec3f& ray_dir,
+  const std::vector<EVec3f> &cps,
+  const float cp_rad)
 {
-  const int fidx = formVisParam_getframeI();
-  const std::vector<EVec3f> &cps = m_cps[fidx];
-  
   float min_depth = FLT_MAX;
   int min_idx = -1;
 
   for (int i = 0; i < (int)cps.size(); ++i)
   {
-    if (t_DistRayAndPoint(ray_pos, ray_dir, cps[i]) > m_cp_rad) continue;
-    
+    if (t_DistRayAndPoint(ray_pos, ray_dir, cps[i]) > cp_rad) continue;
+
     float d = (ray_pos - cps[i]).norm();
     if (d < min_depth)
     {
@@ -130,8 +131,20 @@ int ModePlaceCPs::pick_cps(const EVec3f& ray_pos, const EVec3f& ray_dir)
   return min_idx;
 }
 
-
-
+bool pick_to_erase_cps(
+    const EVec3f& ray_pos,
+    const EVec3f& ray_dir,
+    const float cp_rad,
+    std::vector<EVec3f>& cps)
+{
+  int cpid = pick_cps(ray_pos, ray_dir, cps, cp_rad);
+  if (cpid != -1)
+  {
+    cps.erase(cps.begin() + cpid);
+    return true;
+  }
+  return false;
+}
 
 
 
@@ -155,17 +168,23 @@ void ModePlaceCPs::LBtnDown(const EVec2i& p, OglForCLI* ogl)
     ogl->GetCursorRay(p, ray_pos, ray_dir);
     
     //pick cps to drag
-    m_drag_cpid = pick_cps(ray_pos, ray_dir);
-    if (m_drag_cpid != -1)
-      return;
+    m_drag_cpid = pick_cps(ray_pos, ray_dir, m_cps[f], m_cp_rad);
+    if (m_drag_cpid != -1) return;
 
-    //pick planes/isosurface to place
-    if (pick_planes_isosurf(ray_pos, ray_dir, pos))
+    m_drag_tmpcpid = pick_cps(ray_pos, ray_dir, m_template_cps, m_cp_rad);
+    if (m_drag_tmpcpid != -1) return;
+    
+    //pick template --> pick planes/isosurface
+    if (m_template.PickByRay(ray_pos, ray_dir, pos))
+    {
+      m_template_cps.push_back(pos);
+      m_drag_tmpcpid = (int)m_template_cps.size()-1;
+    }
+    else if (pick_planes_isosurf(ray_pos, ray_dir, pos))
     {
       m_cps[f].push_back(pos);
       m_drag_cpid = (int)m_cps[f].size() - 1;
     }
-    
   }
   else
   {
@@ -189,6 +208,7 @@ void ModePlaceCPs::LBtnUp(const EVec2i& p, OglForCLI* ogl)
   m_bL = false;
   m_b_draw_stroke = false;
   m_drag_cpid = -1;
+  m_drag_tmpcpid = -1;
 
   ogl->BtnUp();
   formMain_RedrawMainPanel();
@@ -201,14 +221,16 @@ void ModePlaceCPs::RBtnDown(const EVec2i& p, OglForCLI* ogl)
 
   if (isShiftKeyOn())
   {
+    const int f = formVisParam_getframeI();
     EVec3f ray_pos, ray_dir;
     ogl->GetCursorRay(p, ray_pos, ray_dir);
-    int cpid = pick_cps(ray_pos, ray_dir);
-    
-    if (cpid != -1)
+
+    if (pick_to_erase_cps(ray_pos, ray_dir, m_cp_rad, m_cps[f]))
     {
-      const int f = formVisParam_getframeI();
-      m_cps[f].erase(m_cps[f].begin() + cpid);
+      formMain_RedrawMainPanel();
+    }
+    else if (pick_to_erase_cps(ray_pos, ray_dir, m_cp_rad, m_template_cps))
+    {
       formMain_RedrawMainPanel();
     }
   }
@@ -261,8 +283,14 @@ void ModePlaceCPs::MouseMove(const EVec2i& p, OglForCLI* ogl)
   {
     if (pick_planes_isosurf(ray_pos, ray_dir, pos))
     {
-      const int f = formVisParam_getframeI();
-      m_cps[f][m_drag_cpid] = pos;
+      m_cps[formVisParam_getframeI()][m_drag_cpid] = pos;
+    }
+  }
+  else if (m_drag_tmpcpid != -1)
+  {
+    if (m_template.PickByRay(ray_pos, ray_dir, pos))
+    {
+      m_template_cps[m_drag_tmpcpid] = pos;
     }
   }
   else
@@ -290,13 +318,68 @@ void ModePlaceCPs::keyDown(int nChar)
 void ModePlaceCPs::keyUp(int nChar) {}
 
 
-static const int NUM_COL = 9;
-static float COLOR[9][4] = 
+template<class TMESH_TRIANGLESOUP>
+static void DrawTransparentMesh(
+    const TMESH_TRIANGLESOUP &m,
+    const float diff[4], 
+    const float ambi[4],
+    const float spec[4],
+    const float shin[1])
 {
-  {1.0f, 0.0f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.0f, 0.5f}, {0.0f, 0.0f, 1.0f, 0.5f},
-  {1.0f, 0.5f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.5f, 0.5f}, {0.5f, 0.0f, 1.0f, 0.5f},
-  {0.5f, 0.0f, 0.0f, 0.5f}, {0.0f, 0.5f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.5f, 0.5f}
-};
+
+  glDepthMask(false);
+  glEnable(GL_BLEND);
+  m.Draw(diff, ambi, spec, shin);
+  glDisable(GL_BLEND);
+  glDepthMask(true);
+}
+
+static void DrawTranslatedMesh(
+  const TMesh  &m,
+  const EVec3f &t,
+  const float diff[4],
+  const float ambi[4],
+  const float spec[4],
+  const float shin[1])
+{
+  glPushMatrix();
+  glTranslated(t[0], t[1], t[2]);
+  m.Draw(diff,ambi, spec, shin);
+  glPopMatrix();
+
+}
+
+
+static void DrawColoredCPs(
+    const TMesh &cp_mesh,  
+    const std::vector<EVec3f> &cps)
+{
+  static const int NUM_COL = 9;
+  static float COLOR[9][4] =
+  {
+    {1.0f, 0.0f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.0f, 0.5f}, {0.0f, 0.0f, 1.0f, 0.5f},
+    {1.0f, 0.5f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.5f, 0.5f}, {0.5f, 0.0f, 1.0f, 0.5f},
+    {0.5f, 0.0f, 0.0f, 0.5f}, {0.0f, 0.5f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.5f, 0.5f}
+  };
+  static float SPEC[4] = { 0.9f,0.9f,0.9f,0.3f };
+  static float SHIN[1] = { 54.0f };
+
+  for (int i = 0; i < cps.size(); ++i)
+  {
+    float* color = COLOR[i % NUM_COL];
+    DrawTranslatedMesh(cp_mesh, cps[i], color, color, SPEC, SHIN);
+  }
+}
+
+
+
+static float SPEC[4] = { 0.9f,0.9f,0.9f,0.3f };
+static float SHIN[1] = { 54.0f };
+static float DIFF1[4] = { 0.2f,0.8f,0.2f,0.3f };
+static float AMBI1[4] = { 0.2f,0.8f,0.2f,0.3f };
+static float DIFF2[4] = { 0.8f,0.2f,0.8f,0.3f };
+static float AMBI2[4] = { 0.8f,0.2f,0.8f,0.3f };
+
 
 void ModePlaceCPs::drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF) 
 {
@@ -306,54 +389,35 @@ void ModePlaceCPs::drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVe
 
   if (frame_idx < 0 || m_isosurfaces.size() <= frame_idx) 
   {
-    std::cout << "somthing wrong 1...\n";
+    std::cout << "something wrong 1...\n";
     return;
   }
   if (frame_idx < 0 || m_cps.size() <= frame_idx)
   {
-    std::cout << "somthing wrong 2...\n";
+    std::cout << "something wrong 2...\n";
     return;
   }
 
-  //bind volumes
   BindAllVolumes();
   DrawCrossSections(cuboid, reso, false, m_crssec_shader);
-
+  
   if (m_b_draw_stroke)
   {
     t_DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke, false);
   }
 
-  //draw source and iso surfaces
-  static float diff1[4] = { 0.2f,0.8f,0.2f,0.3f };
-  static float ambi1[4] = { 0.2f,0.8f,0.2f,0.3f };
-  static float diff2[4] = { 0.4f,0.1f,0.8f,1.0f };
-  static float ambi2[4] = { 0.4f,0.1f,0.8f,1.0f };
-  static float spec[4] = { 0.9f,0.9f,0.9f,0.3f };
-  static float shin[1] = { 54.0f };
-
   glEnable(GL_LIGHTING);
-
   if (!isSpaceKeyOn())
   {
     //draw control points
-    const auto& cps = m_cps[frame_idx];
-    for (int i = 0; i < cps.size(); ++i)
-    {
-      glPushMatrix();
-      glTranslated(cps[i][0], cps[i][1], cps[i][2]);
-      m_cp_mesh.Draw(COLOR[i%NUM_COL], COLOR[i % NUM_COL], spec, shin);
-      glPopMatrix();
-    }
+    DrawColoredCPs(m_cp_mesh, m_cps[frame_idx]);
+    DrawColoredCPs(m_cp_mesh, m_template_cps);
 
     //draw isosurface
-    glDepthMask(false);
-    glEnable(GL_BLEND);
-    m_isosurfaces[frame_idx].Draw(diff1, ambi1, spec, shin);
-    glDisable(GL_BLEND);
-    glDisable(GL_LIGHTING);
-    glDepthMask(true);
+    DrawTransparentMesh(m_isosurfaces[frame_idx], DIFF1, AMBI1,SPEC, SHIN);
+    m_template.Draw(DIFF2, AMBI2, SPEC, SHIN);
   }
+
 
   if (formVisParam_bRendVol())
   {
@@ -477,3 +541,33 @@ void ModePlaceCPs::ImportControlPoints(std::string fname)
 
 
 
+void ModePlaceCPs::LoadTemplateMesh(std::string fname)
+{
+  EVec3f cuboid = ImageCore::GetInst()->GetCuboid();
+  m_template_cps.clear();
+  m_template.Initialize(fname.c_str());
+  
+  EVec3f minbb, maxbb;
+  m_template.GetBoundBox(minbb, maxbb);
+  m_template.Translate(EVec3f(-maxbb[0]*1.2,0,0));
+}
+
+
+
+//given two sets pf points 
+//compute translation t and rotation R to minimize 
+// ƒ°||R (x0-c0) - (x1-c1)||
+// c0 and c1 are gravty centers of x0 and x1
+// t = R c0 + c
+static void CalcShapeMatching(
+    const std::vector<EVec3f> &x0,
+    const std::vector<EVec3f> &x1)
+{
+
+}
+
+
+void ModePlaceCPs::FitTemplateUsingCPs(bool modify_scale)
+{
+  
+}

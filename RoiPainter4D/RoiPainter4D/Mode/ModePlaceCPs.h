@@ -32,6 +32,12 @@ class ModePlaceCPs : public ModeInterface
   float m_cp_rad;
   TMesh m_cp_mesh;
 
+  //template mesh
+  std::vector<EVec3f> m_template_cps;
+  int m_drag_tmpcpid; //-1 if nothing 
+  TMesh m_template;
+  
+
   ModePlaceCPs();
 public:
   ~ModePlaceCPs();
@@ -66,9 +72,13 @@ public:
   void ExportControlPoints(std::string fname);
   void ImportControlPoints(std::string fname);
 
+
+  void LoadTemplateMesh(std::string fname);
+  void FitTemplateUsingCPs(bool modify_scale);
+
+
 private:
   bool pick_planes_isosurf(const EVec3f &ray_pos, const EVec3f &ray_dir, EVec3f &pos);
-  int  pick_cps(const EVec3f& ray_pos, const EVec3f& ray_dir); //return -1 if fails
 };
 
 

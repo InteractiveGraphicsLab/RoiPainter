@@ -101,3 +101,35 @@ System::Void FormPlaceCPs::textbox_setisovalue__TextChanged(System::Object^ send
     textbox_setisovalue_->Text = trackbar_setisoValue_->Value.ToString();
   }
 }
+
+
+System::Void FormPlaceCPs::groupBox1_Enter(System::Object^ sender, System::EventArgs^ e)
+{
+}
+
+System::Void FormPlaceCPs::checkbox_modify_scale__CheckedChanged(System::Object^ sender, System::EventArgs^ e)
+{
+}
+
+
+System::Void FormPlaceCPs::button_fit_template__Click(System::Object^ sender, System::EventArgs^ e)
+{
+  bool tf = this->checkbox_modify_scale_->Checked;
+  ModePlaceCPs::GetInst()->FitTemplateUsingCPs(tf);
+}
+
+System::Void FormPlaceCPs::button_load_mesh__Click(System::Object^ sender, System::EventArgs^ e)
+{
+  OpenFileDialog^ dlg = gcnew OpenFileDialog();
+  dlg->Filter = "plygon mesh (*.obj)|*.obj";
+  dlg->Multiselect = false;
+  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
+  IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
+  std::string fname = static_cast<const char*>(mptr.ToPointer());
+
+  ModePlaceCPs::GetInst()->LoadTemplateMesh(fname);
+
+}
+
+
+
