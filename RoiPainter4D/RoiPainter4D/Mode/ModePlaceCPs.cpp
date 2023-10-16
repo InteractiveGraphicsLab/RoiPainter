@@ -480,6 +480,7 @@ void ModePlaceCPs::drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVe
       glPushMatrix();
       glMultMatrixf(m);
       m_template.Draw(DIFF2, AMBI2, SPEC, SHIN);
+      DrawColoredCPs(m_cp_mesh, m_template_cps);
       glPopMatrix();
     }
     
@@ -650,12 +651,68 @@ static void EigenSolverTest()
 
 
 
+//given (x0, x1, x2) and (y0, y1, y2) 
+// ƒ°||R (x0-c0) - (x1-c1)|| 
+// x0' = R x0 + (R c0 + c)
+// t = 
+static void CalcTriangleMatching(
+  const std::vector<EVec3f>& x,      
+  const std::vector<EVec3f>& y,
+  std::pair<EMat3f, EVec3f>& rottrans //OUTPUT : rotation, transpose
+)
+{
+  rottrans.first = EMat3f::Identity();
+  rottrans.second << 0, 0, 0;
+
+  const int N = std::min((int)x.size(), (int)x.size());
+  if (N != 3) return; 
+
+  //calc gc 
+  EVec3f cx = (x[0] + x[1] + x[2]) / 3.0f;
+  EVec3f cy = (y[0] + y[1] + y[2]) / 3.0f;
+
+  //calc origin center point 
+  EVec3f x0 = x[0]-cx, x1 = x[1]-cx, x2 = x[2]-cx;
+  EVec3f y0 = y[0]-cy, y1 = y[1]-cy, y2 = y[2]-cy;
+
+  //calc normalized normal and rot axis
+  EVec3f nx = ((x1 - x0).cross(x2 - x0));
+  EVec3f ny = ((y1 - y0).cross(y2 - y0));  
+  EVec3f axis_nxny = nx.cross(ny);
+
+  float len_nx = nx.norm();
+  float len_ny = ny.norm();
+  float len_axis_nxny = axis_nxny.norm();
+  if (len_nx < 0.00001f || len_ny < 0.00001f || len_axis_nxny < 0.00001f ) return;
+  nx /= len_nx;
+  ny /= len_ny;
+  axis_nxny /= len_axis_nxny;
+
+  EMat3f Rot1 = t_CalcRotationMat(nx, ny, axis_nxny);
+  x0 = Rot1 * x0;
+  x1 = Rot1 * x1;
+  x2 = Rot1 * x2;
+
+  float t0 = t_CalcAngle(x0, y0, ny);
+  float t1 = t_CalcAngle(x1, y1, ny);
+  float t2 = t_CalcAngle(x2, y2, ny);
+  float t = t_CalcAverageAngle3(t0, t1, t2);
+
+  EMat3f Rot2 = Eigen::AngleAxis<float>(t, ny).matrix();
+
+  //R = Apq * (V sqrt(U) Vt) ^ -1
+  rottrans.first = Rot2 * Rot1;
+  rottrans.second = -rottrans.first * cx + cy;
+}
+
+
+
 
 //given two sets pf points 
 //compute translation t and rotation R to minimize 
 // ƒ°||R (x0-c0) - (x1-c1)||
 // c0 and c1 are gravty centers of x0 and x1
-// t = R c0 + c
+// t = - R c0 + c
 static void CalcShapeMatching(
     const std::vector<EVec3f> &x0,
     const std::vector<EVec3f> &x1,
@@ -720,7 +777,15 @@ void ModePlaceCPs::FitTemplateUsingCPs(bool modify_scale)
 
   for (int f = 0; f < num_frame; ++f)
   {
-    CalcShapeMatching(m_template_cps, m_cps[f], m_template_rottrans[f]);
+    const int N = std::min((int)m_template_cps.size(), (int)m_cps[f].size());
+    if (N == 3)
+    {
+      CalcTriangleMatching(m_template_cps, m_cps[f], m_template_rottrans[f]);
+    }
+    else if (N >= 4)
+    {
+      CalcShapeMatching(m_template_cps, m_cps[f], m_template_rottrans[f]);
+    }
   }
 
 }
