@@ -1,5 +1,6 @@
 #include "FormPlaceCPs.h"
 #include "FormVisParam.h"
+#include "FormMain.h"
 
 #pragma unmanaged
 #include "Mode/ModePlaceCPs.h"
@@ -110,6 +111,12 @@ System::Void FormPlaceCPs::groupBox1_Enter(System::Object^ sender, System::Event
 System::Void FormPlaceCPs::checkbox_modify_scale__CheckedChanged(System::Object^ sender, System::EventArgs^ e)
 {
 }
+
+System::Void FormPlaceCPs::checkbox_vis_fittemplate_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
+{
+  formMain_RedrawMainPanel();
+}
+
 
 
 System::Void FormPlaceCPs::button_fit_template__Click(System::Object^ sender, System::EventArgs^ e)

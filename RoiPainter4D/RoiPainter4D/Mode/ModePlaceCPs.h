@@ -36,7 +36,9 @@ class ModePlaceCPs : public ModeInterface
   std::vector<EVec3f> m_template_cps;
   int m_drag_tmpcpid; //-1 if nothing 
   TMesh m_template;
-  
+
+  std::vector<std::pair<EMat3f, EVec3f>> m_template_rottrans;//rigid transform
+
 
   ModePlaceCPs();
 public:

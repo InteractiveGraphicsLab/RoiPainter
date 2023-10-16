@@ -50,11 +50,15 @@ void ModePlaceCPs::startMode()
 {
   m_bL = m_bR = m_bM = false;
   m_drag_cpid = -1;
+  m_drag_tmpcpid = -1;
 
   //show dialog
   FormPlaceCPs_InitParam();
   FormPlaceCPs_Show();
   
+  //initialize vFlg
+  ImageCore::GetInst()->InitializeFlg4dByMask(formMain_SetProgressValue);
+
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
   m_isosurfaces.clear();
   m_isosurfaces.resize(num_frames);
@@ -64,17 +68,64 @@ void ModePlaceCPs::startMode()
   m_cps.resize(num_frames);
   m_cp_mesh.InitializeAsSphere(m_cp_rad, 10, 10);
 
+  m_template_rottrans.resize(num_frames);
 
   //4D volume (cpu) --> vis volume (gpu)
   UpdateImageCoreVisVolumes();
 }
 
 
+
+
+
 void ModePlaceCPs::FinishSegmentation() 
 {
+  const int num_frame = ImageCore::GetInst()->GetNumFrames();
+  const int num_voxel = ImageCore::GetInst()->GetNumVoxels();
+  const EVec3i  reso  = ImageCore::GetInst()->GetReso();
+  const EVec3f  pitch = ImageCore::GetInst()->GetPitch();
+
+  std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;
+
+
+  byte* flgInOut = new byte[num_voxel];
+
+  for (int f = 0; f < num_frame; ++f)
+  {
+    TMesh mesh = m_template;
+    mesh.Rotate(m_template_rottrans[f].first);
+    mesh.Translate(m_template_rottrans[f].second);
+    GenBinaryVolumeFromMesh_Y(reso, pitch, mesh, flgInOut);
+
+    byte* flg3d = flg4d[f];
+#pragma omp parallel for
+    for (int i = 0; i < num_voxel; ++i)
+    {
+      flg3d[i] = (flg3d[i]    == 0) ? 0   :
+                 (flgInOut[i] == 1) ? 255 : 1;
+    }
+
+    //progressbar
+    formMain_SetProgressValue((float) f / num_frame);
+    std::cout << "fillInMesh " << f << "\n";
+  }
+  delete[] flgInOut;
+  formMain_SetProgressValue(0);
+
+  ImageCore::GetInst()->mask_storeCurrentForeGround();
+
   ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
-  RoiPainter4D::formMain_RedrawMainPanel();
+  formMain_RedrawMainPanel();
 }
+
+
+
+
+
+
+
+
+
 
 
 void ModePlaceCPs::CancelSegmentation() 
@@ -416,6 +467,22 @@ void ModePlaceCPs::drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVe
     //draw isosurface
     DrawTransparentMesh(m_isosurfaces[frame_idx], DIFF1, AMBI1,SPEC, SHIN);
     m_template.Draw(DIFF2, AMBI2, SPEC, SHIN);
+
+    if (FormPlaceCPs_VisFitTemplate())
+    { 
+      float m[16];
+      const EMat3f& r = m_template_rottrans[frame_idx].first;
+      const EVec3f& t = m_template_rottrans[frame_idx].second;
+      m[0]=r(0,0); m[4]=r(0,1); m[ 8]=r(0,2); m[12] = t[0];
+      m[1]=r(1,0); m[5]=r(1,1); m[ 9]=r(1,2); m[13] = t[1];
+      m[2]=r(2,0); m[6]=r(2,1); m[10]=r(2,2); m[14] = t[2];
+      m[3]=  0 ; m[7]=  0 ; m[11]=  0 ; m[15] =    1;
+      glPushMatrix();
+      glMultMatrixf(m);
+      m_template.Draw(DIFF2, AMBI2, SPEC, SHIN);
+      glPopMatrix();
+    }
+    
   }
 
 
@@ -429,7 +496,7 @@ void ModePlaceCPs::drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVe
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
   }
-
+  
 }
 
 
@@ -549,8 +616,38 @@ void ModePlaceCPs::LoadTemplateMesh(std::string fname)
   
   EVec3f minbb, maxbb;
   m_template.GetBoundBox(minbb, maxbb);
-  m_template.Translate(EVec3f(-maxbb[0]*1.2,0,0));
+  m_template.Translate(EVec3f(-maxbb[0]*1.2f,0,0));
 }
+
+
+
+//Eigen solver test
+static void EigenSolverTest()
+{
+  EMat3f M;
+  M << 1, 2, 3,
+  2, -1, 5,
+  3, 5, 2;
+
+  Eigen::SelfAdjointEigenSolver<EMat3f> eigensolver(M);
+
+  if (eigensolver.info() == Eigen::Success)
+  {
+    EMat3f V = eigensolver.eigenvectors();
+    EVec3f d = eigensolver.eigenvalues();
+
+    EMat3f D;
+    D << d[0], 0, 0,
+      0, d[1], 0,
+      0, 0, d[2];
+
+    std::cout << "vis\n";
+    std::cout << V * V.transpose() << " -- \n\n"; //matrix (v0,v1,v2)
+    std::cout << V.transpose() * V << " -- \n\n"; //matrix (v0,v1,v2)
+    std::cout << V * D * V.transpose() << "\n\n";
+  }
+}
+
 
 
 
@@ -561,13 +658,69 @@ void ModePlaceCPs::LoadTemplateMesh(std::string fname)
 // t = R c0 + c
 static void CalcShapeMatching(
     const std::vector<EVec3f> &x0,
-    const std::vector<EVec3f> &x1)
+    const std::vector<EVec3f> &x1,
+    std::pair<EMat3f, EVec3f> &rottrans //OUTPUT : rotation, transpose
+)
 {
+  rottrans.first  = EMat3f::Identity();
+  rottrans.second << 0, 0, 0;
 
+  const int N = std::min((int)x0.size(), (int)x1.size());
+  if (N<=3) return; //TODO N == 3‚ÌŽž‚Í•Ê‚Ìˆ—
+
+  //calc gc 
+  EVec3f c0(0,0,0), c1(0,0,0);
+  for (int i = 0; i < N; ++i )
+  {
+    c0 += x0[i];
+    c1 += x1[i];
+  }
+  c0 /= (float)N;
+  c1 /= (float)N;
+
+  //calc Apq = ƒ°((x1i-c1))(x0i-c0)-T
+  EMat3f Apq = EMat3f::Zero();
+  for (int i = 0; i < N; ++i)
+  {
+    EVec3f p = x1[i] - c1, q = x0[i] - c0;
+    Apq(0,0) += p[0]*q[0];  Apq(0,1) += p[0]*q[1];  Apq(0,2) += p[0]*q[2];
+    Apq(1,0) += p[1]*q[0];  Apq(1,1) += p[1]*q[1];  Apq(1,2) += p[1]*q[2];
+    Apq(2,0) += p[2]*q[0];  Apq(2,1) += p[2]*q[1];  Apq(2,2) += p[2]*q[2];
+  }
+  
+  //AtA = V U Vt --> sqrt(AtA) = V sqrt(U) Vt 
+  EMat3f AtA = Apq.transpose() * Apq;
+  Eigen::SelfAdjointEigenSolver<EMat3f> eigensolver(AtA);
+  if (eigensolver.info() != Eigen::Success) return;
+  EMat3f V = eigensolver.eigenvectors();
+  EVec3f d = eigensolver.eigenvalues();
+
+  EMat3f D = EMat3f::Identity();
+  D(0, 0) = (d[0] > 0) ? sqrt(d[0]) : 0.000001f;
+  D(1, 1) = (d[1] > 0) ? sqrt(d[1]) : 0.000001f;
+  D(2, 2) = (d[2] > 0) ? sqrt(d[2]) : 0.000001f;
+  
+  //D --> D^-1
+  D(0, 0) = 1.0f / D(0, 0);
+  D(1, 1) = 1.0f / D(1, 1);
+  D(2, 2) = 1.0f / D(2, 2);
+  EMat3f sqrtAtA_inv = V * D * V.transpose();
+
+  //R = Apq * (V sqrt(U) Vt) ^ -1
+  rottrans.first = Apq * sqrtAtA_inv;
+  rottrans.second = -rottrans.first * c0 + c1;
 }
 
 
 void ModePlaceCPs::FitTemplateUsingCPs(bool modify_scale)
 {
-  
+  const int num_frame = ImageCore::GetInst()->GetNumFrames();
+  m_template_rottrans.resize(num_frame);
+
+
+  for (int f = 0; f < num_frame; ++f)
+  {
+    CalcShapeMatching(m_template_cps, m_cps[f], m_template_rottrans[f]);
+  }
+
 }
