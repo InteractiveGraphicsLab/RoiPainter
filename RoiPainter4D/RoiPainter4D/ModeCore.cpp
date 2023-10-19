@@ -15,6 +15,7 @@
 #include "Mode/ModeSegBronchi.h"
 #include "Mode/ModeSegSwallowTempGen.h"
 #include "Mode/ModeSegStrokeFfd.h"
+#include "Mode/ModePlaceCPs.h"
 
 #pragma managed
 #include "FormVisMask.h"
@@ -32,6 +33,7 @@
 #include "FormSegSwallowTempGen.h"
 #include "FormRefStrokeTrim.h"
 #include "FormSegStrokeFfd.h"
+#include "FormPlaceCPs.h"
 #pragma unmanaged
 
 using namespace RoiPainter4D;
@@ -60,36 +62,24 @@ void ModeCore::ModeSwitch(MODE_ID m)
 
   if (!m_mode->canEndMode()) return;
 
-  if (m == MODE_VIS_MASK)
-    m_mode = ModeVizMask::GetInst();
-  else if (m == MODE_SEG_REGGROW)
-    m_mode = ModeSegRGrow::GetInst();
-  else if (m == MODE_SEG_PIXPAINT)
-    m_mode = ModeSegPixPaint::GetInst();
-  else if (m == MODE_SEG_RIGIDICP)
-    m_mode = ModeSegRigidICP::GetInst();
-  else if (m == MODE_SEG_CLOSESTPIX)
-    m_mode = ModeSegClosestPix::GetInst();
-  //else if (m == MODE_SEG_PARACONT  ) 
+  if      (m == MODE_VIS_MASK   )   m_mode = ModeVizMask::GetInst();
+  else if (m == MODE_SEG_REGGROW)   m_mode = ModeSegRGrow::GetInst();
+  else if (m == MODE_SEG_PIXPAINT)  m_mode = ModeSegPixPaint::GetInst();
+  else if (m == MODE_SEG_RIGIDICP)  m_mode = ModeSegRigidICP::GetInst();
+  else if (m == MODE_SEG_CLOSESTPIX)m_mode = ModeSegClosestPix::GetInst();
+  //else if (m == MODE_SEG_PARACONT) 
   //  m_mode = ModeSegParaConts::getInst();
-  else if (m == MODE_SEG_LCLRGROW)
-    m_mode = ModeSegLocalRGrow::GetInst();
-  else if (m == MODE_SEG_BOLUS)
-    m_mode = ModeSegBolus::getInst();
-  else if (m == MODE_SEG_SWALLOW)
-    m_mode = ModeSegSwallowOrgans::GetInst();
-  else if (m == MODE_SEG_SWLTMPGEN)
-    m_mode = ModeSegSwallowTempGen::getInst();
-  else if (m == MODE_REF_STRKTRIM)
-    m_mode = ModeRefStrokeTrim::GetInst();
-  else if (m == MODE_SEG_JTRACKER)
-    m_mode = ModeSegJointTracker::GetInst();
-  else if (m == MODE_SEG_STROKEFFD)
-    m_mode = ModeSegStrokeFfd::GetInst();
-  else if (m == MODE_SEG_BRONCHI ) 
-    m_mode = ModeSegBronchi::GetInst();
-  else	
-    m_mode = ModeVizNormal::GetInst();
+  else if (m == MODE_SEG_LCLRGROW)  m_mode = ModeSegLocalRGrow::GetInst();
+  else if (m == MODE_SEG_BOLUS)     m_mode = ModeSegBolus::getInst();
+  else if (m == MODE_SEG_SWALLOW)   m_mode = ModeSegSwallowOrgans::GetInst();
+  else if (m == MODE_SEG_SWLTMPGEN) m_mode = ModeSegSwallowTempGen::getInst();
+  else if (m == MODE_REF_STRKTRIM)  m_mode = ModeRefStrokeTrim::GetInst();
+  else if (m == MODE_SEG_JTRACKER)  m_mode = ModeSegJointTracker::GetInst();
+  else if (m == MODE_SEG_STROKEFFD) m_mode = ModeSegStrokeFfd::GetInst();
+  else if (m == MODE_SEG_BRONCHI )  m_mode = ModeSegBronchi::GetInst();
+  else if (m == MODE_PLC_CPS)       m_mode = ModePlaceCPs  ::GetInst();
+  else
+    m_mode = ModeVizNormal ::GetInst();
 
   // Hide all Forms
   formVisMask_Hide();
@@ -107,6 +97,8 @@ void ModeCore::ModeSwitch(MODE_ID m)
   formSegBronchi_Hide();
   FormSegSwallowTempGen_Hide();
   FormSegStrokeFfd_Hide();
+  FormPlaceCPs_Hide();
+
   m_mode->startMode();
 }
 

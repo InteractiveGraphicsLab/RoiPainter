@@ -66,6 +66,13 @@ public:
   
   void CalcBoundBox(EVec3f& BBmin, EVec3f& BBmax) const;
   EVec3f GetGravityCenter();
+
+  bool TTriangleSoup::PickByRay(const EVec3f& rayP, const EVec3f& rayD, EVec3f& pos, int& pid) const;
+  bool TTriangleSoup::PickByRay(const EVec3f& rayP, const EVec3f& rayD, EVec3f& pos) const
+  {
+    int pidx;
+    return PickByRay(rayP, rayD, pos, pidx);
+  }
 };
 
 

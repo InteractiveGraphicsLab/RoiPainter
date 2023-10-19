@@ -708,6 +708,28 @@ inline double t_CalcAngle(
 }
 
 
+inline EMat3f t_CalcRotationMat(
+  const EVec3f& v1,
+  const EVec3f& v2,
+  const EVec3f& axis)
+{
+  double t = t_CalcAngle(v1,v2,axis);
+  return Eigen::AngleAxis<float>((float)t, axis).matrix();
+}
+
+//3この角度の平均をとる
+//（単純な平均ではなく、一度単位ベクトルにして、その和の変革を利用）
+inline float t_CalcAverageAngle3(float t0, float t1, float t2) 
+{
+  float x = cos(t0) + cos(t1) + cos(t2);
+  float y = sin(t0) + sin(t1) + sin(t2);
+  float t = atan2(y, x);
+  return t;
+}
+
+
+
+
 //2D座標系において左回りが正（右ねじ座標系でz(0,0,1)を軸にして右回りが正）
 inline double t_CalcAngle(const EVec2d& d1, const EVec2d& d2)
 {

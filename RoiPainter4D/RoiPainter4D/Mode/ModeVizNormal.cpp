@@ -167,7 +167,6 @@ void ModeVizNormal::drawScene(const EVec3f &cuboid, const EVec3f &camP, const EV
 
   if ( formVisParam_bRendVol() )
   {
-
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
