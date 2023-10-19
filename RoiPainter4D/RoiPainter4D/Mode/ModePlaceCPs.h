@@ -80,7 +80,7 @@ public:
 
 
 private:
-  bool pick_planes_isosurf(const EVec3f &ray_pos, const EVec3f &ray_dir, EVec3f &pos);
+  bool PickPlanesIsosurf(const EVec3f &ray_pos, const EVec3f &ray_dir, EVec3f &pos);
 };
 
 

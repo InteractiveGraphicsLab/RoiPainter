@@ -136,16 +136,15 @@ void ModePlaceCPs::CancelSegmentation()
 
 
 //表示されているplaneと isosurfaceをピッキングして、近い点を返す
-bool ModePlaceCPs::pick_planes_isosurf(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos)
+bool ModePlaceCPs::PickPlanesIsosurf(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos)
 {
   const int fidx = formVisParam_getframeI();
   if (fidx < 0 || m_isosurfaces.size() <= fidx ) return false;
 
   EVec3f p1, p2;
   bool pick1 = PickCrssec(ray_pos, ray_dir, p1);
-  bool pick2 = m_isosurfaces[fidx].PickByRay(ray_pos, ray_dir, p2);
+  bool pick2 = FormPlaceCPs_VisIsoSurface() && m_isosurfaces[fidx].PickByRay(ray_pos, ray_dir, p2);
 
-  
   if (!pick1 && !pick2) return false;
 
   if ( pick1 && !pick2) pos = p1;
@@ -231,7 +230,7 @@ void ModePlaceCPs::LBtnDown(const EVec2i& p, OglForCLI* ogl)
       m_template_cps.push_back(pos);
       m_drag_tmpcpid = (int)m_template_cps.size()-1;
     }
-    else if (pick_planes_isosurf(ray_pos, ray_dir, pos))
+    else if (PickPlanesIsosurf(ray_pos, ray_dir, pos))
     {
       m_cps[f].push_back(pos);
       m_drag_cpid = (int)m_cps[f].size() - 1;
@@ -332,7 +331,7 @@ void ModePlaceCPs::MouseMove(const EVec2i& p, OglForCLI* ogl)
   }
   else if (m_drag_cpid != -1)
   {
-    if (pick_planes_isosurf(ray_pos, ray_dir, pos))
+    if (PickPlanesIsosurf(ray_pos, ray_dir, pos))
     {
       m_cps[formVisParam_getframeI()][m_drag_cpid] = pos;
     }
@@ -426,8 +425,8 @@ static void DrawColoredCPs(
 
 static float SPEC[4] = { 0.9f,0.9f,0.9f,0.3f };
 static float SHIN[1] = { 54.0f };
-static float DIFF1[4] = { 0.2f,0.8f,0.2f,0.3f };
-static float AMBI1[4] = { 0.2f,0.8f,0.2f,0.3f };
+static float DIFF1[4] = { 0.3f,0.4f,0.1f,0.3f };
+static float AMBI1[4] = { 0.3f,0.4f,0.1f,0.3f };
 static float DIFF2[4] = { 0.8f,0.2f,0.8f,0.3f };
 static float AMBI2[4] = { 0.8f,0.2f,0.8f,0.3f };
 
@@ -465,11 +464,16 @@ void ModePlaceCPs::drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVe
     DrawColoredCPs(m_cp_mesh, m_template_cps);
 
     //draw isosurface
-    DrawTransparentMesh(m_isosurfaces[frame_idx], DIFF1, AMBI1,SPEC, SHIN);
+    if (FormPlaceCPs_VisIsoSurface())
+    {
+      m_isosurfaces[frame_idx].Draw(DIFF1, AMBI1, SPEC, SHIN);
+      //DrawTransparentMesh(m_isosurfaces[frame_idx], DIFF1, AMBI1, SPEC, SHIN);
+    }
+
     m_template.Draw(DIFF2, AMBI2, SPEC, SHIN);
 
     if (FormPlaceCPs_VisFitTemplate())
-    { 
+    {
       float m[16];
       const EMat3f& r = m_template_rottrans[frame_idx].first;
       const EVec3f& t = m_template_rottrans[frame_idx].second;
@@ -518,7 +522,29 @@ void ModePlaceCPs::IsosurfaceGenerateOneFrame(
   const EVec3i reso = ImageCore::GetInst()->GetReso();
   const EVec3f pitch = ImageCore::GetInst()->GetPitch();
   const short* volume = ImageCore::GetInst()->m_img4d[frame_idx];
-  t_MarchingCubes_PolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[frame_idx]);
+  
+  if (reso[0] % 2 == 0 && reso[2] % 2 == 0 && reso[2] % 2 == 0)
+  {
+    //halfen volume 
+    const int W = reso[0], H = reso[1], D = reso[2];
+    const int hW = W / 2, hH = H / 2, hD = D / 2;
+    EVec3i rh( hW, hH, hD);
+    EVec3f ph(pitch[0] * 2, pitch[1] * 2, pitch[2] * 2);
+    short* vh = new short[hW * hH * hD];
+    for (int z = 0; z < hD; ++z)
+      for (int y = 0; y < hH; ++y)
+        for (int x = 0; x < hW; ++x)
+          vh[z * hW * hH + y * hW + x] = volume[2*z*W*H + 2*y*W + 2*x];
+
+    t_MarchingCubes_PolygonSoup(rh, ph, vh, isovalue, 0, 0, m_isosurfaces[frame_idx]);
+    delete[] vh;
+
+  }
+  else
+  {
+    t_MarchingCubes_PolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[frame_idx]);
+  }
+
 
   std::cout << "isoSurfGen1Frame " << frame_idx << " / " << num_frames << "\n";
 }
@@ -534,12 +560,33 @@ void ModePlaceCPs::IsosurfaceGenerateAllFrame(const int isovalue)
   const EVec3i reso = ImageCore::GetInst()->GetReso();
   const EVec3f pitch = ImageCore::GetInst()->GetPitch();
 
+  const int W = reso[0], H = reso[1], D = reso[2];
+  const int hW = W / 2, hH = H / 2, hD = D / 2;
+  EVec3i rh(hW, hH, hD);
+  EVec3f ph(pitch[0] * 2, pitch[1] * 2, pitch[2] * 2);
+  short* vh = new short[hW * hH * hD];
+
   for (int i = 0; i < num_frames; ++i)
   {
     short* volume = ImageCore::GetInst()->m_img4d[i];
-    t_MarchingCubes_PolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[i]);
+    if (W % 2 == 0 && H % 2 == 0 && D % 2 == 0)
+    {
+      //halfen volume 
+      for (int z = 0; z < hD; ++z)
+        for (int y = 0; y < hH; ++y)
+          for (int x = 0; x < hW; ++x)
+            vh[z * hW * hH + y * hW + x] = volume[2 * z * W * H + 2 * y * W + 2 * x];
+      t_MarchingCubes_PolygonSoup(rh, ph, vh, isovalue, 0, 0, m_isosurfaces[i]);
+    }
+    else
+    {
+      t_MarchingCubes_PolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[i]);
+    }
     std::cout << "isoSurfGen " << i << "/" << num_frames << "\n";
   }
+
+  delete[] vh;
+
 }
 
 
@@ -664,7 +711,7 @@ static void CalcTriangleMatching(
   rottrans.first = EMat3f::Identity();
   rottrans.second << 0, 0, 0;
 
-  const int N = std::min((int)x.size(), (int)x.size());
+  const int N = std::min((int)x.size(), (int)y.size());
   if (N != 3) return; 
 
   //calc gc 

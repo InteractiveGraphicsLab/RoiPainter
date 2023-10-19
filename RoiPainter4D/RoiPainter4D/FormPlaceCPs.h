@@ -32,7 +32,8 @@ namespace RoiPainter4D {
 		System::Windows::Forms::Label^ label1;
 		System::Windows::Forms::CheckBox^ checkbox_modify_scale_;
 		System::Windows::Forms::CheckBox^ checkbox_vis_fittemplate;
-		System::Windows::Forms::Button^ button_inport_cpinfo_;
+	private: System::Windows::Forms::CheckBox^ checkbox_vis_isosurface;
+		   System::Windows::Forms::Button^ button_inport_cpinfo_;
 
 
 		FormPlaceCPs(void)
@@ -59,6 +60,10 @@ namespace RoiPainter4D {
 
 		bool VisFitTemplate() {
 			return checkbox_vis_fittemplate->Checked;
+		}
+
+		bool VisIsoSurface() {
+			return checkbox_vis_isosurface->Checked;
 		}
 
 	protected:
@@ -101,6 +106,7 @@ namespace RoiPainter4D {
 			this->checkbox_modify_scale_ = (gcnew System::Windows::Forms::CheckBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->checkbox_vis_fittemplate = (gcnew System::Windows::Forms::CheckBox());
+			this->checkbox_vis_isosurface = (gcnew System::Windows::Forms::CheckBox());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackbar_setisoValue_))->BeginInit();
 			this->groupBox2->SuspendLayout();
@@ -247,7 +253,7 @@ namespace RoiPainter4D {
 			// 
 			this->checkbox_modify_scale_->AutoSize = true;
 			this->checkbox_modify_scale_->Location = System::Drawing::Point(110, 17);
-			this->checkbox_modify_scale_->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
+			this->checkbox_modify_scale_->Margin = System::Windows::Forms::Padding(2);
 			this->checkbox_modify_scale_->Name = L"checkbox_modify_scale_";
 			this->checkbox_modify_scale_->Size = System::Drawing::Size(89, 16);
 			this->checkbox_modify_scale_->TabIndex = 24;
@@ -277,11 +283,26 @@ namespace RoiPainter4D {
 			this->checkbox_vis_fittemplate->UseVisualStyleBackColor = true;
 			this->checkbox_vis_fittemplate->CheckedChanged += gcnew System::EventHandler(this, &FormPlaceCPs::checkbox_vis_fittemplate_CheckedChanged);
 			// 
+			// checkbox_vis_isosurface
+			// 
+			this->checkbox_vis_isosurface->AutoSize = true;
+			this->checkbox_vis_isosurface->Checked = true;
+			this->checkbox_vis_isosurface->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->checkbox_vis_isosurface->Location = System::Drawing::Point(120, 213);
+			this->checkbox_vis_isosurface->Margin = System::Windows::Forms::Padding(2);
+			this->checkbox_vis_isosurface->Name = L"checkbox_vis_isosurface";
+			this->checkbox_vis_isosurface->Size = System::Drawing::Size(106, 16);
+			this->checkbox_vis_isosurface->TabIndex = 26;
+			this->checkbox_vis_isosurface->Text = L"vis iso surfaces";
+			this->checkbox_vis_isosurface->UseVisualStyleBackColor = true;
+			this->checkbox_vis_isosurface->CheckedChanged += gcnew System::EventHandler(this, &FormPlaceCPs::checkbox_vis_isosurface_CheckedChanged);
+			// 
 			// FormPlaceCPs
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(230, 338);
+			this->Controls->Add(this->checkbox_vis_isosurface);
 			this->Controls->Add(this->checkbox_vis_fittemplate);
 			this->Controls->Add(this->groupBox2);
 			this->Controls->Add(this->button_inport_cpinfo_);
@@ -313,11 +334,13 @@ namespace RoiPainter4D {
 		System::Void button_load_mesh__Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void checkbox_modify_scale__CheckedChanged(System::Object^ sender, System::EventArgs^ e);
 		System::Void checkbox_vis_fittemplate_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
+		System::Void checkbox_vis_isosurface_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {}
 };
 
 	inline void FormPlaceCPs_Show() { FormPlaceCPs::GetInst()->Show(); }
 	inline void FormPlaceCPs_Hide() { FormPlaceCPs::GetInst()->Hide(); }
 	inline void FormPlaceCPs_InitParam(){ FormPlaceCPs::GetInst()->InitParams(); }
-	inline bool FormPlaceCPs_VisFitTemplate(){return FormPlaceCPs::GetInst()->VisFitTemplate(); }
+	inline bool FormPlaceCPs_VisFitTemplate() { return FormPlaceCPs::GetInst()->VisFitTemplate(); }
+	inline bool FormPlaceCPs_VisIsoSurface() { return FormPlaceCPs::GetInst()->VisIsoSurface(); }
 
 }
