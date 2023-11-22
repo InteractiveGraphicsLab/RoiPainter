@@ -113,8 +113,6 @@ bool t_open4DImg_traw3d
   EVec3f &pitch
 )
 {
-
-
   for (int idx = 0; idx < (int)fnames.size(); ++idx)
   {
     std::cout << "load " << idx << "/" << fnames.size();
@@ -150,6 +148,43 @@ bool t_open4DImg_traw3d
   }
   return true;
 }
+
+
+
+bool t_open3DImg_traw3d_ub
+(
+  const std::string &fname,
+  EVec3i& reso ,
+  EVec3f& pitch,
+  byte*   &img // allocated in this function 
+)
+{
+  FILE* fp = fopen(fname.c_str(), "rb");
+  if (fp == 0) return false;
+
+  int  W, H, D; // resoulution (Width, Height, Depth)
+  fread(&W, sizeof(int), 1, fp);
+  fread(&H, sizeof(int), 1, fp);
+  fread(&D, sizeof(int), 1, fp);
+  double px, py, pz;
+  fread(&px, sizeof(double), 1, fp);
+  fread(&py, sizeof(double), 1, fp);
+  fread(&pz, sizeof(double), 1, fp);
+
+  reso << W, H, D;
+  pitch << (float)px, (float)py, (float)pz;
+
+  img = new byte[W*H*D];
+
+  if (fread(img, sizeof(byte), W * H * D, fp) != W * H * D)
+  {
+    delete[] img;
+    return false;
+  }
+  return true;
+}
+
+
 
 
 static bool t_open4DImg_raw8bit(
@@ -917,8 +952,6 @@ void ImageCore::SaveImg4DAsTRawFiles(std::string fname)
 
 
 
-
-
 void ImageCore::LoadMask(std::string fname, int timeI)
 {
   FILE* fp = fopen(fname.c_str(), "rb");
@@ -1106,7 +1139,47 @@ void ImageCore::LoadMaskMha(std::vector<std::string> fnames, int timeI)
 
 
 
+void ImageCore::LoadMaskTRawFiles(
+  std::vector<std::string> fnames, 
+  int frameI)
+{ 
+  const int  num_frames = (int)m_img4d.size();
+  const byte num_masks  = (byte)m_mask_data.size();
 
+  int num_new_mask = 0;
+  
+  for(int fi=0; fi < fnames.size(); ++fi)
+  { 
+    EVec3i reso;
+    EVec3f pitch;
+    byte *img;
+    if (!t_open3DImg_traw3d_ub(fnames[fi], reso, pitch, img))
+    {
+      std::cout << "failed reading " << fi << " files\n";
+      delete[] img;
+      continue;
+    }
+
+    // write mask data 
+    byte* mask = m_mask4d[fi];
+    const int WHD = reso[0] * reso[1] * reso[2];
+    for (int i = 0; i < WHD; ++i)
+    {
+      if(img[i] == 0) continue;
+      if(mask[i]>0 && m_mask_data[mask[i]].lock) continue;
+
+      if (img[i] > num_new_mask) num_new_mask = img[i];
+      mask[i] = img[i] + num_masks - 1;
+    }
+
+    delete[] img;
+  }
+
+  //generate mask 
+  for (int c = 0; c < num_new_mask; ++c)
+    m_mask_data.push_back(MaskData("import", ColPallet[(num_masks + c) % ColPalletN], 0.1, false, true));
+  m_vol_mask.SetValue(m_mask4d[frameI]);
+}
 
 
 

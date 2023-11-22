@@ -794,7 +794,7 @@ System::Void FormMain::file_exportMasktrawub_Click(
   System::EventArgs^ e)
 {
   SaveFileDialog^ dlg = gcnew SaveFileDialog();
-  dlg->Filter = "4D image traw3d_ss |*";
+  dlg->Filter = "4D image traw3d_ub |*";
 
   if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
 
@@ -804,6 +804,33 @@ System::Void FormMain::file_exportMasktrawub_Click(
   ImageCore::GetInst()->SaveMaskAsTRawFiles(fname);
 
 }
+
+
+System::Void FormMain::file_importMasktrawub_Click(
+  System::Object^ sender,
+  System::EventArgs^ e)
+{
+  const char* filter = "traw 3D unsigned byte (*.traw3d_ub)|*.traw3d_ub";
+  std::vector<std::string> filenames;
+  std::vector<std::string> filedates;
+  if (!OpenFileDlgToSelectMultiFiles(filter, filenames, filedates))
+    return;
+  
+  for(int i = 0; i < filenames.size(); ++i) 
+    std::cout << filenames[i] << " " << filedates[i] << "\n";
+
+  const int frameI = FormVisParam::GetInst()->GetframeI();
+  ImageCore::GetInst()->LoadMaskTRawFiles(filenames, frameI);
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
+  RedrawMainPanel();
+
+}
+
+
+
+
+
+
 
 
 

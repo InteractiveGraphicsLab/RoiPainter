@@ -56,6 +56,7 @@ namespace RoiPainter4D {
   private: System::Windows::Forms::ToolStripMenuItem^ export4dcttrawssToolStripMenuItem;
   private: System::Windows::Forms::ToolStripMenuItem^ exportMasktrawubToolStripMenuItem;
   private: System::Windows::Forms::ToolStripMenuItem^ file_loadMaskMha;
+  private: System::Windows::Forms::ToolStripMenuItem^ importMasktrawubToolStripMenuItem;
 
 
 
@@ -137,8 +138,9 @@ namespace RoiPainter4D {
         this->switch_segSwallowTempGen = (gcnew System::Windows::Forms::ToolStripMenuItem());
         this->switch_segClosestPix = (gcnew System::Windows::Forms::ToolStripMenuItem());
         this->switch_segJointTracker = (gcnew System::Windows::Forms::ToolStripMenuItem());
-        this->m_progressbar = (gcnew System::Windows::Forms::ProgressBar());
         this->switch_placeCPs = (gcnew System::Windows::Forms::ToolStripMenuItem());
+        this->m_progressbar = (gcnew System::Windows::Forms::ProgressBar());
+        this->importMasktrawubToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
         this->mainmenu->SuspendLayout();
         this->SuspendLayout();
         // 
@@ -171,10 +173,10 @@ namespace RoiPainter4D {
         // 
         // menu_file
         // 
-        this->menu_file->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(10) {
+        this->menu_file->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(11) {
             this->file_dcm3d,
                 this->file_dcm2D, this->file_traw3d, this->file_saveMask, this->file_loadMask, this->file_loadMaskMha, this->open3D8bitRawrawToolStripMenuItem,
-                this->toolStripSeparator4, this->export4dcttrawssToolStripMenuItem, this->exportMasktrawubToolStripMenuItem
+                this->toolStripSeparator4, this->export4dcttrawssToolStripMenuItem, this->exportMasktrawubToolStripMenuItem, this->importMasktrawubToolStripMenuItem
         });
         this->menu_file->Name = L"menu_file";
         this->menu_file->Size = System::Drawing::Size(37, 20);
@@ -376,6 +378,13 @@ namespace RoiPainter4D {
         this->switch_segJointTracker->Text = L"Seg Joint Tracker";
         this->switch_segJointTracker->Click += gcnew System::EventHandler(this, &FormMain::switch_segJointTracker_Click);
         // 
+        // switch_placeCPs
+        // 
+        this->switch_placeCPs->Name = L"switch_placeCPs";
+        this->switch_placeCPs->Size = System::Drawing::Size(304, 22);
+        this->switch_placeCPs->Text = L"Place Points";
+        this->switch_placeCPs->Click += gcnew System::EventHandler(this, &FormMain::switch_placeCPs_Click);
+        // 
         // m_progressbar
         // 
         this->m_progressbar->Location = System::Drawing::Point(632, 0);
@@ -383,12 +392,12 @@ namespace RoiPainter4D {
         this->m_progressbar->Size = System::Drawing::Size(118, 23);
         this->m_progressbar->TabIndex = 2;
         // 
-        // switch_placeCPs
+        // importMasktrawubToolStripMenuItem
         // 
-        this->switch_placeCPs->Name = L"switch_placeCPs";
-        this->switch_placeCPs->Size = System::Drawing::Size(304, 22);
-        this->switch_placeCPs->Text = L"Place Points";
-        this->switch_placeCPs->Click += gcnew System::EventHandler(this, &FormMain::switch_placeCPs_Click);
+        this->importMasktrawubToolStripMenuItem->Name = L"importMasktrawubToolStripMenuItem";
+        this->importMasktrawubToolStripMenuItem->Size = System::Drawing::Size(198, 22);
+        this->importMasktrawubToolStripMenuItem->Text = L"Import Mask (traw_ub)";
+        this->importMasktrawubToolStripMenuItem->Click += gcnew System::EventHandler(this, &FormMain::file_importMasktrawub_Click);
         // 
         // FormMain
         // 
@@ -438,6 +447,7 @@ namespace RoiPainter4D {
     System::Void file_raw8bit_Click(System::Object^ sender, System::EventArgs^ e);
     System::Void file_export4dcttraw_Click(System::Object^ sender, System::EventArgs^ e);
     System::Void file_exportMasktrawub_Click(System::Object^ sender, System::EventArgs^ e);
+    System::Void file_importMasktrawub_Click(System::Object^ sender, System::EventArgs^ e);
 
     System::Void switch_visNorm_Click(System::Object^  sender, System::EventArgs^  e);
     System::Void switch_visMask_Click(System::Object^  sender, System::EventArgs^  e);

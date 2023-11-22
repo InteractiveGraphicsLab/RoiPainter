@@ -130,7 +130,10 @@ public:
 
   void SaveMask(std::string fname);
   void LoadMask(std::string fname, int timeI);
-  void LoadMaskMha(std::vector<std::string> fname, int timeI);
+  void LoadMaskMha(      std::vector<std::string> fname, int timeI);
+  void LoadMaskTRawFiles(std::vector<std::string> fnames, int frameI);
+
+
 
   void SaveMaskAsTRawFiles(std::string fname);
   void SaveImg4DAsTRawFiles(std::string fname);
