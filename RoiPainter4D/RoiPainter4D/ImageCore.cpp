@@ -747,7 +747,7 @@ void ImageCore::LoadMask_Mha(std::vector<std::string> fnames, int timeI)
   //generate mask 
   m_mask_data.clear();
   m_mask_data.push_back(MaskData("bckGrnd", EVec3i(0, 0, 0), 0, 0));
-  for( int c = 1; c < max_mask_id; ++c)
+  for( int c = 1; c <= max_mask_id; ++c)
     m_mask_data.push_back(MaskData("region", ColPallet[c % ColPalletN], 0.1, false, true));
 
   m_vol_mask.SetValue(m_mask4d[timeI]);
