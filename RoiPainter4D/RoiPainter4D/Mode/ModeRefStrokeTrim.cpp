@@ -101,7 +101,7 @@ void ModeRefStrokeTrim::startMode ()
 	memcpy(m_msk3D_pre, &flg4d[fi][0], sizeof(byte)*num_voxels);
 	m_msk3D_pre_fi = fi;
   
-  m_bDrawCrssec = false;
+  m_bDrawCrssec = true;
 
 	std::cout << "finish start mode!!!!\n";
 }

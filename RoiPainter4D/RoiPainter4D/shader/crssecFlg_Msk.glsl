@@ -23,12 +23,19 @@ void main(void)
 	if( u_doHL )
 	{
 		float maskID  = texture3D( u_img3_mask, gl_TexCoord[0].xyz )  ;
-		vec4  color   = texture1D( u_img1_mskC, maskID + COEF_1_255_2);
-   		gl_FragColor.xyz = 0.5 * (color.xyz + vec3( imgI, imgI, imgI ));
+		if (maskID > 0)
+		{
+			vec4  color = texture1D(u_img1_mskC, maskID + COEF_1_255_2);
+			gl_FragColor.xyz = 0.5 * (color.xyz + vec3(imgI, imgI, imgI));
+		}
+		else
+		{
+			gl_FragColor.xyz = vec3(imgI, imgI, imgI);
+		}
 	}
 	else
 	{
-   		gl_FragColor.xyz = vec3( imgI, imgI, imgI );
+		gl_FragColor.xyz = vec3( imgI, imgI, imgI );
 	}
 }
 

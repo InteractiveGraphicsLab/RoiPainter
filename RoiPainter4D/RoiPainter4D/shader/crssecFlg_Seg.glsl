@@ -23,7 +23,7 @@ void main(void)
 	if( u_gMag ) imgI = texture3D(u_img3_gMag, gl_TexCoord[0]).x;
 	else         imgI = texture3D(u_img3_vol , gl_TexCoord[0]).x;
 
-    gl_FragColor = vec4(imgI, imgI, imgI, 1 );
+  gl_FragColor = vec4(imgI, imgI, imgI, 1 );
 
 	if( u_doHL ) 
 	{
@@ -35,9 +35,19 @@ void main(void)
 		}
 		else if( imgFlg < COEF_1_255_2) //flg == 0
 		{
-			float maskID  = texture3D( u_img3_mask, gl_TexCoord[0].xyz);
-			vec4  color   = texture1D( u_img1_mskC, maskID + COEF_1_255_2).xyzw;
-   			gl_FragColor.xyz = 0.5 * (color.xyz + vec3( imgI, imgI, imgI ));
+			float maskID = texture3D(u_img3_mask, gl_TexCoord[0].xyz);
+			if (maskID > 0)
+			{
+				vec4  color = texture1D(u_img1_mskC, maskID + COEF_1_255_2);
+				gl_FragColor.xyz = 0.5 * (color.xyz + vec3(imgI, imgI, imgI));
+			}
+			else
+			{
+				gl_FragColor.xyz = vec3(imgI, imgI, imgI);
+			}
+			//float maskID  = texture3D( u_img3_mask, gl_TexCoord[0].xyz);
+			//vec4  color   = texture1D( u_img1_mskC, maskID + COEF_1_255_2).xyzw;
+			//gl_FragColor.xyz = 0.5 * (color.xyz + vec3( imgI, imgI, imgI ));
 		}	
 	} 
 }

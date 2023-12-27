@@ -157,6 +157,7 @@
     <ClCompile Include="..\..\COMMON\tmarchingcubes.cpp" />
     <ClCompile Include="..\..\COMMON\tmesh.cpp" />
     <ClCompile Include="..\..\COMMON\ttrianglesoup.cpp" />
+    <ClCompile Include="..\..\COMMON\tvolumelader.cpp" />
     <ClCompile Include="CagedMeshSequence.cpp" />
     <ClCompile Include="CrsSecCore.cpp" />
     <ClCompile Include="FormLoadFrameIdx.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="..\..\COMMON\tmesh.h" />
     <ClInclude Include="..\..\COMMON\tqueue.h" />
     <ClInclude Include="..\..\COMMON\ttrianglesoup.h" />
+    <ClInclude Include="..\..\COMMON\tvolumelader.h" />
     <ClInclude Include="CagedMeshSequence.h" />
     <ClInclude Include="CliMessageBox.h" />
     <ClInclude Include="CrsSecCore.h" />
