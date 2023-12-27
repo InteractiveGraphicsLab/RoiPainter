@@ -519,7 +519,6 @@ System::Void FormMain::switch_placeCPs_Click(System::Object^ sender, System::Eve
 
 
 
-
 static void n_marshalString(String ^ s, std::string& os) {
   const char* chars = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
   os = chars;
@@ -527,11 +526,10 @@ static void n_marshalString(String ^ s, std::string& os) {
 }
 
 
-static bool OpenFileDlgToSelectMultiFiles(
+static bool OpenDlgMulti(
     const char* filter,
     std::vector<std::string> &out_f_names,
-    std::vector<std::string> &out_f_dates
-)
+    std::vector<std::string> &out_f_dates)
 {
   OpenFileDialog^ dlg = gcnew OpenFileDialog();
   dlg->Filter = gcnew System::String(filter);
@@ -547,9 +545,30 @@ static bool OpenFileDlgToSelectMultiFiles(
     n_marshalString(File::GetCreationTime(it).ToString(), fTime);
     out_f_names.push_back(fName);
     out_f_dates.push_back(fTime);
+    std::cout << fName.c_str() << " " << fTime.c_str() << "\n";
   }
+  
   return true;
 }
+
+
+
+static bool SaveDlgSingle(
+  const char* filter,
+  std::string &out_f_name)
+{
+  SaveFileDialog^ dlg = gcnew SaveFileDialog();
+  dlg->Filter = gcnew System::String(filter);
+  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) 
+    return false;
+
+  IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
+  out_f_name = static_cast<const char*>(mptr.ToPointer());
+  return true;
+}
+
+
+
 
 
 
@@ -559,35 +578,31 @@ System::Void  FormMain::file_dcm3d_Click(
   System::EventArgs^  e)
 {
   const char* filter = "3d dcm files(*.dcm;*)|*.dcm;*";
-  std::vector<std::string> fNames;
-  std::vector<std::string> fDates;
-  if (!OpenFileDlgToSelectMultiFiles(filter, fNames, fDates) )
-    return;
+  std::vector<std::string> fNames, fDates;
+  if (!OpenDlgMulti(filter, fNames, fDates) ) return;
 
   if (fNames.size() == 1 || formSortFiles_showModalDialog(fNames, fDates)) 
   {
     std::vector<std::vector<std::string>> tmp;
-    ImageCore::GetInst()->load4DCT(fNames, tmp, FT_3D_DICOM_FLIES);
+    ImageCore::GetInst()->load4DCT(fNames, tmp, FT_DCM3D);
     FormVisParam::GetInst()->InitAllItemsForNewImg();
     InitCameraPosition();
     ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
-
     RedrawMainPanel();
   }
 }
 
 
-System::Void  FormMain::file_traw3d_Click(
+System::Void FormMain::file_traw3d_Click(
   System::Object^ sender,
   System::EventArgs^ e)
 {
-  const char* filter = "3d traw files(*.traw3D_ss; *) | *.traw3D_ss; *";
-  std::vector<std::string> fNames;
-  std::vector<std::string> fDates;
-  if (!OpenFileDlgToSelectMultiFiles(filter, fNames, fDates))
-    return;
+  const char* filter = "traw3d files(*.traw3D_ss)|*.traw3D_ss";
+  std::vector<std::string> fNames, fDates;
+  if (!OpenDlgMulti(filter, fNames, fDates)) return;
 
-  if (fNames.size() == 1 || formSortFiles_showModalDialog(fNames, fDates)) {
+  if (fNames.size() == 1 || formSortFiles_showModalDialog(fNames, fDates)) 
+  {
     std::vector<std::vector<std::string>> tmp;
     ImageCore::GetInst()->load4DCT(fNames, tmp, FT_TRAW3D);
     FormVisParam::GetInst()->InitAllItemsForNewImg();
@@ -597,24 +612,42 @@ System::Void  FormMain::file_traw3d_Click(
 }
 
 
+System::Void FormMain::file_mha_Click(
+    System::Object^ sender, 
+    System::EventArgs^ e) 
+{
+  const char* filter = "mha files(*.mha)|*.mha";
+  std::vector<std::string> fNames, fDates;
+  if (!OpenDlgMulti(filter, fNames, fDates)) return;
+
+  if (fNames.size() == 1 || formSortFiles_showModalDialog(fNames, fDates))
+  {
+    std::vector<std::vector<std::string>> tmp;
+    ImageCore::GetInst()->load4DCT(fNames, tmp, FT_MHA);
+    FormVisParam::GetInst()->InitAllItemsForNewImg();
+    InitCameraPosition();
+    RedrawMainPanel();
+  }
+}
+
+
+
 System::Void FormMain::file_raw8bit_Click(
   System::Object^ sender,
   System::EventArgs^ e)
 {
   const char* filter = "3d 8bit raw (*.raw)|*.raw";
-  std::vector<std::string> fNames;
-  std::vector<std::string> fDates;
-  if (!OpenFileDlgToSelectMultiFiles(filter, fNames, fDates))
-    return;
+  std::vector<std::string> fNames, fDates;
+  if (!OpenDlgMulti(filter, fNames, fDates)) return;
 
-  if (fNames.size() == 1 || formSortFiles_showModalDialog(fNames, fDates)) {
+  if (fNames.size() == 1 || formSortFiles_showModalDialog(fNames, fDates)) 
+  {
     std::vector<std::vector<std::string>> tmp;
     ImageCore::GetInst()->load4DCT(fNames, tmp, FT_RAW8BIT);
     FormVisParam::GetInst()->InitAllItemsForNewImg();
     InitCameraPosition();
     RedrawMainPanel();
   }
-
 }
 
 
@@ -705,41 +738,65 @@ System::Void FormMain::file_dcm2D_Click
   }
 
   //3. load file
-  ImageCore::GetInst()->load4DCT(std::vector<std::string>(), fnamesInDirs_trimed, FT_2D_DICOM_FLIES);
+  ImageCore::GetInst()->load4DCT(std::vector<std::string>(), fnamesInDirs_trimed, FT_DCM2D);
   FormVisParam::GetInst()->InitAllItemsForNewImg();
   InitCameraPosition();
   RedrawMainPanel();
 }
 
 
-System::Void FormMain::file_saveMask_Click(System::Object^  sender, System::EventArgs^  e)
+//SAVE Mask 
+System::Void FormMain::file_saveMask_Click(
+    System::Object^  sender, 
+    System::EventArgs^  e)
 {
-  SaveFileDialog^ dlg = gcnew SaveFileDialog();
-  dlg->Filter = "roi painter 4D mask (*.msk4)|*.msk4";
+  const char* filter = "4d mask file (*.msk4)|*.msk4";
+  std::string fname;
+  if( !SaveDlgSingle(filter, fname) ) return;
 
-  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
-
-  IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
-  std::string fname = static_cast<const char*>(mptr.ToPointer());
-
-  ImageCore::GetInst()->SaveMask(fname);
+  ImageCore::GetInst()->SaveMask_Msk4(fname);
 }
 
 
+System::Void FormMain::file_saveMasktrawub_Click(
+    System::Object^ sender,
+    System::EventArgs^ e)
+{
+  const char* filter = "mask file (*.traw3d_ub)|*";
+  std::string fname;
+  if (!SaveDlgSingle(filter, fname)) return;
+
+  ImageCore::GetInst()->SaveMask_Trawub(fname);
+}
+
+
+System::Void FormMain::file_saveMaskMha_Click(
+    System::Object^ sender, 
+    System::EventArgs^ e) 
+{
+  const char* filter = "mask files (*.mha) |*";
+  std::string fname;
+  if (!SaveDlgSingle(filter, fname)) return;
+
+  ImageCore::GetInst()->SaveMask_Mha(fname);
+}
+
+
+
+
+//Load Mask 
 System::Void FormMain::file_loadMask_Click(System::Object^  sender, System::EventArgs^  e)
 {
   OpenFileDialog^ dlg = gcnew OpenFileDialog();
-  dlg->Filter = "roi painter 4D mask (*.msk4)|*.msk4";
+  dlg->Filter = "4D mask file (*.msk4)|*.msk4";
   dlg->Multiselect = false;
-
   if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
-
   IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
   std::string fname = static_cast<const char*>(mptr.ToPointer());
 
   const int frameI = FormVisParam::GetInst()->GetframeI();
 
-  ImageCore::GetInst()->LoadMask(fname, frameI);
+  ImageCore::GetInst()->LoadMask_Msk4(fname, frameI);
   ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   RedrawMainPanel();
 }
@@ -747,84 +804,56 @@ System::Void FormMain::file_loadMask_Click(System::Object^  sender, System::Even
 
 System::Void FormMain::file_loadMaskMha_Click(System::Object^ sender, System::EventArgs^ e)
 {
-
-  OpenFileDialog^ dlg = gcnew OpenFileDialog();
-  dlg->Filter = "3D masks (*.mha)|*.mha";
-  dlg->Multiselect = true;
-
-  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
-
-  std::vector<std::string> fnames;
-  for each (auto it in  dlg->FileNames)
-  {
-    std::string fName;
-    n_marshalString(it, fName);
-    fnames.push_back(fName);
-  }
+  const char* filter = "mha files (*.mha)|*.mha";
+  std::vector<std::string> fnames, fdates;
+  if (!OpenDlgMulti(filter, fnames, fdates)) return;
 
   const int frameI = FormVisParam::GetInst()->GetframeI();
-
-  ImageCore::GetInst()->LoadMaskMha(fnames, frameI);
+  ImageCore::GetInst()->LoadMask_Mha(fnames, frameI);
   ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   RedrawMainPanel();
 }
 
 
+System::Void FormMain::file_loadMasktrawub_Click(
+  System::Object^ sender,
+  System::EventArgs^ e)
+{
+  const char* filter = "mask files (*.traw3d_ub)|*.traw3d_ub";
+  std::vector<std::string> fnames, fdates;
+  if (!OpenDlgMulti(filter, fnames, fdates)) return;
+
+  const int frameI = FormVisParam::GetInst()->GetframeI();
+  ImageCore::GetInst()->LoadMask_Trawub(fnames, frameI);
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
+  RedrawMainPanel();
+
+}
 
 
 System::Void FormMain::file_export4dcttraw_Click(
   System::Object^ sender, 
   System::EventArgs^ e)
 {
-  SaveFileDialog^ dlg = gcnew SaveFileDialog();
-  dlg->Filter = "4D mask traw3d_ss |*";
+  const char* filter = "traw3d_ss |*";
+  std::string fname;
+  if (!SaveDlgSingle(filter, fname)) return;
 
-  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
-
-  IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
-  std::string fname = static_cast<const char*>(mptr.ToPointer());
-
-  ImageCore::GetInst()->SaveImg4DAsTRawFiles(fname);
+  ImageCore::GetInst()->SaveImg4D_traw3dss(fname);
 }
 
-
-
-System::Void FormMain::file_exportMasktrawub_Click(
+System::Void FormMain::file_export4dct_mha_Click(
   System::Object^ sender,
   System::EventArgs^ e)
 {
-  SaveFileDialog^ dlg = gcnew SaveFileDialog();
-  dlg->Filter = "4D image traw3d_ub |*";
+  const char* filter = "mha |*";
+  std::string fname;
+  if (!SaveDlgSingle(filter, fname)) return;
 
-  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
-
-  IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
-  std::string fname = static_cast<const char*>(mptr.ToPointer());
-
-  ImageCore::GetInst()->SaveMaskAsTRawFiles(fname);
-
+  ImageCore::GetInst()->SaveImg4D_mha(fname);
 }
 
 
-System::Void FormMain::file_importMasktrawub_Click(
-  System::Object^ sender,
-  System::EventArgs^ e)
-{
-  const char* filter = "traw 3D unsigned byte (*.traw3d_ub)|*.traw3d_ub";
-  std::vector<std::string> filenames;
-  std::vector<std::string> filedates;
-  if (!OpenFileDlgToSelectMultiFiles(filter, filenames, filedates))
-    return;
-  
-  for(int i = 0; i < filenames.size(); ++i) 
-    std::cout << filenames[i] << " " << filedates[i] << "\n";
-
-  const int frameI = FormVisParam::GetInst()->GetframeI();
-  ImageCore::GetInst()->LoadMaskTRawFiles(filenames, frameI);
-  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
-  RedrawMainPanel();
-
-}
 
 
 

@@ -180,6 +180,9 @@
     <ClCompile Include="FormPlaceCPs.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\COMMON\tvolumelader.cpp">
+      <Filter>COMMON</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FormMain.h">
@@ -358,6 +361,9 @@
     </ClInclude>
     <ClInclude Include="FormPlaceCPs.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\tvolumelader.h">
+      <Filter>COMMON</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

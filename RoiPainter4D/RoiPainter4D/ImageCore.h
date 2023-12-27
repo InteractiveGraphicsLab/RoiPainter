@@ -23,8 +23,9 @@ enum LOAD_FILE_TYPE {
   FT_NON,
   FT_TRAW3D,
   FT_RAW8BIT,
-  FT_3D_DICOM_FLIES,
-  FT_2D_DICOM_FLIES
+  FT_DCM3D,
+  FT_DCM2D,
+  FT_MHA
 };
 
 
@@ -128,15 +129,16 @@ public:
   const std::vector<MaskData> &GetMaskData(){ return m_mask_data; }
   int   GetSelectMaskIdx(){ return m_active_maskid; }
 
-  void SaveMask(std::string fname);
-  void LoadMask(std::string fname, int timeI);
-  void LoadMaskMha(      std::vector<std::string> fname, int timeI);
-  void LoadMaskTRawFiles(std::vector<std::string> fnames, int frameI);
+  
+  void LoadMask_Msk4  (std::string fname, int timeI);
+  void LoadMask_Mha   (std::vector<std::string> fname , int timeI );
+  void LoadMask_Trawub(std::vector<std::string> fnames, int frameI);
+  void SaveMask_Msk4  (std::string fname);
+  void SaveMask_Trawub(std::string fname);
+  void SaveMask_Mha   (std::string fname);
 
-
-
-  void SaveMaskAsTRawFiles(std::string fname);
-  void SaveImg4DAsTRawFiles(std::string fname);
+  void SaveImg4D_traw3dss(std::string fname);
+  void SaveImg4D_mha     (std::string fname);
 
   void UpdateVisVolume(int winlv_min, int winlv_max, int frame_idx);
   void UpdateImgMaskColor();
@@ -170,7 +172,6 @@ public:
     m_pitch = pitch;
   }
 
-
   inline int GetVoxelIndex(const EVec3f& position){
     const int x = t_crop( 0, m_reso[0] - 1, (int)(position[0] / m_pitch[0]));
     const int y = t_crop( 0, m_reso[1] - 1, (int)(position[1] / m_pitch[1]));
@@ -178,14 +179,12 @@ public:
     return x + y * m_reso[0] + z * m_reso[0] * m_reso[1];
   }
 
-
   inline EVec4i GetVoxelIndexXYZI(const EVec3f& position) {
     const int x = t_crop( 0, m_reso[0] - 1, (int)(position[0] / m_pitch[0]));
     const int y = t_crop( 0, m_reso[1] - 1, (int)(position[1] / m_pitch[1]));
     const int z = t_crop( 0, m_reso[2] - 1, (int)(position[2] / m_pitch[2]));
     return EVec4i(x,y,z, x + y * m_reso[0] + z * m_reso[0] * m_reso[1]);
   }
-
 
   short GetVoxelValue(const int frameI, const EVec3f& position){
     return m_img4d[frameI][GetVoxelIndex(position)];
@@ -202,25 +201,6 @@ public:
 
 
 
-inline void t_flipVolume3DInZ
-(
-  const int W,
-  const int H,
-  const int D,
-  short* img
-)
-{
-  short *tmp = new short[W*H];
-  for (int i = 0; i < D / 2; ++i)
-  {
-    short *img1 = &(img[i     * W * H]);
-    short *img2 = &(img[(D - 1 - i) * W * H]);
-    memcpy(tmp, img1, sizeof(short) * W * H);
-    memcpy(img1, img2, sizeof(short) * W * H);
-    memcpy(img2, tmp, sizeof(short) * W * H);
-  }
-  delete[] tmp;
-}
 
 void CalcDistanceTransform(
   const EVec3f &pitch,

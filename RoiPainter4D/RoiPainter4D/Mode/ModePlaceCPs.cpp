@@ -740,9 +740,9 @@ static void CalcTriangleMatching(
   x1 = Rot1 * x1;
   x2 = Rot1 * x2;
 
-  float t0 = t_CalcAngle(x0, y0, ny);
-  float t1 = t_CalcAngle(x1, y1, ny);
-  float t2 = t_CalcAngle(x2, y2, ny);
+  float t0 = (float)t_CalcAngle(x0, y0, ny);
+  float t1 = (float)t_CalcAngle(x1, y1, ny);
+  float t2 = (float)t_CalcAngle(x2, y2, ny);
   float t = t_CalcAverageAngle3(t0, t1, t2);
 
   EMat3f Rot2 = Eigen::AngleAxis<float>(t, ny).matrix();

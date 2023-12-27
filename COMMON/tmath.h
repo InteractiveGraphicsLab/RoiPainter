@@ -1328,4 +1328,28 @@ static Eigen::VectorXd SolveQp_ActiveSetMethod
   }
 }
 
+
+template<class T>
+void FlipVolumeInZ( const int W, const int H, const int D, T* img)
+{
+  const int WH = W * H;
+  T* tmp = new T[WH];
+  for (int i = 0; i < D / 2; ++i)
+  {
+    T* img1 = &(img[i * WH]);
+    T* img2 = &(img[(D - 1 - i) * WH]);
+    memcpy(tmp, img1, sizeof(T) * WH);
+    memcpy(img1, img2, sizeof(T) * WH);
+    memcpy(img2, tmp, sizeof(T) * WH);
+  }
+  delete[] tmp;
+}
+
+template<class T>
+void FlipVolumeInZ(const EVec3i& reso, T* img)
+{
+  FlipVolumeInZ<T>(reso[0], reso[1], reso[2], img);
+}
+
+
 #endif

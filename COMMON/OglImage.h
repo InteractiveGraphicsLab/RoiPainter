@@ -14,7 +14,7 @@ enum OGL_IMAGE_CH
   CH_RGBA = 4
 };
 
-
+/*
 template<class T>
 void t_FlipVolumeInZ(const int W, const int H, const int D, T* vol)
 {
@@ -24,13 +24,13 @@ void t_FlipVolumeInZ(const int W, const int H, const int D, T* vol)
 
   for (int z = 0; z < D / 2; ++z)
   {
-    memcpy(tmp, &vol[z * WH], sizeof(T) * WH);
+    memcpy(tmp         , &vol[z * WH]          , sizeof(T) * WH);
     memcpy(&vol[z * WH], &vol[(D - 1 - z) * WH], sizeof(T) * WH);
-    memcpy(&vol[(D - 1 - z) * WH], tmp, sizeof(T) * WH);
+    memcpy(&vol[(D - 1 - z) * WH], tmp         , sizeof(T) * WH);
   }
   delete[] tmp;
 }
-
+*/
 
 
 //voxel value (input/output)
@@ -233,7 +233,7 @@ public:
   GLubyte* GetVolumePtr() { return m_volume; }
 
   void FlipInZ() {
-    t_FlipVolumeInZ<GLubyte>(m_resolution[0], m_resolution[1], m_resolution[2], m_volume);
+    FlipVolumeInZ<GLubyte>(m_resolution, m_volume);
   }
 };
 
