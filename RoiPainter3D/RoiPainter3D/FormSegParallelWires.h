@@ -10,7 +10,7 @@ namespace RoiPainter3D {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// FormSegParallelWires ‚ÌŠT—v
+	/// FormSegParallelWires ã®æ¦‚è¦
 	/// </summary>
 	public ref class FormSegParallelWires : public System::Windows::Forms::Form
 	{
@@ -44,7 +44,7 @@ namespace RoiPainter3D {
 
 	protected:
 		/// <summary>
-		/// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+		/// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
 		/// </summary>
 		~FormSegParallelWires()
 		{
@@ -79,14 +79,14 @@ namespace RoiPainter3D {
 
 	private:
 		/// <summary>
-		/// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+		/// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-		/// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+		/// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+		/// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
 		/// </summary>
 		void InitializeComponent(void)
 		{
@@ -111,39 +111,39 @@ namespace RoiPainter3D {
       // m_label1
       // 
       this->m_label1->AutoSize = true;
-      this->m_label1->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->m_label1->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_label1->Location = System::Drawing::Point(2, 7);
       this->m_label1->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
       this->m_label1->Name = L"m_label1";
       this->m_label1->Size = System::Drawing::Size(297, 60);
       this->m_label1->TabIndex = 1;
-      this->m_label1->Text = L"œShift + L click : add control points\r\n# click on a cirve -> \"insert\" a point\r\n# "
+      this->m_label1->Text = L"â—Shift + L click : add control points\r\n# click on a cirve -> \"insert\" a point\r\n# "
         L"otherwise         -> add a point at the end";
       // 
       // m_label3
       // 
       this->m_label3->AutoSize = true;
-      this->m_label3->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->m_label3->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_label3->Location = System::Drawing::Point(2, 92);
       this->m_label3->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
       this->m_label3->Name = L"m_label3";
       this->m_label3->Size = System::Drawing::Size(246, 20);
       this->m_label3->TabIndex = 2;
-      this->m_label3->Text = L"œShift + R/M click : remove point ";
+      this->m_label3->Text = L"â—Shift + R/M click : remove point ";
       // 
       // m_label2
       // 
       this->m_label2->AutoSize = true;
-      this->m_label2->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->m_label2->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_label2->Location = System::Drawing::Point(2, 66);
       this->m_label2->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
       this->m_label2->Name = L"m_label2";
       this->m_label2->Size = System::Drawing::Size(268, 20);
       this->m_label2->TabIndex = 1;
-      this->m_label2->Text = L"œShift + L drag : move a control point";
+      this->m_label2->Text = L"â—Shift + L drag : move a control point";
       // 
       // m_groupbox
       // 
@@ -214,7 +214,7 @@ namespace RoiPainter3D {
       // 
       // m_btn_finish
       // 
-      this->m_btn_finish->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->m_btn_finish->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_btn_finish->Location = System::Drawing::Point(106, 331);
       this->m_btn_finish->Margin = System::Windows::Forms::Padding(2);
@@ -227,7 +227,7 @@ namespace RoiPainter3D {
       // 
       // m_btn_cancel
       // 
-      this->m_btn_cancel->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->m_btn_cancel->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_btn_cancel->Location = System::Drawing::Point(8, 331);
       this->m_btn_cancel->Margin = System::Windows::Forms::Padding(2);
@@ -241,7 +241,7 @@ namespace RoiPainter3D {
       // m_label4
       // 
       this->m_label4->AutoSize = true;
-      this->m_label4->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->m_label4->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_label4->Location = System::Drawing::Point(4, 189);
       this->m_label4->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
@@ -288,7 +288,7 @@ namespace RoiPainter3D {
       this->Controls->Add(this->m_label3);
       this->Controls->Add(this->m_label2);
       this->Controls->Add(this->m_label1);
-      this->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->Name = L"FormSegParallelWires";
       this->Text = L"FormSegParallelWires";

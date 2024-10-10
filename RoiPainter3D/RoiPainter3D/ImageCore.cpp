@@ -114,7 +114,7 @@ static bool t_LoadTRawSS(
 
 
 
-//‹CÛƒf[ƒ^—p‚ÌƒŒƒKƒV[ƒR[ƒh
+//æ°—è±¡ãƒ‡ãƒ¼ã‚¿ç”¨ã®ãƒ¬ã‚¬ã‚·ãƒ¼ã‚³ãƒ¼ãƒ‰
 static bool t_LoadTxt(
 	const char* fname,
 	EVec3i &reso     ,
@@ -313,7 +313,8 @@ static bool t_LoadDCMs
 	{
 		std::cout << "flip in z\n";
 		pitch[2] *= -1.0;
-		t_FlipVolumeInZ<short>(W,H,D, vol);
+    //t_FlipVolumeInZ<short>(W,H,D, vol);
+    FlipVolumeInZ<short>(W,H,D, vol);
 	}
 
 	return true;
@@ -337,7 +338,7 @@ static bool t_LoadDCM3D(
 	pitch[0] = 1;
 	pitch[1] = 1;
 	pitch[2] = 1;
-  CLI_MessageBox_OK_Show( "pitchî•ñ‚Í“Ç‚İ‚ñ‚Å‚¢‚Ü‚¹‚ñB³‚µ‚¢’l‚ğƒ_ƒCƒAƒƒO‚æ‚èw’è‚µ‚Ä‚µ‚Ä‚­‚¾‚³‚¢", "message");
+  CLI_MessageBox_OK_Show( "pitchæƒ…å ±ã¯èª­ã¿è¾¼ã‚“ã§ã„ã¾ã›ã‚“ã€‚æ­£ã—ã„å€¤ã‚’ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚ˆã‚ŠæŒ‡å®šã—ã¦ã—ã¦ãã ã•ã„", "message");
 
 	std::cout << "resolution " << reso[0] << " " << reso[1]  << " " << reso[2] << "\n";
 
@@ -434,7 +435,7 @@ bool ImageCore::LoadVolume(vector<string> fnames, string fext)
 	if( success && strangePitch )
   {
 		m_pitch[0] = m_pitch[1] = m_pitch[2] = 1;
-		CLI_MessageBox_OK_Show("Pitchî•ñ‚ğ“Ç‚İ‚ß‚Ü‚¹‚ñ‚Å‚µ‚½B\n³‚µ‚¢’l‚ğƒ_ƒCƒAƒƒO‚æ‚èw’è‚µ‚Ä‚­‚¾‚³‚¢.", "message");
+		CLI_MessageBox_OK_Show("Pitchæƒ…å ±ã‚’èª­ã¿è¾¼ã‚ã¾ã›ã‚“ã§ã—ãŸã€‚\næ­£ã—ã„å€¤ã‚’ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚ˆã‚ŠæŒ‡å®šã—ã¦ãã ã•ã„.", "message");
 	}
 
 	if (success)
@@ -443,12 +444,13 @@ bool ImageCore::LoadVolume(vector<string> fnames, string fext)
 
 		if( trgtId == 10 && !strangePitch)
 		{
-			CLI_MessageBox_OK_Show("Dicom Slice‚ğ“Ç‚İ‚İ‚Ü‚µ‚½B\n dcm‘®«’l‚æ‚è‰æ‘œ‚ÌƒXƒ^ƒbƒN•ûŒü‚ğ©“®Œˆ’è‚µ‚Ü‚µ‚½B\ni”O‚Ì‚½‚ß¶‰E”½“]‚Ì—L–³‚ğŠm”F‚µ‚Ä‚­‚¾‚³‚¢Bj", "message");
+			CLI_MessageBox_OK_Show("Dicom Sliceã‚’èª­ã¿è¾¼ã¿ã¾ã—ãŸã€‚\n dcmå±æ€§å€¤ã‚ˆã‚Šç”»åƒã®ã‚¹ã‚¿ãƒƒã‚¯æ–¹å‘ã‚’è‡ªå‹•æ±ºå®šã—ã¾ã—ãŸã€‚\nï¼ˆå¿µã®ãŸã‚å·¦å³åè»¢ã®æœ‰ç„¡ã‚’ç¢ºèªã—ã¦ãã ã•ã„ã€‚ï¼‰", "message");
 		}
 		else
 		{
       int flg = RoiPainter3D::formStackOrder_showModalDialog();
-			if (flg == 1) t_FlipVolumeInZ<short>( m_resolution[0], m_resolution[1], m_resolution[2], m_vol_orig);
+      //if (flg == 1) t_FlipVolumeInZ<short>(m_resolution[0], m_resolution[1], m_resolution[2], m_vol_orig);
+      if (flg == 1) FlipVolumeInZ<short>( m_resolution[0], m_resolution[1], m_resolution[2], m_vol_orig);
 		}
 	}
 	else 
@@ -459,7 +461,7 @@ bool ImageCore::LoadVolume(vector<string> fnames, string fext)
 
 	// post loading 
 	short minV, maxV;
-	t_getMaxMinOfArray<short>( m_resolution[0]* m_resolution[1] * m_resolution[2], m_vol_orig, minV, maxV);
+	GetMaxMinOfArray<short>( m_resolution[0]* m_resolution[1] * m_resolution[2], m_vol_orig, minV, maxV);
 
 	m_vol_origgm = new float[m_resolution[0]* m_resolution[1] * m_resolution[2]];
 	m_vol      .Allocate( m_resolution );
@@ -489,10 +491,10 @@ void ImageCore::UpdateGradMagnituteVolume()
 	const int N = m_resolution[0] * m_resolution[1] * m_resolution[2];
 
 	memset( m_vol_origgm, 0, sizeof(float) * N);
-	t_Sobel3D<short, float>( m_resolution[0], m_resolution[1], m_resolution[2], m_vol_orig, m_vol_origgm);
+	Sobel3D<short, float>( m_resolution[0], m_resolution[1], m_resolution[2], m_vol_orig, m_vol_origgm);
 
 	float minV, maxV;
-	t_getMaxMinOfArray<float>( N, m_vol_origgm, minV, maxV);
+	GetMaxMinOfArray<float>( N, m_vol_origgm, minV, maxV);
 
 	const float c = 255.0f;
 	for (int i = 0; i < N; ++i)
@@ -660,7 +662,7 @@ void ImageCore::SaveMask( const char* fname)
 //////////////////////////////////////////////////////////
 //Mask Manipulation///////////////////////////////////////
 
-//todo unique pointer‚ğ—˜—p‚·‚é
+//todo unique pointerã‚’åˆ©ç”¨ã™ã‚‹
 //
 // 0: locked mask id, 1: unlocked non-target, 255:target mask id
 void ImageCore::GetFlgVolByMask_0_1_255(
@@ -718,9 +720,9 @@ void ImageCore::ActiveMask_Delete  ()
 
 }
 
-// map_old2new_id ‚Í ‹ŒID‚©‚çVID‚Ö‚Ì‘Î‰
-// example ‹ŒID  0,1,2,3,4,5,6,7   (2,3,5‚ªƒ}[ƒW‘ÎÛ)
-//         VID  0,1,x,x,2,x,3,4  x=5
+// map_old2new_id ã¯ æ—§IDã‹ã‚‰æ–°IDã¸ã®å¯¾å¿œ
+// example æ—§ID  0,1,2,3,4,5,6,7   (2,3,5ãŒãƒãƒ¼ã‚¸å¯¾è±¡)
+//         æ–°ID  0,1,x,x,2,x,3,4  x=5
 //
 //
 void ImageCore::MargeMaskIDs (std::set<int> &ids)
@@ -796,7 +798,7 @@ void ImageCore::SmartFillHole( std::set<int> &ids, int dilation_size )
   {
     const char *message = 
       "0th region (background) cannot be used"
-      "0”Ô—Ìˆæ‚ÍSmart fillhole——˜—p‚Å‚«‚Ü‚¹‚ñ";
+      "0ç•ªé ˜åŸŸã¯Smart fillholeä¼¼åˆ©ç”¨ã§ãã¾ã›ã‚“";
     CLI_MessageBox_OK_Show( message, "CAUTION");
     return;
   }
@@ -822,9 +824,9 @@ void ImageCore::SmartFillHole( std::set<int> &ids, int dilation_size )
   memcpy( vol_dilate, vol_orig, sizeof(byte)*num_voxels);
 
   for( int i=0; i < dilation_size; ++i)
-    t_Dilate3D(m_resolution, vol_dilate);
+    Dilate3D(m_resolution, vol_dilate);
   
-  //3. calc hole filling --> extract hole area (‘OŒi‚É•Ï‰»‚µ‚½‰æ‘f‚ğ’Šo)
+  //3. calc hole filling --> extract hole area (å‰æ™¯ã«å¤‰åŒ–ã—ãŸç”»ç´ ã‚’æŠ½å‡º)
   byte *vol_fill   = new byte[num_voxels];
   
 
@@ -834,7 +836,7 @@ void ImageCore::SmartFillHole( std::set<int> &ids, int dilation_size )
     vol_fill[i] = (vol_dilate[i] == 255) ? 255 : 0;
   }
 
-  t_FillHole3D(m_resolution[0], m_resolution[1], m_resolution[2], vol_fill);
+  FillHole3D(m_resolution[0], m_resolution[1], m_resolution[2], vol_fill);
 
 #pragma omp parallel for 
   for ( int i=0; i < num_voxels; ++i )
@@ -853,7 +855,7 @@ void ImageCore::SmartFillHole( std::set<int> &ids, int dilation_size )
   if( b_foreexist )
   {
     for ( int i=0; i < dilation_size; ++i )
-      t_Dilate3D(m_resolution, vol_fill);
+      Dilate3D(m_resolution, vol_fill);
 
     m_vol_flag.SetAllZero();
 
@@ -891,7 +893,7 @@ void ImageCore::ActiveMask_Erode()
   byte* flgs = new byte[N];
   GetFlgVolByMask_0_1_255( m_active_maskid, flgs);
 
-  t_Erode3D( m_resolution, flgs);
+  Erode3D( m_resolution, flgs);
 
 #pragma omp parallel for 
   for (int i = 0; i < N; ++i) 
@@ -920,7 +922,7 @@ void ImageCore::ActiveMask_Dilate  ()
   byte* flgs = new byte[N];
   GetFlgVolByMask_0_1_255( m_active_maskid, flgs);
   
-  t_Dilate3D( m_resolution, flgs);
+  Dilate3D( m_resolution, flgs);
 
 #pragma omp parallel for 
   for (int i = 0; i < N; ++i) 
@@ -950,7 +952,7 @@ void ImageCore::FillHole( std::set<int> &ids )
   {
     const char *message = 
       "0th region (background) cannot be used"
-      "0”Ô—Ìˆæ‚ÍSmart fillhole——˜—p‚Å‚«‚Ü‚¹‚ñ";
+      "0ç•ªé ˜åŸŸã¯Smart fillholeä¼¼åˆ©ç”¨ã§ãã¾ã›ã‚“";
     CLI_MessageBox_OK_Show( message, "CAUTION");
     return;
   }
@@ -972,7 +974,7 @@ void ImageCore::FillHole( std::set<int> &ids )
   }
 
   memcpy( vol_hole, vol_flg, sizeof(byte) * num_voxels );
-  t_FillHole3D(m_resolution[0], m_resolution[1], m_resolution[2], vol_hole);
+  FillHole3D(m_resolution[0], m_resolution[1], m_resolution[2], vol_hole);
 
 
   m_vol_flag.SetAllZero();
@@ -1003,7 +1005,7 @@ void ImageCore::ActiveMask_ExportObj  (const string &fname)
 {
   if ( m_active_maskid <= 0 || m_mask_data.size() <= m_active_maskid) return;
 
-  const char* message = "Smoothing Time? (•½ŠŠ‰»‰ñ”‚ğw’è)";
+  const char* message = "Smoothing Time? (å¹³æ»‘åŒ–å›æ•°ã‚’æŒ‡å®š)";
   int smoothing_n;
   FormIntegerSelection_doModal( 2, 0, 100, message, smoothing_n );
 
@@ -1017,7 +1019,7 @@ void ImageCore::ActiveMask_ExportObj  (const string &fname)
   }
 
   TMesh mesh;
-  marchingcubes::t_MarchingCubes(m_resolution, m_pitch, v, 128, 0, 0, mesh);
+  marchingcubes::MarchingCubes(m_resolution, m_pitch, v, 128, 0, 0, mesh);
   mesh.Smoothing(smoothing_n);
   mesh.ExportObjNoTexCd(fname.c_str());
 
@@ -1028,11 +1030,11 @@ void ImageCore::ActiveMask_ExportObj  (const string &fname)
 
 void ImageCore::ExportMaskIDsAsOneMesh   ( std::set<int> mask_ids, const char *fname )
 {
-  const char* message = "Smoothing Time? (•½ŠŠ‰»‰ñ”‚ğw’è)";
+  const char* message = "Smoothing Time? (å¹³æ»‘åŒ–å›æ•°ã‚’æŒ‡å®š)";
   int smoothing_n;
   FormIntegerSelection_doModal( 2, 0, 100, message, smoothing_n );
 
-  //vector[]‚ÌƒAƒNƒZƒX‚ª’x‚¢‚Ì‚Å”z—ñ‚ğì¬
+  //vector[]ã®ã‚¢ã‚¯ã‚»ã‚¹ãŒé…ã„ã®ã§é…åˆ—ã‚’ä½œæˆ
   byte mask_b_trgt[256] = {0};
   for( auto id : mask_ids ) mask_b_trgt[id] = 1;
   
@@ -1046,7 +1048,7 @@ void ImageCore::ExportMaskIDsAsOneMesh   ( std::set<int> mask_ids, const char *f
   }
 
   TMesh mesh;
-  marchingcubes::t_MarchingCubes( m_resolution, m_pitch, v, 128, 0, 0, mesh);
+  marchingcubes::MarchingCubes( m_resolution, m_pitch, v, 128, 0, 0, mesh);
   mesh.Smoothing(smoothing_n);
   mesh.ExportObjNoTexCd( fname );
 
@@ -1274,7 +1276,7 @@ void ImageCore::ActiveMask_SetRendSurf(const bool tf)
       v[i] = ( m_vol_mask[i] == m_active_maskid ) ? 255 : 0;
     }
 
-    marchingcubes::t_MarchingCubes(m_resolution, m_pitch, v, 128, 0, 0, trgtMsk.m_surface);
+    marchingcubes::MarchingCubes(m_resolution, m_pitch, v, 128, 0, 0, trgtMsk.m_surface);
 		trgtMsk.m_surface.Smoothing(2);
 
 		delete[] v;
@@ -1359,14 +1361,14 @@ void ImageCore::SaveVolumeAsTraw3dss(const char *fname)
 
 
 
-// m_vol_flag‚ğ‰Šú‰»
+// m_vol_flagã‚’åˆæœŸåŒ–
 // voxel at locked mask --> 0 
 // otherwise --> 1
 void ImageCore::InitializeVolFlgByLockedMask(int fore_maskid )
 {
   const int num_voxels = GetNumVoxels();
 
-  //vector[]‚ÌƒAƒNƒZƒX‚ª’x‚¢‚Ì‚Å”z—ñ‚ğì¬
+  //vector[]ã®ã‚¢ã‚¯ã‚»ã‚¹ãŒé…ã„ã®ã§é…åˆ—ã‚’ä½œæˆ
   byte masklocked[256] = {};
   for( int i=0; i < (int)m_mask_data.size(); ++i ) 
     masklocked[i] = m_mask_data[i].m_b_locked ? 255 : 0;

@@ -17,7 +17,7 @@ static bool GetMeshAndCageFileNames(
     std::string& defname)
 {
   OpenFileDialog^ dlg = gcnew OpenFileDialog();
-  dlg->Title = "select mesh (ƒƒbƒVƒ…ƒ‚ƒfƒ‹‚ð‘I‘ð‚µ‚Ä‚­‚¾‚³‚¢)";
+  dlg->Title = "select mesh (ãƒ¡ãƒƒã‚·ãƒ¥ãƒ¢ãƒ‡ãƒ«ã‚’é¸æŠžã—ã¦ãã ã•ã„)";
   dlg->Filter = "mesh file(*.obj;)|*.obj;";
   dlg->Multiselect = false;
   if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return false;
@@ -25,14 +25,14 @@ static bool GetMeshAndCageFileNames(
   meshname = static_cast<const char*>(mptr1.ToPointer());
 
   dlg->Filter = "cage file (*.obj;)|*.obj;";
-  dlg->Title = "cage mesh (ƒP[ƒWƒ‚ƒfƒ‹‚ð‘I‘ð‚µ‚Ä‚­‚¾‚³‚¢)";
+  dlg->Title = "cage mesh (ã‚±ãƒ¼ã‚¸ãƒ¢ãƒ‡ãƒ«ã‚’é¸æŠžã—ã¦ãã ã•ã„)";
   dlg->Multiselect = false;
   if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return false;
   IntPtr mptr2 = Marshal::StringToHGlobalAnsi(dlg->FileName);
   cagename = static_cast<const char*>(mptr2.ToPointer());
 
   dlg->Filter = "deformation file (*.txt;)|*.txt;";
-  dlg->Title = "•ÏŒ`ƒf[ƒ^ (•ÏŒ`ƒf[ƒ^‚ð‘I‘ð‚µ‚Ä‚­‚¾‚³‚¢)";
+  dlg->Title = "å¤‰å½¢ãƒ‡ãƒ¼ã‚¿ (å¤‰å½¢ãƒ‡ãƒ¼ã‚¿ã‚’é¸æŠžã—ã¦ãã ã•ã„)";
   dlg->Multiselect = false;
   if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return false;
   IntPtr mptr3 = Marshal::StringToHGlobalAnsi(dlg->FileName);
@@ -85,8 +85,8 @@ System::Void RoiPainter4D::FormSegSwallowTempGen::m_btn_update_timing_Click(
     System::EventArgs^ e)
 {
   OpenFileDialog^ dlg = gcnew OpenFileDialog();
-  dlg->Title = "timing info(ƒeƒ“ƒvƒŒ[ƒg‚Ìƒ^ƒCƒ~ƒ“ƒOî•ñ)";
-  dlg->Filter = "ƒ^ƒCƒ~ƒ“ƒOƒf[ƒ^ƒtƒ@ƒCƒ‹(*.txt;)|*.txt;";
+  dlg->Title = "timing info(ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°æƒ…å ±)";
+  dlg->Filter = "ã‚¿ã‚¤ãƒŸãƒ³ã‚°ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«(*.txt;)|*.txt;";
   dlg->Multiselect = false;
   if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
   IntPtr mptr1 = Marshal::StringToHGlobalAnsi(dlg->FileName);
@@ -105,7 +105,7 @@ System::Void RoiPainter4D::FormSegSwallowTempGen::m_btn_export_motion_Click(
     System::EventArgs^ e)
 {
   SaveFileDialog^ dlg = gcnew SaveFileDialog();
-  dlg->Filter = "cage•ÏŒ`ƒf[ƒ^(*.txt)|*.txt";
+  dlg->Filter = "cageå¤‰å½¢ãƒ‡ãƒ¼ã‚¿(*.txt)|*.txt";
   if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
   IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
   std::string fname = static_cast<const char*>(mptr.ToPointer());

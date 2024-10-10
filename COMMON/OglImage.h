@@ -1,4 +1,4 @@
-﻿#ifndef COMMON_OGLIMAGE_H_
+#ifndef COMMON_OGLIMAGE_H_
 #define COMMON_OGLIMAGE_H_
 #pragma unmanaged
 
@@ -37,17 +37,17 @@ void t_FlipVolumeInZ(const int W, const int H, const int D, T* vol)
 //  0:never change 
 //  1:background
 //255:foreground
-void t_Erode3D(const int& W, const int& H, const int& D, byte* vol);
-void t_Dilate3D(const int& W, const int& H, const int& D, byte* vol);
-void t_Erode3D(const EVec3i& reso, byte* vol);
-void t_Dilate3D(const EVec3i& reso, byte* vol);
+void Erode3D(const int& W, const int& H, const int& D, byte* vol);
+void Dilate3D(const int& W, const int& H, const int& D, byte* vol);
+void Erode3D(const EVec3i& reso, byte* vol);
+void Dilate3D(const EVec3i& reso, byte* vol);
 
 
 //voxel value (input/output)
 //  0 : background
 //255 : foreground
-void t_FillHole3D(const int& W, const int& H, const int& D, byte* vol);
-void t_FillHole3D(const EVec3i& reso, byte* vol);
+void FillHole3D(const int& W, const int& H, const int& D, byte* vol);
+void FillHole3D(const EVec3i& reso, byte* vol);
 
 
 
@@ -506,18 +506,18 @@ typedef OglImage2D<CH_INTES> OGLImage2D1;
 
 
 //voxel value 0:never change, 1:background, 255:foreground
-void t_Erode3D(OglImage3D& v);
+void Erode3D(OglImage3D& v);
 
 //voxel value 0:never cahnge, 1:background, 255:foreground
-void t_Dilate3D(OglImage3D& v);
+void Dilate3D(OglImage3D& v);
 
 //voxel value 0: background, 255:foreground
-void t_FillHole3D(OglImage3D& v);
+void FillHole3D(OglImage3D& v);
 
 
 
 template<class T1, class T2>
-void t_Sobel3D(const int W, const int H, const int D, const T1* vol, T2* res)
+void Sobel3D(const int W, const int H, const int D, const T1* vol, T2* res)
 {
   const T1 sblX[3][3][3] = {
     { {-1,  0, +1},

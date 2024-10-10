@@ -6,23 +6,23 @@
 #include "GlslShader.h"
 #include "GeneralizedCylinder.h"
 
-// 3ŸŒ³‹óŠÔ“à‚É cylinder‚ÆƒV[ƒh‚ª•¡””z’u‚³‚ê‚é
-//  - cylinder‚Ì’†S²‚Í—ÌˆæŠg’£‚ÌƒV[ƒh‚É‚È‚é
-//  - ‚»‚êˆÈŠO‚É‚à–¾¦“I‚É—ÌˆæŠg’£‚ÌƒV[ƒh‚ğ”z’u‚Å‚«‚é
+// 3æ¬¡å…ƒç©ºé–“å†…ã« cylinderã¨ã‚·ãƒ¼ãƒ‰ãŒè¤‡æ•°é…ç½®ã•ã‚Œã‚‹
+//  - cylinderã®ä¸­å¿ƒè»¸ã¯é ˜åŸŸæ‹¡å¼µã®ã‚·ãƒ¼ãƒ‰ã«ãªã‚‹
+//  - ãã‚Œä»¥å¤–ã«ã‚‚æ˜ç¤ºçš„ã«é ˜åŸŸæ‹¡å¼µã®ã‚·ãƒ¼ãƒ‰ã‚’é…ç½®ã§ãã‚‹
 
 //user interface
 // -- Cylinder mode -- 
-// shift + L dblclick --> ‘I‘ğó‘Ô‚È‚ç cp’Ç‰Á
-// shift + L dblclick --> ‘I‘ğ–³‚µ‚È‚ç cylinder’Ç‰Á
-// shift + R dblclick --> ‘I‘ğ‚µ‚½cylinder‚Ìcp‚ğíœ iÅŒã‚Ìcp‚È‚çcylinderíœj
+// shift + L dblclick --> é¸æŠçŠ¶æ…‹ãªã‚‰ cpè¿½åŠ 
+// shift + L dblclick --> é¸æŠç„¡ã—ãªã‚‰ cylinderè¿½åŠ 
+// shift + R dblclick --> é¸æŠã—ãŸcylinderã®cpã‚’å‰Šé™¤ ï¼ˆæœ€å¾Œã®cpãªã‚‰cylinderå‰Šé™¤ï¼‰
 // -- seed mode -- 
-// shift + L dblclick --> seed ’Ç‰Á 
-// shift + R dblclick --> seed íœ 
-// --—¼•û--
-// shift + M click --> cylinder ‘I‘ğ
-// shift + L drag  --> seed‚ğˆÚ“® or active cylinder‚Ìcp‚ğˆÚ“®
+// shift + L dblclick --> seed è¿½åŠ  
+// shift + R dblclick --> seed å‰Šé™¤ 
+// --ä¸¡æ–¹--
+// shift + M click --> cylinder é¸æŠ
+// shift + L drag  --> seedã‚’ç§»å‹• or active cylinderã®cpã‚’ç§»å‹•
 //
-// ctl + L drag --> cylinder‚ğ•½sˆÚ“®
+// ctl + L drag --> cylinderã‚’å¹³è¡Œç§»å‹•
 
 
 class ModeSegBolus : public ModeInterface
@@ -44,7 +44,7 @@ private:
   //manipuration
   int  m_active_cid ;     // -1 when false
 	int  m_drag_cpid  ;     // -1 when false
-  bool m_b_drag_cylinder; //active cylinder‘S‘Ì‚ğƒhƒ‰ƒbƒO
+  bool m_b_drag_cylinder; //active cylinderå…¨ä½“ã‚’ãƒ‰ãƒ©ãƒƒã‚°
 
   EVec2i m_pre_pos;
 	bool m_b_modified;
@@ -54,7 +54,7 @@ private:
 	short m_thresh_max;
 	short m_thresh_min;
   
-  //fillvoxelŒvZŒã‚Ífalse, cylinder‚ª•ÒW‚³‚ê‚½‚çtrue
+  //fillvoxelè¨ˆç®—å¾Œã¯false, cylinderãŒç·¨é›†ã•ã‚ŒãŸã‚‰true
 	bool m_b_updated_cylinder;
 
 private:
@@ -65,7 +65,7 @@ public:
 
 public:   
 	// overload functions ---------------------------------------------
-	MODE_ID getModeID() { return MODE_SEG_BOLUS; }
+	MODE_ID GetModeID() { return MODE_SEG_BOLUS; }
 
 	void LBtnUp    (const EVec2i &p, OglForCLI *ogl);
 	void RBtnUp    (const EVec2i &p, OglForCLI *ogl);
@@ -78,11 +78,11 @@ public:
 	void MBtnDclk  (const EVec2i &p, OglForCLI *ogl);
 	void MouseMove (const EVec2i &p, OglForCLI *ogl);
 	void MouseWheel(const EVec2i &p, short zDelta, OglForCLI *ogl);
-	void keyDown(int nChar);
-	void keyUp(int nChar){}
-	bool canEndMode();
-	void startMode();
-	void drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+	void KeyDown(int nChar);
+	void KeyUp(int nChar){}
+	bool CanEndMode();
+	void StartMode();
+	void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
 
 	void FinishSegmentation();
 	void cancelSegmentation();
@@ -97,7 +97,7 @@ public:
 	void AddNewCylinder();
 	void FillInCylinder();
 
-  //3D/4D ‰æ‘œˆ—
+  //3D/4D ç”»åƒå‡¦ç†
 	void RunThresholdingInClyinderOneFrame ( const short minv, const short maxv);
 	void RunThresholdingInCylinderAllFrame ( const short minv, const short maxv);
 	void RunRegionGrowingInCylinderOneFrame( const short minv, const short maxv);

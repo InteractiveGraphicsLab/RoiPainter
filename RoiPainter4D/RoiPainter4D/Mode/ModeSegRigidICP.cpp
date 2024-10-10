@@ -57,7 +57,7 @@ ModeSegRigidICP::ModeSegRigidICP() :
 }
 
 
-bool ModeSegRigidICP::canEndMode()
+bool ModeSegRigidICP::CanEndMode()
 {
   if (!m_b_modified) return true;
   return ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Leaving?");
@@ -112,7 +112,7 @@ void ModeSegRigidICP::FinishSegmentation(const bool b_storeallframes)
 
   //NOTE: do not clear "m_isovalue and m_isosurfaces"
 
-  //Ç±ÇÃÉ^ÉCÉ~ÉìÉOÇ≈isModified = false (ÇµÇ»Ç¢Ç∆canEndModeÇ≈É_ÉCÉAÉçÉOÇ™ï\é¶Ç≥ÇÍÇÈ)
+  //„Åì„ÅÆ„Çø„Ç§„Éü„É≥„Ç∞„ÅßisModified = false („Åó„Å™„ÅÑ„Å®canEndMode„Åß„ÉÄ„Ç§„Ç¢„É≠„Ç∞„ÅåË°®Á§∫„Åï„Çå„Çã)
   m_b_modified = false;
 
   ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
@@ -141,8 +141,8 @@ void ModeSegRigidICP::CancelSegmentation()
 
 
 
-// flg4d[f][i] : 0îwåiÅiïœâªÇ≥ÇπÇƒÇÕÉ_ÉÅÅj, 1îwåi(ïœâªâ¬î\)ÅC255ëOåi 
-void ModeSegRigidICP::startMode()
+// flg4d[f][i] : 0ËÉåÊôØÔºàÂ§âÂåñ„Åï„Åõ„Å¶„ÅØ„ÉÄ„É°Ôºâ, 1ËÉåÊôØ(Â§âÂåñÂèØËÉΩ)Ôºå255ÂâçÊôØ 
+void ModeSegRigidICP::StartMode()
 {
   //init ui flags
   m_bL = m_bR = m_bM = false;
@@ -172,7 +172,7 @@ void ModeSegRigidICP::startMode()
   }
 
   if( prev_isosurf_available && 
-    ShowMsgDlgYesNo("ëOâÒÇÃiso surfaceÇçƒóòópÇ≈Ç´Ç‹Ç∑ÅDçƒóòópÇµÇ‹Ç∑Ç©ÅH", "message")  )
+    ShowMsgDlgYesNo("ÂâçÂõû„ÅÆiso surface„ÇíÂÜçÂà©Áî®„Åß„Åç„Åæ„ÅôÔºéÂÜçÂà©Áî®„Åó„Åæ„Åô„ÅãÔºü", "message")  )
   {
     FormSegRigidICP_ReusePrevIsoSurface(m_isovalue);
   }
@@ -201,12 +201,12 @@ void ModeSegRigidICP::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
   m_bL = true;
 
-  if ( isCtrKeyOn() )
+  if ( IsCtrKeyOn() )
   {
     m_stroke.clear();
     m_b_draw_stroke = true;
   }
-  else if (isShiftKeyOn())
+  else if (IsShiftKeyOn())
   {
     m_b_trans_srcsurf = FormSegRigidICPBTrans();
     m_b_trans_pivot   = FormSegRigidICPBTransPiv();
@@ -312,11 +312,11 @@ void ModeSegRigidICP::MouseMove(const EVec2i &p, OglForCLI *ogl)
     int dy = p.y() - m_pre_mouse_point.y();
     EMat3d dR = CalcObjectRotationMatrixByMouseDrag(ogl, dx,dy,0.007);
 
-    //pivot (= icpmat[i] * pivot_vec ) ÇíÜêSÇ…âÒì]Ç∑ÇÈ
+    //pivot (= icpmat[i] * pivot_vec ) „Çí‰∏≠ÂøÉ„Å´ÂõûËª¢„Åô„Çã
     // pos  = R x + t
     // pos' = dR (R x + t - piv) + piv = dR R x + dR t - dR piv + piv
     const int frameI = formVisParam_getframeI();
-    EVec3f piv = t_Mult( m_icpmats[frameI], m_handle_pivot);
+    EVec3f piv = Mult( m_icpmats[frameI], m_handle_pivot);
     
     EMat3d R;
     R(0, 0) = m_icpmats[frameI](0, 0);  R(0, 1) = m_icpmats[frameI](0, 1);  R(0, 2) = m_icpmats[frameI](0, 2);
@@ -346,10 +346,10 @@ void ModeSegRigidICP::MouseMove(const EVec2i &p, OglForCLI *ogl)
     int dy = p.y() - m_pre_mouse_point.y();
     EVec3d t = CalcObjectTransVectorByMouseDrag(ogl, dx, dy, 0.1); 
     EMat4d Minv = m_icpmats[formVisParam_getframeI()].inverse();
-    // piv  = R * handle_piv + t (RÇ∆tÇÕ ICPMatÇÃâÒì]ÅEà⁄ìÆê¨ï™)   
+    // piv  = R * handle_piv + t (R„Å®t„ÅØ ICPMat„ÅÆÂõûËª¢„ÉªÁßªÂãïÊàêÂàÜ)   
     // piv' = R * handle_piv + t + dt 
-    //      = R * (handle_piv + Rinv dt ) * t -->Rinv * dt ÇæÇØ handle_piv Çà⁄ìÆ 
-    m_handle_pivot += t_MultOnlyRot( Minv, t.cast<float>());
+    //      = R * (handle_piv + Rinv dt ) * t -->Rinv * dt „Å†„Åë handle_piv „ÇíÁßªÂãï 
+    m_handle_pivot += MultOnlyRot( Minv, t.cast<float>());
     m_b_modified = true;
   }
   else
@@ -371,14 +371,14 @@ void ModeSegRigidICP::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 }
 
 
-void ModeSegRigidICP::keyDown(int nChar)
+void ModeSegRigidICP::KeyDown(int nChar)
 {
   if (nChar == VK_TAB)
     m_b_show_source_and_iso_surface = !m_b_show_source_and_iso_surface;
 
   formMain_RedrawMainPanel();
 }
-void ModeSegRigidICP::keyUp(int nChar) {}
+void ModeSegRigidICP::KeyUp(int nChar) {}
 
 
 
@@ -386,7 +386,7 @@ void ModeSegRigidICP::keyUp(int nChar) {}
 
 
 
-void ModeSegRigidICP::drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+void ModeSegRigidICP::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
 {
   const int    frame_idx = formVisParam_getframeI();
   const EVec3i reso      = ImageCore::GetInst()->GetReso();
@@ -394,34 +394,34 @@ void ModeSegRigidICP::drawScene(const EVec3f &cuboid, const EVec3f &camP, const 
 
   //bind volumes
   BindAllVolumes();
-  DrawCrossSections( cuboid, reso, !isSpaceKeyOn(), m_crssec_shader );
+  DrawCrossSections( cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader );
 
   if (m_b_draw_stroke)
   {
-    t_DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
+    DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
   }
 
   //draw handle
-  if ( isShiftKeyOn() )
+  if ( IsShiftKeyOn() )
   {
-    EVec3f pivot = t_Mult( m_icpmats[frame_idx], m_handle_pivot );
+    EVec3f pivot = Mult( m_icpmats[frame_idx], m_handle_pivot );
 
     TMesh::DrawSphere( pivot, pitch[0] * 3);
     if (FormSegRigidICPBTrans()) 
     {
-      t_DrawHandleOrthoArrows(
+      DrawHandleOrthoArrows(
           pivot, cuboid.norm() * 0.2, cuboid.norm() * 0.01,
           COLOR_R, COLOR_G, COLOR_B );
     }
     if (FormSegRigidICPBTransPiv()) 
     {
-      t_DrawHandleOrthoArrows(
+      DrawHandleOrthoArrows(
         pivot, cuboid.norm() * 0.2, cuboid.norm() * 0.005, 
         COLOR_R, COLOR_R, COLOR_R );
     }
     if (FormSegRigidICPBRot()  )
     {
-      t_DrawHandleOrthoCircles(pivot, cuboid.norm() * 0.15);
+      DrawHandleOrthoCircles(pivot, cuboid.norm() * 0.15);
     }
   }
 
@@ -456,7 +456,7 @@ void ModeSegRigidICP::drawScene(const EVec3f &cuboid, const EVec3f &camP, const 
     glEnable(GL_BLEND);
     const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
     DrawVolumeSlices( cuboid, reso, camP, camF, 
-                     !isSpaceKeyOn(), b_onmanip, m_volume_shader);
+                     !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
   }
@@ -477,7 +477,7 @@ void ModeSegRigidICP::IsosurfaceGenerateOneFrame(const int isovalue, const int f
   const EVec3i reso       = ImageCore::GetInst()->GetReso();
   const EVec3f pitch      = ImageCore::GetInst()->GetPitch();
   const short* volume     = ImageCore::GetInst()->m_img4d[frame_idx];
-  t_MarchingCubes_PolygonSoup( reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[frame_idx]);
+  MarchingCubesPolygonSoup( reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[frame_idx]);
 
   std::cout <<"isoSurfGen1Frame " << frame_idx << " / "  <<  num_frames << "\n";
 }
@@ -497,7 +497,7 @@ void ModeSegRigidICP::IsosurfaceGenerateAllFrame(const int isovalue)
   for (int i = 0; i < num_frames; ++i)
   {
     short* volume = ImageCore::GetInst()->m_img4d[i];
-    t_MarchingCubes_PolygonSoup( reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[i] );
+    MarchingCubesPolygonSoup( reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[i] );
     std::cout << "isoSurfGen " << i << "/" << num_frames << "\n";
   }
 
@@ -544,7 +544,7 @@ static EMat4d t_calcRigidTransformation(
   }
   catch (...)
   {
-    std::cout << "*** surfaceÇÃå`èÛÇ‹ÇΩÇÕà íuÇ™ëÂÇ´Ç≠àŸÇ»ÇÈÇΩÇﬂí«ê’Ç…é∏îsÇµÇ‹ÇµÇΩ ***\n";
+    std::cout << "*** surface„ÅÆÂΩ¢Áä∂„Åæ„Åü„ÅØ‰ΩçÁΩÆ„ÅåÂ§ß„Åç„ÅèÁï∞„Å™„Çã„Åü„ÇÅËøΩË∑°„Å´Â§±Êïó„Åó„Åæ„Åó„Åü ***\n";
   }
 
   EMat4d resM;
@@ -599,12 +599,12 @@ void ModeSegRigidICP::PerformTracking(
 {
   if ( m_source_surface.m_num_triangles == 0)
   {
-    ShowMsgDlg_OK("à íuçáÇÌÇπÇçsÇ§ÉÅÉbÉVÉÖÉfÅ[É^ÇÉçÅ[ÉhÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB", "caution");
+    ShowMsgDlg_OK("‰ΩçÁΩÆÂêà„Çè„Åõ„ÇíË°å„ÅÜ„É°„ÉÉ„Ç∑„É•„Éá„Éº„Çø„Çí„É≠„Éº„Éâ„Åó„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇ", "caution");
     return;
   }
   if (m_isosurfaces[0].m_num_triangles == 0)
   {
-    ShowMsgDlg_OK("isoSurface Çê∂ê¨ÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB", "caution");
+    ShowMsgDlg_OK("isoSurface „ÇíÁîüÊàê„Åó„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇ", "caution");
     return;
   }
 
@@ -653,7 +653,7 @@ void ModeSegRigidICP::PerformTracking(
 
       int prev_fidx = (f == trgtFrameList.front()) ? f     : 
                       ( start_index < end_index  ) ? f - 1 : f + 1 ;
-      prev_fidx = t_crop(0, num_frames-1, prev_fidx);
+      prev_fidx = Crop(0, num_frames-1, prev_fidx);
                                                          
       m_icpmats[f] = t_calcRigidTransformation( icp_reject_scale, icp_number_level, m_icpmats[prev_fidx],srcM,trgtM );
 
@@ -701,7 +701,7 @@ void ModeSegRigidICP::FillInMesh(
 {
   if (m_source_surface.m_num_triangles == 0)
   {
-    ShowMsgDlg_OK("ICPÇ™åvéZÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ\n ICP is not computed yet ", "no mesh");
+    ShowMsgDlg_OK("ICP„ÅåË®àÁÆó„Åï„Çå„Å¶„ÅÑ„Åæ„Åõ„Çì\n ICP is not computed yet ", "no mesh");
     return;
   }
 
@@ -722,7 +722,7 @@ void ModeSegRigidICP::FillInMesh(
     EMat4f M = m_icpmats[f].cast<float>();
     mesh.MultMat( M );
 
-    GenBinaryVolumeFromMesh_Y(resolution, pitch, mesh, flgInOut);
+    GenBinaryVolumeFromMeshY(resolution, pitch, mesh, flgInOut);
 
     byte* flg3d = flg4d[f];
 #pragma omp parallel for

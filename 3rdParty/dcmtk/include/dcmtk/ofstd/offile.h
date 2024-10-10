@@ -167,7 +167,7 @@ public:
   /** associates a stream with the existing file descriptor, fildes. The mode
    *  of the stream (one of the values "r", "r+", "w", "w+", "a", "a+") must be
    *  compatible with the mode of the file descriptor. The file position
-   *  indicator of the new stream is set to that belong­ ing to fildes, and the
+   *  indicator of the new stream is set to that belongï½­ ing to fildes, and the
    *  error and end-of-file indicators are cleared. Modes "w" or "w+" do not
    *  cause truncation of the file. The file descriptor is not dup'ed, and
    *  will be closed when the stream created by fdopen is closed. The result of

@@ -12,9 +12,9 @@
 // shift + R click : remove control point
 //
 // (*) vol_flg
-// 0 ëŒè€äO
-// 1   : îwåi
-// 255 : óŒêFÉnÉCÉâÉCÉg
+// 0 ÂØæË±°Â§ñ
+// 1   : ËÉåÊôØ
+// 255 : Á∑ëËâ≤„Éè„Ç§„É©„Ç§„Éà
 //-----------------------------------------------
 
 class ModeSegRGrow : public ModeInterface
@@ -41,7 +41,7 @@ public:
   static ModeSegRGrow* GetInst() { static ModeSegRGrow p; return &p; }
   
   // overload functions ---------------------------------------------
-  MODE_ID getModeID() { return MODE_SEG_REGGROW; }
+  MODE_ID GetModeID() { return MODE_SEG_REGGROW; }
 
   void LBtnUp    (const EVec2i &p, OglForCLI *ogl);
   void RBtnUp    (const EVec2i &p, OglForCLI *ogl);
@@ -54,11 +54,11 @@ public:
   void MBtnDclk  (const EVec2i &p, OglForCLI *ogl);
   void MouseMove (const EVec2i &p, OglForCLI *ogl);
   void MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl);
-  void keyDown(int nChar);
-  void keyUp (int nChar);
-  bool canEndMode();
-  void startMode();
-  void drawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center);
+  void KeyDown(int nChar);
+  void KeyUp (int nChar);
+  bool CanEndMode();
+  void StartMode();
+  void DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center);
   //-----------------------------------------------------------------
 
   void RunThresholding(const short minv, const short maxv);

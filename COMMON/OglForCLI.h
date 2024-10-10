@@ -1,4 +1,4 @@
-﻿#ifndef COMMON_OGLFORCLI_H_
+#ifndef COMMON_OGLFORCLI_H_
 #define COMMON_OGLFORCLI_H_
 #pragma unmanaged
 
@@ -326,7 +326,7 @@ public:
     m_camera.ZoomCameraByOffset(offset);
   }
 
-  void unProject_correctY(
+  void UnProjectCorrectY(
     const double cx, 
     const double cy, 
     const double depth, 
@@ -373,8 +373,8 @@ public:
     EVec3f &ray_dir) const
   {
     double x1, y1, z1, x2, y2, z2;
-    unProject_correctY(cx, cy, 0.01, x1, y1, z1);
-    unProject_correctY(cx, cy, 0.2, x2, y2, z2);
+    UnProjectCorrectY(cx, cy, 0.01, x1, y1, z1);
+    UnProjectCorrectY(cx, cy, 0.2, x2, y2, z2);
 
     ray_pos << (float)x1, (float)y1, (float)z1;
     ray_dir << (float)(x2 - x1), (float)(y2 - y1), (float)(z2 - z1);
@@ -453,7 +453,7 @@ private:
 
 
 
-inline void t_DrawPolyLine(
+inline void DrawPolyLine(
   const EVec3f color,
   const float  width,
   const std::vector<EVec3f>& points,
@@ -479,7 +479,7 @@ inline void t_DrawPolyLine(
 }
 
 
-inline void t_DrawPolyLine(
+inline void DrawPolyLine(
   const EVec3f  color,
   const float   width,
   const int     num_points,

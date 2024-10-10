@@ -64,7 +64,7 @@ void ModeSegLocalRGrow::FinishSegmentation()
     return;
   }
 
-  //‚±‚Ìƒ^ƒCƒ~ƒ“ƒO‚Åfalse‚É‚µ‚È‚¢‚ÆcanEndMode‚Åƒ_ƒCƒAƒƒO‚ª•\¦‚³‚ê‚é
+  //ã“ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§falseã«ã—ãªã„ã¨canEndModeã§ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãŒè¡¨ç¤ºã•ã‚Œã‚‹
   m_is_modified = false;
 
   //SaveSeedInfo("");
@@ -78,7 +78,7 @@ void ModeSegLocalRGrow::FinishSegmentation()
 }
 
 
-bool ModeSegLocalRGrow::canEndMode()
+bool ModeSegLocalRGrow::CanEndMode()
 {
   if ( !m_is_modified ) return true;
   return (ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Leaving?"));
@@ -201,7 +201,7 @@ void ModeSegLocalRGrow::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
   m_bL = true;
 
-  if ( !isShiftKeyOn() )
+  if ( !IsShiftKeyOn() )
   {
     ogl->BtnDown_Trans(p);
     return;
@@ -219,7 +219,7 @@ void ModeSegLocalRGrow::LBtnDown(const EVec2i &p, OglForCLI *ogl)
     const EVec3f seed_pos = m_seeds[ m_active_seed_id ].GetPosition(frame_idx);
     const float  seed_rad = m_seeds[ m_active_seed_id ].GetRadius  (frame_idx); 
 
-    if ( t_DistRayAndPoint(ray_pos, ray_dir, seed_pos) > 0.8 * seed_rad )
+    if ( DistRayAndPoint(ray_pos, ray_dir, seed_pos) > 0.8 * seed_rad )
     {
       formMain_setCursorNESW();
       m_is_resize_activeseed = true;
@@ -279,14 +279,14 @@ void ModeSegLocalRGrow::MBtnUp(const EVec2i &p, OglForCLI *ogl)
 
 void ModeSegLocalRGrow::LBtnDclk(const EVec2i &p, OglForCLI *ogl)
 {
-  if (!isShiftKeyOn()) return;
+  if (!IsShiftKeyOn()) return;
 
   EVec3f rayP, rayD, pos;
   ogl->GetCursorRay(p, rayP, rayD);
 
   int pickSeedI = PickSeeds(rayP, rayD);
 
-  //ƒV[ƒh‚ğƒ_ƒuƒ‹ƒNƒŠƒbƒN‚µ‚½‚ç‚»‚ÌƒV[ƒh‚ğÁ‚·
+  //ã‚·ãƒ¼ãƒ‰ã‚’ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã—ãŸã‚‰ãã®ã‚·ãƒ¼ãƒ‰ã‚’æ¶ˆã™
   if (pickSeedI != -1)
   {
     std::cout << "delete local seed id = " << pickSeedI << "\n";
@@ -334,7 +334,7 @@ void ModeSegLocalRGrow::MouseMove(const EVec2i &p, OglForCLI *ogl)
     {
       const EVec3f seed_pos = m_seeds[ sid ].GetPosition(frame_idx);
       const float  seed_rad = m_seeds[ sid ].GetRadius  (frame_idx); 
-      if ( t_DistRayAndPoint(ray_pos, ray_dir, seed_pos) > 0.8 * seed_rad )
+      if ( DistRayAndPoint(ray_pos, ray_dir, seed_pos) > 0.8 * seed_rad )
         formMain_setCursorNESW();
       else 
         formMain_setCursorDefault();
@@ -358,7 +358,7 @@ void ModeSegLocalRGrow::MouseMove(const EVec2i &p, OglForCLI *ogl)
   {
     if (PickCrssec(ray_pos, ray_dir, pos) != CRSSEC_NON)
     {
-      float dist = t_DistRayAndPoint( ray_pos, ray_dir, m_seeds[m_active_seed_id].GetPosition(frame_idx) );
+      float dist = DistRayAndPoint( ray_pos, ray_dir, m_seeds[m_active_seed_id].GetPosition(frame_idx) );
       SelectSeed_SetRadius( dist );
     }
   }
@@ -394,7 +394,7 @@ void ModeSegLocalRGrow::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *og
 
 
 
-//ŠeƒV[ƒh‚É‘Î‚µ‚ÄƒŒƒC‚Æ‚ÌÕ“Ë‚ğŒŸo
+//å„ã‚·ãƒ¼ãƒ‰ã«å¯¾ã—ã¦ãƒ¬ã‚¤ã¨ã®è¡çªã‚’æ¤œå‡º
 int ModeSegLocalRGrow::PickSeeds(const EVec3f &ray_pos, const EVec3f &ray_dir)
 {
   const int frame_idx = formVisParam_getframeI();
@@ -404,7 +404,7 @@ int ModeSegLocalRGrow::PickSeeds(const EVec3f &ray_pos, const EVec3f &ray_dir)
 
   for (int i = 0; i < (int)m_seeds.size(); ++i)
   {
-    float distance = t_DistRayAndPoint(ray_pos, ray_dir, m_seeds[i].GetPosition(frame_idx) );
+    float distance = DistRayAndPoint(ray_pos, ray_dir, m_seeds[i].GetPosition(frame_idx) );
     if ( distance < m_seeds[i].GetRadius(frame_idx) && distance < mindist)
     {
       min_id  = i;
@@ -415,15 +415,15 @@ int ModeSegLocalRGrow::PickSeeds(const EVec3f &ray_pos, const EVec3f &ray_dir)
 }
 
 
-void ModeSegLocalRGrow::keyDown(int nChar) {}
-void ModeSegLocalRGrow::keyUp(int nChar) {}
+void ModeSegLocalRGrow::KeyDown(int nChar) {}
+void ModeSegLocalRGrow::KeyUp(int nChar) {}
 
 
 
 
 
 
-void ModeSegLocalRGrow::startMode()
+void ModeSegLocalRGrow::StartMode()
 {
   //initialize field 
   m_bL = m_bR = m_bM = false;
@@ -456,7 +456,7 @@ void ModeSegLocalRGrow::startMode()
 
 
 
-void ModeSegLocalRGrow::drawScene(
+void ModeSegLocalRGrow::DrawScene(
     const EVec3f &cuboid, 
     const EVec3f &cam_pos, 
     const EVec3f &cam_cnt)
@@ -465,7 +465,7 @@ void ModeSegLocalRGrow::drawScene(
 
   //bind volumes ---------------------------------------
   BindAllVolumes();
-  DrawCrossSections(cuboid, reso, !isSpaceKeyOn(), m_crssec_shader);
+  DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader);
 
   if ( formVisParam_bRendVol() )
   {
@@ -473,7 +473,7 @@ void ModeSegLocalRGrow::drawScene(
     glEnable(GL_BLEND);
     const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
     DrawVolumeSlices( cuboid, reso, cam_pos, cam_cnt, 
-                     !isSpaceKeyOn(), b_onmanip, m_volume_shader);
+                     !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
   }
@@ -485,7 +485,7 @@ void ModeSegLocalRGrow::drawScene(
   //draw control points
   glEnable(GL_LIGHTING);
   glEnable(GL_BLEND);
-  if(!isSKeyOn())
+  if(!IsSKeyOn())
   {
     for (int s = 0; s < num_seeds; ++s)
     {
@@ -564,7 +564,7 @@ void ModeSegLocalRGrow::SelectSeed_SetPosition( EVec3f new_pos )
 
 
 
-//è‡’l•ÏX
+//é–¾å€¤å¤‰æ›´
 void ModeSegLocalRGrow::SelectSeed_SetThreshMax( int maxv )
 {
   if ( m_active_seed_id < 0 || (int)m_seeds.size() <= m_active_seed_id ) return;
@@ -615,14 +615,14 @@ void ModeSegLocalRGrow::SelectSeed_RunInterpolation()
 //#example 
 //  pre = 4   0.0
 //  new = 10  1.0 
-//  4,5,6,7,8,9,10 (10-4 = 6“™•ª) 
+//  4,5,6,7,8,9,10 (10-4 = 6ç­‰åˆ†) 
 //   
 //  1/(10-4) = 1/6.0
 //  4:0, 5:1/6, 6:2/6, 7:3/6, 8:4/6, 9:5/6, 10:6/6
 //
 
 
-//ƒV[ƒh•âŠÔ(ˆÊ’u / ”¼Œa / è‡’l)
+//ã‚·ãƒ¼ãƒ‰è£œé–“(ä½ç½® / åŠå¾„ / é–¾å€¤)
 void ModeSegLocalRGrow::RunSeedInterpolation( int trgt_seed_id)
 {
   if (trgt_seed_id < 0 || trgt_seed_id >= m_seeds.size())return;
@@ -729,7 +729,7 @@ void t_RunLocalRegionGrow3D
   byte* flg3d
 )
 {
-  //get resolution (‚±‚ÌŠÖ”‚ÅImageCore“ñƒAƒNƒZƒX‚·‚é‚Ì‚Í­‚µ‹C‚¿ˆ«‚¢‚¯‚Ç‹–—e)
+  //get resolution (ã“ã®é–¢æ•°ã§ImageCoreäºŒã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹ã®ã¯å°‘ã—æ°—æŒã¡æ‚ªã„ã‘ã©è¨±å®¹)
   int WH = W*H, WHD = W*H*D;
   const short minv = seed_minmax[0];
   const short maxv = seed_minmax[1];
@@ -741,9 +741,9 @@ void t_RunLocalRegionGrow3D
   //CP --> pixel id
   TQueue<EVec4i> Q;
   {
-    const int xi = t_crop( 0, W - 1, (int)(seed_pos[0] / pitch[0]));
-    const int yi = t_crop( 0, H - 1, (int)(seed_pos[1] / pitch[1]));
-    const int zi = t_crop( 0, D - 1, (int)(seed_pos[2] / pitch[2]));
+    const int xi = Crop( 0, W - 1, (int)(seed_pos[0] / pitch[0]));
+    const int yi = Crop( 0, H - 1, (int)(seed_pos[1] / pitch[1]));
+    const int zi = Crop( 0, D - 1, (int)(seed_pos[2] / pitch[2]));
     const int idx = xi + yi * W + zi * WH;
     if ( flg3d[idx] != 0 && t_inRange(img3d[idx], minv, maxv) )
     {
@@ -762,8 +762,8 @@ void t_RunLocalRegionGrow3D
     const EVec3f piv_pos( (x+0.5f)*pitch[0], (y+0.5f)*pitch[1], (z+0.5f)*pitch[2]);
     Q.pop_front();
 
-    //”ÍˆÍŠO‚É‚Í‚İo‚Ä‚¢‚½‚ç¬’·‚µ‚È‚¢i1‰æ‘f•ª‚Í‚İo‚Ä‚µ‚Ü‚¤‚ªCŒvZ—Ê“I‚É‚±‚ÌÀ‘•‚ğÌ—pj
-    if ( t_DistSq( piv_pos, seed_pos) > radi2) continue;
+    //ç¯„å›²å¤–ã«ã¯ã¿å‡ºã¦ã„ãŸã‚‰æˆé•·ã—ãªã„ï¼ˆ1ç”»ç´ åˆ†ã¯ã¿å‡ºã¦ã—ã¾ã†ãŒï¼Œè¨ˆç®—é‡çš„ã«ã“ã®å®Ÿè£…ã‚’æ¡ç”¨ï¼‰
+    if ( DistSq( piv_pos, seed_pos) > radi2) continue;
     
     //grow to 6 neighbors
     int    K;
@@ -820,7 +820,7 @@ void ModeSegLocalRGrow::RunLocalRegionGrow_OnlyTrgtFrame(int trgt_frame_idx)
       //if (flg3d[vi] == 255) cnt_255++;
 
     }
-    //cout << "  0 " << cnt_0 << "\n";//0‚Ì‚İ
+    //cout << "  0 " << cnt_0 << "\n";//0ã®ã¿
     //cout << "  1 " << cnt_1 << "\n";
     //cout << "255 " << cnt_255 << "\n";
 

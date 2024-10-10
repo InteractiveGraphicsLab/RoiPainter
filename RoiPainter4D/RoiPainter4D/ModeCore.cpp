@@ -60,7 +60,7 @@ void ModeCore::ModeSwitch(MODE_ID m)
 
   std::cout << "\n ModeSwitch " << m << "\n\n";
 
-  if (!m_mode->canEndMode()) return;
+  if (!m_mode->CanEndMode()) return;
 
   if      (m == MODE_VIS_MASK   )   m_mode = ModeVizMask::GetInst();
   else if (m == MODE_SEG_REGGROW)   m_mode = ModeSegRGrow::GetInst();
@@ -99,7 +99,7 @@ void ModeCore::ModeSwitch(MODE_ID m)
   FormSegStrokeFfd_Hide();
   FormPlaceCPs_Hide();
 
-  m_mode->startMode();
+  m_mode->StartMode();
 }
 
 

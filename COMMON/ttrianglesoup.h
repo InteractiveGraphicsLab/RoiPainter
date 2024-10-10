@@ -1,4 +1,4 @@
-﻿#ifndef COMMON_TRIANGLESOUP_H_
+#ifndef COMMON_TRIANGLESOUP_H_
 #define COMMON_TRIANGLESOUP_H_
 
 #pragma unmanaged
@@ -77,7 +77,7 @@ public:
 
 
 // cast ray in Y axis ( divide ZX plane )  
-void GenBinaryVolumeFromMesh_Y
+void GenBinaryVolumeFromMeshY
 (
   const EVec3i& reso,
   const EVec3f& pitch,

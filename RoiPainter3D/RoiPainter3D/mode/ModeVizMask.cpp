@@ -158,7 +158,7 @@ void ModeVizMask::DrawScene(
   //bind volumes ---------------------------------------
   BindAllVolumes();
 
-  if (m_bDrawStr) t_DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
+  if (m_bDrawStr) DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
 
   //Cross Section
   const EVec3i reso = ImageCore::GetInst()->GetResolution();

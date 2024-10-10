@@ -54,7 +54,7 @@ public:
 
 
 	//data should be allocated
-	//�Q�lhttp://radroom.web.fc2.com/dicom/image.html
+	//蜿りドttp://radroom.web.fc2.com/dicom/image.html
 	template<class T> 
 	bool getPixelsAs(T* data)
 	{

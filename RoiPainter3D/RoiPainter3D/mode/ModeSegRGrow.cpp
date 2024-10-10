@@ -68,7 +68,7 @@ void ModeSegRGrow::StartMode()
   formSegRGrow_Show();
 
   //Lock/Unlock pitch box 
-  //ピッチ変更によりseedがずれる可能性はあるがseed数が少ないのでpitch変更可能にしておく
+  //繝斐ャ繝∝､画峩縺ｫ繧医ｊseed縺後★繧後ｋ蜿ｯ閭ｽ諤ｧ縺ｯ縺ゅｋ縺茎eed謨ｰ縺悟ｰ代↑縺�縺ｮ縺ｧpitch螟画峩蜿ｯ閭ｽ縺ｫ縺励※縺翫￥
   formVisParam_UnlockPitchBox();
 }
 
@@ -207,7 +207,7 @@ int ModeSegRGrow::PickControlPoints(
 {
 	for (int i = 0; i < (int)m_cp_centers.size(); ++i)
 	{
-		if (t_DistRayAndPoint(ray_pos, ray_dir, m_cp_centers[i]) < m_cp_size) 
+		if (DistRayAndPoint(ray_pos, ray_dir, m_cp_centers[i]) < m_cp_size) 
       return i;
 	}
 	return -1;
@@ -237,7 +237,7 @@ void ModeSegRGrow::DrawScene(
   BindAllVolumes();
 
   //draw cut stroke 
-  if ( m_b_drawstroke ) t_DrawPolyLine( EVec3f(1,1,0), 3, m_stroke );
+  if ( m_b_drawstroke ) DrawPolyLine( EVec3f(1,1,0), 3, m_stroke );
 
   //draw planes
   const EVec3i reso = ImageCore::GetInst()->GetResolution();
@@ -300,7 +300,7 @@ void ModeSegRGrow::RunRegionGrow6(short minv, short maxv)
 {
   std::cout << "runRegionGrow6...";
 
-  //サイズ関連を準備  
+  //繧ｵ繧､繧ｺ髢｢騾｣繧呈ｺ門ｙ  
   int W,H,D,WH,WHD;
   std::tie(W,H,D,WH,WHD) = ImageCore::GetInst()->GetResolution5();
   const EVec3f pitch= ImageCore::GetInst()->GetPitch();
@@ -365,7 +365,7 @@ void ModeSegRGrow::RunRegionGrow26(short minV, short maxV)
 {
   std::cout << "runRegionGrow26...";
 
-  //サイズ関連を準備  
+  //繧ｵ繧､繧ｺ髢｢騾｣繧呈ｺ門ｙ  
   int W,H,D,WH,WHD;
   std::tie(W,H,D,WH,WHD) = ImageCore::GetInst()->GetResolution5();
   const EVec3f pitch= ImageCore::GetInst()->GetPitch();
@@ -449,7 +449,7 @@ void ModeSegRGrow::RunRegionGrow26(short minV, short maxV)
 
 void ModeSegRGrow::RunDilation()
 {
-	t_Dilate3D( ImageCore::GetInst()->m_vol_flag );
+	Dilate3D( ImageCore::GetInst()->m_vol_flag );
 	m_b_roi_update = true;
   RedrawScene();
 }
@@ -457,7 +457,7 @@ void ModeSegRGrow::RunDilation()
 
 void ModeSegRGrow::RunErosion()
 {
-	t_Erode3D( ImageCore::GetInst()->m_vol_flag );
+	Erode3D( ImageCore::GetInst()->m_vol_flag );
 	m_b_roi_update = true;
   RedrawScene();
 }
@@ -475,7 +475,7 @@ void ModeSegRGrow::RunFillHole()
     flg[i] = (flg[i] == 255) ? 255 : 0;
   }
 
-  t_FillHole3D(flg);
+  FillHole3D(flg);
 
   // update flg volume (never change voxel with vflg[i]==0)
 	byte *flg3d = ImageCore::GetInst()->m_vol_flag.GetVolumePtr();

@@ -32,7 +32,7 @@ System::Void FormSegRGrow::textBox_max_TextChanged(System::Object^ sender, Syste
   int x;
   if (Int32::TryParse(textBox_max->Text, x)) 
   {
-    t_crop( trackbar_max->Minimum, trackbar_max->Maximum, x);
+    Crop( trackbar_max->Minimum, trackbar_max->Maximum, x);
     textBox_max->Text = (x).ToString();
     trackbar_max->Value = x;
   }
@@ -49,7 +49,7 @@ System::Void FormSegRGrow::textBox_min_TextChanged(System::Object^ sender, Syste
   int x;
   if (Int32::TryParse(textBox_min->Text, x)) 
   {
-    t_crop( trackbar_min->Minimum, trackbar_min->Maximum, x);
+    Crop( trackbar_min->Minimum, trackbar_min->Maximum, x);
     textBox_min->Text = (x).ToString();
     trackbar_min->Value = x;
   }

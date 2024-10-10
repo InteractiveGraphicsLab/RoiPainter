@@ -10,7 +10,7 @@ namespace RoiPainter4D {
   using namespace System::Drawing;
 
   /// <summary>
-  /// FormSegPixPaint ‚ÌŠT—v
+  /// FormSegPixPaint ã®æ¦‚è¦
   /// </summary>
   public ref class FormSegPixPaint : public System::Windows::Forms::Form
   {
@@ -46,7 +46,7 @@ namespace RoiPainter4D {
 
   protected:
     /// <summary>
-    /// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+    /// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
     /// </summary>
     ~FormSegPixPaint()
     {
@@ -64,14 +64,14 @@ namespace RoiPainter4D {
 
   private:
     /// <summary>
-    /// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+    /// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
     /// </summary>
     System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
     /// <summary>
-    /// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-    /// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+    /// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+    /// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
     /// </summary>
     void InitializeComponent(void)
     {
@@ -88,7 +88,7 @@ namespace RoiPainter4D {
         // 
         // okButton
         // 
-        this->okButton->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+        this->okButton->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
             static_cast<System::Byte>(128)));
         this->okButton->Location = System::Drawing::Point(12, 200);
         this->okButton->Name = L"okButton";
@@ -100,7 +100,7 @@ namespace RoiPainter4D {
         // 
         // cancelButton
         // 
-        this->cancelButton->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+        this->cancelButton->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
             static_cast<System::Byte>(128)));
         this->cancelButton->Location = System::Drawing::Point(156, 207);
         this->cancelButton->Name = L"cancelButton";
@@ -114,7 +114,7 @@ namespace RoiPainter4D {
         // 
         this->paintRadioButton->AutoSize = true;
         this->paintRadioButton->Checked = true;
-        this->paintRadioButton->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+        this->paintRadioButton->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
             static_cast<System::Byte>(128)));
         this->paintRadioButton->Location = System::Drawing::Point(12, 4);
         this->paintRadioButton->Name = L"paintRadioButton";
@@ -128,7 +128,7 @@ namespace RoiPainter4D {
         // lassoRadioButton
         // 
         this->lassoRadioButton->AutoSize = true;
-        this->lassoRadioButton->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+        this->lassoRadioButton->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
             static_cast<System::Byte>(128)));
         this->lassoRadioButton->Location = System::Drawing::Point(12, 70);
         this->lassoRadioButton->Name = L"lassoRadioButton";
@@ -142,7 +142,7 @@ namespace RoiPainter4D {
         // 
         this->textBox1->BackColor = System::Drawing::SystemColors::MenuBar;
         this->textBox1->BorderStyle = System::Windows::Forms::BorderStyle::None;
-        this->textBox1->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+        this->textBox1->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
             static_cast<System::Byte>(128)));
         this->textBox1->ForeColor = System::Drawing::SystemColors::MenuText;
         this->textBox1->Location = System::Drawing::Point(13, 25);
@@ -155,7 +155,7 @@ namespace RoiPainter4D {
         // 
         this->textBox2->BackColor = System::Drawing::SystemColors::MenuBar;
         this->textBox2->BorderStyle = System::Windows::Forms::BorderStyle::None;
-        this->textBox2->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+        this->textBox2->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
             static_cast<System::Byte>(128)));
         this->textBox2->Location = System::Drawing::Point(13, 43);
         this->textBox2->Name = L"textBox2";
@@ -167,7 +167,7 @@ namespace RoiPainter4D {
         // 
         this->textBox3->BackColor = System::Drawing::SystemColors::MenuBar;
         this->textBox3->BorderStyle = System::Windows::Forms::BorderStyle::None;
-        this->textBox3->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+        this->textBox3->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
             static_cast<System::Byte>(128)));
         this->textBox3->Location = System::Drawing::Point(13, 110);
         this->textBox3->Name = L"textBox3";
@@ -179,7 +179,7 @@ namespace RoiPainter4D {
         // 
         this->textBox4->BackColor = System::Drawing::SystemColors::MenuBar;
         this->textBox4->BorderStyle = System::Windows::Forms::BorderStyle::None;
-        this->textBox4->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+        this->textBox4->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
             static_cast<System::Byte>(128)));
         this->textBox4->ForeColor = System::Drawing::SystemColors::MenuText;
         this->textBox4->Location = System::Drawing::Point(13, 92);
@@ -191,7 +191,7 @@ namespace RoiPainter4D {
         // lassoAllRadioButton
         // 
         this->lassoAllRadioButton->AutoSize = true;
-        this->lassoAllRadioButton->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+        this->lassoAllRadioButton->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
             static_cast<System::Byte>(128)));
         this->lassoAllRadioButton->Location = System::Drawing::Point(13, 137);
         this->lassoAllRadioButton->Name = L"lassoAllRadioButton";

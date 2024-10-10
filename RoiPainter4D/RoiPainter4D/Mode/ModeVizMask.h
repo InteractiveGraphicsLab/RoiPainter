@@ -15,7 +15,7 @@ public:
   static ModeVizMask* GetInst() { static ModeVizMask p; return &p; }
 
   // overload functions ---------------------------------------------
-  MODE_ID getModeID() { return MODE_VIS_MASK; }
+  MODE_ID GetModeID() { return MODE_VIS_MASK; }
   void LBtnUp(const EVec2i &p, OglForCLI *ogl);
   void RBtnUp(const EVec2i &p, OglForCLI *ogl);
   void MBtnUp(const EVec2i &p, OglForCLI *ogl);
@@ -27,11 +27,11 @@ public:
   void MBtnDclk(const EVec2i &p, OglForCLI *ogl);
   void MouseMove(const EVec2i &p, OglForCLI *ogl);
   void MouseWheel(const EVec2i &p, short zDelta, OglForCLI *ogl);
-  void keyDown(int nChar);
-  void keyUp(int nChar);
-  bool canEndMode();
-  void startMode();
-  void drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+  void KeyDown(int nChar);
+  void KeyUp(int nChar);
+  bool CanEndMode();
+  void StartMode();
+  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
 };
 
 #endif

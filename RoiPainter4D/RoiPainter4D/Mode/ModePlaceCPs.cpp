@@ -40,13 +40,13 @@ ModePlaceCPs::ModePlaceCPs():
 }
 
 
-bool ModePlaceCPs::canEndMode() 
+bool ModePlaceCPs::CanEndMode() 
 { 
   return true; 
 }
 
 
-void ModePlaceCPs::startMode() 
+void ModePlaceCPs::StartMode() 
 {
   m_bL = m_bR = m_bM = false;
   m_drag_cpid = -1;
@@ -95,7 +95,7 @@ void ModePlaceCPs::FinishSegmentation()
     TMesh mesh = m_template;
     mesh.Rotate(m_template_rottrans[f].first);
     mesh.Translate(m_template_rottrans[f].second);
-    GenBinaryVolumeFromMesh_Y(reso, pitch, mesh, flgInOut);
+    GenBinaryVolumeFromMeshY(reso, pitch, mesh, flgInOut);
 
     byte* flg3d = flg4d[f];
 #pragma omp parallel for
@@ -135,7 +135,7 @@ void ModePlaceCPs::CancelSegmentation()
 }
 
 
-//•\Ž¦‚³‚ê‚Ä‚¢‚éplane‚Æ isosurface‚ðƒsƒbƒLƒ“ƒO‚µ‚ÄA‹ß‚¢“_‚ð•Ô‚·
+//è¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹planeã¨ isosurfaceã‚’ãƒ”ãƒƒã‚­ãƒ³ã‚°ã—ã¦ã€è¿‘ã„ç‚¹ã‚’è¿”ã™
 bool ModePlaceCPs::PickPlanesIsosurf(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos)
 {
   const int fidx = formVisParam_getframeI();
@@ -169,7 +169,7 @@ static int pick_cps(
 
   for (int i = 0; i < (int)cps.size(); ++i)
   {
-    if (t_DistRayAndPoint(ray_pos, ray_dir, cps[i]) > cp_rad) continue;
+    if (DistRayAndPoint(ray_pos, ray_dir, cps[i]) > cp_rad) continue;
 
     float d = (ray_pos - cps[i]).norm();
     if (d < min_depth)
@@ -205,12 +205,12 @@ void ModePlaceCPs::LBtnDown(const EVec2i& p, OglForCLI* ogl)
   m_bL = true;
   
 
-  if (isCtrKeyOn())
+  if (IsCtrKeyOn())
   {
     m_stroke.clear();
     m_b_draw_stroke = true;
   }
-  else if (isShiftKeyOn())
+  else if (IsShiftKeyOn())
   {
     const int f = formVisParam_getframeI();
 
@@ -269,7 +269,7 @@ void ModePlaceCPs::RBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
   m_bR = true;
 
-  if (isShiftKeyOn())
+  if (IsShiftKeyOn())
   {
     const int f = formVisParam_getframeI();
     EVec3f ray_pos, ray_dir;
@@ -360,12 +360,12 @@ void ModePlaceCPs::MouseWheel(const EVec2i& p, short z_delta, OglForCLI* ogl)
 }
 
 
-void ModePlaceCPs::keyDown(int nChar)
+void ModePlaceCPs::KeyDown(int nChar)
 {
   formMain_RedrawMainPanel();
 }
 
-void ModePlaceCPs::keyUp(int nChar) {}
+void ModePlaceCPs::KeyUp(int nChar) {}
 
 
 template<class TMESH_TRIANGLESOUP>
@@ -431,7 +431,7 @@ static float DIFF2[4] = { 0.8f,0.2f,0.8f,0.3f };
 static float AMBI2[4] = { 0.8f,0.2f,0.8f,0.3f };
 
 
-void ModePlaceCPs::drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF) 
+void ModePlaceCPs::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF) 
 {
   const int    frame_idx = formVisParam_getframeI();
   const EVec3i reso      = ImageCore::GetInst()->GetReso();
@@ -453,11 +453,11 @@ void ModePlaceCPs::drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVe
   
   if (m_b_draw_stroke)
   {
-    t_DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke, false);
+    DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke, false);
   }
 
   glEnable(GL_LIGHTING);
-  if (!isSpaceKeyOn())
+  if (!IsSpaceKeyOn())
   {
     //draw control points
     DrawColoredCPs(m_cp_mesh, m_cps[frame_idx]);
@@ -497,7 +497,7 @@ void ModePlaceCPs::drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVe
     glEnable(GL_BLEND);
     const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
     DrawVolumeSlices(cuboid, reso, camP, camF,
-      !isSpaceKeyOn(), b_onmanip, m_volume_shader);
+      !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
   }
@@ -536,13 +536,13 @@ void ModePlaceCPs::IsosurfaceGenerateOneFrame(
         for (int x = 0; x < hW; ++x)
           vh[z * hW * hH + y * hW + x] = volume[2*z*W*H + 2*y*W + 2*x];
 
-    t_MarchingCubes_PolygonSoup(rh, ph, vh, isovalue, 0, 0, m_isosurfaces[frame_idx]);
+    MarchingCubesPolygonSoup(rh, ph, vh, isovalue, 0, 0, m_isosurfaces[frame_idx]);
     delete[] vh;
 
   }
   else
   {
-    t_MarchingCubes_PolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[frame_idx]);
+    MarchingCubesPolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[frame_idx]);
   }
 
 
@@ -576,11 +576,11 @@ void ModePlaceCPs::IsosurfaceGenerateAllFrame(const int isovalue)
         for (int y = 0; y < hH; ++y)
           for (int x = 0; x < hW; ++x)
             vh[z * hW * hH + y * hW + x] = volume[2 * z * W * H + 2 * y * W + 2 * x];
-      t_MarchingCubes_PolygonSoup(rh, ph, vh, isovalue, 0, 0, m_isosurfaces[i]);
+      MarchingCubesPolygonSoup(rh, ph, vh, isovalue, 0, 0, m_isosurfaces[i]);
     }
     else
     {
-      t_MarchingCubes_PolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[i]);
+      MarchingCubesPolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[i]);
     }
     std::cout << "isoSurfGen " << i << "/" << num_frames << "\n";
   }
@@ -699,7 +699,7 @@ static void EigenSolverTest()
 
 
 //given (x0, x1, x2) and (y0, y1, y2) 
-// ƒ°||R (x0-c0) - (x1-c1)|| 
+// Î£||R (x0-c0) - (x1-c1)|| 
 // x0' = R x0 + (R c0 + c)
 // t = 
 static void CalcTriangleMatching(
@@ -735,15 +735,15 @@ static void CalcTriangleMatching(
   ny /= len_ny;
   axis_nxny /= len_axis_nxny;
 
-  EMat3f Rot1 = t_CalcRotationMat(nx, ny, axis_nxny);
+  EMat3f Rot1 = CalcRotationMat(nx, ny, axis_nxny);
   x0 = Rot1 * x0;
   x1 = Rot1 * x1;
   x2 = Rot1 * x2;
 
-  float t0 = (float)t_CalcAngle(x0, y0, ny);
-  float t1 = (float)t_CalcAngle(x1, y1, ny);
-  float t2 = (float)t_CalcAngle(x2, y2, ny);
-  float t = t_CalcAverageAngle3(t0, t1, t2);
+  float t0 = (float)CalcAngle(x0, y0, ny);
+  float t1 = (float)CalcAngle(x1, y1, ny);
+  float t2 = (float)CalcAngle(x2, y2, ny);
+  float t = CalcAverageAngle3(t0, t1, t2);
 
   EMat3f Rot2 = Eigen::AngleAxis<float>(t, ny).matrix();
 
@@ -757,7 +757,7 @@ static void CalcTriangleMatching(
 
 //given two sets pf points 
 //compute translation t and rotation R to minimize 
-// ƒ°||R (x0-c0) - (x1-c1)||
+// Î£||R (x0-c0) - (x1-c1)||
 // c0 and c1 are gravty centers of x0 and x1
 // t = - R c0 + c
 static void CalcShapeMatching(
@@ -770,7 +770,7 @@ static void CalcShapeMatching(
   rottrans.second << 0, 0, 0;
 
   const int N = std::min((int)x0.size(), (int)x1.size());
-  if (N<=3) return; //TODO N == 3‚ÌŽž‚Í•Ê‚Ìˆ—
+  if (N<=3) return; //TODO N == 3ã®æ™‚ã¯åˆ¥ã®å‡¦ç†
 
   //calc gc 
   EVec3f c0(0,0,0), c1(0,0,0);
@@ -782,7 +782,7 @@ static void CalcShapeMatching(
   c0 /= (float)N;
   c1 /= (float)N;
 
-  //calc Apq = ƒ°((x1i-c1))(x0i-c0)-T
+  //calc Apq = Î£((x1i-c1))(x0i-c0)-T
   EMat3f Apq = EMat3f::Zero();
   for (int i = 0; i < N; ++i)
   {

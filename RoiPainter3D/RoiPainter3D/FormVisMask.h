@@ -10,7 +10,7 @@ namespace RoiPainter3D {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// FormVisMask ‚ÌŠT—v
+	/// FormVisMask ã®æ¦‚è¦
 	/// </summary>
 	public ref class FormVisMask : public System::Windows::Forms::Form
 	{
@@ -60,7 +60,7 @@ namespace RoiPainter3D {
 
 	protected:
 		/// <summary>
-		/// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+		/// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
 		/// </summary>
 		~FormVisMask()
 		{
@@ -73,14 +73,14 @@ namespace RoiPainter3D {
 
 	private:
 		/// <summary>
-		/// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+		/// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-		/// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+		/// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+		/// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
 		/// </summary>
 		void InitializeComponent(void)
 		{
@@ -107,7 +107,7 @@ namespace RoiPainter3D {
       // 
       // btnMargeTo
       // 
-      this->btnMargeTo->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btnMargeTo->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btnMargeTo->Location = System::Drawing::Point(143, 240);
       this->btnMargeTo->Name = L"btnMargeTo";
@@ -119,7 +119,7 @@ namespace RoiPainter3D {
       // 
       // btnDelete
       // 
-      this->btnDelete->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btnDelete->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btnDelete->Location = System::Drawing::Point(6, 178);
       this->btnDelete->Name = L"btnDelete";
@@ -131,7 +131,7 @@ namespace RoiPainter3D {
       // 
       // btnColorPallet
       // 
-      this->btnColorPallet->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btnColorPallet->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btnColorPallet->Location = System::Drawing::Point(65, 17);
       this->btnColorPallet->Name = L"btnColorPallet";
@@ -144,7 +144,7 @@ namespace RoiPainter3D {
       // checkbox_lock
       // 
       this->checkbox_lock->AutoSize = true;
-      this->checkbox_lock->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->checkbox_lock->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->checkbox_lock->Location = System::Drawing::Point(6, 18);
       this->checkbox_lock->Name = L"checkbox_lock";
@@ -216,7 +216,7 @@ namespace RoiPainter3D {
       // 
       this->alpha->BackColor = System::Drawing::SystemColors::Menu;
       this->alpha->BorderStyle = System::Windows::Forms::BorderStyle::None;
-      this->alpha->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->alpha->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->alpha->Location = System::Drawing::Point(10, 48);
       this->alpha->Name = L"alpha";
@@ -227,7 +227,7 @@ namespace RoiPainter3D {
       // 
       // btnExpObj
       // 
-      this->btnExpObj->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btnExpObj->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btnExpObj->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
       this->btnExpObj->Location = System::Drawing::Point(6, 142);
@@ -240,7 +240,7 @@ namespace RoiPainter3D {
       // 
       // btnErode
       // 
-      this->btnErode->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btnErode->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btnErode->Location = System::Drawing::Point(6, 89);
       this->btnErode->Name = L"btnErode";
@@ -252,7 +252,7 @@ namespace RoiPainter3D {
       // 
       // btnDilate
       // 
-      this->btnDilate->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btnDilate->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btnDilate->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
       this->btnDilate->Location = System::Drawing::Point(6, 115);
@@ -265,7 +265,7 @@ namespace RoiPainter3D {
       // 
       // btnFillHole
       // 
-      this->btnFillHole->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btnFillHole->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btnFillHole->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
       this->btnFillHole->Location = System::Drawing::Point(142, 266);
@@ -295,7 +295,7 @@ namespace RoiPainter3D {
       // 
       // btnSmartFillHole
       // 
-      this->btnSmartFillHole->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btnSmartFillHole->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btnSmartFillHole->Location = System::Drawing::Point(142, 293);
       this->btnSmartFillHole->Name = L"btnSmartFillHole";

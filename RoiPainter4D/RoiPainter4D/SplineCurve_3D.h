@@ -5,8 +5,8 @@
 #include "tmath.h"
 #include <vector>
 
-//0<= t <=N-1  ‚Å“™ŠÔŠuƒpƒ‰ƒƒgƒ‰ƒCƒY (N‚Íƒf[ƒ^‚ÌŒÂ”)
-//Ü‚êü‚Å•\Œ»
+//0<= t <=N-1  ã§ç­‰é–“éš”ãƒ‘ãƒ©ãƒ¡ãƒˆãƒ©ã‚¤ã‚º (Nã¯ãƒ‡ãƒ¼ã‚¿ã®å€‹æ•°)
+//æŠ˜ã‚Œç·šã§è¡¨ç¾
 class SplineCurve_3D
 {
 private:
@@ -62,14 +62,14 @@ public:
 	}
 
 private:
-	//control_points_‚ð‚Â‚È‚®3ŽŸƒXƒvƒ‰ƒCƒ“‹Èü(Ü‚êü‚Å•\Œ»‚·‚é)‚ð¶¬
+	//control_points_ã‚’ã¤ãªã3æ¬¡ã‚¹ãƒ—ãƒ©ã‚¤ãƒ³æ›²ç·š(æŠ˜ã‚Œç·šã§è¡¨ç¾ã™ã‚‹)ã‚’ç”Ÿæˆ
 	void createSpline();
 	
-	EMatXf makeLeftSideMatrix()const ;   //Ax = b ‚ÌA‚ð¶¬
-	EVecXf makeRightSideVector(int xyz) const;  //Ax = b ‚Ìb‚ð¶¬
-	EVecXf calcSplineCoefficient(const EMatXf& A, const EVecXf& b) const;//Ax = b ‚ð‰ð‚­‚±‚Æ‚Å3ŽŸƒXƒvƒ‰ƒCƒ“‹Èü‚ÌŒW”‚ðŒvŽZ
+	EMatXf makeLeftSideMatrix()const ;   //Ax = b ã®Aã‚’ç”Ÿæˆ
+	EVecXf makeRightSideVector(int xyz) const;  //Ax = b ã®bã‚’ç”Ÿæˆ
+	EVecXf calcSplineCoefficient(const EMatXf& A, const EVecXf& b) const;//Ax = b ã‚’è§£ãã“ã¨ã§3æ¬¡ã‚¹ãƒ—ãƒ©ã‚¤ãƒ³æ›²ç·šã®ä¿‚æ•°ã‚’è¨ˆç®—
 
-	//3ŽŸƒXƒvƒ‰ƒCƒ“‹Èü‚©‚çÜ‚êü‚ðŒ`¬
+	//3æ¬¡ã‚¹ãƒ—ãƒ©ã‚¤ãƒ³æ›²ç·šã‹ã‚‰æŠ˜ã‚Œç·šã‚’å½¢æˆ
 	void sampling(const EVecXf* const splineCoefficients);
 };
 

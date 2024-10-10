@@ -111,14 +111,14 @@ void ModeRefSplitByPlane::finishSegmentation()
   byte* flg3d = ImageCore::GetInst()->m_vol_flag.GetVolumePtr();
 
 
-  //ˆê’U ƒgƒŠƒ€‚³‚ê‚½‰æ‘f‚ÌID‚ğ0‚É
+  //ä¸€æ—¦ ãƒˆãƒªãƒ ã•ã‚ŒãŸç”»ç´ ã®IDã‚’0ã«
   for (int i = 0; i < num_voxels; ++i)
   {
     if (msk3d[i] == m_trgt_maskid && flg3d[i] != 255) msk3d[i] = 0;
   }
   ImageCore::GetInst()->ClearMaskSurface(m_trgt_maskid);
 
-  //ƒgƒŠƒ€‚³‚ê‚½—Ìˆæ‚ğV‚µ‚¢—Ìˆæ‚Æ‚µ‚Ä’Ç‰Á
+  //ãƒˆãƒªãƒ ã•ã‚ŒãŸé ˜åŸŸã‚’æ–°ã—ã„é ˜åŸŸã¨ã—ã¦è¿½åŠ 
   bool bTrimRegionExist = false;
   for (int i = 0; i < num_voxels; ++i)
   {
@@ -142,8 +142,8 @@ int ModeRefSplitByPlane::PickCPs(EVec3f &ray_pos, EVec3f &ray_dir)
   float depth = FLT_MAX;
   for (int i = 0; i < m_cps.size(); ++i)
   {
-    if (t_DistRayAndPoint(ray_pos, ray_dir, m_cps[i]) > m_cp_radi) continue;
-    float d = t_Dist(ray_pos, m_cps[i]);
+    if (DistRayAndPoint(ray_pos, ray_dir, m_cps[i]) > m_cp_radi) continue;
+    float d = Dist(ray_pos, m_cps[i]);
     if (d < depth)
     {
       depth = d;
@@ -309,7 +309,7 @@ void ModeRefSplitByPlane::DrawScene(
   BindAllVolumes();
 
   //draw cut stroke 
-  if (m_b_drawstroke) t_DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke);
+  if (m_b_drawstroke) DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke);
 
   //draw planes
   const EVec3i reso = ImageCore::GetInst()->GetResolution();
@@ -370,18 +370,18 @@ void ModeRefSplitByPlane::GeneratePlaneFromPoints()
 {
   if (m_cps.size() < 3)
   {
-    CLI_MessageBox_OK_Show("Place at least 3 points (3“_ˆÈã‚Ì“_‚ğ’u‚¢‚Ä‚­‚¾‚³‚¢", "message");
+    CLI_MessageBox_OK_Show("Place at least 3 points (3ç‚¹ä»¥ä¸Šã®ç‚¹ã‚’ç½®ã„ã¦ãã ã•ã„", "message");
     return;
   }
 
   //step compute plane  
-  m_plane_pos = t_CalcGravityCenter(m_cps);
-  EMat3f A = t_CalcCovMatrix(m_cps);
+  m_plane_pos = CalcGravityCenter(m_cps);
+  EMat3f A = CalcCovMatrix(m_cps);
   Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> solver(A);
 
   EVec3f v = solver.eigenvalues();
   int minidx = min3id(v[0], v[1], v[2]);
-  m_plane_norm = solver.eigenvectors().col(minidx); //Å‚à•ªU‚ª¬‚³‚¢•ûŒü
+  m_plane_norm = solver.eigenvectors().col(minidx); //æœ€ã‚‚åˆ†æ•£ãŒå°ã•ã„æ–¹å‘
   if (m_plane_norm.norm() != 0) m_plane_norm.normalize();
 
   //generate plane mesh 
@@ -390,31 +390,31 @@ void ModeRefSplitByPlane::GeneratePlaneFromPoints()
   std::vector<TPoly> Ps = { TPoly(0, 1, 2), TPoly(0, 2, 3) };
   int maxidx = max3id(abs(m_plane_norm[0]), abs(m_plane_norm[1]), abs(m_plane_norm[2]));
 
-  if (maxidx == 0) // –@ü‚ªx²•ûŒü‚ğŒü‚¢‚Ä‚¢‚é
+  if (maxidx == 0) // æ³•ç·šãŒxè»¸æ–¹å‘ã‚’å‘ã„ã¦ã„ã‚‹
   {
     EVec3f x = EVec3f(1, 0, 0);
-    t_intersectRayToPlane(EVec3f(0, 0  ,  0 ), x, m_plane_pos, m_plane_norm, Vs[0]);
-    t_intersectRayToPlane(EVec3f(0,c[1],  0 ), x, m_plane_pos, m_plane_norm, Vs[1]);
-    t_intersectRayToPlane(EVec3f(0,c[1],c[2]), x, m_plane_pos, m_plane_norm, Vs[2]);
-    t_intersectRayToPlane(EVec3f(0, 0  ,c[2]), x, m_plane_pos, m_plane_norm, Vs[3]);
+    IntersectRayToPlane(EVec3f(0, 0  ,  0 ), x, m_plane_pos, m_plane_norm, Vs[0]);
+    IntersectRayToPlane(EVec3f(0,c[1],  0 ), x, m_plane_pos, m_plane_norm, Vs[1]);
+    IntersectRayToPlane(EVec3f(0,c[1],c[2]), x, m_plane_pos, m_plane_norm, Vs[2]);
+    IntersectRayToPlane(EVec3f(0, 0  ,c[2]), x, m_plane_pos, m_plane_norm, Vs[3]);
     m_plane_x = EVec3f(0, 1, 0);
   }
-  else if (maxidx == 1)// –@ü‚ªy²•ûŒü‚ğŒü‚¢‚Ä‚¢‚é
+  else if (maxidx == 1)// æ³•ç·šãŒyè»¸æ–¹å‘ã‚’å‘ã„ã¦ã„ã‚‹
   {
     EVec3f y = EVec3f(0, 1, 0);
-    t_intersectRayToPlane(EVec3f( 0  ,0,  0 ), y, m_plane_pos, m_plane_norm, Vs[0]);
-    t_intersectRayToPlane(EVec3f(c[0],0,  0 ), y, m_plane_pos, m_plane_norm, Vs[1]);
-    t_intersectRayToPlane(EVec3f(c[0],0,c[2]), y, m_plane_pos, m_plane_norm, Vs[2]);
-    t_intersectRayToPlane(EVec3f( 0  ,0,c[2]), y, m_plane_pos, m_plane_norm, Vs[3]);
+    IntersectRayToPlane(EVec3f( 0  ,0,  0 ), y, m_plane_pos, m_plane_norm, Vs[0]);
+    IntersectRayToPlane(EVec3f(c[0],0,  0 ), y, m_plane_pos, m_plane_norm, Vs[1]);
+    IntersectRayToPlane(EVec3f(c[0],0,c[2]), y, m_plane_pos, m_plane_norm, Vs[2]);
+    IntersectRayToPlane(EVec3f( 0  ,0,c[2]), y, m_plane_pos, m_plane_norm, Vs[3]);
     m_plane_x = EVec3f(1, 0, 0);
   }
   else
   {
     EVec3f z = EVec3f(0, 0, 1);
-    t_intersectRayToPlane(EVec3f(  0 ,  0 ,0), z, m_plane_pos, m_plane_norm, Vs[0]);
-    t_intersectRayToPlane(EVec3f(  0 ,c[1],0), z, m_plane_pos, m_plane_norm, Vs[1]);
-    t_intersectRayToPlane(EVec3f(c[0],c[1],0), z, m_plane_pos, m_plane_norm, Vs[2]);
-    t_intersectRayToPlane(EVec3f(c[0],  0 ,0), z, m_plane_pos, m_plane_norm, Vs[3]);
+    IntersectRayToPlane(EVec3f(  0 ,  0 ,0), z, m_plane_pos, m_plane_norm, Vs[0]);
+    IntersectRayToPlane(EVec3f(  0 ,c[1],0), z, m_plane_pos, m_plane_norm, Vs[1]);
+    IntersectRayToPlane(EVec3f(c[0],c[1],0), z, m_plane_pos, m_plane_norm, Vs[2]);
+    IntersectRayToPlane(EVec3f(c[0],  0 ,0), z, m_plane_pos, m_plane_norm, Vs[3]);
     m_plane_x = EVec3f(1, 0, 0);
   }
   std::cout << Vs[0] << Vs[1] << Vs[2] << Vs[3];
@@ -511,10 +511,10 @@ void ModeRefSplitByPlane::AnalysisWithCurrentPlane(std::string fname)
   const byte* vflg = ImageCore::GetInst()->m_vol_flag.GetVolumePtr();
   const byte* vol  = ImageCore::GetInst()->m_vol.GetVolumePtr();
 
-  //‰æ‘œ‚Ì‰ğ‘œ“xEƒsƒbƒ`E’†SE¶ã‚ğæ“¾ (’†S -->cuboid‚Ì’†S‚ğ•½–Ê‚ÉË‰e)
+  //ç”»åƒã®è§£åƒåº¦ãƒ»ãƒ”ãƒƒãƒãƒ»ä¸­å¿ƒãƒ»å·¦ä¸Šã‚’å–å¾— (ä¸­å¿ƒ -->cuboidã®ä¸­å¿ƒã‚’å¹³é¢ã«å°„å½±)
   int W = reso[0], H = reso[1];
   float px = pitch[0], py = pitch[1];
-  EVec3f center = t_projectPointToPlane(m_plane_pos, m_plane_norm, 0.5f * cube);
+  EVec3f center = ProjectPointToPlane(m_plane_pos, m_plane_norm, 0.5f * cube);
   EVec3f piv = center - (px * W / 2.0f) * m_plane_x
                       - (py * H / 2.0f) * m_plane_y;
 
@@ -533,11 +533,11 @@ void ModeRefSplitByPlane::AnalysisWithCurrentPlane(std::string fname)
 
       int I = y * W + x;
       img_val   [I] = vol[vox_idx[3]];
-      img_height[I] = CalcHeight(pos, m_plane_norm, cube, 0.5 * px, vflg);
+      img_height[I] = CalcHeight(pos, m_plane_norm, cube, 0.5f * px, vflg);
     }
   }
 
-  //‰æ‘œ‚ğì¬‚µ‚ÄƒZ[ƒu
+  //ç”»åƒã‚’ä½œæˆã—ã¦ã‚»ãƒ¼ãƒ–
   OGLImage2D1 oglimg_val;
   OGLImage2D4 oglimg_height;
   oglimg_val.Allocate(W, H);

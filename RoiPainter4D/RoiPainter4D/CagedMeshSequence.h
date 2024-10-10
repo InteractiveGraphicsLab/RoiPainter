@@ -19,7 +19,7 @@ class CagedMeshSequence
 private:
   std::vector< TMesh > m_cages ;
   std::vector< TMesh > m_meshes;
-  std::vector< int   > m_cagevtx_hl; //cage vtx‚Ì‘I‘ğó‹µ flg 
+  std::vector< int   > m_cagevtx_hl; //cage vtxã®é¸æŠçŠ¶æ³ flg 
   float **m_harmcoord; //size is [n_meshvtx,  n_cagevtx]
 
 
@@ -48,15 +48,18 @@ public:
 
   //GETTERs
   TMesh GetMesh( int frame_idx);
+  TMesh GetCage(int frame_idx);
   int   GetNumSelectedVtx() const;
   int   GetNumMeshVertex() const ;
   int   GetNumCageVertex() const ;
   int   GetNumFrames()const { return (int)m_cages.size(); }
+  float** GetHarmCoord() const { return m_harmcoord; }
 
   EVec3f GetMeshVertex( const int frame_idx, const int vtx_idx);
   EVec3f GetCageVertex( const int frame_idx, const int vtx_idx);
   void   SetCageVertex( const int frame_idx, const int vtx_idx, EVec3f pos, bool doUpdateShape = true);
-  std::vector<EVec3f> GetCageVertices(const int frame_idx)const;
+  std::vector<EVec3f> GetMeshVertices(const int frame_idx) const;
+  std::vector<EVec3f> GetCageVertices(const int frame_idx) const;
   void SetCageVertices(const int frame_idx, const std::vector<EVec3f> &verts, const bool doUpdateShape = true);
 
   void SetSelectedCageVtxPos(const int frame_idx, const int dim_xyz, float pos);
@@ -72,12 +75,14 @@ public:
     const int frame_idx, 
     const EVec2i p0, 
     const EVec2i p1, 
-    OglForCLI *ogl); 
+    OglForCLI *ogl,
+    const int select_mode = -1); 
 
   void SelectCageVtxByPick( 
     const int frame_idx, 
     const EVec3f &ray_pos, 
-    const EVec3f &ray_dir); 
+    const EVec3f &ray_dir,
+    const int select_mode = -1);
 
   void SetCageVtxSelected( std::set<int> &ids);
   std::set<int> GetSelectedCageVtx();

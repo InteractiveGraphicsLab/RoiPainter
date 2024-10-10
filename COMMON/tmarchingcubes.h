@@ -1,4 +1,4 @@
-﻿#ifndef COMMON_MARCHINGCUBES_H_
+#ifndef COMMON_MARCHINGCUBES_H_
 #define COMMON_MARCHINGCUBES_H_
 #pragma unmanaged
 
@@ -17,7 +17,7 @@ namespace marchingcubes
 // 複数頂点が一点に縮退する場合がある．
 // この時は一部の面の法線が計算できなくなるので注意
 
-void t_MarchingCubes(
+void MarchingCubes(
     const EVec3i &vRes,
     const EVec3f &vPitch,
     const short   *volume,
@@ -29,7 +29,7 @@ void t_MarchingCubes(
 );
 
 
-void t_MarchingCubes_PolygonSoup(
+void MarchingCubesPolygonSoup(
     const EVec3i &vRes,
     const EVec3f &vPitch,
     const short   *volume,
@@ -42,7 +42,7 @@ void t_MarchingCubes_PolygonSoup(
 );
 
 
-void t_MarchingCubes_PolygonSoup(
+void MarchingCubesPolygonSoup(
     const EVec3i &vRes,
     const EVec3f &vPitch,
     const short   *volume,
@@ -54,7 +54,7 @@ void t_MarchingCubes_PolygonSoup(
 );
 
 
-void t_MarchingCubes(
+void MarchingCubes(
     const EVec3i &vRes,
     const EVec3f &vPitch,
     const short  *volume,

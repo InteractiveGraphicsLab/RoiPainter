@@ -4,36 +4,36 @@
 
 #pragma warning(disable : 4996)
 
-//°ˆäæ¶‚Ìƒy[ƒWQÆ http://marina.sys.wakayama-u.ac.jp/~tokoi/?date=20051006
+//åºŠäº•å…ˆç”Ÿã®ãƒšãƒ¼ã‚¸å‚ç…§ http://marina.sys.wakayama-u.ac.jp/~tokoi/?date=20051006
 
 
-// ƒVƒF[ƒ_[‚Ìƒ\[ƒXƒvƒƒOƒ‰ƒ€‚ğƒƒ‚ƒŠ‚É“Ç‚İ‚Ş by Tokoi-sensei
+// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ã‚½ãƒ¼ã‚¹ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚’ãƒ¡ãƒ¢ãƒªã«èª­ã¿è¾¼ã‚€ by Tokoi-sensei
 int t_ReadShaderSource(GLuint shader, const char *file)
 {
-  //ƒtƒ@ƒCƒ‹‚ğŠJ‚­
+  //ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
   FILE *fp = fopen(file, "rb");
   if (fp == NULL) {
     perror(file);
     return -1;
   }
 
-  //ƒtƒ@ƒCƒ‹‚Ì––”ö‚ÉˆÚ“®‚µŒ»İˆÊ’ui‚Â‚Ü‚èƒtƒ@ƒCƒ‹ƒTƒCƒYj‚ğ“¾‚é
+  //ãƒ•ã‚¡ã‚¤ãƒ«ã®æœ«å°¾ã«ç§»å‹•ã—ç¾åœ¨ä½ç½®ï¼ˆã¤ã¾ã‚Šãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºï¼‰ã‚’å¾—ã‚‹
   fseek(fp, 0L, SEEK_END);
   GLsizei length = ftell(fp);
 
-  //ƒtƒ@ƒCƒ‹ƒTƒCƒY‚Ìƒƒ‚ƒŠ‚ğŠm•Û 
+  //ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºã®ãƒ¡ãƒ¢ãƒªã‚’ç¢ºä¿ 
   const GLchar *source = (GLchar *)malloc(length);
   if (source == NULL) {
     std::cout << "Could not allocate read buffer\n";
     return -1;
   }
 
-  // ƒtƒ@ƒCƒ‹‚ğæ“ª‚©‚ç“Ç‚İ‚Ş 
+  // ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å…ˆé ­ã‹ã‚‰èª­ã¿è¾¼ã‚€ 
   fseek(fp, 0L, SEEK_SET);
   int ret = fread((void *)source, 1, length, fp) != (size_t)length;
   fclose(fp);
 
-  // ƒVƒF[ƒ_‚Ìƒ\[ƒXƒvƒƒOƒ‰ƒ€‚ÌƒVƒF[ƒ_ƒIƒuƒWƒFƒNƒg‚Ö‚Ì“Ç‚İ‚İ
+  // ã‚·ã‚§ãƒ¼ãƒ€ã®ã‚½ãƒ¼ã‚¹ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®ã‚·ã‚§ãƒ¼ãƒ€ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¸ã®èª­ã¿è¾¼ã¿
   if (ret) std::cout << "Could not read file: " << file << "\n";
   else glShaderSource(shader, 1, &source, &length);
 
@@ -47,7 +47,7 @@ void t_PrintShaderInfoLog(GLuint shader)
 {
   GLsizei bufSize;
 
-  /* ƒVƒF[ƒ_‚ÌƒRƒ“ƒpƒCƒ‹‚ÌƒƒO‚Ì’·‚³‚ğæ“¾‚·‚é */
+  /* ã‚·ã‚§ãƒ¼ãƒ€ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ™‚ã®ãƒ­ã‚°ã®é•·ã•ã‚’å–å¾—ã™ã‚‹ */
   glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &bufSize);
 
   if (bufSize > 1) {
@@ -56,7 +56,7 @@ void t_PrintShaderInfoLog(GLuint shader)
     if (infoLog != NULL) {
       GLsizei length;
 
-      /* ƒVƒF[ƒ_‚ÌƒRƒ“ƒpƒCƒ‹‚ÌƒƒO‚Ì“à—e‚ğæ“¾‚·‚é */
+      /* ã‚·ã‚§ãƒ¼ãƒ€ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ™‚ã®ãƒ­ã‚°ã®å†…å®¹ã‚’å–å¾—ã™ã‚‹ */
       glGetShaderInfoLog(shader, bufSize, &length, infoLog);
       std::cout << "InfoLog:\n" << infoLog << "\n\n";
       free(infoLog);

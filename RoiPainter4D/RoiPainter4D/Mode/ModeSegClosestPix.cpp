@@ -33,15 +33,15 @@ ModeSegClosestPix::ModeSegClosestPix () :
 }
 
 
-bool ModeSegClosestPix::canEndMode()
+bool ModeSegClosestPix::CanEndMode()
 { 
-	//TODO •ÏX‚Ì—L–³‚ğ‹L‰¯‚µ‚Ä‚¨‚­
-	//•ÏX‚ª‚È‚¯‚ê‚Î return true 
-	//•ÏX‚ª‚ ‚ê‚Î --> return CLI_MessageBox_YESNO_Show("Leaving?", "Œ»İ‚Ì•ªŠ„Œ‹‰Ê‚ğ”jŠü‚µ‚Äƒ‚[ƒh‚ğ•ÏX‚µ‚Ü‚·‚©H");
+	//TODO å¤‰æ›´ã®æœ‰ç„¡ã‚’è¨˜æ†¶ã—ã¦ãŠã
+	//å¤‰æ›´ãŒãªã‘ã‚Œã° return true 
+	//å¤‰æ›´ãŒã‚ã‚Œã° --> return CLI_MessageBox_YESNO_Show("Leaving?", "ç¾åœ¨ã®åˆ†å‰²çµæœã‚’ç ´æ£„ã—ã¦ãƒ¢ãƒ¼ãƒ‰ã‚’å¤‰æ›´ã—ã¾ã™ã‹ï¼Ÿ");
 	return true;
 }
 
-void ModeSegClosestPix::startMode() 
+void ModeSegClosestPix::StartMode() 
 {
 	m_bL = m_bR = m_bM = false;
 	formSegClosestPix_Show();
@@ -53,7 +53,7 @@ void ModeSegClosestPix::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
 	m_bL = true;
 
-	if (isCtrKeyOn())
+	if (IsCtrKeyOn())
 	{
 		m_stroke.clear();
 		m_bDrawStr = true;
@@ -133,8 +133,8 @@ void ModeSegClosestPix::MouseWheel(const EVec2i &p, short z_delta,  OglForCLI *o
 }
 
 
-void ModeSegClosestPix::keyUp  (int nChar) {}
-void ModeSegClosestPix::keyDown(int nChar) {}
+void ModeSegClosestPix::KeyUp  (int nChar) {}
+void ModeSegClosestPix::KeyDown(int nChar) {}
 
 
 
@@ -145,7 +145,7 @@ void ModeSegClosestPix::keyDown(int nChar) {}
 
 
 
-void ModeSegClosestPix::drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+void ModeSegClosestPix::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
 {
 	const EVec3i reso     = ImageCore::GetInst()->GetReso();
 
@@ -232,7 +232,7 @@ inline void t_IDSet(
 
 }
 
-// ‘OŒi‚É‘Î‚µ‚Ä‚Ì‚İC‘O‚ÌƒtƒŒ[ƒ€‚ÌŠe‰æ‘f
+// å‰æ™¯ã«å¯¾ã—ã¦ã®ã¿ï¼Œå‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®å„ç”»ç´ 
 void ModeSegClosestPix::runSegClosestPix(const int &startI, const int &endI) {
 
 	std::cout << "updateMask-----------------------\n";
@@ -249,7 +249,7 @@ void ModeSegClosestPix::runSegClosestPix(const int &startI, const int &endI) {
 
 	for (int fI = startI; fI <= endI; ++fI)
 	{
-		// vol‚Ì“Æ—§—Ìˆæ‚ÉID‚ğİ’èB‘OƒtƒŒ[ƒ€‚ÌID‚ğ—˜—pB
+		// volã®ç‹¬ç«‹é ˜åŸŸã«IDã‚’è¨­å®šã€‚å‰ãƒ•ãƒ¬ãƒ¼ãƒ ã®IDã‚’åˆ©ç”¨ã€‚
 		std::cout << fI << "...";
 		t_IDSet(W, H, D, flg4D[fI-1], msk4D[fI-1], flg4D[fI], msk4D[fI]);
 	}

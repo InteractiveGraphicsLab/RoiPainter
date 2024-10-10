@@ -10,7 +10,7 @@ namespace RoiPainter4D {
   using namespace System::Drawing;
 
   /// <summary>
-  /// FormVisMask ‚ÌŠT—v
+  /// FormVisMask ã®æ¦‚è¦
   /// </summary>
   public ref class FormVisMask : public System::Windows::Forms::Form
   {
@@ -63,7 +63,7 @@ namespace RoiPainter4D {
 
   protected:
     /// <summary>
-    /// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+    /// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
     /// </summary>
     ~FormVisMask()
     {
@@ -80,14 +80,14 @@ namespace RoiPainter4D {
 
   private:
     /// <summary>
-    /// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+    /// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
     /// </summary>
 
 
 #pragma region Windows Form Designer generated code
     /// <summary>
-    /// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-    /// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+    /// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+    /// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
     /// </summary>
     void InitializeComponent(void)
     {
@@ -388,7 +388,7 @@ namespace RoiPainter4D {
 #pragma endregion
 
   private: System::Void btnTestAdd_Click(System::Object^  sender, System::EventArgs^  e) {
-    maskList->Rows->Add("1", "Ô");
+    maskList->Rows->Add("1", "èµ¤");
     //	maskList[1, 0]->Style->BackColor = Color::FromArgb(255, 255, 0, 0);
   }
 

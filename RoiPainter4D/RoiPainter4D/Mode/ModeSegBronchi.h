@@ -1,4 +1,4 @@
-﻿#ifndef MODE_MODESEGBRONCHI_H_
+#ifndef MODE_MODESEGBRONCHI_H_
 #define MODE_MODESEGBRONCHI_H_
 #pragma unmanaged
 
@@ -142,12 +142,12 @@ public:
 
 
   /////////////////////////////////////////////////////////////////
-  virtual MODE_ID getModeID() { return MODE_SEG_BRONCHI; }
+  virtual MODE_ID GetModeID() { return MODE_SEG_BRONCHI; }
 
-	virtual void startMode();
-	virtual bool canEndMode();
+	virtual void StartMode();
+	virtual bool CanEndMode();
 	virtual void FinishSegmentation();
-	virtual void drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF);
+	virtual void DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF);
 	
 
 	virtual void LBtnDown   (const EVec2i& p, OglForCLI* ogl);
@@ -161,8 +161,8 @@ public:
 	virtual void MBtnDclk	  (const EVec2i &p, OglForCLI *ogl);
 	virtual void MouseMove	(const EVec2i &p, OglForCLI *ogl);
 	virtual void MouseWheel	(const EVec2i &p, short zDelta, OglForCLI *ogl);
-	virtual void keyDown    (int nChar) ;
-	virtual void keyUp      (int nChar) ;
+	virtual void KeyDown    (int nChar) ;
+	virtual void KeyUp      (int nChar) ;
 	
 
 	void UpControlPointSize();

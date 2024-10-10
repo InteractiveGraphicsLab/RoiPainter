@@ -86,7 +86,7 @@ System::Void FormSegRGrow::btn_cancel_Click(System::Object^  sender, System::Eve
   ModeSegRGrow::GetInst()->cancelSegmentation();
 }
 
-// minV, maxVの値は可能であれば手打ちと、track barを併用してほしい
+// minV, maxV縺ｮ蛟､縺ｯ蜿ｯ閭ｽ縺ｧ縺ゅｌ縺ｰ謇区遠縺｡縺ｨ縲》rack bar繧剃ｽｵ逕ｨ縺励※縺ｻ縺励＞
 System::Void FormSegRGrow::minThreshold_Scroll(System::Object^  sender, System::EventArgs^  e) {
   if(m_item_updating) return;
   m_item_updating = true;

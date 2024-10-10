@@ -10,7 +10,7 @@ namespace RoiPainter4D {
   using namespace System::Drawing;
 
   /// <summary>
-  /// FormVisNorm ‚ÌŠT—v
+  /// FormVisNorm ã®æ¦‚è¦
   /// </summary>
   public ref class FormVisNorm : public System::Windows::Forms::Form
   {
@@ -48,7 +48,7 @@ namespace RoiPainter4D {
 
   protected:
     /// <summary>
-    /// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+    /// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
     /// </summary>
     ~FormVisNorm()
     {
@@ -60,14 +60,14 @@ namespace RoiPainter4D {
 
   private:
     /// <summary>
-    /// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+    /// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
     /// </summary>
     System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
     /// <summary>
-    /// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-    /// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+    /// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+    /// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
     /// </summary>
     void InitializeComponent(void)
     {
@@ -83,7 +83,7 @@ namespace RoiPainter4D {
       // label1
       // 
       this->label1->AutoSize = true;
-      this->label1->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label1->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label1->Location = System::Drawing::Point(-1, 152);
       this->label1->Name = L"label1";
@@ -93,7 +93,7 @@ namespace RoiPainter4D {
       // 
       // textBox_voxelvalue
       // 
-      this->textBox_voxelvalue->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->textBox_voxelvalue->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->textBox_voxelvalue->Location = System::Drawing::Point(105, 149);
       this->textBox_voxelvalue->Name = L"textBox_voxelvalue";
@@ -104,7 +104,7 @@ namespace RoiPainter4D {
       // label5
       // 
       this->label5->AutoSize = true;
-      this->label5->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label5->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(0)));
       this->label5->Location = System::Drawing::Point(11, 92);
       this->label5->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
@@ -116,7 +116,7 @@ namespace RoiPainter4D {
       // label4
       // 
       this->label4->AutoSize = true;
-      this->label4->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label4->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(0)));
       this->label4->Location = System::Drawing::Point(11, 71);
       this->label4->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
@@ -128,7 +128,7 @@ namespace RoiPainter4D {
       // label3
       // 
       this->label3->AutoSize = true;
-      this->label3->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label3->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(0)));
       this->label3->Location = System::Drawing::Point(11, 49);
       this->label3->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
@@ -140,7 +140,7 @@ namespace RoiPainter4D {
       // label2
       // 
       this->label2->AutoSize = true;
-      this->label2->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label2->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(0)));
       this->label2->Location = System::Drawing::Point(11, 29);
       this->label2->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
@@ -152,7 +152,7 @@ namespace RoiPainter4D {
       // label6
       // 
       this->label6->AutoSize = true;
-      this->label6->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label6->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(0)));
       this->label6->Location = System::Drawing::Point(11, 9);
       this->label6->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);

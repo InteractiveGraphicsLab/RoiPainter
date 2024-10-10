@@ -1,4 +1,4 @@
-﻿#pragma managed
+#pragma managed
 #include "FormSortFiles.h"
 
 using namespace RoiPainter4D;

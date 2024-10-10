@@ -1,4 +1,4 @@
-﻿#pragma managed
+#pragma managed
 #include "FormSelectMskId.h"
 
 #pragma unmanaged

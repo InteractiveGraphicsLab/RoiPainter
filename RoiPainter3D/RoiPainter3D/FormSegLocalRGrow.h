@@ -10,7 +10,7 @@ namespace RoiPainter3D {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// FormSegLocalRGrow ‚ÌŠT—v
+	/// FormSegLocalRGrow ã®æ¦‚è¦
 	/// </summary>
 	public ref class FormSegLocalRGrow : public System::Windows::Forms::Form
 	{
@@ -64,7 +64,7 @@ namespace RoiPainter3D {
 
 	protected:
 		/// <summary>
-		/// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+		/// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
 		/// </summary>
 		~FormSegLocalRGrow()
 		{
@@ -76,13 +76,13 @@ namespace RoiPainter3D {
 
 	private:
 		/// <summary>
-		/// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+		/// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
 		/// </summary>
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-		/// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+		/// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+		/// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
 		/// </summary>
 		void InitializeComponent(void)
 		{
@@ -167,7 +167,7 @@ namespace RoiPainter3D {
       // m_label1
       // 
       this->m_label1->AutoSize = true;
-      this->m_label1->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->m_label1->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_label1->Location = System::Drawing::Point(125, 8);
       this->m_label1->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
@@ -179,7 +179,7 @@ namespace RoiPainter3D {
       // m_label3
       // 
       this->m_label3->AutoSize = true;
-      this->m_label3->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->m_label3->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_label3->Location = System::Drawing::Point(125, 203);
       this->m_label3->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
@@ -191,7 +191,7 @@ namespace RoiPainter3D {
       // m_label4
       // 
       this->m_label4->AutoSize = true;
-      this->m_label4->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->m_label4->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_label4->Location = System::Drawing::Point(124, 249);
       this->m_label4->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
@@ -203,7 +203,7 @@ namespace RoiPainter3D {
       // m_label5
       // 
       this->m_label5->AutoSize = true;
-      this->m_label5->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->m_label5->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_label5->Location = System::Drawing::Point(121, 296);
       this->m_label5->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
@@ -216,7 +216,7 @@ namespace RoiPainter3D {
       // 
       this->m_label6->AutoSize = true;
       this->m_label6->Enabled = false;
-      this->m_label6->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->m_label6->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_label6->Location = System::Drawing::Point(166, 155);
       this->m_label6->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
@@ -227,7 +227,7 @@ namespace RoiPainter3D {
       // 
       // btn_cancel
       // 
-      this->btn_cancel->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_cancel->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_cancel->Location = System::Drawing::Point(16, 413);
       this->btn_cancel->Margin = System::Windows::Forms::Padding(2);
@@ -240,7 +240,7 @@ namespace RoiPainter3D {
       // 
       // btn_finish
       // 
-      this->btn_finish->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_finish->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_finish->Location = System::Drawing::Point(114, 413);
       this->btn_finish->Margin = System::Windows::Forms::Padding(2);
@@ -253,7 +253,7 @@ namespace RoiPainter3D {
       // 
       // btn_runLocalRGrow
       // 
-      this->btn_runLocalRGrow->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_runLocalRGrow->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_runLocalRGrow->Location = System::Drawing::Point(127, 342);
       this->btn_runLocalRGrow->Margin = System::Windows::Forms::Padding(2);
@@ -324,7 +324,7 @@ namespace RoiPainter3D {
       // button_addforeseed
       // 
       this->button_addforeseed->Enabled = false;
-      this->button_addforeseed->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->button_addforeseed->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->button_addforeseed->Location = System::Drawing::Point(131, 171);
       this->button_addforeseed->Margin = System::Windows::Forms::Padding(2);
@@ -338,7 +338,7 @@ namespace RoiPainter3D {
       // button_addbackseed
       // 
       this->button_addbackseed->Enabled = false;
-      this->button_addbackseed->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->button_addbackseed->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->button_addbackseed->Location = System::Drawing::Point(222, 171);
       this->button_addbackseed->Margin = System::Windows::Forms::Padding(2);
@@ -351,7 +351,7 @@ namespace RoiPainter3D {
       // 
       // m_btn_loadseeds
       // 
-      this->m_btn_loadseeds->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->m_btn_loadseeds->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_btn_loadseeds->Location = System::Drawing::Point(124, 376);
       this->m_btn_loadseeds->Margin = System::Windows::Forms::Padding(2);
@@ -364,7 +364,7 @@ namespace RoiPainter3D {
       // 
       // m_btn_saveseeds
       // 
-      this->m_btn_saveseeds->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->m_btn_saveseeds->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->m_btn_saveseeds->Location = System::Drawing::Point(222, 377);
       this->m_btn_saveseeds->Margin = System::Windows::Forms::Padding(2);

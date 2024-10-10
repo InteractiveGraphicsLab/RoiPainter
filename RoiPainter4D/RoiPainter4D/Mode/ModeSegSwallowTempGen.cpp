@@ -18,19 +18,19 @@ using namespace RoiPainter4D;
 
 
 /*
-* 1-2 ‰Šú
-* 2-3 ’†Šú
-* 4-5 ŒãŠú 
+* 1-2 åˆæœŸ
+* 2-3 ä¸­æœŸ
+* 4-5 å¾ŒæœŸ 
 
-+ 1. H‰ò‚ª“®‚«n‚ß‚½ƒtƒŒ[ƒ€
-+ 2. ãœ‚ªã‚ª‚èØ‚é
-+ 3. ãœ‚ªè‘O‚Éo‚Ä‰º‚ª‚èn‚½ƒtƒŒ[ƒ€
-+ 4. ãœ‚ª‰º‚ª‚èØ‚é
++ 1. é£Ÿå¡ŠãŒå‹•ãå§‹ã‚ãŸãƒ•ãƒ¬ãƒ¼ãƒ 
++ 2. èˆŒéª¨ãŒä¸ŠãŒã‚Šåˆ‡ã‚‹
++ 3. èˆŒéª¨ãŒæ‰‹å‰ã«å‡ºã¦ä¸‹ãŒã‚Šå§‹ãŸãƒ•ãƒ¬ãƒ¼ãƒ 
++ 4. èˆŒéª¨ãŒä¸‹ãŒã‚Šåˆ‡ã‚‹
 
 
 Input:
-Volume“Ç‚İ‚İ
-Cage + Mesh + “®‚« + timeline
+Volumeèª­ã¿è¾¼ã¿
+Cage + Mesh + å‹•ã + timeline
 
 timeline.txt
 -------------
@@ -38,26 +38,26 @@ timeline.txt
 -------------
 
 + TODO 
-- Mesh/Cage/“®‚«‚Ìƒ[ƒh 
+- Mesh/Cage/å‹•ãã®ãƒ­ãƒ¼ãƒ‰ 
     - zetu OK
     - into OK 
     - koto OK
     - nank OK
-- Mesh/Cage/“®‚«‚Ì‰Â‹‰»
-    - mesh/cage‰Â‹‰»
-    - handle‰Â‹‰» 
+- Mesh/Cage/å‹•ãã®å¯è¦–åŒ–
+    - mesh/cageå¯è¦–åŒ–
+    - handleå¯è¦–åŒ– 
     
-- Cage‚Ì•ÏŒ`
-@- •½sˆÚ“®
-  - ‰ñ“]
-  - Šgk
+- Cageã®å¤‰å½¢
+ã€€- å¹³è¡Œç§»å‹•
+  - å›è»¢
+  - æ‹¡ç¸®
     
-- timeline‚Ìƒ[ƒh YET
-- timeline‚Ìw’è
-  - 4‚±spinboxì‚é
-  - “K—pƒ{ƒ^ƒ“ì‚é
+- timelineã®ãƒ­ãƒ¼ãƒ‰ YET
+- timelineã®æŒ‡å®š
+  - 4ã“spinboxä½œã‚‹
+  - é©ç”¨ãƒœã‚¿ãƒ³ä½œã‚‹
 
-- “K—pƒ{ƒ^ƒ“‚Ì‹““®ì‚é
+- é©ç”¨ãƒœã‚¿ãƒ³ã®æŒ™å‹•ä½œã‚‹
 
 
 */
@@ -87,13 +87,13 @@ ModeSegSwallowTempGen::ModeSegSwallowTempGen() :
 
 
 
-bool ModeSegSwallowTempGen::canEndMode()
+bool ModeSegSwallowTempGen::CanEndMode()
 {
   return true;
 }
 
 
-void ModeSegSwallowTempGen::startMode()
+void ModeSegSwallowTempGen::StartMode()
 {
   std::cout << "ModeSegSwallowTempGen...startMode----------\n";
 
@@ -117,12 +117,12 @@ void ModeSegSwallowTempGen::LBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
   m_bL = true;
 
-  if (isCtrKeyOn())
+  if (IsCtrKeyOn())
   {
     m_stroke.clear();
     m_b_draw_cutstroke = true;
   }
-  else if (isShiftKeyOn())
+  else if (IsShiftKeyOn())
   {
     m_pre_point = p;
     EVec3f ray_pos, ray_dir;
@@ -130,18 +130,18 @@ void ModeSegSwallowTempGen::LBtnDown(const EVec2i& p, OglForCLI* ogl)
     const int frame_idx = formVisParam_getframeI();
     EVec3f gc = GetGravCenterTrgtCages(frame_idx);
 
-    //•ÏŒ`ŠJn pick handle
+    //å¤‰å½¢é–‹å§‹ pick handle
     int trans_rot_scale = FormSegSwallowTempGen_isModeTrans() ? 0 :
       FormSegSwallowTempGen_isModeRot() ? 1 : 2;
 
     if (trans_rot_scale == 0) {
-      m_drag_handle_id = t_PickHandleOrthoArrows( ray_pos, ray_dir , gc, m_HANDLE_L, m_HANDLE_W);
+      m_drag_handle_id = PickHandleOrthoArrows( ray_pos, ray_dir , gc, m_HANDLE_L, m_HANDLE_W);
     }
     else if (trans_rot_scale == 1) {
-      m_drag_handle_id = t_PickHandleOrthoCircles(ray_pos, ray_dir, gc, m_HANDLE_L , m_HANDLE_W);
+      m_drag_handle_id = PickHandleOrthoCircles(ray_pos, ray_dir, gc, m_HANDLE_L , m_HANDLE_W);
     }
     else if (trans_rot_scale == 2) {
-      m_drag_handle_id = t_PickHandleOrthoArrows( ray_pos, ray_dir , gc, m_HANDLE_L, m_HANDLE_W);
+      m_drag_handle_id = PickHandleOrthoArrows( ray_pos, ray_dir , gc, m_HANDLE_L, m_HANDLE_W);
     }
        
   }
@@ -245,12 +245,12 @@ void ModeSegSwallowTempGen::MouseWheel(const EVec2i& p, short z_delta, OglForCLI
 }
 
 
-void ModeSegSwallowTempGen::keyDown(int nChar) {}
-void ModeSegSwallowTempGen::keyUp(int nChar) {}
+void ModeSegSwallowTempGen::KeyDown(int nChar) {}
+void ModeSegSwallowTempGen::KeyUp(int nChar) {}
 
 
 
-void ModeSegSwallowTempGen::drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF)
+void ModeSegSwallowTempGen::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF)
 {
   const EVec3i reso = ImageCore::GetInst()->GetReso();
 
@@ -270,7 +270,7 @@ void ModeSegSwallowTempGen::drawScene(const EVec3f& cuboid, const EVec3f& camP, 
   float planeyz = b_yz ? CrssecCore::GetInst()->GetPlanePosYZ() : -1;
   float planezx = b_zx ? CrssecCore::GetInst()->GetPlanePosZX() : -1;
 
-  if( !isSpaceKeyOn() )
+  if( !IsSpaceKeyOn() )
   {
     CagedMeshSequence::SetControlPointRadius(0.3f);
     m_cagedmesh_zetsu.DrawCage(frame_idx, true);
@@ -283,17 +283,17 @@ void ModeSegSwallowTempGen::drawScene(const EVec3f& cuboid, const EVec3f& camP, 
     m_cagedmesh_into.DrawMesh(frame_idx, planeyz, planezx, planexy, 0.1f, cuboid);
   }
 
-  if (isShiftKeyOn())
+  if (IsShiftKeyOn())
   {
     int trans_rot_scale = FormSegSwallowTempGen_isModeTrans() ? 0 :
       FormSegSwallowTempGen_isModeRot() ? 1 : 2;
     EVec3f gc = GetGravCenterTrgtCages(frame_idx);
     if (trans_rot_scale == 0)
-      t_DrawHandleOrthoArrows(gc, m_HANDLE_L, m_HANDLE_W, COLOR_R, COLOR_G, COLOR_B);
+      DrawHandleOrthoArrows(gc, m_HANDLE_L, m_HANDLE_W, COLOR_R, COLOR_G, COLOR_B);
     if (trans_rot_scale == 1)
-      t_DrawHandleOrthoCircles(gc, m_HANDLE_L);
+      DrawHandleOrthoCircles(gc, m_HANDLE_L);
     if (trans_rot_scale == 2)
-      t_DrawHandleOrthoCubes(gc, m_HANDLE_L, m_HANDLE_W, COLOR_R, COLOR_G, COLOR_B);
+      DrawHandleOrthoCubes(gc, m_HANDLE_L, m_HANDLE_W, COLOR_R, COLOR_G, COLOR_B);
   }
 
 
@@ -302,7 +302,7 @@ void ModeSegSwallowTempGen::drawScene(const EVec3f& cuboid, const EVec3f& camP, 
   //cut stroke
   if (m_b_draw_cutstroke)
   {
-    t_DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke, false);
+    DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke, false);
   }
 
   if (formVisParam_bRendVol())
@@ -389,7 +389,7 @@ void ModeSegSwallowTempGen::LoadCagedMesh(
   const EVec3f cuboid     = ImageCore::GetInst()->GetCuboidF()  ;
   cm_modi.Initialize(num_frames, cuboid, mesh_path, cage_path );
    
-  //orig‚Ì•û‚ÍAnum_frame‚ªˆÙ‚È‚é‰Â”\«‚ª‚ ‚é‚Ì‚ÅA‚»‚ê‚ğl—¶‚µ‚Ä“Ç‚İ‚İ 
+  //origã®æ–¹ã¯ã€num_frameãŒç•°ãªã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã®ã§ã€ãã‚Œã‚’è€ƒæ…®ã—ã¦èª­ã¿è¾¼ã¿ 
   cm_orig = cm_modi;
   cm_orig.ImportCageSequenceFromTxt(deform_path, true);
   
@@ -413,7 +413,7 @@ void ModeSegSwallowTempGen::TranslateTargetCages(
   std::tie(ray_p0, ray_d0) = ogl->GetCursorRay1(p0);
   std::tie(ray_p1, ray_d1) = ogl->GetCursorRay1(p1);
 
-  float coef = t_Dist(gc, ogl->GetCamPos()) / t_Dist(ray_p0, ogl->GetCamPos());
+  float coef = Dist(gc, ogl->GetCamPos()) / Dist(ray_p0, ogl->GetCamPos());
 
 
   EVec3f trans = coef * (ray_p1 - ray_p0);
@@ -444,7 +444,7 @@ void ModeSegSwallowTempGen::RotateTargetCages(EVec2i p0, EVec2i p1, ORTHO_HANDLE
   std::tie(ray_p0, ray_d0) = ogl->GetCursorRay1(p0);
   std::tie(ray_p1, ray_d1) = ogl->GetCursorRay1(p1);
 
-  float coef = t_Dist(gc, ogl->GetCamPos()) / t_Dist(ray_p0, ogl->GetCamPos());
+  float coef = Dist(gc, ogl->GetCamPos()) / Dist(ray_p0, ogl->GetCamPos());
   EVec3f eye_ray = (ogl->GetCamCnt() - ogl->GetCamPos()).normalized();
   EVec3f trans = coef * (ray_p1 - ray_p0);
 
@@ -571,7 +571,7 @@ void ModeSegSwallowTempGen::UpdateCageByTiming(
     int f1, int f2, int f3, int f4
     )
 {
-  //ƒIƒŠƒWƒiƒ‹ƒ^ƒCƒ€ƒ‰ƒCƒ“ƒtƒ@ƒCƒ‹“Ç‚İ‚İ
+  //ã‚ªãƒªã‚¸ãƒŠãƒ«ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿
   std::ifstream ifs(fname_time_orig.c_str());
   int orig_f1, orig_f2, orig_f3, orig_f4;
   ifs >> orig_f1 >> orig_f2 >> orig_f3 >> orig_f4;

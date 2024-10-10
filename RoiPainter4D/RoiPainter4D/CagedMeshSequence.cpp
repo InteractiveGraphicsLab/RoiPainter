@@ -102,12 +102,12 @@ void CagedMeshSequence::Copy( const CagedMeshSequence &src)
 
 
 static const char* MESSAGE_REUSE = 
-  "‘OŒvZŒ‹‰Ê‚ª—˜—p‚Å‚«‚Ü‚·D—˜—p‚µ‚Ü‚·‚©H\n"
+  "å‰è¨ˆç®—çµæœãŒåˆ©ç”¨ã§ãã¾ã™ï¼åˆ©ç”¨ã—ã¾ã™ã‹ï¼Ÿ\n"
   "The precomp data is available. Do you want to use it.";
 
 
 static const char* MESSAGE_FAILLOADING =
-"objƒtƒ@ƒCƒ‹“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½. fails to load Obj file";
+"objãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ã«å¤±æ•—ã—ã¾ã—ãŸ. fails to load Obj file";
 
 bool t_LoadMeshAndCage(
   const std::string &meshname,
@@ -277,7 +277,10 @@ TMesh CagedMeshSequence::GetMesh( int frame_idx){
   return m_meshes[frame_idx]; 
 }
 
-
+TMesh CagedMeshSequence::GetCage(int frame_idx) {
+  if (frame_idx < 0 || (int)m_cages.size() <= frame_idx) return TMesh();
+  return m_cages[frame_idx];
+}
 
 int  CagedMeshSequence::GetNumSelectedVtx() const
 {
@@ -325,7 +328,22 @@ EVec3f CagedMeshSequence::GetCageVertex(const int frame_idx, const int vtx_idx)
 }
 
 
-std::vector<EVec3f> CagedMeshSequence::GetCageVertices(const int frame_idx)const
+std::vector<EVec3f> CagedMeshSequence::GetMeshVertices(const int frame_idx) const
+{
+  if (frame_idx < 0 || (int)m_meshes.size() <= frame_idx)
+    return std::vector<EVec3f>();
+
+  int n = m_meshes[frame_idx].m_vSize;
+  std::vector<EVec3f> verts(n);
+
+  for (int i = 0; i < n; ++i)
+    verts[i] = m_meshes[frame_idx].m_vVerts[i];
+
+  return verts;
+}
+
+
+std::vector<EVec3f> CagedMeshSequence::GetCageVertices(const int frame_idx) const
 {
   if (frame_idx < 0 || (int)m_cages.size() <= frame_idx) 
     return std::vector<EVec3f>();
@@ -502,13 +520,14 @@ std::set<int> CagedMeshSequence::GetSelectedCageVtx()
 
 
 
-// 2D screenã‚É•`‚©‚ê‚½rectangle“à•”‚Ì’¸“_‚ğ‘I‘ğó‘Ô‚É‚·‚é
-// rect‚ÌŠO‚Ì’¸“_‚É‚Â‚¢‚Ä‚Í‘I‘ğó‘Ô‚ğ‰ğœ‚µ‚È‚¢
+// 2D screenä¸Šã«æã‹ã‚ŒãŸrectangleå†…éƒ¨ã®é ‚ç‚¹ã‚’é¸æŠçŠ¶æ…‹ã«ã™ã‚‹
+// rectã®å¤–ã®é ‚ç‚¹ã«ã¤ã„ã¦ã¯é¸æŠçŠ¶æ…‹ã‚’è§£é™¤ã—ãªã„
 void CagedMeshSequence::SelectCageVtxByRect(
     const int frame_idx, 
     const EVec2i p0, 
     const EVec2i p1, 
-    OglForCLI *ogl)
+    OglForCLI *ogl,
+    const int select_mode)
 {
   if ( frame_idx < 0 || (int)m_cages.size() <= frame_idx  ) return; 
 
@@ -534,7 +553,14 @@ void CagedMeshSequence::SelectCageVtxByRect(
 		
     if ( minx <= x && x <= maxx && miny <= y && y <= maxy )
 		{
-      m_cagevtx_hl[i] = (m_cagevtx_hl[i]==0) ? 1 : 0;
+      if ((select_mode == 0) || (select_mode == 1))
+      {
+        m_cagevtx_hl[i] = select_mode;
+      }
+      else
+      {
+        m_cagevtx_hl[i] = (m_cagevtx_hl[i] == 1) ? 0 : 1;
+      }
     }
   }
 
@@ -548,8 +574,9 @@ void CagedMeshSequence::SelectCageVtxByRect(
 // pick to select cage vertex
 void CagedMeshSequence::SelectCageVtxByPick( 
     const int    frame_idx, 
-    const EVec3f &ray_pos  , 
-    const EVec3f &ray_dir )
+    const EVec3f &ray_pos, 
+    const EVec3f &ray_dir,
+    const int select_mode)
 {
   if ( frame_idx < 0 || m_cages.size() <= frame_idx  ) return; 
 
@@ -561,10 +588,10 @@ void CagedMeshSequence::SelectCageVtxByPick(
   for ( int i = 0; i < cage.m_vSize; ++i)
   {
     const EVec3f &vertex = cage.m_vVerts[i];
-    if ( t_DistRayAndPoint( ray_pos, ray_dir, vertex) > m_CP_RADIUS )
+    if ( DistRayAndPoint( ray_pos, ray_dir, vertex) > m_CP_RADIUS )
       continue;
     
-    float d = t_Dist(vertex, ray_pos);
+    float d = Dist(vertex, ray_pos);
     if ( d < mindist )
     {
       mindist = d;
@@ -572,8 +599,17 @@ void CagedMeshSequence::SelectCageVtxByPick(
     }   
   }
 
-  if ( minidx != -1 )
-    m_cagevtx_hl[minidx] = (m_cagevtx_hl[minidx]==1) ? 0 : 1;
+  if (minidx != -1)
+  {
+    if ((select_mode == 0) || (select_mode == 1))
+    {
+      m_cagevtx_hl[minidx] = select_mode;
+    }
+    else
+    {
+      m_cagevtx_hl[minidx] = (m_cagevtx_hl[minidx] == 1) ? 0 : 1;
+    }
+  }
 }
 
 
@@ -686,8 +722,8 @@ void CagedMeshSequence::TranslateSelectedVerts(
   std::tie(ray_p0, ray_d0) = ogl->GetCursorRay1(p0);
   std::tie(ray_p1, ray_d1) = ogl->GetCursorRay1(p1);
 
-  float coef = t_Dist( gc    , ogl->GetCamPos() ) / 
-               t_Dist( ray_p0, ogl->GetCamPos() );
+  float coef = Dist( gc    , ogl->GetCamPos() ) / 
+               Dist( ray_p0, ogl->GetCamPos() );
   
   EVec3f trans = coef * (ray_p1 - ray_p0);
   if ( handle_id == OHDL_X ) trans[1] = trans[2] = 0;
@@ -716,7 +752,7 @@ void CagedMeshSequence::RotateSelectedVerts(
 {
 
   if ( frame_idx < 0 || (int)m_cages.size() <= frame_idx  ) return; 
-  std::cout << "RotateSelectedVerts\n";
+  // std::cout << "RotateSelectedVerts\n";
 
   const EVec3f gc = GetSelectedVtxCentroid( frame_idx );
   
@@ -724,8 +760,8 @@ void CagedMeshSequence::RotateSelectedVerts(
   std::tie(ray_p0, ray_d0) = ogl->GetCursorRay1(p0);
   std::tie(ray_p1, ray_d1) = ogl->GetCursorRay1(p1);
 
-  float coef = t_Dist( gc    , ogl->GetCamPos() ) / 
-               t_Dist( ray_p0, ogl->GetCamPos() );
+  float coef = Dist( gc    , ogl->GetCamPos() ) / 
+               Dist( ray_p0, ogl->GetCamPos() );
   
   EVec3f eye_ray = (ogl->GetCamCnt() - ogl->GetCamPos()).normalized();
   EVec3f trans = coef * (ray_p1 - ray_p0);
@@ -875,8 +911,8 @@ void CagedMeshSequence::CopyOneFrameToTheOtherAllFrames( const int frame_idx )
 //rendering ///////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
-// crssec_*‚Ì•t‹ß‚Ì‚İ•s“§–¾‚É‚ÅƒŒƒ“ƒ_ƒŠƒ“ƒO
-// crssec_*‚Í[0,1]‚É³‹K‰»‚³‚ê‚Ä‚¢‚é‚à‚Ì‚Æ‚·‚é
+// crssec_*ã®ä»˜è¿‘ã®ã¿ä¸é€æ˜ã«ã§ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°
+// crssec_*ã¯[0,1]ã«æ­£è¦åŒ–ã•ã‚Œã¦ã„ã‚‹ã‚‚ã®ã¨ã™ã‚‹
 void CagedMeshSequence::DrawMesh(
   int frame_idx, 
   float planex01, //plane position (normalized into [0,1])
@@ -955,11 +991,11 @@ void CagedMeshSequence::DrawHandle(int frame_idx, int trans_rot_scale) const
   const float wid = m_HANDLE_WIDTH;
   //translation, rotation, scaling
   if ( trans_rot_scale == 0) 
-    t_DrawHandleOrthoArrows( c, len, wid, COLOR_R, COLOR_G, COLOR_B);
+    DrawHandleOrthoArrows( c, len, wid, COLOR_R, COLOR_G, COLOR_B);
   if ( trans_rot_scale == 1) 
-    t_DrawHandleOrthoCircles(c, m_HANDLE_LENGTH                    );
+    DrawHandleOrthoCircles(c, m_HANDLE_LENGTH                    );
   if ( trans_rot_scale == 2)
-    t_DrawHandleOrthoCubes  (c, len, wid, COLOR_R, COLOR_G, COLOR_B);
+    DrawHandleOrthoCubes  (c, len, wid, COLOR_R, COLOR_G, COLOR_B);
 }
 
 
@@ -980,11 +1016,11 @@ void CagedMeshSequence::DrawHandleCenter(int frame_idx, int trans_rot_scale) con
   const float wid = m_HANDLE_WIDTH;
   //translation, rotation, scaling
   if (trans_rot_scale == 0)
-    t_DrawHandleOrthoArrows(c, len, wid, COLOR_R, COLOR_G, COLOR_B);
+    DrawHandleOrthoArrows(c, len, wid, COLOR_R, COLOR_G, COLOR_B);
   if (trans_rot_scale == 1)
-    t_DrawHandleOrthoCircles(c, m_HANDLE_LENGTH);
+    DrawHandleOrthoCircles(c, m_HANDLE_LENGTH);
   if (trans_rot_scale == 2)
-    t_DrawHandleOrthoCubes(c, len, wid, COLOR_R, COLOR_G, COLOR_B);
+    DrawHandleOrthoCubes(c, len, wid, COLOR_R, COLOR_G, COLOR_B);
 }
 
 
@@ -1005,13 +1041,13 @@ ORTHO_HANDLE_ID CagedMeshSequence::PickCageHandle(
   const EVec3f c = GetSelectedVtxCentroid( frame_idx );
 
   if ( trans_rot_scale == 0) {
-    return t_PickHandleOrthoArrows (ray_pos, ray_dir, c, length, radius);
+    return PickHandleOrthoArrows (ray_pos, ray_dir, c, length, radius);
   }
   else if ( trans_rot_scale == 1){
-    return t_PickHandleOrthoCircles(ray_pos, ray_dir, c, length, radius);
+    return PickHandleOrthoCircles(ray_pos, ray_dir, c, length, radius);
   }
   else if ( trans_rot_scale == 2){
-    return t_PickHandleOrthoArrows (ray_pos, ray_dir, c, length, radius);
+    return PickHandleOrthoArrows (ray_pos, ray_dir, c, length, radius);
   }
   return OHDL_NON;
 }
@@ -1043,7 +1079,7 @@ void CagedMeshSequence::ImportCageSequenceFromTxt(
   
   if (modify_num_frame && tmp_numframe != num_frames)
   {
-    // frame”‚ğ•ÏX‚·‚é
+    // frameï¿½ï¿½ï¿½ï¿½ÏXï¿½ï¿½ï¿½ï¿½
     TMesh c = m_cages[0];
     TMesh m = m_meshes[0];
     m_cages.resize(tmp_numframe);

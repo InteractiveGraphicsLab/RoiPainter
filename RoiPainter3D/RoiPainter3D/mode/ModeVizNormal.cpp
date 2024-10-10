@@ -170,7 +170,7 @@ void ModeVizNormal::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EV
   //bind volumes ---------------------------------------
   BindAllVolumes();
 
-  if (m_bDrawStr) t_DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
+  if (m_bDrawStr) DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
 
   const EVec3i reso = ImageCore::GetInst()->GetResolution();
   DrawCrossSections(cuboid, reso, m_crssecShader);

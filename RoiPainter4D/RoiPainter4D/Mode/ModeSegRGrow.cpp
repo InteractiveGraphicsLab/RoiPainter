@@ -35,7 +35,7 @@ ModeSegRGrow::~ModeSegRGrow()
 }
 
 
-bool ModeSegRGrow::canEndMode()
+bool ModeSegRGrow::CanEndMode()
 {
   if (!m_b_modified) return true;
   return ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Leaving?");
@@ -65,7 +65,7 @@ void ModeSegRGrow::FinishSegmentation()
     return;
   }
 
-  //Ç±ÇÃÉ^ÉCÉ~ÉìÉOÇ≈falseÇ…ÇµÇ»Ç¢Ç∆canEndModeÇ≈É_ÉCÉAÉçÉOÇ™ï\é¶Ç≥ÇÍÇÈ
+  //„Åì„ÅÆ„Çø„Ç§„Éü„É≥„Ç∞„Åßfalse„Å´„Åó„Å™„ÅÑ„Å®canEndMode„Åß„ÉÄ„Ç§„Ç¢„É≠„Ç∞„ÅåË°®Á§∫„Åï„Çå„Çã
   m_b_modified = false;
 
   ImageCore::GetInst()->mask_storeCurrentForeGround(  );
@@ -76,7 +76,7 @@ void ModeSegRGrow::FinishSegmentation()
 
 void ModeSegRGrow::cancelSegmentation()
 {
-  if (ShowMsgDlgYesNo("åªç›ÇÃï™äÑåãâ Çîjä¸ÇµÇƒÇÊÇ¢Ç≈Ç∑Ç©\nDo you want to cancel current segmentation?", "cancel?"))
+  if (ShowMsgDlgYesNo("ÁèæÂú®„ÅÆÂàÜÂâ≤ÁµêÊûú„ÇíÁ†¥Ê£Ñ„Åó„Å¶„Çà„ÅÑ„Åß„Åô„Åã\nDo you want to cancel current segmentation?", "cancel?"))
   {
     ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
     formMain_RedrawMainPanel();
@@ -84,7 +84,7 @@ void ModeSegRGrow::cancelSegmentation()
 }
 
 
-void ModeSegRGrow::startMode()
+void ModeSegRGrow::StartMode()
 {
   //initialize field 
   m_bL = m_bR = m_bM = false;
@@ -114,12 +114,12 @@ void ModeSegRGrow::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
   m_bL = true;
 
-  if (isCtrKeyOn())
+  if (IsCtrKeyOn())
   {
     m_stroke.clear();
     m_b_draw_cutstroke = true;
   }
-  else if (isShiftKeyOn()) 
+  else if (IsShiftKeyOn()) 
   {
     EVec3f ray_pos, ray_dir, pos;
     ogl->GetCursorRay(p, ray_pos, ray_dir);
@@ -129,7 +129,7 @@ void ModeSegRGrow::LBtnDown(const EVec2i &p, OglForCLI *ogl)
     {
       m_drag_cpid = pick_cpid;
     }
-    else if ( PickCrssec( ray_pos, ray_dir, pos) != CRSSEC_NON)  //Å@Cpîzíu
+    else if ( PickCrssec( ray_pos, ray_dir, pos) != CRSSEC_NON)  //„ÄÄCpÈÖçÁΩÆ
     {
       const int frame_idx = formVisParam_getframeI();
       m_cps.push_back( CtrlPt4D(frame_idx, pos) );
@@ -166,15 +166,15 @@ void ModeSegRGrow::RBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
   m_bR = true;
 
-  if (isShiftKeyOn()) 
+  if (IsShiftKeyOn()) 
   {
     EVec3f rayP, rayD, pos;
     ogl->GetCursorRay(p, rayP, rayD);
     int pickCpI = PickControlPoints(rayP, rayD);
 
-    if (pickCpI != -1) // CpÇ™Ç†ÇÍÇŒ
+    if (pickCpI != -1) // Cp„Åå„ÅÇ„Çå„Å∞
     {
-      m_cps.erase( m_cps.begin() + pickCpI ); // è¡ãé
+      m_cps.erase( m_cps.begin() + pickCpI ); // Ê∂àÂéª
     }
   }
   else 
@@ -248,8 +248,8 @@ void ModeSegRGrow::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 void ModeSegRGrow::LBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeSegRGrow::RBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeSegRGrow::MBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
-void ModeSegRGrow::keyDown(int nChar) {}
-void ModeSegRGrow::keyUp  (int nChar) {}
+void ModeSegRGrow::KeyDown(int nChar) {}
+void ModeSegRGrow::KeyUp  (int nChar) {}
 
 
 int ModeSegRGrow::PickControlPoints(const EVec3f &ray_pos, const EVec3f &ray_dir)
@@ -260,7 +260,7 @@ int ModeSegRGrow::PickControlPoints(const EVec3f &ray_pos, const EVec3f &ray_dir
   {
     if (m_cps[i].frameI == frame_idx)
     {
-      if (t_DistRayAndPoint(ray_pos, ray_dir, m_cps[i].pos) < m_cp_radius) return i;
+      if (DistRayAndPoint(ray_pos, ray_dir, m_cps[i].pos) < m_cp_radius) return i;
     }
   }
   return -1;
@@ -268,16 +268,16 @@ int ModeSegRGrow::PickControlPoints(const EVec3f &ray_pos, const EVec3f &ray_dir
 
 
 
-void ModeSegRGrow::drawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center)
+void ModeSegRGrow::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center)
 {
   const EVec3i reso = ImageCore::GetInst()->GetReso();
 
   BindAllVolumes();
-  DrawCrossSections(cuboid, reso, !isSpaceKeyOn(), m_crssec_shader);
+  DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader);
 
   if (m_b_draw_cutstroke)
   {
-    t_DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
+    DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
   }
 
   //volume
@@ -288,7 +288,7 @@ void ModeSegRGrow::drawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     DrawVolumeSlices( cuboid, reso, cam_pos, cam_center, 
-                    !isSpaceKeyOn(), b_onmanip, m_volume_shader);
+                    !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
   }
@@ -521,7 +521,7 @@ void ModeSegRGrow::RunErosion3D_EachFrame()
 
 #pragma omp parallel for 
   for (int fi = 0; fi < num_frames; ++fi)
-    t_Erode3D(reso[0], reso[1], reso[2], flg4d[fi]);
+    Erode3D(reso[0], reso[1], reso[2], flg4d[fi]);
 
   std::cout << "Run Erosion 3D...DONE\n";
 
@@ -540,7 +540,7 @@ void ModeSegRGrow::RunDilation3D_EachFrame()
   std::cout << "Run Dilation 3D...\n";
 #pragma omp parallel for 
   for (int fi = 0; fi < num_frames; ++fi)
-    t_Dilate3D(reso[0], reso[1], reso[2], flg4d[fi]);
+    Dilate3D(reso[0], reso[1], reso[2], flg4d[fi]);
 
   std::cout << "Run Dilation 3D...DONE\n";
 
@@ -568,7 +568,7 @@ void ModeSegRGrow::RunFillHole3D_EachFrame()
     for (int vi = 0; vi < num_voxels; ++vi)
       flgs[vi] = (flg3d[vi] == 255) ? 255 : 0;
 
-    t_FillHole3D(reso[0], reso[1], reso[2], flgs);
+    FillHole3D(reso[0], reso[1], reso[2], flgs);
 
 #pragma omp parallel for 
     for (int i = 0; i < num_voxels; ++i) 

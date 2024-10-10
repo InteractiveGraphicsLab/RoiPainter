@@ -1,4 +1,4 @@
-﻿#ifndef COMMON_THANDLE_H_
+#ifndef COMMON_THANDLE_H_
 #define COMMON_THANDLE_H_
 #pragma unmanaged
 
@@ -22,7 +22,7 @@ enum ORTHO_HANDLE_ID{
 
 
 // draw translate / rotate handle 
-inline void t_DrawCylinder(double len, double r)
+inline void DrawCylinder(double len, double r)
 {
   glBegin(GL_TRIANGLE_FAN);
   glNormal3d(0, 1, 0);
@@ -52,7 +52,7 @@ inline void t_DrawCylinder(double len, double r)
 }
 
 
-inline void t_DrawCone(double len, double r)
+inline void DrawCone(double len, double r)
 {
 
   glBegin(GL_TRIANGLE_FAN);
@@ -75,7 +75,7 @@ inline void t_DrawCone(double len, double r)
 }
 
 
-inline void t_DrawCube(double cube_size)
+inline void DrawCube(double cube_size)
 {
   double r = cube_size;
   glBegin(GL_TRIANGLES);
@@ -103,7 +103,7 @@ inline void t_DrawCube(double cube_size)
 
 
 //handle for translation
-inline void t_DrawHandleOrthoArrows(
+inline void DrawHandleOrthoArrows(
   const EVec3f &gc, 
   const double length,
   const double radius, 
@@ -129,9 +129,9 @@ inline void t_DrawHandleOrthoArrows(
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color_y);
 
   glTranslated(0, -cylinder_length, 0);
-  t_DrawCylinder( 2*cylinder_length, cylinder_radius);
+  DrawCylinder( 2*cylinder_length, cylinder_radius);
   glTranslated(0, 2*cylinder_length, 0);
-  t_DrawCone( cone_length, cone_radius);
+  DrawCone( cone_length, cone_radius);
   glTranslated(0, -cylinder_length, 0);
 
   //x
@@ -139,9 +139,9 @@ inline void t_DrawHandleOrthoArrows(
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color_x);
   glRotated(-90, 0, 0, 1);
   glTranslated(0, -cylinder_length, 0);
-  t_DrawCylinder( 2*cylinder_length, cylinder_radius);
+  DrawCylinder( 2*cylinder_length, cylinder_radius);
   glTranslated(0, 2*cylinder_length, 0);
-  t_DrawCone( cone_length, cone_radius);
+  DrawCone( cone_length, cone_radius);
   glTranslated(0, -cylinder_length, 0);
 
   //z
@@ -149,9 +149,9 @@ inline void t_DrawHandleOrthoArrows(
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color_z);
   glRotated(90, 1, 0, 0);
   glTranslated(0, -cylinder_length, 0);
-  t_DrawCylinder( 2*cylinder_length, cylinder_radius);
+  DrawCylinder( 2*cylinder_length, cylinder_radius);
   glTranslated(0, 2*cylinder_length, 0);
-  t_DrawCone( cone_length, cone_radius);
+  DrawCone( cone_length, cone_radius);
   glTranslated(0, -cylinder_length, 0);
 
   glPopMatrix();
@@ -159,7 +159,7 @@ inline void t_DrawHandleOrthoArrows(
 
 
 //handle for rotation
-inline void t_DrawHandleOrthoCircles
+inline void DrawHandleOrthoCircles
 (
   const EVec3f &gc, 
   const double radius
@@ -198,7 +198,7 @@ inline void t_DrawHandleOrthoCircles
 
 
 //for scaling handle
-inline void t_DrawHandleOrthoCubes(
+inline void DrawHandleOrthoCubes(
   const EVec3f &gc, 
   const double length,
   const double radius, 
@@ -220,9 +220,9 @@ inline void t_DrawHandleOrthoCubes(
   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color_y);
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color_y);
   glTranslated(0, -length, 0);
-  t_DrawCylinder(2*length, radius);
+  DrawCylinder(2*length, radius);
   glTranslated(0, 2*length, 0);
-  t_DrawCube( 1.5 * radius );
+  DrawCube( 1.5 * radius );
   glTranslated(0, -length, 0);
 
   //x
@@ -230,9 +230,9 @@ inline void t_DrawHandleOrthoCubes(
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color_x);
   glRotated(-90, 0, 0, 1);
   glTranslated(0, -length, 0);
-  t_DrawCylinder(2*length, radius);
+  DrawCylinder(2*length, radius);
   glTranslated(0, 2*length, 0);
-  t_DrawCube( 1.5 * radius );
+  DrawCube( 1.5 * radius );
   glTranslated(0, -length, 0);
 
   //z
@@ -240,16 +240,16 @@ inline void t_DrawHandleOrthoCubes(
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color_z);
   glRotated(90, 1, 0, 0);
   glTranslated(0, -length, 0);
-  t_DrawCylinder(2*length, radius);
+  DrawCylinder(2*length, radius);
   glTranslated(0, 2*length, 0);
-  t_DrawCube( 1.5 * radius );
+  DrawCube( 1.5 * radius );
   glTranslated(0, -length, 0);
 
   glPopMatrix();
 }
 
 
-inline ORTHO_HANDLE_ID t_PickHandleOrthoArrows
+inline ORTHO_HANDLE_ID PickHandleOrthoArrows
 (
     const EVec3f &ray_pos,
     const EVec3f &ray_dir,
@@ -267,26 +267,26 @@ inline ORTHO_HANDLE_ID t_PickHandleOrthoArrows
 
   float dx,dy,dz;
   EVec3f px,py,pz;
-  std::tie(dx,px) = t_DistRayAndLineSegm(ray_pos, ray_dir, line_x0, line_x1 );
-  std::tie(dy,py) = t_DistRayAndLineSegm(ray_pos, ray_dir, line_y0, line_y1 );
-  std::tie(dz,pz) = t_DistRayAndLineSegm(ray_pos, ray_dir, line_z0, line_z1 );
+  std::tie(dx,px) = DistRayAndLineSegm(ray_pos, ray_dir, line_x0, line_x1 );
+  std::tie(dy,py) = DistRayAndLineSegm(ray_pos, ray_dir, line_y0, line_y1 );
+  std::tie(dz,pz) = DistRayAndLineSegm(ray_pos, ray_dir, line_z0, line_z1 );
 
   int min_idx = -1;
   float min_dist = FLT_MAX;
 
   if ( dx < radius ) {
     min_idx = 0;
-    min_dist = t_Dist(ray_pos, px);
+    min_dist = Dist(ray_pos, px);
   }
 
-  if ( dy < radius && t_Dist(ray_pos, py) < min_dist ) {
+  if ( dy < radius && Dist(ray_pos, py) < min_dist ) {
     min_idx = 1;
-    min_dist = t_Dist(ray_pos, py);
+    min_dist = Dist(ray_pos, py);
   }
 
-  if ( dz < radius && t_Dist(ray_pos, pz) < min_dist) {
+  if ( dz < radius && Dist(ray_pos, pz) < min_dist) {
     min_idx = 2;
-    min_dist = t_Dist(ray_pos, pz);
+    min_dist = Dist(ray_pos, pz);
   }
 
   return min_idx == 0 ? OHDL_X : 
@@ -295,7 +295,7 @@ inline ORTHO_HANDLE_ID t_PickHandleOrthoArrows
 }
 
 
-inline ORTHO_HANDLE_ID t_PickHandleOrthoCircles
+inline ORTHO_HANDLE_ID PickHandleOrthoCircles
 (
     const EVec3f &ray_pos,
     const EVec3f &ray_dir,
@@ -322,9 +322,9 @@ inline ORTHO_HANDLE_ID t_PickHandleOrthoCircles
     p0 = EVec3f( length*cos(step * (i-1)), length* sin(step * (i-1)), 0) + center;
     p1 = EVec3f( length*cos(step * i    ), length* sin(step * i    ), 0) + center;
 
-    std::tie(d,p) = t_DistRayAndLineSegm(ray_pos, ray_dir, p0, p1);
-    if ( d < radius && t_Dist(p, ray_pos) < min_dist ) {
-      min_dist = t_Dist(p, ray_pos);
+    std::tie(d,p) = DistRayAndLineSegm(ray_pos, ray_dir, p0, p1);
+    if ( d < radius && Dist(p, ray_pos) < min_dist ) {
+      min_dist = Dist(p, ray_pos);
       min_idx = 0;
     }
   }
@@ -335,9 +335,9 @@ inline ORTHO_HANDLE_ID t_PickHandleOrthoCircles
     p0 = EVec3f( 0, length*cos(step * (i-1)), length* sin(step * (i-1)) ) + center;
     p1 = EVec3f( 0, length*cos(step * i    ), length* sin(step * i    ) ) + center;
 
-    std::tie(d,p) = t_DistRayAndLineSegm(ray_pos, ray_dir, p0, p1);
-    if ( d < radius && t_Dist(p, ray_pos) < min_dist ) {
-      min_dist = t_Dist(p, ray_pos);
+    std::tie(d,p) = DistRayAndLineSegm(ray_pos, ray_dir, p0, p1);
+    if ( d < radius && Dist(p, ray_pos) < min_dist ) {
+      min_dist = Dist(p, ray_pos);
       min_idx = 1;
     }
   }
@@ -348,9 +348,9 @@ inline ORTHO_HANDLE_ID t_PickHandleOrthoCircles
     p0 = EVec3f( length* sin(step * (i-1)), 0, length*cos(step * (i-1)) ) + center;
     p1 = EVec3f( length* sin(step * i    ), 0, length*cos(step * i    ) ) + center;
 
-    std::tie(d,p) = t_DistRayAndLineSegm(ray_pos, ray_dir, p0, p1);
-    if ( d < radius && t_Dist(p, ray_pos) < min_dist ) {
-      min_dist = t_Dist(p, ray_pos);
+    std::tie(d,p) = DistRayAndLineSegm(ray_pos, ray_dir, p0, p1);
+    if ( d < radius && Dist(p, ray_pos) < min_dist ) {
+      min_dist = Dist(p, ray_pos);
       min_idx = 2;
     }
   }
@@ -368,7 +368,7 @@ inline ORTHO_HANDLE_ID t_PickHandleOrthoCircles
 //old function from roi painter3d
 // TODO REMOVE
 
-inline void t_drawCylinder
+inline void DrawCylinder
 (
   const EVec3f& p1,
   const EVec3f& p2,
@@ -406,7 +406,7 @@ inline void t_drawCylinder
   glEnd();
 }
 
-inline void t_drawSphere
+inline void DrawSphere
 (
   const EVec3f& pos, //場所
   const float radius

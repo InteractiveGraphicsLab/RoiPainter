@@ -74,7 +74,7 @@ System::Void FormSegSwallowOrgans::m_btn_addmesh_Click     (System::Object^  sen
   std::string cagename = "";
 
 	OpenFileDialog^ dlg = gcnew OpenFileDialog();
-  dlg->Title  = "select mesh (ƒƒbƒVƒ…ƒ‚ƒfƒ‹‚ð‘I‘ð‚µ‚Ä‚­‚¾‚³‚¢)";
+  dlg->Title  = "select mesh (ãƒ¡ãƒƒã‚·ãƒ¥ãƒ¢ãƒ‡ãƒ«ã‚’é¸æŠžã—ã¦ãã ã•ã„)";
 	dlg->Filter = "mesh file(*.obj;)|*.obj;";
 	dlg->Multiselect = false;
   if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
@@ -84,7 +84,7 @@ System::Void FormSegSwallowOrgans::m_btn_addmesh_Click     (System::Object^  sen
 
 
 	dlg->Filter = "cage file (*.obj;)|*.obj;";
-  dlg->Title  = "cage mesh (ƒP[ƒWƒ‚ƒfƒ‹‚ð‘I‘ð‚µ‚Ä‚­‚¾‚³‚¢)";
+  dlg->Title  = "cage mesh (ã‚±ãƒ¼ã‚¸ãƒ¢ãƒ‡ãƒ«ã‚’é¸æŠžã—ã¦ãã ã•ã„)";
 	dlg->Multiselect = false;
   if (dlg->ShowDialog() != System::Windows::Forms::DialogResult::Cancel){
 	  IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
@@ -119,7 +119,7 @@ System::Void FormSegSwallowOrgans::m_btn_savecagetxt_Click(System::Object^  send
 
 System::Void FormSegSwallowOrgans::m_btn_loadcagetxt_Click(System::Object^  sender, System::EventArgs^  e) 
 {
-  if( !ShowMsgDlgYesNo("Cage•ÏŒ`‚ð“Ç‚Ýž‚Þ‚ÆŒ»Ý‚Ì•ÒW“à—e‚ªŽ¸‚í‚ê‚Ü‚·B—Ç‚¢‚Å‚·‚©?", "’ˆÓ") )
+  if( !ShowMsgDlgYesNo("Cageå¤‰å½¢ã‚’èª­ã¿è¾¼ã‚€ã¨ç¾åœ¨ã®ç·¨é›†å†…å®¹ãŒå¤±ã‚ã‚Œã¾ã™ã€‚è‰¯ã„ã§ã™ã‹?", "æ³¨æ„") )
     return;
 
 	OpenFileDialog^ dlg = gcnew OpenFileDialog();
@@ -162,7 +162,7 @@ System::Void FormSegSwallowOrgans::m_btn_loaddeform_nextcage_Click(System::Objec
   //get file names 
   OpenFileDialog^ dlg_cage = gcnew OpenFileDialog();
   dlg_cage->Filter = "Cage File (*.obj)|*.obj";
-  dlg_cage->Title = "•ÏŒ`‚·‚éƒP[ƒW‚Ü‚½‚ÍƒƒbƒVƒ…(obj)‚ð‘I‘ð‚µ‚Ä‚­‚¾‚³‚¢";
+  dlg_cage->Title = "å¤‰å½¢ã™ã‚‹ã‚±ãƒ¼ã‚¸ã¾ãŸã¯ãƒ¡ãƒƒã‚·ãƒ¥(obj)ã‚’é¸æŠžã—ã¦ãã ã•ã„";
 
   dlg_cage->Multiselect = false;
   if (dlg_cage->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
@@ -170,8 +170,8 @@ System::Void FormSegSwallowOrgans::m_btn_loaddeform_nextcage_Click(System::Objec
   std::string fname_cage = static_cast<const char*>(mptr_cage.ToPointer());
 
   SaveFileDialog^ dlg_txt = gcnew SaveFileDialog();
-  dlg_txt->Filter = "cage •ÏŒ`î•ñ (*.txt)|*.txt";
-  dlg_txt->Title  = "•ÏŒ`î•ñ‚ðo—Í‚·‚éƒtƒ@ƒCƒ‹–¼(txt)‚ðŽw’è‚µ‚Ä‚­‚¾‚³‚¢";
+  dlg_txt->Filter = "cage å¤‰å½¢æƒ…å ± (*.txt)|*.txt";
+  dlg_txt->Title  = "å¤‰å½¢æƒ…å ±ã‚’å‡ºåŠ›ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«å(txt)ã‚’æŒ‡å®šã—ã¦ãã ã•ã„";
 
 
   if (dlg_txt->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
@@ -202,14 +202,14 @@ System::Void FormSegSwallowOrgans::m_btn_cancel_Click(System::Object^  sender, S
 
 
 
-// group list ŠÖ˜A «
+// group list é–¢é€£ â†“
 
 void FormSegSwallowOrgans::UpdateList()
 {
   m_bListUpdating = true;
 
 
-  //‰Šú‰»
+  //åˆæœŸåŒ–
   m_grouplist->Rows->Clear();
   for (int i = 0; i < NUM_POINT_GROUPS; ++i) 
   {

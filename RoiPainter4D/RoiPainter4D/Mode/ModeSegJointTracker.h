@@ -11,17 +11,17 @@
 
 //UI 
 // step1 
-//   è‡’lw’è --> iso surface ¶¬
+//   é–¾å€¤æŒ‡å®š --> iso surface ç”Ÿæˆ
 // step2 tracking  
-//  step 2-1. shift - double click --> iso surface ‚Ìˆê•”‚ğƒnƒCƒ‰ƒCƒg
-//  step 2-2. double click --> cp ”z’u 
-//  step 2-3 run tracking ƒ{ƒ^ƒ“ --> ICP‚É‚æ‚èC2ŒÂ‚ÌŠÖß‚ÌˆÊ’u‚ ‚í‚¹
-//  2-1, 2-2‚Í frameidx == 0 ‚ÉŒÀ’è
+//  step 2-1. shift - double click --> iso surface ã®ä¸€éƒ¨ã‚’ãƒã‚¤ãƒ©ã‚¤ãƒˆ
+//  step 2-2. double click --> cp é…ç½® 
+//  step 2-3 run tracking ãƒœã‚¿ãƒ³ --> ICPã«ã‚ˆã‚Šï¼Œ2å€‹ã®é–¢ç¯€ã®ä½ç½®ã‚ã‚ã›
+//  2-1, 2-2ã¯ frameidx == 0 ã«é™å®š
 
 // step3 
-//   step3-1 ŠO•”‚©‚çobj“Ç‚İ‚İ
-//   step3-2 ƒhƒ‰ƒbƒO‚É‚æ‚èˆÊ’u‚ ‚í‚¹
-//   step3-3 ˆÊ’u‚ ‚í‚¹‚Æ‹——£ŒvZ
+//   step3-1 å¤–éƒ¨ã‹ã‚‰objèª­ã¿è¾¼ã¿
+//   step3-2 ãƒ‰ãƒ©ãƒƒã‚°ã«ã‚ˆã‚Šä½ç½®ã‚ã‚ã›
+//   step3-3 ä½ç½®ã‚ã‚ã›ã¨è·é›¢è¨ˆç®—
 //
 // manipuration mode
 //   - cp placement bone 1 
@@ -53,10 +53,10 @@
 class TVtxDistInfo
 {
 public:
-	int     m_idx ; // Œ³surfaceã‚Ì’¸“_id
-	double  m_dist; // ‘Î‰æsurface‚Ö‚ÌÅ¬‹——£
-	EVec3f  m_pSrc; // ‘Î‰Œ³‚Ì’¸“_ˆÊ’u
-	EVec3f  m_pTgt; // ‘Î‰æsurfaceã‚ÌˆÊ’u
+	int     m_idx ; // å…ƒsurfaceä¸Šã®é ‚ç‚¹id
+	double  m_dist; // å¯¾å¿œå…ˆsurfaceã¸ã®æœ€å°è·é›¢
+	EVec3f  m_pSrc; // å¯¾å¿œå…ƒã®é ‚ç‚¹ä½ç½®
+	EVec3f  m_pTgt; // å¯¾å¿œå…ˆsurfaceä¸Šã®ä½ç½®
 
 	~TVtxDistInfo(){}
 	TVtxDistInfo(){}
@@ -124,7 +124,7 @@ public:
   }
 
   // overload functions ---------------------------------------------
-  MODE_ID getModeID() { return MODE_SEG_JTRACKER; }
+  MODE_ID GetModeID() { return MODE_SEG_JTRACKER; }
 
   void LBtnUp   (const EVec2i &p, OglForCLI *ogl);
   void RBtnUp   (const EVec2i &p, OglForCLI *ogl);
@@ -138,12 +138,12 @@ public:
   void MouseMove(const EVec2i &p, OglForCLI *ogl);
   void MouseWheel(const EVec2i &p, short zDelta, OglForCLI *ogl);
 
-  void keyDown(int nChar);
-  void keyUp(int nChar);
+  void KeyDown(int nChar);
+  void KeyUp(int nChar);
 
-  bool canEndMode();
-  void startMode();
-  void drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+  bool CanEndMode();
+  void StartMode();
+  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
   //-----------------------------------------------------------------
 
   void FinishSegmentation();

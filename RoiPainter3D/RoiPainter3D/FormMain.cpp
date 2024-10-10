@@ -204,8 +204,8 @@ void FormMain::replaceOtherForms()
 
 
 
-//‰Šú‰»‚Ìƒ^ƒCƒ~ƒ“ƒO‚Íd—v
-//managedƒNƒ‰ƒX‚Í‚±‚±‚Å‰Šú‰»‚·‚é
+//åˆæœŸåŒ–ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã¯é‡è¦
+//managedã‚¯ãƒ©ã‚¹ã¯ã“ã“ã§åˆæœŸåŒ–ã™ã‚‹
 void FormMain::initializeOtherForms()
 {
   std::cout << "--------initialize form(dialogs)...\n";
@@ -214,7 +214,7 @@ void FormMain::initializeOtherForms()
   FormVisParam::getInst()->Location = Point(this->Location.X + this->Width, this->Location.Y);
 
 
-  //ˆê“xShow‚µ Hide‚·‚é(‚»‚¤‚µ‚È‚¢‚ÆˆÚ“®‚ªŒø‚©‚È‚¢)
+  //ä¸€åº¦Showã— Hideã™ã‚‹(ãã†ã—ãªã„ã¨ç§»å‹•ãŒåŠ¹ã‹ãªã„)
   FormVisNorm ::getInst()->Show();
   FormVisMask ::getInst()->Show();
   FormSegRGrow::getInst()->Show();
@@ -265,7 +265,7 @@ void FormMain::redrawMainPanel()
   static bool isFirst = true;
   if (isFirst)
   {
-    //‚±‚Ìƒ^ƒCƒ~ƒ“ƒO‚Å ‘¼‚Ìform‚ğ¶¬‚µ, Show()‚à“Ç‚ñ‚ÅOK
+    //ã“ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§ ä»–ã®formã‚’ç”Ÿæˆã—, Show()ã‚‚èª­ã‚“ã§OK
     isFirst = false;
     initializeOtherForms();
     ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);

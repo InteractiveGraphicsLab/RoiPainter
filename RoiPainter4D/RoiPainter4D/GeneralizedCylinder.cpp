@@ -10,25 +10,25 @@
 #define NUM_VERTS_CIRCLE 8
 
 
-//3Ÿ‚Ìspline curve‚É‚æ‚ècontrol points‚ğ•âŠÔ‚·‚é
+//3æ¬¡ã®spline curveã«ã‚ˆã‚Šcontrol pointsã‚’è£œé–“ã™ã‚‹
 //
-// cp[i]-cp[i+1] ‚ÌŠÔ‚ğ3Ÿ‚Ìspline segment‚Å•âŠ®‚·‚é
+// cp[i]-cp[i+1] ã®é–“ã‚’3æ¬¡ã®spline segmentã§è£œå®Œã™ã‚‹
 //
 // fi(t) = ai + bi t + ci t^2 + di t^3 ,  t \in [0,1] 
 //
-// ai, bi, ci, di‚ÍˆÈ‰º‚Ì§–ñ‚©‚çŒvZ‚Å‚«‚é 
+// ai, bi, ci, diã¯ä»¥ä¸‹ã®åˆ¶ç´„ã‹ã‚‰è¨ˆç®—ã§ãã‚‹ 
 //
 // 1.  fi(0) = ai = cp[i], 
 // 2.  fi(1) = ai + bi + ci + di = cp[i+1]
 //
-// Ÿ‚Ìspline segment‚ª‘¶İ‚·‚é‚Æ‚«‚ÍˆÈ‰º‚Ì2®‚ğ—˜—p
+// æ¬¡ã®spline segmentãŒå­˜åœ¨ã™ã‚‹ã¨ãã¯ä»¥ä¸‹ã®2å¼ã‚’åˆ©ç”¨
 // 3a. fi' (1) = fi+1' (0)  --> bi + 2 ci + 3 di = b i+1  
-// 4a. fi''(1) = fi+1''(0)  --> 2 ci + 6 di = 2 ci+1  @@
-// ÅŒã‚Ìspline segment‚Å‚ÍˆÈ‰º‚Ì2®‚ğ—˜—p
+// 4a. fi''(1) = fi+1''(0)  --> 2 ci + 6 di = 2 ci+1  ã€€ã€€
+// æœ€å¾Œã®spline segmentã§ã¯ä»¥ä¸‹ã®2å¼ã‚’åˆ©ç”¨
 // 3b. f0''(0) = 0  --> 2 c0 = 0  
-// 4b. fn''(1) = 0  --> 2 cn + 6 dn = 0  @@
+// 4b. fn''(1) = 0  --> 2 cn + 6 dn = 0  ã€€ã€€
 // 
-// ‚±‚Ì§–ñ®‚ğ‚Ü‚Æ‚ß‚é‚Æ A x = b‚Æ‚¢‚¤üŒ^•û’ö®‚ÌŒ`‚É‚È‚é
+// ã“ã®åˆ¶ç´„å¼ã‚’ã¾ã¨ã‚ã‚‹ã¨ A x = bã¨ã„ã†ç·šå‹æ–¹ç¨‹å¼ã®å½¢ã«ãªã‚‹
 //
 void t_GenerateSplineCurve(
   const std::vector<EVec3f> &cps,
@@ -125,7 +125,7 @@ void t_GenerateSplineCurve(
     }
   }
   
-	//ÅŒã‚Ì’¸“_‚¾‚¯ŒÂ•Ê‘Î‰
+	//æœ€å¾Œã®é ‚ç‚¹ã ã‘å€‹åˆ¥å¯¾å¿œ
   curve.back() = cps.back();
 
 }
@@ -409,7 +409,7 @@ void GeneralizedCylinder::ParameterModified(bool do_update_axis, bool do_update_
 
 void GeneralizedCylinder::DrawAxisCurve( const EVec3f& color, float lineWidth) const
 {
-  t_DrawPolyLine( color, lineWidth, m_axiscurve);
+  DrawPolyLine( color, lineWidth, m_axiscurve);
 }
 
 
@@ -469,13 +469,13 @@ void GeneralizedCylinder::UpdateOrientedBoundinbBox()
 
 	m_obbs.resize( m_cps.size() - 1);
 
-	//‹æŠÔ‚²‚Æ‚ÉOBB‚ğŒvZ
+	//åŒºé–“ã”ã¨ã«OBBã‚’è¨ˆç®—
 #pragma omp parallel for
 	for (int cp_i = 0; cp_i < m_cps.size() - 1; ++cp_i )
 	{
-    //‹æŠÔ cp_i - cp_i+1 ‚ÌŠÔ‚É‘Î‰‚·‚é’¸“_‚ÍCˆÈ‰º‚Ì’Ê‚èD
-    //Še‹æŠÔ‚ğ NUM_RESAMPLE_AXISCURVE“™•ª‚µ‚ÄCŠe“_‚ÉNUM_VERTS_CRSSECCIRCLE •ª‚Ì’¸“_‚ª‚ ‚éD
-    //(5, 8)‚È‚ç... cp_i=0: 0-47Cco_i=1: 40-87, ...
+    //åŒºé–“ cp_i - cp_i+1 ã®é–“ã«å¯¾å¿œã™ã‚‹é ‚ç‚¹ã¯ï¼Œä»¥ä¸‹ã®é€šã‚Šï¼
+    //å„åŒºé–“ã‚’ NUM_RESAMPLE_AXISCURVEç­‰åˆ†ã—ã¦ï¼Œå„ç‚¹ã«NUM_VERTS_CRSSECCIRCLE åˆ†ã®é ‚ç‚¹ãŒã‚ã‚‹ï¼
+    //(5, 8)ãªã‚‰... cp_i=0: 0-47ï¼Œco_i=1: 40-87, ...
     int start_idx =  cp_i      * NUM_VERTS_AXISSEGM     * NUM_VERTS_CIRCLE;
     int end_idx   = (cp_i + 1) * (NUM_VERTS_AXISSEGM +1)* NUM_VERTS_CIRCLE;
     int num_verts = (NUM_VERTS_AXISSEGM +1)* NUM_VERTS_CIRCLE;
@@ -553,7 +553,7 @@ int GeneralizedCylinder::PickCPs(const EVec3f &ray_pos, const EVec3f &ray_dir, f
 {
   for (int cp_idx = 0; cp_idx < (int)m_cps.size(); ++cp_idx)
 	{
-		float dist  = t_DistRayAndPoint(ray_pos, ray_dir, m_cps[cp_idx]);
+		float dist  = DistRayAndPoint(ray_pos, ray_dir, m_cps[cp_idx]);
 		float depth = (ray_pos - m_cps[cp_idx]).norm();
 
 		if (dist < cp_radius && depth < max_depth + cp_radius)
@@ -568,7 +568,7 @@ int GeneralizedCylinder::PickCPs(const EVec3f &ray_pos, const EVec3f &ray_dir, f
 
 
 //fill inside voxel 
-//input : flg3d 0:back, 255:inside (Šù‚É255‚Ìvoxel‚É‚Í‰½‚à‚µ‚È‚¢)
+//input : flg3d 0:back, 255:inside (æ—¢ã«255ã®voxelã«ã¯ä½•ã‚‚ã—ãªã„)
 //output: flg3d 0:back, 255:inside 
 void GeneralizedCylinder::FillVoxelInCylinder(
     const EVec3i &reso, 
@@ -580,15 +580,15 @@ void GeneralizedCylinder::FillVoxelInCylinder(
   std::vector<EVec4i> dist_tf_seeds;
   
   std::vector<EVec3f> resample_curve;
-  int   num_sample = int( t_verts_Length(m_axiscurve, false) / ( (pitch[0]+pitch[1]+pitch[2])/3.0 ) );
-  t_verts_ResampleEqualInterval(num_sample, m_axiscurve, resample_curve);
+  int   num_sample = int( VertsLength(m_axiscurve, false) / ( (pitch[0]+pitch[1]+pitch[2])/3.0 ) );
+  VertsResampleEqualInterval(num_sample, m_axiscurve, resample_curve);
 
   for ( int i=0; i < resample_curve.size(); ++i)
   {
     EVec3f &p = resample_curve[i];
-    const int x = t_crop( 0, reso[0] - 1, (int)(p[0] / pitch[0]));
-    const int y = t_crop( 0, reso[1] - 1, (int)(p[1] / pitch[1]));
-    const int z = t_crop( 0, reso[2] - 1, (int)(p[2] / pitch[2]));
+    const int x = Crop( 0, reso[0] - 1, (int)(p[0] / pitch[0]));
+    const int y = Crop( 0, reso[1] - 1, (int)(p[1] / pitch[1]));
+    const int z = Crop( 0, reso[2] - 1, (int)(p[2] / pitch[2]));
     const int I = x + y * reso[0] + z * reso[0] * reso[1];
     dist_tf_seeds.push_back(EVec4i(x,y,z,I));
   }
@@ -600,12 +600,12 @@ void GeneralizedCylinder::FillVoxelInCylinder(
   
 
   //index by using bounding box
-  const int xs = t_crop(0, reso[0]-1, (int)( m_bbmin[0]/pitch[0] ) );
-  const int ys = t_crop(0, reso[1]-1, (int)( m_bbmin[1]/pitch[1] ) );
-  const int zs = t_crop(0, reso[2]-1, (int)( m_bbmin[2]/pitch[2] ) );
-  const int xe = t_crop(0, reso[0]-1, (int)( m_bbmax[0]/pitch[0] ) );
-  const int ye = t_crop(0, reso[1]-1, (int)( m_bbmax[1]/pitch[1] ) );
-  const int ze = t_crop(0, reso[2]-1, (int)( m_bbmax[2]/pitch[2] ) );
+  const int xs = Crop(0, reso[0]-1, (int)( m_bbmin[0]/pitch[0] ) );
+  const int ys = Crop(0, reso[1]-1, (int)( m_bbmin[1]/pitch[1] ) );
+  const int zs = Crop(0, reso[2]-1, (int)( m_bbmin[2]/pitch[2] ) );
+  const int xe = Crop(0, reso[0]-1, (int)( m_bbmax[0]/pitch[0] ) );
+  const int ye = Crop(0, reso[1]-1, (int)( m_bbmax[1]/pitch[1] ) );
+  const int ze = Crop(0, reso[2]-1, (int)( m_bbmax[2]/pitch[2] ) );
   const int W  = reso[0];
   const int WH = reso[0] * reso[1];
   const int num_obb = (int)m_obbs.size();
@@ -635,7 +635,7 @@ void GeneralizedCylinder::FillVoxelInCylinder(
   for( int z = zs; z < ze; ++z)
   {
 
-    //z‚ğ•À—ñ‰»‚·‚é‚Æ progress bar‚ÌXV‚É‰Û‘è‚ªc‚é‚Ì‚Å y‚ğ•À—ñ‰»
+    //zã‚’ä¸¦åˆ—åŒ–ã™ã‚‹ã¨ progress barã®æ›´æ–°ã«èª²é¡ŒãŒæ®‹ã‚‹ã®ã§ yã‚’ä¸¦åˆ—åŒ–
 #pragma omp parallel for
     for( int y = ys; y < ye; ++y)
     {
@@ -644,11 +644,11 @@ void GeneralizedCylinder::FillVoxelInCylinder(
         const int idx = x + y * W + z * WH;
         if( flg3d[idx] != 0 ) continue;
         
-        if( vol_dist[idx] <= min_r1r2 ) {//‘OŒiŠm’è
+        if( vol_dist[idx] <= min_r1r2 ) {//å‰æ™¯ç¢ºå®š
           flg3d[idx] = 255;
           continue;
         }
-        if( vol_dist[idx] > max_r1r2 ) {//”wŒiŠm’è
+        if( vol_dist[idx] > max_r1r2 ) {//èƒŒæ™¯ç¢ºå®š
           continue;
         }
 
@@ -662,14 +662,14 @@ void GeneralizedCylinder::FillVoxelInCylinder(
         } 
         if ( !isInObb ) continue;
         
-        //2. check in/out m_mesh by —§‘ÌŠp ià–¾‚Í‰º‚Éj
+        //2. check in/out m_mesh by ç«‹ä½“è§’ ï¼ˆèª¬æ˜ã¯ä¸‹ã«ï¼‰
         double area = 0.0;
         for (int poly_i = 0; poly_i < num_polys; ++poly_i)
         {
 			    EVec3f ofst = poly_gcenter[poly_i] - p;
 			    const float r = ofst.squaredNorm();
 			    if (r <= 0.00000001) { 
-            //–Êã‚Éæ‚Á‚Ä‚¢‚é‚Æ‚«‚Í“à•””»’è 
+            //é¢ä¸Šã«ä¹—ã£ã¦ã„ã‚‹ã¨ãã¯å†…éƒ¨åˆ¤å®š 
             area = 1000000.0; 
             break; 
           }
@@ -691,12 +691,12 @@ void GeneralizedCylinder::FillVoxelInCylinder(
   delete[] poly_areas;
   delete[] poly_gcenter;
   delete[] vol_dist;
-  //‚ ‚é–ÊS‚Ì—§‘ÌŠp‚Æ‚ÍC‚±‚ê‚ğ”¼Œa1‚Ì‹…‚ÉË‰e‚µ‚½–ÊÏ‚Å’è‹`‚³‚ê‚éD
-  //‚ ‚é“_p‚ª •Â‚¶‚½}Œ`S‚Ì“à•”‚É‚ ‚éê‡C“_p‚ğ’†S‚Æ‚·‚é’PˆÊ‹…‚ÉS‚ğË‰e‚µ‚½Û‚Ì—§‘ÌŠp‚Í4ƒÎ‚É‚È‚é (r=1‚Ì‹…‚Ì–ÊÏ)
-  //‚ ‚é“_p‚ª •Â‚¶‚½}Œ`S‚ÌŠO•”‚É‚ ‚éê‡C“_p‚ğ’†S‚Æ‚·‚é’PˆÊ‹…‚ÉS‚ğË‰e‚µ‚½Û‚Ì—§‘ÌŠp‚Í0‚É‚È‚é
+  //ã‚ã‚‹é¢Sã®ç«‹ä½“è§’ã¨ã¯ï¼Œã“ã‚Œã‚’åŠå¾„1ã®çƒã«å°„å½±ã—ãŸé¢ç©ã§å®šç¾©ã•ã‚Œã‚‹ï¼
+  //ã‚ã‚‹ç‚¹pãŒ é–‰ã˜ãŸå›³å½¢Sã®å†…éƒ¨ã«ã‚ã‚‹å ´åˆï¼Œç‚¹pã‚’ä¸­å¿ƒã¨ã™ã‚‹å˜ä½çƒã«Sã‚’å°„å½±ã—ãŸéš›ã®ç«‹ä½“è§’ã¯4Ï€ã«ãªã‚‹ (r=1ã®çƒã®é¢ç©)
+  //ã‚ã‚‹ç‚¹pãŒ é–‰ã˜ãŸå›³å½¢Sã®å¤–éƒ¨ã«ã‚ã‚‹å ´åˆï¼Œç‚¹pã‚’ä¸­å¿ƒã¨ã™ã‚‹å˜ä½çƒã«Sã‚’å°„å½±ã—ãŸéš›ã®ç«‹ä½“è§’ã¯0ã«ãªã‚‹
   //
-  //—§‘ÌŠp‚Ì’PˆÊ‚Ísr ƒXƒeƒ‰ƒfƒBƒAƒ“ 
+  //ç«‹ä½“è§’ã®å˜ä½ã¯sr ã‚¹ãƒ†ãƒ©ãƒ‡ã‚£ã‚¢ãƒ³ 
   //
-  //”¼Œar‚Ì‹…ã‚É‚ ‚é}Œ`S‚Ì–ÊÏ‚ªs‚ÌC‚±‚Ì}Œ`‚ğ”¼Œa1‚Ì‹…‚ÉË‰e‚·‚é‚Æ–ÊÏ‚Í s/r^2‚É‚È‚é
+  //åŠå¾„rã®çƒä¸Šã«ã‚ã‚‹å›³å½¢Sã®é¢ç©ãŒsã®æ™‚ï¼Œã“ã®å›³å½¢ã‚’åŠå¾„1ã®çƒã«å°„å½±ã™ã‚‹ã¨é¢ç©ã¯ s/r^2ã«ãªã‚‹
   //fill in cylinder
 }

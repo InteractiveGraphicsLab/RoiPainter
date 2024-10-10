@@ -1,4 +1,4 @@
-﻿#ifndef COMMON_HARMONICCOORD_H_
+#ifndef COMMON_HARMONICCOORD_H_
 #define COMMON_HARMONICCOORD_H_
 #pragma unmanaged
 

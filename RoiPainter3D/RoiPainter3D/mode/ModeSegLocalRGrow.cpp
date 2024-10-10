@@ -175,8 +175,8 @@ void  ModeSegLocalRGrow::ImportSeedInfo(std::string fname)
     int flg, minv, maxv;
     float radius;
     ifs >> buf >> flg >> minv >> maxv >> radius; 
-    minv = t_crop(minmax[0], minmax[1], minv);
-    maxv = t_crop(minmax[0], minmax[1], maxv);
+    minv = Crop(minmax[0], minmax[1], minv);
+    maxv = Crop(minmax[0], minmax[1], maxv);
     m_seeds.push_back(LRGSeed(EVec3f(0,0,0), minv, maxv, flg, radius));
     
     m_seeds.back().m_cps.resize(num_cps);
@@ -219,7 +219,7 @@ int  ModeSegLocalRGrow::GetLatestAddedSeedIdx(bool tf)
 
 ///////////////////////////////////////////////////////////////////////
 //Mouse Listener///////////////////////////////////////////////////////
-// current version(Œ»İ‚Ì‚à‚Ì)
+// current version(ç¾åœ¨ã®ã‚‚ã®)
 // Select seed    : L/R click on CP                   ok
 // Move CP        : L/R drag  on CP                   ok
 // Add seed 1     : L/R dblclick when no active seed  ok
@@ -259,14 +259,14 @@ void ModeSegLocalRGrow::AddNewSeed(bool b_foreseed, EVec3f &cp_position)
 	m_activeseed_idx = (int)m_seeds.size() - 1;
 
   //sort seed (Original code was by Hiryu Kamoshita)
-  //negative‚Í‘O”¼‚ÉÏ‚Ş
+  //negativeã¯å‰åŠã«ç©ã‚€
   if( m_seeds.back().m_flg_fore == false)
   {
     for(int i = (int)m_seeds.size()-1; i > 0 ; --i) 
 	  {
-      //è‘O‚ªnegative‚È‚çI—¹
+      //æ‰‹å‰ãŒnegativeãªã‚‰çµ‚äº†
 		  if( !m_seeds[i-1].m_flg_fore ) break;
-      //‚»‚¤‚Å‚È‚¯‚ê‚Î“ü‚ê‘Ö‚¦
+      //ãã†ã§ãªã‘ã‚Œã°å…¥ã‚Œæ›¿ãˆ
       std::swap(m_seeds[i-1], m_seeds[i] );
       m_activeseed_idx = i-1;
 	  }
@@ -277,7 +277,7 @@ void ModeSegLocalRGrow::AddNewSeed(bool b_foreseed, EVec3f &cp_position)
 
 void ModeSegLocalRGrow::AddNewSeed(bool b_foreseed)
 {
-  //fix position (•\¦‚³‚ê‚Ä‚¢‚é plane‚Ì’†S‚É”z’u)
+  //fix position (è¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹ planeã®ä¸­å¿ƒã«é…ç½®)
   const EVec3f cuboid = ImageCore::GetInst()->GetCuboid();
 
   EVec3f cp_position;
@@ -369,7 +369,7 @@ void ModeSegLocalRGrow::LBtnDclk(const EVec2i &p, OglForCLI *ogl)
 {
   //LogCore::GetInst()->Add("LBtnDclk");
 
-  //pick‚µ‚½ƒV[ƒh‚ğíœ or V‚µ‚¢ƒV[ƒh‚ğ’Ç‰Á
+  //pickã—ãŸã‚·ãƒ¼ãƒ‰ã‚’å‰Šé™¤ or æ–°ã—ã„ã‚·ãƒ¼ãƒ‰ã‚’è¿½åŠ 
   EVec3f ray_pos, ray_dir;
   ogl->GetCursorRay(p, ray_pos, ray_dir);
 
@@ -386,7 +386,7 @@ void ModeSegLocalRGrow::RBtnDclk(const EVec2i &p, OglForCLI *ogl)
 {
   //LogCore::GetInst()->Add("RBtnDclk");
 
-  //pick‚µ‚½ƒV[ƒh‚ğíœ or V‚µ‚¢ƒV[ƒh‚ğ’Ç‰Á
+  //pickã—ãŸã‚·ãƒ¼ãƒ‰ã‚’å‰Šé™¤ or æ–°ã—ã„ã‚·ãƒ¼ãƒ‰ã‚’è¿½åŠ 
   EVec3f ray_pos, ray_dir;
   ogl->GetCursorRay(p, ray_pos, ray_dir);
 
@@ -533,7 +533,7 @@ void ModeSegLocalRGrow::MBtnUp(const EVec2i &p, OglForCLI *ogl)
 
 EVec2i ModeSegLocalRGrow::PickSeedCP(const EVec3f &ray_pos, const EVec3f &ray_dir)
 {
-  //cross section‚ÌŒã‚ë‚ÍG‚ç‚È‚¢
+  //cross sectionã®å¾Œã‚ã¯è§¦ã‚‰ãªã„
   float max_depth = FLT_MAX;
   EVec3f pos;
   if ( PickCrssec(ray_pos, ray_dir, &pos) != CRSSEC_NON)
@@ -549,7 +549,7 @@ EVec2i ModeSegLocalRGrow::PickSeedCP(const EVec3f &ray_pos, const EVec3f &ray_di
 		{
       const EVec3f p = m_seeds[i].m_cps[j];
 
-			if ( t_DistRayAndPoint(ray_pos, ray_dir, p ) < CP_RADIUS && 
+			if ( DistRayAndPoint(ray_pos, ray_dir, p ) < CP_RADIUS && 
            (p-ray_pos).norm() < max_depth ) 
       {
 				return EVec2i(i,j);
@@ -568,7 +568,7 @@ bool ModeSegLocalRGrow::PickActiveSeed(const EVec3f &ray_pos, const EVec3f &ray_
 	if ( m_activeseed_idx < 0 || m_seeds.size() <= m_activeseed_idx)
     return false;
 
-  //cross section‚ÌŒã‚ë‚ÍG‚ç‚È‚¢
+  //cross sectionã®å¾Œã‚ã¯è§¦ã‚‰ãªã„
   float max_depth = FLT_MAX;
   EVec3f crssec_pos;
   if ( PickCrssec(ray_pos, ray_dir, &crssec_pos) != CRSSEC_NON)
@@ -581,7 +581,7 @@ bool ModeSegLocalRGrow::PickActiveSeed(const EVec3f &ray_pos, const EVec3f &ray_
 
   for ( const auto &cp : s.m_cps)
   {
-    if ( t_DistRayAndPoint(ray_pos, ray_dir, cp) < s.m_radius 
+    if ( DistRayAndPoint(ray_pos, ray_dir, cp) < s.m_radius 
          && (ray_pos - cp).norm() - s.m_radius < max_depth)
     {
       pos = cp;
@@ -599,7 +599,7 @@ bool ModeSegLocalRGrow::PickActiveSeed(const EVec3f &ray_pos, const EVec3f &ray_
     //  (t2 > 1.0f) ? cp2 :
     //  ray_pos + t1 * ray_dir;
 
-    auto res = t_DistRayAndLineSegm(ray_pos, ray_dir, cp1, cp2);
+    auto res = DistRayAndLineSegm(ray_pos, ray_dir, cp1, cp2);
     float  dist = std::get<0>(res);
     EVec3f pos  = std::get<1>(res);
 
@@ -647,9 +647,9 @@ void ModeSegLocalRGrow::MouseMove(const EVec2i &p, OglForCLI *ogl)
 
 void ModeSegLocalRGrow::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 {
-  //active seed ‚ª‚ ‚èC‚»‚ê‚ğƒsƒbƒN‚µ‚Ä‚¢‚ê‚Î‚»‚Ì”¼Œa‚ğ•ÏX‚·‚é 
-  //crs section‚ğG‚Á‚Ä‚¢‚ê‚ÎˆÚ“®
-  //‚»‚¤‚Å‚È‚¯‚ê‚Îredraw
+  //active seed ãŒã‚ã‚Šï¼Œãã‚Œã‚’ãƒ”ãƒƒã‚¯ã—ã¦ã„ã‚Œã°ãã®åŠå¾„ã‚’å¤‰æ›´ã™ã‚‹ 
+  //crs sectionã‚’è§¦ã£ã¦ã„ã‚Œã°ç§»å‹•
+  //ãã†ã§ãªã‘ã‚Œã°redraw
   EVec3f ray_pos, ray_dir, seedpos, crssecpos;
   ogl->GetCursorRay( p, ray_pos, ray_dir);
   
@@ -657,7 +657,7 @@ void ModeSegLocalRGrow::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *og
   bool pickcrssec = PickCrssec    (ray_pos, ray_dir, &crssecpos );
   if ( pickseed && pickcrssec)
   { 
-    //è‘O‚ğÌ—p
+    //æ‰‹å‰ã‚’æ¡ç”¨
     EVec3f e = ogl->GetCamPos();
     if ( (seedpos - e).norm() > (crssecpos-e).norm() )
       pickseed = false;
@@ -751,7 +751,7 @@ void ModeSegLocalRGrow::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, c
 
   if ( IsAltKeyOn() ) // for figure of the paper 
   {
-    //¬‚³‚¢‡‚É‘‚­
+    //å°ã•ã„é †ã«æ›¸ã
     std::multimap<float, int> idx_map;
     for ( int i=0; i < m_seeds.size(); ++i) 
       idx_map.insert(std::make_pair( m_seeds[i].m_radius,i ));
@@ -762,7 +762,7 @@ void ModeSegLocalRGrow::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, c
 	
 	if (m_b_drawstroke)
   {
-    t_DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
+    DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
   }
 }
 
@@ -821,12 +821,12 @@ void ModeSegLocalRGrow::RunLocalRegionGrow()
 
 	byte *flg = new byte[ WHD ];
 
-  //seed–ˆ‚ÉRegion growing‚ğŒvZ
+  //seedæ¯ã«Region growingã‚’è¨ˆç®—
 	for( int j = 0; j < (int) m_seeds.size(); ++j)
 	{
-    //flg‰Šú‰»(0:locked, 1:yet fixed, 2:negative, 255:positive)
-    //‘OŒiseed : locked(0)‚Ænegative(2)ˆÈŠO‚ğyet(1)‚É
-    //”wŒiseed : —ÌˆæŒvZ‚Í‘S‘Ì‚É‘Î‚µ‚Äs‚¤
+    //flgåˆæœŸåŒ–(0:locked, 1:yet fixed, 2:negative, 255:positive)
+    //å‰æ™¯seed : locked(0)ã¨negative(2)ä»¥å¤–ã‚’yet(1)ã«
+    //èƒŒæ™¯seed : é ˜åŸŸè¨ˆç®—ã¯å…¨ä½“ã«å¯¾ã—ã¦è¡Œã†
 		if ( m_seeds[j].m_flg_fore)
     {
       for ( int i = 0; i < WHD; ++i) 
@@ -891,10 +891,10 @@ static float s_DistTransGrowFronteer
 
 		int K ;
 	  
-    //1. vol[I]‚Ì26‹ß–T‚ğŒ©‚ÄC‹——£‚ªÅ¬‚Æ‚È‚é‚à‚Ì‚ğ“ü‚ê‚é
-    //2. one ring•ªgrow‚³‚¹‚é
+    //1. vol[I]ã®26è¿‘å‚ã‚’è¦‹ã¦ï¼Œè·é›¢ãŒæœ€å°ã¨ãªã‚‹ã‚‚ã®ã‚’å…¥ã‚Œã‚‹
+    //2. one ringåˆ†growã•ã›ã‚‹
 		//calc Dist for voxel (x,y,z) 
-    //unisotropic volume‚ÅAseed‚ª‹Èüó‚È‚Ì‚Å‚±‚ÌÀ‘•‚Ì‚Ù‚¤‚ª‘½­³Šm
+    //unisotropic volumeã§ã€seedãŒæ›²ç·šçŠ¶ãªã®ã§ã“ã®å®Ÿè£…ã®ã»ã†ãŒå¤šå°‘æ­£ç¢º
 		K = I-1-W-WH; if(x>0  &&y>0  &&z>0	&& vol_flg[K]) vol_dist[I] = std::min( vol_dist[I], vol_dist[K] + pXYZ );
 		K = I  -W-WH; if(       y>0  &&z>0  && vol_flg[K]) vol_dist[I] = std::min( vol_dist[I], vol_dist[K] + pYZ  );
 		K = I+1-W-WH; if(x<W-1&&y>0  &&z>0  && vol_flg[K]) vol_dist[I] = std::min( vol_dist[I], vol_dist[K] + pXYZ );
@@ -1030,7 +1030,7 @@ static void s_calcDistTrans
 
 	if( max_dist * 2 > cuboid[0] ) 
 	{
-    //R‘å‚«‚¢ê‡‚ÍCdistfield‚ÌŒvZ‚Í–³‘Ê‚È‚Ì‚Å‘S‚Ä1‚É‚µ‚Ä‚µ‚Ü‚¤
+    //Rå¤§ãã„å ´åˆã¯ï¼Œdistfieldã®è¨ˆç®—ã¯ç„¡é§„ãªã®ã§å…¨ã¦1ã«ã—ã¦ã—ã¾ã†
 		for(int i = 0; i < WHD; ++i) vol_dist[i] = 1;
 	}
 	else
@@ -1052,8 +1052,8 @@ static void s_calcDistTrans
 
 
 //vol_f
-//“ü—Í : 0:locked, 1:yet fixed
-//o—Í : 0:locked, 1:yet(‚È‚¢‚Í‚¸), 2:negative, 255:positive
+//å…¥åŠ›æ™‚ : 0:locked, 1:yet fixed
+//å‡ºåŠ›æ™‚ : 0:locked, 1:yet(ãªã„ã¯ãš), 2:negative, 255:positive
 
 static void s_LocalRegionGrow
 (
@@ -1075,7 +1075,7 @@ static void s_LocalRegionGrow
   
   const int WH = W*H;
 
-	//1 seed --> seed pixel (Å‰‚ÆÅŒã‚Ì“ñ“_ + ƒ|ƒŠƒ‰ƒCƒ“‚ğsampling
+	//1 seed --> seed pixel (æœ€åˆã¨æœ€å¾Œã®äºŒç‚¹ + ãƒãƒªãƒ©ã‚¤ãƒ³ã‚’sampling
 	std::deque<EVec4i> Q;
 
 	Q.push_back( ImageCore::GetInst()->GetVoxelIndex4i( seed.m_cps.front() ) );
@@ -1208,11 +1208,11 @@ void LRGSeed::DrawAsActive() const
 
 	//glDepthMask(false);
 	for (int i = 1; i < (int)m_cps.size(); ++i)
-		t_drawCylinder(m_cps[i-1], m_cps[i], m_radius);
+		DrawCylinder(m_cps[i-1], m_cps[i], m_radius);
 	//glDepthMask(true);
   
 	for (int i = 0; i < (int)m_cps.size(); ++i)
-	  t_drawSphere(m_cps[i], m_radius);
+	  DrawSphere(m_cps[i], m_radius);
 
 
 	glDisable(GL_BLEND);

@@ -106,7 +106,7 @@ CRSSEC_ID CrssecCore::PickCrssec
   bool  b_pick_xy, 
   bool  b_pick_yz, 
   bool  b_pick_zx,
-  bool  b_pick_curvecrssec, //curved surface‚àƒsƒbƒN‚·‚é‚©H
+  bool  b_pick_curvecrssec, //curved surfaceã‚‚ãƒ”ãƒƒã‚¯ã™ã‚‹ã‹ï¼Ÿ
   const EVec3f &cuboid, 
   const EVec3f &ray_pos, 
   const EVec3f &ray_dir, 
@@ -129,7 +129,7 @@ CRSSEC_ID CrssecCore::PickCrssec
     if (i == 2) { p[0] << 0, plnZX, 0;  p[1] << 0, plnZX, cuboid[2];  p[2] << cuboid[0], plnZX, cuboid[2];  p[3] << cuboid[0], plnZX, 0; }
 
     EVec3f pos;
-    if (!t_intersectRayToQuad(ray_pos, ray_dir, p[0], p[1], p[2], p[3], pos))
+    if (!IntersectRayToQuad(ray_pos, ray_dir, p[0], p[1], p[2], p[3], pos))
       continue;
 
     double d = (pos - ray_pos).norm();
@@ -159,7 +159,7 @@ CRSSEC_ID CrssecCore::PickCrssec(
     bool  b_pick_xy, 
     bool  b_pick_yz, 
     bool  b_pick_zx,
-    bool  b_pick_curvecrssec, //curved surface‚àƒsƒbƒN‚·‚é‚©H
+    bool  b_pick_curvecrssec, //curved surfaceã‚‚ãƒ”ãƒƒã‚¯ã™ã‚‹ã‹ï¼Ÿ
     const EVec3f &cuboid, 
     const EVec3f &ray_pos, 
     const EVec3f &ray_dir
@@ -469,7 +469,7 @@ void t_DrawCuboidSlices(const int num_slice, const EVec3f &cam_pos, const EVec3f
 
 /*-------------------------------------------------------------------------------------------------
 bool t_intersectRayToCuboid
-const EVec3f &rayP@: input ray point
+const EVec3f &rayPã€€: input ray point
 const EVec3f &rayD  : input ray direction
 EVec3f &nearP : output intersection point (close to rayP)
 EVec3f &farP  : output intersection point (far from rayP)
@@ -493,7 +493,7 @@ bool t_intersectRayToCuboid(
     EVec3f tmpP1 = rayP + t1 * rayD;
     EVec3f tmpP2 = rayP + t2 * rayD;
 
-    if (t_bInWindow3D(EVec3f(0, 0, 0), cube, tmpP1, 0.001f)) {
+    if (BInWindow3D(EVec3f(0, 0, 0), cube, tmpP1, 0.001f)) {
       if (rayD[xyz] < 0) {
         nearP = tmpP1;
         hasNear = true;
@@ -503,7 +503,7 @@ bool t_intersectRayToCuboid(
         hasFar = true;
       }
     }
-    if (t_bInWindow3D(EVec3f(0, 0, 0), cube, tmpP2, 0.001f)) {
+    if (BInWindow3D(EVec3f(0, 0, 0), cube, tmpP2, 0.001f)) {
       if (rayD[xyz] > 0) {
         nearP = tmpP2;
         hasNear = true;
@@ -537,16 +537,16 @@ void CrssecCore::GenerateCurvedCrssec(
 
   // smoothing and resampling stroke
   std::vector<EVec3f> tmp = _stroke, stroke3D;
-  t_verts_Smoothing(2, tmp);
+  VertsSmoothing(2, tmp);
 
   int strN = std::min(100, std::max(30, (int)tmp.size()));
-  t_verts_ResampleEqualInterval(strN, tmp, stroke3D);
+  VertsResampleEqualInterval(strN, tmp, stroke3D);
 
   //gen surface
   std::vector< EVec3f > Vs;
   std::vector< TPoly  > Ps;
 
-  if (t_bInWindow3D(EVec3f(0, 0, 0), cube, camP))
+  if (BInWindow3D(EVec3f(0, 0, 0), cube, camP))
   {
     Vs.push_back(camP);
 
@@ -613,7 +613,7 @@ void CrssecCore::GenerateCurvedCrssec(
 
 
 
-//’–Ú‚µ‚Ä‚¢‚é“_‚ª lasso ‚Ì“à‘¤‚Å‚ ‚é‚©”»’è
+//æ³¨ç›®ã—ã¦ã„ã‚‹ç‚¹ãŒ lasso ã®å†…å´ã§ã‚ã‚‹ã‹åˆ¤å®š
 static bool t_IsInsideLasso
 (
 	const EVec3f &pos, 
@@ -629,7 +629,7 @@ static bool t_IsInsideLasso
 	double sum = 0;
   for( int i=0; i < N; ++i)
   {
-		sum += t_CalcAngle(lasso_stroke[ i ]-pos, lasso_stroke[ (i==N-1)?0:i+1 ]-pos, axis);
+		sum += CalcAngle(lasso_stroke[ i ]-pos, lasso_stroke[ (i==N-1)?0:i+1 ]-pos, axis);
   }
 
 	return fabs(2 * M_PI - fabs(sum)) < M_PI * 0.5;
@@ -637,9 +637,9 @@ static bool t_IsInsideLasso
 
 
 
-//lasso‚Ì“à‘¤‚É‚ ‚évoxel‚ğ fore/back‚É•ÏX
-//b_fore = true  --> vFlg 1   --> 255‚É
-//b_fore = false --> vFlg 255 --> 1‚É
+//lassoã®å†…å´ã«ã‚ã‚‹voxelã‚’ fore/backã«å¤‰æ›´
+//b_fore = true  --> vFlg 1   --> 255ã«
+//b_fore = false --> vFlg 255 --> 1ã«
 void t_AddPixsInsideLasso
 (
 	const CRSSEC_ID       id   ,
@@ -656,13 +656,13 @@ void t_AddPixsInsideLasso
 	const int D = reso[2], WH = W*H;
 
   std::vector<EVec3f> lasso;
-  const int new_num = std::max( 10, std::min( (int)lasso_stroke.size(), (int)( t_verts_Length(lasso_stroke, true)/pitch[0]) ));
+  const int new_num = std::max( 10, std::min( (int)lasso_stroke.size(), (int)( VertsLength(lasso_stroke, true)/pitch[0]) ));
 
-  t_verts_ResampleEqualInterval( new_num, lasso_stroke, lasso);
+  VertsResampleEqualInterval( new_num, lasso_stroke, lasso);
 
   //compute bounding box
   EVec3f tmp_min, tmp_max;
-  t_CalcBoundingBox( lasso, tmp_min, tmp_max);
+  CalcBoundingBox( lasso, tmp_min, tmp_max);
   EVec3i bb_min ( (int) (tmp_min[0]/pitch[0] ), (int) (tmp_min[1]/pitch[1] ), (int) (tmp_min[2]/pitch[2] ) );
   EVec3i bb_max ( (int) (tmp_max[0]/pitch[0] ), (int) (tmp_max[1]/pitch[1] ), (int) (tmp_max[2]/pitch[2] ) );
   bb_min[0] = std::max( 0 ,bb_min[0] - 1);

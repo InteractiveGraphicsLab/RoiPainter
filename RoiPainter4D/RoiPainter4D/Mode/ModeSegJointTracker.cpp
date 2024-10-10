@@ -30,10 +30,10 @@ using namespace RoiPainter4D;
 
 //memo rigid transform matrix Matrix4f 
 // todo 0501 
-// rigid trackingÇÃì‡óeÇçƒämîF OK
-// ÉâÉCÉgÇÃà íuÇí≤êÆ 
-// shiftÇâüÇµÇƒÇ¢Ç»Ç¢Ç∆ÉhÉâÉbÉOÇ≈Ç´Ç»Ç¢ÇÊÇ§Ç… OK
-// eval meshÇ…Ç‡ÉnÉìÉhÉãï\é¶Ç  OK 
+// rigid tracking„ÅÆÂÜÖÂÆπ„ÇíÂÜçÁ¢∫Ë™ç OK
+// „É©„Ç§„Éà„ÅÆ‰ΩçÁΩÆ„ÇíË™øÊï¥ 
+// shift„ÇíÊäº„Åó„Å¶„ÅÑ„Å™„ÅÑ„Å®„Éâ„É©„ÉÉ„Ç∞„Åß„Åç„Å™„ÅÑ„Çà„ÅÜ„Å´ OK
+// eval mesh„Å´„ÇÇ„Éè„É≥„Éâ„É´Ë°®Á§∫„Çí  OK 
 
 ModeSegJointTracker::ModeSegJointTracker() : 
   m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl"),
@@ -48,13 +48,13 @@ ModeSegJointTracker::~ModeSegJointTracker()
 
 
 
-bool ModeSegJointTracker::canEndMode()
+bool ModeSegJointTracker::CanEndMode()
 {
   return true;
 }
 
 
-void ModeSegJointTracker::startMode()
+void ModeSegJointTracker::StartMode()
 {
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
 
@@ -107,17 +107,17 @@ void ModeSegJointTracker::CancelSegmentation(){}
 /////////////////////////////////////////////////////////////////////
 //MouseListener//////////////////////////////////////////////////////
 
-const char* MSG_RUNICP  = "ICPÇÃèCêÆÅià⁄ìÆÅjëÄçÏÇÕÅCàÍìxICPÇé¿çsÇµÇΩå„ÇçsÇ»Ç¶Ç‹Ç∑ÅD";
-const char* MSG_FRMNON0 = "Ç±ÇÃà⁄ìÆëÄçÏÇÕframe=0à»äOÇ…ëŒÇµÇƒçsÇ»Ç¶Ç‹Ç∑ÅD";
-const char* MSG_NOMESH  = "ï]âøópÉÅÉbÉVÉÖÇ™ÉçÅ[ÉhÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ" ;
-const char* MSG_FMR0    = "Ç±ÇÃà⁄ìÆëÄçÏÇÕframe=0ÇÃÇ›Ç…ëŒÇµÇƒçsÇ»Ç¶Ç‹Ç∑ÅD";
+const char* MSG_RUNICP  = "ICP„ÅÆ‰øÆÊï¥ÔºàÁßªÂãïÔºâÊìç‰Ωú„ÅØÔºå‰∏ÄÂ∫¶ICP„ÇíÂÆüË°å„Åó„ÅüÂæå„ÇíË°å„Å™„Åà„Åæ„ÅôÔºé";
+const char* MSG_FRMNON0 = "„Åì„ÅÆÁßªÂãïÊìç‰Ωú„ÅØframe=0‰ª•Â§ñ„Å´ÂØæ„Åó„Å¶Ë°å„Å™„Åà„Åæ„ÅôÔºé";
+const char* MSG_NOMESH  = "Ë©ï‰æ°Áî®„É°„ÉÉ„Ç∑„É•„Åå„É≠„Éº„Éâ„Åï„Çå„Å¶„ÅÑ„Åæ„Åõ„Çì" ;
+const char* MSG_FMR0    = "„Åì„ÅÆÁßªÂãïÊìç‰Ωú„ÅØframe=0„ÅÆ„Åø„Å´ÂØæ„Åó„Å¶Ë°å„Å™„Åà„Åæ„ÅôÔºé";
 
 void ModeSegJointTracker::LBtnDown (const EVec2i &p, OglForCLI *ogl)
 {
 	m_bL = true;
 	const int frame_idx = formVisParam_getframeI();
 
-  if( !isShiftKeyOn() )
+  if( !IsShiftKeyOn() )
   {
     ogl->BtnDown_Trans( p );
     m_prevpoint = p;
@@ -173,7 +173,7 @@ void ModeSegJointTracker::LBtnUp   (const EVec2i &p, OglForCLI *ogl)
 	const int frame_idx = formVisParam_getframeI();
   if ( frame_idx != 0 && m_dragcp[0] > 0 )
   {
-    ShowMsgDlg_OK("êßå‰ì_éwíËÇÕframe=0Ç≈çsÇ»Ç¡ÇƒÇ≠ÇæÇ≥Ç¢", "MSG");
+    ShowMsgDlg_OK("Âà∂Âæ°ÁÇπÊåáÂÆö„ÅØframe=0„ÅßË°å„Å™„Å£„Å¶„Åè„Å†„Åï„ÅÑ", "MSG");
   }
   
 	m_bL = m_b_transrot = false;
@@ -222,7 +222,7 @@ void ModeSegJointTracker::LBtnDclk (const EVec2i &p, OglForCLI *ogl)
   ogl->GetCursorRay(p, rayp, rayd);
 	const int frame_idx = formVisParam_getframeI();
 
-	if( isShiftKeyOn() ) // pick iso surface to activate
+	if( IsShiftKeyOn() ) // pick iso surface to activate
 	{
     IsoSurf_PickToActivate(rayp, rayd);
 		return;
@@ -236,7 +236,7 @@ void ModeSegJointTracker::LBtnDclk (const EVec2i &p, OglForCLI *ogl)
 
   if ( frame_idx != 0 )
   {
-    ShowMsgDlg_OK("êßå‰ì_îzíuÇÕ frame=0 Ç≈çsÇ¡Çƒâ∫Ç≥Ç¢", "MSG");
+    ShowMsgDlg_OK("Âà∂Âæ°ÁÇπÈÖçÁΩÆ„ÅØ frame=0 „ÅßË°å„Å£„Å¶‰∏ã„Åï„ÅÑ", "MSG");
     return;
   }
   
@@ -327,11 +327,11 @@ void ModeSegJointTracker::MouseMove(const EVec2i &p, OglForCLI *ogl)
       m_handle_rot = rot * m_handle_rot;
 
       if (      rotbone1 ) {
-        EVec3f gc =  t_CalcCentroid(m_cps_bone1) ;
+        EVec3f gc =  CalcCentroid(m_cps_bone1) ;
         t_RotRigidMat( rot, gc, m_mats_bone1[frame_idx] ) ;
       } 
       else if ( rotbone2 ) {
-        EVec3f gc =  t_CalcCentroid(m_cps_bone2) ;
+        EVec3f gc =  CalcCentroid(m_cps_bone2) ;
         t_RotRigidMat( rot, gc, m_mats_bone2[frame_idx] ) ;
       }
       else if ( rotobj   ) {
@@ -366,8 +366,8 @@ void ModeSegJointTracker::MouseWheel(
     ogl->ZoomCamera(z_delta * 0.1f);
   formMain_RedrawMainPanel();
 }
-void ModeSegJointTracker::keyDown(int nChar){}
-void ModeSegJointTracker::keyUp(int nChar){}
+void ModeSegJointTracker::KeyDown(int nChar){}
+void ModeSegJointTracker::KeyUp(int nChar){}
 
 
 
@@ -434,7 +434,7 @@ void ModeSegJointTracker::DrawCpTrajectory(int frameidx, int cpidx)
 
 
 
-void ModeSegJointTracker::drawScene(
+void ModeSegJointTracker::DrawScene(
     const EVec3f &cuboid, 
     const EVec3f &camP, 
     const EVec3f &camF)
@@ -464,7 +464,7 @@ void ModeSegJointTracker::drawScene(
   const int    frame_idx = formVisParam_getframeI();
 
   BindAllVolumes();
-  DrawCrossSections( cuboid, reso, !isSpaceKeyOn(), m_crssec_shader );
+  DrawCrossSections( cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader );
    
   //draw iso surfaces
   if ( FormJTrack_bVisIsoSurface() ) IsoSurf_Draw( frame_idx );
@@ -479,24 +479,24 @@ void ModeSegJointTracker::drawScene(
   const float HNDL_W = HNDL_R * 0.01f; 
 
   if ( FormJTrack_bModeRotBone1() )
-    t_DrawHandleOrthoCircles( t_CalcCentroid( m_cps_bone1 ), HNDL_R);
+    DrawHandleOrthoCircles( CalcCentroid( m_cps_bone1 ), HNDL_R);
   if ( FormJTrack_bModeRotBone2() )
-    t_DrawHandleOrthoCircles( t_CalcCentroid( m_cps_bone2 ), HNDL_R);    
+    DrawHandleOrthoCircles( CalcCentroid( m_cps_bone2 ), HNDL_R);    
   if ( FormJTrack_bModeTransBone1() ) 
-    t_DrawHandleOrthoArrows(  t_CalcCentroid( m_cps_bone1 ), HNDL_R, HNDL_W, COLOR_R, COLOR_G, COLOR_B);
+    DrawHandleOrthoArrows(  CalcCentroid( m_cps_bone1 ), HNDL_R, HNDL_W, COLOR_R, COLOR_G, COLOR_B);
   if ( FormJTrack_bModeTransBone2() ) 
-    t_DrawHandleOrthoArrows(  t_CalcCentroid( m_cps_bone2 ), HNDL_R, HNDL_W, COLOR_R, COLOR_G, COLOR_B);
+    DrawHandleOrthoArrows(  CalcCentroid( m_cps_bone2 ), HNDL_R, HNDL_W, COLOR_R, COLOR_G, COLOR_B);
   if ( FormJTrack_bModeRotObj()   ) {
     EVec3f gc( (float)m_mats_evalobj[0](0,3), 
                (float)m_mats_evalobj[0](1,3), 
                (float)m_mats_evalobj[0](2,3) );
-    t_DrawHandleOrthoCircles( gc, HNDL_R);    
+    DrawHandleOrthoCircles( gc, HNDL_R);    
   }
   if ( FormJTrack_bModeTransObj() ) {
     EVec3f gc( (float)m_mats_evalobj[0](0,3), 
                (float)m_mats_evalobj[0](1,3), 
                (float)m_mats_evalobj[0](2,3) );
-    t_DrawHandleOrthoArrows( gc, HNDL_R, HNDL_W, COLOR_R, COLOR_G, COLOR_B);
+    DrawHandleOrthoArrows( gc, HNDL_R, HNDL_W, COLOR_R, COLOR_G, COLOR_B);
   }
 
   if (formVisParam_bRendVol())
@@ -506,7 +506,7 @@ void ModeSegJointTracker::drawScene(
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     DrawVolumeSlices( cuboid, reso, camP, camF, 
-                      !isSpaceKeyOn(), b_onmanip, m_volume_shader);
+                      !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
   }
@@ -535,7 +535,7 @@ void ModeSegJointTracker::IsoSurf_Generate(short isovalue )
   {
     const short* vol = ImageCore::GetInst()->m_img4d[i];
     TMesh &mesh = m_isosurfaces[i]; 
-		t_MarchingCubes( reso, pitch, vol, isovalue, 0, 0, mesh);
+		MarchingCubes( reso, pitch, vol, isovalue, 0, 0, mesh);
     
     m_isosurf_pflg[i] = new byte[mesh.m_pSize];
     memset( m_isosurf_pflg[i],0, sizeof(byte)* mesh.m_pSize);
@@ -602,7 +602,7 @@ void ModeSegJointTracker::IsoSurf_Draw( int frame_idx )
   glEnd();
   glDisable( GL_LIGHTING );
 
-  if( isSpaceKeyOn() )
+  if( IsSpaceKeyOn() )
   {
     mesh.DrawEdges(1,0,1,0);
   }
@@ -661,7 +661,7 @@ bool ModeSegJointTracker::IsoSurf_PickActiveSurf(
     const EVec3f& x0 = verts[ p[0] ];
     const EVec3f& x1 = verts[ p[1] ];
     const EVec3f& x2 = verts[ p[2] ];
-    if ( t_intersectRayToTriangle( rayp, rayd, x0,x1,x2, tmppos))
+    if ( IntersectRayToTriangle( rayp, rayd, x0,x1,x2, tmppos))
     {
       float d = (tmppos - rayp).norm();
       if (d < depth)
@@ -681,7 +681,7 @@ bool ModeSegJointTracker::IsoSurf_PickActiveSurf(
 //Control points//////////////////////////////////////////////////
 
 static bool t_CalcLocalCoordinate(
-	  const std::vector<EVec3f> &basepoints, //3å¬ÇÃêßå‰ì_
+	  const std::vector<EVec3f> &basepoints, //3ÂÄã„ÅÆÂà∂Âæ°ÁÇπ
 	  const std::vector<EVec3f> &trgtpoints, //CPs for moving object
 		EVec3f &cd_orig,
 		EVec3f &cd_xdir,
@@ -690,23 +690,23 @@ static bool t_CalcLocalCoordinate(
 {
   if( basepoints.size() < 3 ) return false;
   
-  //å¥ì_ÇÕ (p0+p2)/2
+  //ÂéüÁÇπ„ÅØ (p0+p2)/2
 	cd_orig = 0.5 * (basepoints[0] + basepoints[2]);
   
-  //xï˚å¸ÇÕ p1 - orig
+  //xÊñπÂêë„ÅØ p1 - orig
 	cd_xdir = (basepoints[1] - cd_orig).normalized();
   
-  //yï˚å¸ÇÕ p0 - orig
+  //yÊñπÂêë„ÅØ p0 - orig
 	cd_ydir = (basepoints[0] - cd_orig).normalized();
 	cd_ydir -= (cd_ydir.dot(cd_xdir) ) * cd_xdir;
 	cd_ydir.normalize();
   
-  //zï˚å¸ÇÕ äOêœ
+  //zÊñπÂêë„ÅØ Â§ñÁ©ç
 	cd_zdir = cd_xdir.cross( cd_ydir );
 
 	if(trgtpoints.size() != 0 )
 	{
-    EVec3f gc = t_CalcCentroid( trgtpoints );
+    EVec3f gc = CalcCentroid( trgtpoints );
 		if( (gc - cd_orig).dot( cd_zdir ) < 0 ) cd_zdir *= -1;
 	}
 
@@ -766,8 +766,8 @@ void ModeSegJointTracker::CPs_Draw( int frameidx )
     EMat4d m1 = m_mats_bone1[frameidx];
     EMat4d m2 = m_mats_bone2[frameidx];
     std::vector<EVec3f> cps1, cps2;
-    for ( const auto& p1 : m_cps_bone1) cps1.push_back( t_Mult( m1, p1) );    
-    for ( const auto& p2 : m_cps_bone2) cps2.push_back( t_Mult( m2, p2) );    
+    for ( const auto& p1 : m_cps_bone1) cps1.push_back( Mult( m1, p1) );    
+    for ( const auto& p2 : m_cps_bone2) cps2.push_back( Mult( m2, p2) );    
 
     //gen coordinate system 
     EVec3f orig, axisx, axisy, axisz;
@@ -789,13 +789,13 @@ EVec2i ModeSegJointTracker::CPs_Pick( EVec3f ray_p, EVec3f ray_d)
 { 
   for ( int i = 0; i < (int) m_cps_bone1.size(); ++i )
   {
-    if ( t_DistRayAndPoint( ray_p, ray_d, m_cps_bone1[i]) < CP_SIZE) 
+    if ( DistRayAndPoint( ray_p, ray_d, m_cps_bone1[i]) < CP_SIZE) 
       return EVec2i( 1, i);
   }
 
   for ( int i = 0; i < (int) m_cps_bone2.size(); ++i )
   {
-    if ( t_DistRayAndPoint( ray_p, ray_d, m_cps_bone2[i]) < CP_SIZE) 
+    if ( DistRayAndPoint( ray_p, ray_d, m_cps_bone2[i]) < CP_SIZE) 
       return EVec2i( 2, i);
   }
   return EVec2i(-1,-1);
@@ -815,7 +815,7 @@ void ModeSegJointTracker::CPs_Add(
     else
     {
       ShowMsgDlg_OK(
-        "bone1ópCPÇÕä˘Ç…3å¬íuÇ©ÇÍÇƒÇ¢Ç‹Ç∑ÅD\nbone2ÉÇÅ[ÉhÇ÷à⁄çsÇµÇ‹Ç∑ÅD", "MSG");
+        "bone1Áî®CP„ÅØÊó¢„Å´3ÂÄãÁΩÆ„Åã„Çå„Å¶„ÅÑ„Åæ„ÅôÔºé\nbone2„É¢„Éº„Éâ„Å∏ÁßªË°å„Åó„Åæ„ÅôÔºé", "MSG");
       FormJTrack_SetModePlaceCpBone2();
       return;
     }
@@ -952,7 +952,7 @@ static EMat4d t_ICP(
   }
   catch (...)
   {
-    std::cout << "*** surfaceÇÃå`èÛÇ‹ÇΩÇÕà íuÇ™ëÂÇ´Ç≠àŸÇ»ÇÈÇΩÇﬂí«ê’Ç…é∏îsÇµÇ‹ÇµÇΩ ***\n";
+    std::cout << "*** surface„ÅÆÂΩ¢Áä∂„Åæ„Åü„ÅØ‰ΩçÁΩÆ„ÅåÂ§ß„Åç„ÅèÁï∞„Å™„Çã„Åü„ÇÅËøΩË∑°„Å´Â§±Êïó„Åó„Åæ„Åó„Åü ***\n";
   }
 
   EMat4d m;
@@ -978,19 +978,19 @@ void ModeSegJointTracker::RunICP_all(
 	const int num_frames = ImageCore::GetInst()->GetNumFrames();
 
   for ( const auto &mesh : m_isosurfaces ) if( mesh.m_vSize == 0 ) {
-    ShowMsgDlg_OK( "Iso surfaceÇ™ñ¢çÏê¨Ç≈Ç∑", "MSG");
+    ShowMsgDlg_OK( "Iso surface„ÅåÊú™‰ΩúÊàê„Åß„Åô", "MSG");
     return;
   }
 	if( m_cps_bone1.size() < 3 ){ 
-    ShowMsgDlg_OK( "frame0ÇÃbone1Ç…3å¬ÇÃpointsÇíuÇ¢ÇƒÇ≠ÇæÇ≥Ç¢", "MSG");
+    ShowMsgDlg_OK( "frame0„ÅÆbone1„Å´3ÂÄã„ÅÆpoints„ÇíÁΩÆ„ÅÑ„Å¶„Åè„Å†„Åï„ÅÑ", "MSG");
     return;
   }
 	if( m_cps_bone2.size() < 3 ){ 
-    ShowMsgDlg_OK( "frame0ÇÃbone2Ç…3å¬à»è„ÇÃpointsÇíuÇ¢ÇƒÇ≠ÇæÇ≥Ç¢", "MSG");
+    ShowMsgDlg_OK( "frame0„ÅÆbone2„Å´3ÂÄã‰ª•‰∏ä„ÅÆpoints„ÇíÁΩÆ„ÅÑ„Å¶„Åè„Å†„Åï„ÅÑ", "MSG");
     return;
   }
 
-  //extract source matrix (150-ringÇ∆100ringÇóòóp)
+  //extract source matrix (150-ring„Å®100ring„ÇíÂà©Áî®)
 	cv::Mat mat_src1, mat_src2;
   t_ExtractLinkedVsNs( m_isosurfaces[0], m_cps_bone1[0], 150, m_srcbone1_ids, m_srcbone1);
   t_ExtractLinkedVsNs( m_isosurfaces[0], m_cps_bone2[0], 100, m_srcbone2_ids, m_srcbone2);
@@ -1025,28 +1025,28 @@ void ModeSegJointTracker::RunICP_currenrt(
   const int frame_idx = formVisParam_getframeI();
 
   for ( const auto &mesh : m_isosurfaces ) if( mesh.m_vSize == 0 ) {
-    ShowMsgDlg_OK( "Iso surfaceÇ™ñ¢çÏê¨Ç≈Ç∑", "MSG");
+    ShowMsgDlg_OK( "Iso surface„ÅåÊú™‰ΩúÊàê„Åß„Åô", "MSG");
     return;
   }
 	if( m_cps_bone1.size() < 3 ){ 
-    ShowMsgDlg_OK( "frame0ÇÃbone1Ç…3å¬ÇÃpointsÇíuÇ¢ÇƒÇ≠ÇæÇ≥Ç¢", "MSG");
+    ShowMsgDlg_OK( "frame0„ÅÆbone1„Å´3ÂÄã„ÅÆpoints„ÇíÁΩÆ„ÅÑ„Å¶„Åè„Å†„Åï„ÅÑ", "MSG");
     return;
   }
 	if( m_cps_bone2.size() < 3 ){ 
-    ShowMsgDlg_OK( "frame0ÇÃbone2Ç…3å¬à»è„ÇÃpointsÇíuÇ¢ÇƒÇ≠ÇæÇ≥Ç¢", "MSG");
+    ShowMsgDlg_OK( "frame0„ÅÆbone2„Å´3ÂÄã‰ª•‰∏ä„ÅÆpoints„ÇíÁΩÆ„ÅÑ„Å¶„Åè„Å†„Åï„ÅÑ", "MSG");
     return;
   }
   if ( m_srcbone1.size() == 0 || m_srcbone2.size() == 0 ){
-    ShowMsgDlg_OK( "ICP One FrameÇÕ\n\
-                    àÍìxICP ALLÇµÇƒÇ©ÇÁóòópÇ≈Ç´Ç‹Ç∑", "MSG");
+    ShowMsgDlg_OK( "ICP One Frame„ÅØ\n\
+                    ‰∏ÄÂ∫¶ICP ALL„Åó„Å¶„Åã„ÇâÂà©Áî®„Åß„Åç„Åæ„Åô", "MSG");
     return;
   }
   if ( frame_idx == 0 ) {
-    ShowMsgDlg_OK( "frame 0Ç…ÇÕìKópÇ≈Ç´Ç‹ÇπÇÒ", "MSG" );
+    ShowMsgDlg_OK( "frame 0„Å´„ÅØÈÅ©Áî®„Åß„Åç„Åæ„Åõ„Çì", "MSG" );
     return;
   }
 
-  //extract source matrix (150-ringÇ∆100ringÇóòóp)
+  //extract source matrix (150-ring„Å®100ring„ÇíÂà©Áî®)
 	cv::Mat mat_src1, mat_src2;
   t_SetMat( m_srcbone1, mat_src1);
   t_SetMat( m_srcbone2, mat_src2);
@@ -1098,7 +1098,7 @@ void ModeSegJointTracker::EvalObj_Translate(int frameidx, EVec3f trans)
 
 void ModeSegJointTracker::EvalObj_Rotate (int frameidx, EMat3f rot  )
 {
-  //ïΩçsà⁄ìÆÇñ≥éãÇ∑ÇÈÇÃÇ≈ÅCâÒì]ê¨ï™ÇæÇØÇåvéZÇ∑ÇÈ
+  //Âπ≥Ë°åÁßªÂãï„ÇíÁÑ°Ë¶ñ„Åô„Çã„ÅÆ„ÅßÔºåÂõûËª¢ÊàêÂàÜ„Å†„Åë„ÇíË®àÁÆó„Åô„Çã
   EMat4d &M = m_mats_evalobj[frameidx];
   EMat3f R;
   for ( int i=0; i < 3; ++i ) 
@@ -1132,7 +1132,7 @@ void ModeSegJointTracker::EvalObj_DrawDiff (int frameidx )
 	}
 	glEnd();
 
-	if ( isShiftKeyOn() )
+	if ( IsShiftKeyOn() )
 	{
 		glColor3d( 0, 1, 1 );
 		glLineWidth(1);
@@ -1181,7 +1181,7 @@ static void t_GetNearestVid(
 	{
     if ( n.dot(norms[vi]) <= 0 ) continue;
 
-		float d = t_DistSq( p, verts[ vi ] );
+		float d = DistSq( p, verts[ vi ] );
 		if (d < min_distsq)
 		{
 			min_distsq = d;
@@ -1192,8 +1192,8 @@ static void t_GetNearestVid(
 
 
 
-//ãﬂñTíTçı 
-//src_vsnsÇ…ç≈Ç‡ãﬂÇ¢ 
+//ËøëÂÇçÊé¢Á¥¢ 
+//src_vsns„Å´ÊúÄ„ÇÇËøë„ÅÑ 
 static void t_GetNearestVtxIdx
 (
 	const EVec3f   cube   ,
@@ -1206,10 +1206,10 @@ static void t_GetNearestVtxIdx
 	const int DIV_N = 30;
   std::vector<int> idsets[DIV_N][DIV_N][DIV_N];
 
-	//ìoò^
+	//ÁôªÈå≤
 	for( int i = 0; i < trgtmesh.m_vSize; ++i)
 	{
-		//C[0] = 50.0, DIV_N = 4 ÇÃÇ∆Ç´, [0,12.5] -> 0, [12.5,25.0]-->1
+		//C[0] = 50.0, DIV_N = 4 „ÅÆ„Å®„Åç, [0,12.5] -> 0, [12.5,25.0]-->1
     const EVec3f &v = trgtmesh.m_vVerts[i]; 
 		int xi = (int) std::min( v[0] / cube[0] * DIV_N, DIV_N-1.0f);  
 		int yi = (int) std::min( v[1] / cube[1] * DIV_N, DIV_N-1.0f);  
@@ -1219,7 +1219,7 @@ static void t_GetNearestVtxIdx
   
   const EVec3f *tgt_vs = trgtmesh.m_vVerts;
   const EVec3f *tgt_ns = trgtmesh.m_vNorms;
-	//åüçı
+	//Ê§úÁ¥¢
 	for (int i = 0; i < (int)src_vsns.size(); ++i)
 	{
 		const EVec3f &p = src_vsns[i].first ;
@@ -1228,7 +1228,7 @@ static void t_GetNearestVtxIdx
 		int y = (int)std::min( p[1] / cube[1] * DIV_N, DIV_N-1.0f);
 		int z = (int)std::min( p[2] / cube[2] * DIV_N, DIV_N-1.0f);
 
-		//ñ{óàÇÕ26ãﬂñTÇ…Ç∑Ç◊Ç´ÇæÇ™âeãøÇÕîÒèÌÇ…è¨Ç≥Ç¢ÇÃÇ≈ãﬂéóâÇìæÇÈñ⁄ìIÇ≈6ãﬂñTÇÃÇ›
+		//Êú¨Êù•„ÅØ26ËøëÂÇç„Å´„Åô„Åπ„Åç„Å†„ÅåÂΩ±Èüø„ÅØÈùûÂ∏∏„Å´Â∞è„Åï„ÅÑ„ÅÆ„ÅßËøë‰ººËß£„ÇíÂæó„ÇãÁõÆÁöÑ„Åß6ËøëÂÇç„ÅÆ„Åø
 		float  min_d = FLT_MAX;
 		int    min_i = -1;
 		               t_GetNearestVid( p,n, tgt_vs, tgt_ns, idsets[z][y][x]  , min_d, min_i);
@@ -1242,7 +1242,7 @@ static void t_GetNearestVtxIdx
 		if ( min_i == -1)
 		{
       std::cout << "searchAll- ";
-      t_verts_GetNearestPoint( trgtmesh.m_vSize, trgtmesh.m_vVerts, p, min_i, min_d);
+      VertsGetNearestPoint( trgtmesh.m_vSize, trgtmesh.m_vVerts, p, min_i, min_d);
 		}
 		vid_src2tgt[i] = min_i;
 	}
@@ -1251,7 +1251,7 @@ static void t_GetNearestVtxIdx
 
 
 
-//ãﬂñTíTçı   mat * src_vs[i] Ç…ç≈Ç‡ãﬂÇ¢í∏ì_ tgt_vs[idx[i]] ÇãÅÇﬂÇÈ
+//ËøëÂÇçÊé¢Á¥¢   mat * src_vs[i] „Å´ÊúÄ„ÇÇËøë„ÅÑÈ†ÇÁÇπ tgt_vs[idx[i]] „ÇíÊ±Ç„ÇÅ„Çã
 static void t_ExtractVsNs
 (
   const TMesh  &mesh, 
@@ -1263,8 +1263,8 @@ static void t_ExtractVsNs
   verts_norms.resize(mesh.m_vSize);
   for ( int i = 0; i < mesh.m_vSize; ++i )
   {
-    verts_norms[i].first  = t_Mult( mat, mesh.m_vVerts[i]);
-    verts_norms[i].second = t_MultOnlyRot( mat, mesh.m_vNorms[i]);
+    verts_norms[i].first  = Mult( mat, mesh.m_vVerts[i]);
+    verts_norms[i].second = MultOnlyRot( mat, mesh.m_vNorms[i]);
   }
 }
 
@@ -1281,17 +1281,17 @@ void ModeSegJointTracker::EvalObj_RunAnalysis(
 	const int num_frames = (int) m_isosurfaces.size();
 
 	if( m_evalobj.m_vSize == 0 ) {
-		ShowMsgDlg_OK( "ï]âøópsurfaceÇì«Ç›çûÇÒÇ≈Ç≠ÇæÇ≥Ç¢", "MSG");
+		ShowMsgDlg_OK( "Ë©ï‰æ°Áî®surface„ÇíË™≠„ÅøËæº„Çì„Åß„Åè„Å†„Åï„ÅÑ", "MSG");
     return;
   } 
   for( int i=0; i < num_frames; ++i ) if( m_isosurfaces[i].m_vSize == 0 ) {
-    ShowMsgDlg_OK( "Iso surfaceÇ™ñ¢çÏê¨Ç≈Ç∑", "MSG" );
+    ShowMsgDlg_OK( "Iso surface„ÅåÊú™‰ΩúÊàê„Åß„Åô", "MSG" );
     return;
   }
 		
-	ShowMsgDlg_OK("ï]âøópsurfaceÇÃICPåvéZÇ∆ç∑ï™åvéZÇçsÇ»Ç¢Ç‹Ç∑ÅD", "MSG");
+	ShowMsgDlg_OK("Ë©ï‰æ°Áî®surface„ÅÆICPË®àÁÆó„Å®Â∑ÆÂàÜË®àÁÆó„ÇíË°å„Å™„ÅÑ„Åæ„ÅôÔºé", "MSG");
 
-	// registration m_f_EvalSurfTrans[0] ÇÕèâä˙âªÇ∑Ç›
+	// registration m_f_EvalSurfTrans[0] „ÅØÂàùÊúüÂåñ„Åô„Åø
 	for( int t = 0; t < num_frames; ++t)
   {
 		cv::Mat src, trgt;
@@ -1329,7 +1329,7 @@ void ModeSegJointTracker::EvalObj_RunAnalysis(
 			EVec3f pos;
 			double dist;// = DBL_MAX;
 			m_isosurfaces[fi].GetDistToPoint( p, nearest_vids[i], pos, dist);
-      m_evalinfo[fi][i] = TVtxDistInfo( i, t_Dist(p, pos), p, pos );
+      m_evalinfo[fi][i] = TVtxDistInfo( i, Dist(p, pos), p, pos );
 
 			if( i%50000 == 0 ) 
         std::cout << i << "/" << m_evalobj.m_vSize << "\n";
@@ -1365,8 +1365,8 @@ void ModeSegJointTracker::ExportCPsInfo( std::string fname )
 
   if( m_cps_bone1.size() < 3 || m_cps_bone2.size() < 1 )
   {
-    ShowMsgDlg_OK("êßå‰ì_êîÇ™ë´ÇËÇ‹ÇπÇÒ\n\
-            å®çbçúÇ…3å¬ÅCè„òrçúÇ…1å¬à»è„ÇÃêßå‰ì_ÇîzíuÇµÇƒÇ≠ÇæÇ≥Ç¢","Msg");
+    ShowMsgDlg_OK("Âà∂Âæ°ÁÇπÊï∞„ÅåË∂≥„Çä„Åæ„Åõ„Çì\n\
+            ËÇ©Áî≤È™®„Å´3ÂÄãÔºå‰∏äËÖïÈ™®„Å´1ÂÄã‰ª•‰∏ä„ÅÆÂà∂Âæ°ÁÇπ„ÇíÈÖçÁΩÆ„Åó„Å¶„Åè„Å†„Åï„ÅÑ","Msg");
     return;
   }
 
@@ -1384,8 +1384,8 @@ void ModeSegJointTracker::ExportCPsInfo( std::string fname )
     fs << "frame[" << f << "] CPonBone1 " << m_cps_bone1.size() << 
                            " CPonBone2 "  << m_cps_bone2.size() << "\n";
 	  
-    for( const auto cp : m_cps_bone1) WriteToFstream( fs, t_Mult( m_mats_bone1[f], cp));
-	  for( const auto cp : m_cps_bone2) WriteToFstream( fs, t_Mult( m_mats_bone2[f], cp));
+    for( const auto cp : m_cps_bone1) WriteToFstream( fs, Mult( m_mats_bone1[f], cp));
+	  for( const auto cp : m_cps_bone2) WriteToFstream( fs, Mult( m_mats_bone2[f], cp));
   }
 
   //cp pos with respect to local coardinate
@@ -1400,8 +1400,8 @@ void ModeSegJointTracker::ExportCPsInfo( std::string fname )
     EMat4d m1 = m_mats_bone1[f];
     EMat4d m2 = m_mats_bone2[f];
     std::vector<EVec3f> cps1, cps2;
-    for ( const auto& p1 : m_cps_bone1) cps1.push_back( t_Mult( m1, p1) );    
-    for ( const auto& p2 : m_cps_bone2) cps2.push_back( t_Mult( m2, p2) );    
+    for ( const auto& p1 : m_cps_bone1) cps1.push_back( Mult( m1, p1) );    
+    for ( const auto& p2 : m_cps_bone2) cps2.push_back( Mult( m2, p2) );    
 
     //gen coordinate system 
     EVec3f orig, cdX, cdZ, cdY;
@@ -1473,7 +1473,7 @@ void ModeSegJointTracker::ImportCPsInfo(std::string fname)
 	if( tmp_num_frames != num_frames )
 	{
 		std::cout << buf << " " << tmp_num_frames;
-		ShowMsgDlg_OK( "ì«Ç›çûÇ›4dCTÇ∆ÉçÅ[ÉhíÜÉfÅ[É^ÇÃÉtÉåÅ[ÉÄêîÇ™ïsàÍív", "Msg");
+		ShowMsgDlg_OK( "Ë™≠„ÅøËæº„Åø4dCT„Å®„É≠„Éº„Éâ‰∏≠„Éá„Éº„Çø„ÅÆ„Éï„É¨„Éº„É†Êï∞„Åå‰∏ç‰∏ÄËá¥", "Msg");
 		return;
 	}
 	this->IsoSurf_Generate( m_isovalue );
@@ -1492,7 +1492,7 @@ void ModeSegJointTracker::ImportCPsInfo(std::string fname)
       for( int i = 0; i < num_cp1; ++i) ReadFromFstream( fs, m_cps_bone1[i] );
       for( int i = 0; i < num_cp2; ++i) ReadFromFstream( fs, m_cps_bone2[i] );
     } else{
-      //ì«Ç›éÃÇƒ
+      //Ë™≠„ÅøÊç®„Å¶
       EVec3f tmp;
       for( int i = 0; i < num_cp1; ++i) ReadFromFstream( fs, tmp );
       for( int i = 0; i < num_cp2; ++i) ReadFromFstream( fs, tmp );
@@ -1500,7 +1500,7 @@ void ModeSegJointTracker::ImportCPsInfo(std::string fname)
   }
 
   
-	//CPs in Relative coordinate ì«Ç›éÃÇƒ
+	//CPs in Relative coordinate Ë™≠„ÅøÊç®„Å¶
   fs >> buf;
   std::cout << "--------------------" << buf << "\n";
   for( int f = 0; f < num_frames; ++f)
@@ -1554,7 +1554,7 @@ void ModeSegJointTracker::ImportCPsInfo(std::string fname)
   
   fs.close();
 
-  if ( ShowMsgDlgYesNo( "Ç±ÇÃÉfÅ[É^ÇÕãåSJTrackerÇ≈çÏê¨Ç≥ÇÍÇΩÇ‡ÇÃÇ≈Ç∑Ç©?", "Msg") )
+  if ( ShowMsgDlgYesNo( "„Åì„ÅÆ„Éá„Éº„Çø„ÅØÊóßSJTracker„Åß‰ΩúÊàê„Åï„Çå„Åü„ÇÇ„ÅÆ„Åß„Åô„Åã?", "Msg") )
   {
     for ( auto& m: m_mats_bone1) m.transposeInPlace();
     for ( auto& m: m_mats_bone2) m.transposeInPlace();

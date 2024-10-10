@@ -1,4 +1,4 @@
-﻿#ifndef COMMON_VOLUMELOADER_H_
+#ifndef COMMON_VOLUMELOADER_H_
 #define COMMON_VOLUMELOADER_H_
 #pragma unmanaged
 
@@ -49,7 +49,7 @@ void GenDefaultVolume(
 
 //////////////////////////////////////////////
 // 4DCT Loaders ///////////////////////////////
-bool Open4DImg_traw3d(
+bool Open4DImgTraw3D(
   const std::vector<std::string>& fnames,
 
   EVec3i& reso,
@@ -57,28 +57,28 @@ bool Open4DImg_traw3d(
   std::vector<short*>& img4D
 );
 
-bool Open4DImg_mha(
+bool Open4DImgMha(
   const std::vector<std::string>& fnames,
   EVec3i& reso,
   EVec3f& pitch,
   std::vector<short*>& img4D
 );
 
-bool Open4DImg_raw8bit(
+bool Open4DImgRaw8bit(
   const std::vector<std::string>& fnames,
   EVec3i& reso,
   EVec3f& pitch,
   std::vector<short*>& img4D
 );
 
-bool Open4DImg_dcm2Ds(
+bool Open4DImgDcm2Ds(
   std::vector<std::vector<std::string>> filesInDirs,
   EVec3i& reso,
   EVec3f& pitch,
   std::vector<short*>& img4D
 );
 
-bool Open4DImg_dcm3Ds(
+bool Open4DImgDcm3Ds(
   const std::vector<std::string>& fnames,
   EVec3i& reso,
   EVec3f& pitch,

@@ -1,4 +1,4 @@
-﻿#pragma unmanaged 
+#pragma unmanaged 
 #include "ModeRefStrokeTrim.h"
 
 #pragma managed 
@@ -37,7 +37,7 @@ ModeRefStrokeTrim::~ModeRefStrokeTrim()
 }
 
 
-bool ModeRefStrokeTrim::canEndMode() 
+bool ModeRefStrokeTrim::CanEndMode() 
 {
 	if (!m_bModified) return true;
 	
@@ -47,7 +47,7 @@ bool ModeRefStrokeTrim::canEndMode()
 
 
 
-void ModeRefStrokeTrim::startMode ()
+void ModeRefStrokeTrim::StartMode ()
 {
 	m_bL = m_bR = m_bM = false;
 	m_bModified = false;
@@ -118,12 +118,12 @@ void ModeRefStrokeTrim::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 
 	m_TrimStroke.clear();
   
-  if (isCtrKeyOn())
+  if (IsCtrKeyOn())
   {
     m_stroke.clear();
     m_b_draw_cutstroke = true;
   }
-	else if ( isShiftKeyOn() )
+	else if ( IsShiftKeyOn() )
 	{
 		m_CutStroke.clear();
 		m_bDrawTrimStr = true;
@@ -234,10 +234,10 @@ void ModeRefStrokeTrim::RBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeRefStrokeTrim::MBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 
 
-void ModeRefStrokeTrim::keyDown(int nChar) 
+void ModeRefStrokeTrim::KeyDown(int nChar) 
 {
 
-	if (nChar == 'Z' && isCtrKeyOn())
+	if (nChar == 'Z' && IsCtrKeyOn())
 	{
 	  const int      fi = formVisParam_getframeI();
 
@@ -254,13 +254,13 @@ void ModeRefStrokeTrim::keyDown(int nChar)
     m_bDrawCrssec = !m_bDrawCrssec;
 }
 
-void ModeRefStrokeTrim::keyUp(int nChar) 
+void ModeRefStrokeTrim::KeyUp(int nChar) 
 {
 }
 
 
 
-void ModeRefStrokeTrim::drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
 {	
 	const EVec3i reso     = ImageCore::GetInst()->GetReso();
 
@@ -269,17 +269,17 @@ void ModeRefStrokeTrim::drawScene(const EVec3f &cuboid, const EVec3f &camP, cons
 
 	if (m_bDrawCrssec)
   {
-    DrawCrossSections(cuboid, reso, !isSKeyOn(), m_crssecShader);
+    DrawCrossSections(cuboid, reso, !IsSKeyOn(), m_crssecShader);
   }
 
   if (m_b_draw_cutstroke)
   {
-    t_DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
+    DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
   }
 
 	if (m_bDrawTrimStr)
   {
-    t_DrawPolyLine( EVec3f(1,0,1), 4, m_CutStroke, true);
+    DrawPolyLine( EVec3f(1,0,1), 4, m_CutStroke, true);
   }
 
 	const bool b_onmanip  = (formVisParam_bOnManip() || m_bL || m_bR || m_bM) 
@@ -300,7 +300,7 @@ static double calcAngle(const EVec2d &d1, const EVec2d &d2)
 	double l = d1.norm() * d2.norm();
 	if (l == 0) return 0;
 
-	double cosT = t_crop(-1.0, 1.0, (d1.dot(d2)) / l);
+	double cosT = Crop(-1.0, 1.0, (d1.dot(d2)) / l);
 
 	if (d1[0] * d2[1] - d1[1] * d2[0] >= 0) return  acos(cosT);
 	else					                          return -acos(cosT);

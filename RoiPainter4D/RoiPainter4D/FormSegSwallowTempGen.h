@@ -10,7 +10,7 @@ namespace RoiPainter4D {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// FormSegSwallowTempGen ‚ÌŠT—v
+	/// FormSegSwallowTempGen ã®æ¦‚è¦
 	/// </summary>
 	public ref class FormSegSwallowTempGen : public System::Windows::Forms::Form
 	{
@@ -77,7 +77,7 @@ namespace RoiPainter4D {
 		void initialize_spin_control(int num_frames, int f1, int f2, int f3, int f4);
 	protected:
 		/// <summary>
-		/// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+		/// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
 		/// </summary>
 		~FormSegSwallowTempGen()
 		{
@@ -89,14 +89,14 @@ namespace RoiPainter4D {
 
 	private:
 		/// <summary>
-		/// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+		/// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-		/// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+		/// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+		/// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
 		/// </summary>
 		void InitializeComponent(void)
 		{
@@ -146,53 +146,53 @@ namespace RoiPainter4D {
 			// 
 			// m_btn_addzetumesh
 			// 
-			this->m_btn_addzetumesh->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->m_btn_addzetumesh->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->m_btn_addzetumesh->Location = System::Drawing::Point(5, 22);
 			this->m_btn_addzetumesh->Margin = System::Windows::Forms::Padding(2);
 			this->m_btn_addzetumesh->Name = L"m_btn_addzetumesh";
 			this->m_btn_addzetumesh->Size = System::Drawing::Size(67, 27);
 			this->m_btn_addzetumesh->TabIndex = 10;
-			this->m_btn_addzetumesh->Text = L"ã";
+			this->m_btn_addzetumesh->Text = L"èˆŒ";
 			this->m_btn_addzetumesh->UseVisualStyleBackColor = true;
 			this->m_btn_addzetumesh->Click += gcnew System::EventHandler(this, &FormSegSwallowTempGen::m_btn_addzetumesh_Click);
 			// 
 			// m_btn_addnankmesh
 			// 
-			this->m_btn_addnankmesh->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->m_btn_addnankmesh->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->m_btn_addnankmesh->Location = System::Drawing::Point(76, 22);
 			this->m_btn_addnankmesh->Margin = System::Windows::Forms::Padding(2);
 			this->m_btn_addnankmesh->Name = L"m_btn_addnankmesh";
 			this->m_btn_addnankmesh->Size = System::Drawing::Size(66, 27);
 			this->m_btn_addnankmesh->TabIndex = 11;
-			this->m_btn_addnankmesh->Text = L"“îŒûŠW";
+			this->m_btn_addnankmesh->Text = L"è»Ÿå£è“‹";
 			this->m_btn_addnankmesh->UseVisualStyleBackColor = true;
 			this->m_btn_addnankmesh->Click += gcnew System::EventHandler(this, &FormSegSwallowTempGen::m_btn_addnankmesh_Click);
 			// 
 			// m_btn_addkoutmesh
 			// 
-			this->m_btn_addkoutmesh->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->m_btn_addkoutmesh->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->m_btn_addkoutmesh->Location = System::Drawing::Point(146, 22);
 			this->m_btn_addkoutmesh->Margin = System::Windows::Forms::Padding(2);
 			this->m_btn_addkoutmesh->Name = L"m_btn_addkoutmesh";
 			this->m_btn_addkoutmesh->Size = System::Drawing::Size(66, 27);
 			this->m_btn_addkoutmesh->TabIndex = 12;
-			this->m_btn_addkoutmesh->Text = L"A“ªŠW";
+			this->m_btn_addkoutmesh->Text = L"å–‰é ­è“‹";
 			this->m_btn_addkoutmesh->UseVisualStyleBackColor = true;
 			this->m_btn_addkoutmesh->Click += gcnew System::EventHandler(this, &FormSegSwallowTempGen::m_btn_addkoutmesh_Click);
 			// 
 			// m_btn_addintomesh
 			// 
-			this->m_btn_addintomesh->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->m_btn_addintomesh->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->m_btn_addintomesh->Location = System::Drawing::Point(216, 22);
 			this->m_btn_addintomesh->Margin = System::Windows::Forms::Padding(2);
 			this->m_btn_addintomesh->Name = L"m_btn_addintomesh";
 			this->m_btn_addintomesh->Size = System::Drawing::Size(71, 27);
 			this->m_btn_addintomesh->TabIndex = 13;
-			this->m_btn_addintomesh->Text = L"ˆô“ª";
+			this->m_btn_addintomesh->Text = L"å’½é ­";
 			this->m_btn_addintomesh->UseVisualStyleBackColor = true;
 			this->m_btn_addintomesh->Click += gcnew System::EventHandler(this, &FormSegSwallowTempGen::m_btn_addintomesh_Click);
 			// 
@@ -203,14 +203,14 @@ namespace RoiPainter4D {
 			this->groupBox2->Controls->Add(this->m_btn_addintomesh);
 			this->groupBox2->Controls->Add(this->m_btn_addnankmesh);
 			this->groupBox2->Controls->Add(this->m_btn_addzetumesh);
-			this->groupBox2->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->groupBox2->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->groupBox2->Location = System::Drawing::Point(20, 19);
 			this->groupBox2->Name = L"groupBox2";
 			this->groupBox2->Size = System::Drawing::Size(296, 64);
 			this->groupBox2->TabIndex = 24;
 			this->groupBox2->TabStop = false;
-			this->groupBox2->Text = L"Cage • Mesh “Ç‚İ‚İ";
+			this->groupBox2->Text = L"Cage ï¼† Mesh èª­ã¿è¾¼ã¿";
 			// 
 			// m_groupbox_deformation
 			// 
@@ -225,14 +225,14 @@ namespace RoiPainter4D {
 			this->m_groupbox_deformation->Controls->Add(this->m_radiobtn_translatecage);
 			this->m_groupbox_deformation->Controls->Add(this->m_radiobtn_rotatecage);
 			this->m_groupbox_deformation->Controls->Add(this->m_radiobtn_scalecage);
-			this->m_groupbox_deformation->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->m_groupbox_deformation->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->m_groupbox_deformation->Location = System::Drawing::Point(20, 95);
 			this->m_groupbox_deformation->Name = L"m_groupbox_deformation";
 			this->m_groupbox_deformation->Size = System::Drawing::Size(296, 104);
 			this->m_groupbox_deformation->TabIndex = 25;
 			this->m_groupbox_deformation->TabStop = false;
-			this->m_groupbox_deformation->Text = L"‘I‘ğŠíŠ¯‚Ì•ÏŒ`";
+			this->m_groupbox_deformation->Text = L"é¸æŠå™¨å®˜ã®å¤‰å½¢";
 			// 
 			// m_check_allframe
 			// 
@@ -255,7 +255,7 @@ namespace RoiPainter4D {
 			this->m_chooseinto->Name = L"m_chooseinto";
 			this->m_chooseinto->Size = System::Drawing::Size(54, 24);
 			this->m_chooseinto->TabIndex = 29;
-			this->m_chooseinto->Text = L"ˆô“ª";
+			this->m_chooseinto->Text = L"å’½é ­";
 			this->m_chooseinto->UseVisualStyleBackColor = true;
 			// 
 			// m_choosekout
@@ -267,7 +267,7 @@ namespace RoiPainter4D {
 			this->m_choosekout->Name = L"m_choosekout";
 			this->m_choosekout->Size = System::Drawing::Size(67, 24);
 			this->m_choosekout->TabIndex = 28;
-			this->m_choosekout->Text = L"A“ªŠW";
+			this->m_choosekout->Text = L"å–‰é ­è“‹";
 			this->m_choosekout->UseVisualStyleBackColor = true;
 			// 
 			// m_choosenank
@@ -279,7 +279,7 @@ namespace RoiPainter4D {
 			this->m_choosenank->Name = L"m_choosenank";
 			this->m_choosenank->Size = System::Drawing::Size(67, 24);
 			this->m_choosenank->TabIndex = 27;
-			this->m_choosenank->Text = L"“îŒûŠW";
+			this->m_choosenank->Text = L"è»Ÿå£è“‹";
 			this->m_choosenank->UseVisualStyleBackColor = true;
 			this->m_choosenank->CheckedChanged += gcnew System::EventHandler(this, &FormSegSwallowTempGen::m_choosenank_CheckedChanged);
 			// 
@@ -292,52 +292,52 @@ namespace RoiPainter4D {
 			this->m_choosezetu->Name = L"m_choosezetu";
 			this->m_choosezetu->Size = System::Drawing::Size(41, 24);
 			this->m_choosezetu->TabIndex = 26;
-			this->m_choosezetu->Text = L"ã";
+			this->m_choosezetu->Text = L"èˆŒ";
 			this->m_choosezetu->UseVisualStyleBackColor = true;
 			this->m_choosezetu->CheckedChanged += gcnew System::EventHandler(this, &FormSegSwallowTempGen::m_choosezetu_CheckedChanged);
 			// 
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 6.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->label2->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 6.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->label2->Location = System::Drawing::Point(4, 33);
 			this->label2->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(168, 14);
 			this->label2->TabIndex = 6;
-			this->label2->Text = L"ƒhƒ‰ƒbƒO’†‚É R-click ‚Å‘€ìƒLƒƒƒ“ƒZƒ‹";
+			this->label2->Text = L"ãƒ‰ãƒ©ãƒƒã‚°ä¸­ã« R-click ã§æ“ä½œã‚­ãƒ£ãƒ³ã‚»ãƒ«";
 			// 
 			// m_label1
 			// 
 			this->m_label1->AutoSize = true;
-			this->m_label1->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->m_label1->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->m_label1->Location = System::Drawing::Point(7, 17);
 			this->m_label1->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->m_label1->Name = L"m_label1";
 			this->m_label1->Size = System::Drawing::Size(175, 17);
 			this->m_label1->TabIndex = 6;
-			this->m_label1->Text = L"Shift + L-drag : ƒnƒ“ƒhƒ‹‚ğˆÚ“®";
+			this->m_label1->Text = L"Shift + L-drag : ãƒãƒ³ãƒ‰ãƒ«ã‚’ç§»å‹•";
 			// 
 			// m_radiobtn_translatecage
 			// 
 			this->m_radiobtn_translatecage->AutoSize = true;
-			this->m_radiobtn_translatecage->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->m_radiobtn_translatecage->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->m_radiobtn_translatecage->Location = System::Drawing::Point(132, 49);
 			this->m_radiobtn_translatecage->Margin = System::Windows::Forms::Padding(2);
 			this->m_radiobtn_translatecage->Name = L"m_radiobtn_translatecage";
 			this->m_radiobtn_translatecage->Size = System::Drawing::Size(74, 22);
 			this->m_radiobtn_translatecage->TabIndex = 5;
-			this->m_radiobtn_translatecage->Text = L"•½sˆÚ“®";
+			this->m_radiobtn_translatecage->Text = L"å¹³è¡Œç§»å‹•";
 			this->m_radiobtn_translatecage->UseVisualStyleBackColor = true;
 			// 
 			// m_radiobtn_rotatecage
 			// 
 			this->m_radiobtn_rotatecage->AutoSize = true;
 			this->m_radiobtn_rotatecage->Checked = true;
-			this->m_radiobtn_rotatecage->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->m_radiobtn_rotatecage->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->m_radiobtn_rotatecage->Location = System::Drawing::Point(68, 49);
 			this->m_radiobtn_rotatecage->Margin = System::Windows::Forms::Padding(2);
@@ -345,20 +345,20 @@ namespace RoiPainter4D {
 			this->m_radiobtn_rotatecage->Size = System::Drawing::Size(50, 22);
 			this->m_radiobtn_rotatecage->TabIndex = 4;
 			this->m_radiobtn_rotatecage->TabStop = true;
-			this->m_radiobtn_rotatecage->Text = L"‰ñ“]";
+			this->m_radiobtn_rotatecage->Text = L"å›è»¢";
 			this->m_radiobtn_rotatecage->UseVisualStyleBackColor = true;
 			// 
 			// m_radiobtn_scalecage
 			// 
 			this->m_radiobtn_scalecage->AutoSize = true;
-			this->m_radiobtn_scalecage->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->m_radiobtn_scalecage->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->m_radiobtn_scalecage->Location = System::Drawing::Point(10, 49);
 			this->m_radiobtn_scalecage->Margin = System::Windows::Forms::Padding(2);
 			this->m_radiobtn_scalecage->Name = L"m_radiobtn_scalecage";
 			this->m_radiobtn_scalecage->Size = System::Drawing::Size(50, 22);
 			this->m_radiobtn_scalecage->TabIndex = 14;
-			this->m_radiobtn_scalecage->Text = L"Šgk";
+			this->m_radiobtn_scalecage->Text = L"æ‹¡ç¸®";
 			this->m_radiobtn_scalecage->UseVisualStyleBackColor = true;
 			// 
 			// m_numeric1
@@ -396,50 +396,50 @@ namespace RoiPainter4D {
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 6.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->label1->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 6.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->label1->Location = System::Drawing::Point(22, 241);
 			this->label1->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(61, 14);
 			this->label1->TabIndex = 30;
-			this->label1->Text = L"H‰ò“®‚«n‚ß";
+			this->label1->Text = L"é£Ÿå¡Šå‹•ãå§‹ã‚";
 			// 
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 6.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->label3->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 6.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->label3->Location = System::Drawing::Point(19, 266);
 			this->label3->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(70, 14);
 			this->label3->TabIndex = 31;
-			this->label3->Text = L"ãœã‚ª‚èØ‚é";
+			this->label3->Text = L"èˆŒéª¨ä¸ŠãŒã‚Šåˆ‡ã‚‹";
 			// 
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 6.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->label4->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 6.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->label4->Location = System::Drawing::Point(17, 291);
 			this->label4->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(70, 14);
 			this->label4->TabIndex = 31;
-			this->label4->Text = L"ãœ‰º‚ª‚èn‚ß";
+			this->label4->Text = L"èˆŒéª¨ä¸‹ãŒã‚Šå§‹ã‚";
 			// 
 			// label5
 			// 
 			this->label5->AutoSize = true;
-			this->label5->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 6.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->label5->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 6.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->label5->Location = System::Drawing::Point(17, 316);
 			this->label5->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(70, 14);
 			this->label5->TabIndex = 32;
-			this->label5->Text = L"ãœ‰º‚ª‚èØ‚é";
+			this->label5->Text = L"èˆŒéª¨ä¸‹ãŒã‚Šåˆ‡ã‚‹";
 			// 
 			// m_btn_update_timing
 			// 

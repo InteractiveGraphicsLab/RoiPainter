@@ -10,14 +10,14 @@ namespace RoiPainter4D {
   using namespace System::Drawing;
 
   /// <summary>
-  /// FormSegLocalRGrow ‚ÌŠT—v
+  /// FormSegLocalRGrow ã®æ¦‚è¦
   /// </summary>
   public ref class FormSegLocalRGrow : public System::Windows::Forms::Form
   {
   private:
     
-    // dialog item‚ğXV‚·‚éÛ‚É true‚É‚È‚éƒtƒ‰ƒO
-    // textbox->Value = newtext@‚È‚Ç‚ÅtextchangedƒCƒxƒ“ƒg‚ªŒÄ‚Î‚ê‚Ä‚µ‚Ü‚¤‚±‚Æ‚È‚Ç‚ª‚ ‚é‚Ì‚Å‚±‚ê‚ğ‰ñ”ğ‚·‚é‚½‚ß‚É—˜—p‚·‚é
+    // dialog itemã‚’æ›´æ–°ã™ã‚‹éš›ã« trueã«ãªã‚‹ãƒ•ãƒ©ã‚°
+    // textbox->Value = newtextã€€ãªã©ã§textchangedã‚¤ãƒ™ãƒ³ãƒˆãŒå‘¼ã°ã‚Œã¦ã—ã¾ã†ã“ã¨ãªã©ãŒã‚ã‚‹ã®ã§ã“ã‚Œã‚’å›é¿ã™ã‚‹ãŸã‚ã«åˆ©ç”¨ã™ã‚‹
     bool m_item_updating; 
 
   private: 
@@ -83,7 +83,7 @@ namespace RoiPainter4D {
 
   protected:
     /// <summary>
-    /// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+    /// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
     /// </summary>
     ~FormSegLocalRGrow()
     {
@@ -95,14 +95,14 @@ namespace RoiPainter4D {
 
   private:
     /// <summary>
-    /// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+    /// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
     /// </summary>
     System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
     /// <summary>
-    /// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-    /// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+    /// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+    /// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
     /// </summary>
     void InitializeComponent(void)
     {
@@ -238,7 +238,7 @@ namespace RoiPainter4D {
       // 
       this->m_groupbox_runrgrow->Controls->Add(this->m_btn_runlocalregiongrow_onlyone);
       this->m_groupbox_runrgrow->Controls->Add(this->m_btn_runlocalregiongrow_allframes);
-      this->m_groupbox_runrgrow->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
+      this->m_groupbox_runrgrow->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
         System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(128)));
       this->m_groupbox_runrgrow->Location = System::Drawing::Point(7, 286);
       this->m_groupbox_runrgrow->Name = L"m_groupbox_runrgrow";
@@ -382,7 +382,7 @@ namespace RoiPainter4D {
       // label2
       // 
       this->label2->AutoSize = true;
-      this->label2->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label2->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label2->Location = System::Drawing::Point(4, 3);
       this->label2->Name = L"label2";
@@ -393,7 +393,7 @@ namespace RoiPainter4D {
       // label1
       // 
       this->label1->AutoSize = true;
-      this->label1->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label1->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label1->Location = System::Drawing::Point(4, 20);
       this->label1->Name = L"label1";
@@ -404,7 +404,7 @@ namespace RoiPainter4D {
       // label3
       // 
       this->label3->AutoSize = true;
-      this->label3->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label3->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label3->Location = System::Drawing::Point(4, 37);
       this->label3->Name = L"label3";

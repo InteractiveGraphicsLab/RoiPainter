@@ -5,9 +5,9 @@
 //See README and LICENSE for detail.
 //
 //class ImageCore :
-//CT‰æ‘œ‚È‚Ç‚Ì‰æ‘œ‚ğŠÇ—‚·‚éƒVƒ“ƒOƒ‹ƒgƒ“ƒNƒ‰ƒX
-//ƒIƒŠƒWƒiƒ‹‰æ‘œ‚Íshort”z—ñ‚Å•Û
-//GPU‚Ö“]‘—‚·‚é‚½‚ß8bit‚Éƒg[ƒ“ƒ}ƒbƒsƒ“ƒO‚·‚é
+//CTç”»åƒãªã©ã®ç”»åƒã‚’ç®¡ç†ã™ã‚‹ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚¯ãƒ©ã‚¹
+//ã‚ªãƒªã‚¸ãƒŠãƒ«ç”»åƒã¯shorté…åˆ—ã§ä¿æŒ
+//GPUã¸è»¢é€ã™ã‚‹ãŸã‚8bitã«ãƒˆãƒ¼ãƒ³ãƒãƒƒãƒ”ãƒ³ã‚°ã™ã‚‹
 //----------------------------------------------------------
 #ifndef IMAGECORE_H_
 #define IMAGECORE_H_
@@ -79,7 +79,7 @@ public:
 class ImageCore
 {
 private:
-  EVec3i m_reso         ; //‰ğ‘œ“x x,y,z
+  EVec3i m_reso         ; //è§£åƒåº¦ x,y,z
   EVec3f m_pitch        ; //pitch  x,y,z
   EVec2i m_volume_minmax;
 
@@ -87,12 +87,12 @@ private:
   std::vector<MaskData>  m_mask_data    ;
 
 public:
-  //4D volumes (CPU‚É•Û)
+  //4D volumes (CPUã«ä¿æŒ)
   std::vector< short* > m_img4d ; //orig volume
-  std::vector< byte*  > m_flg4d ; //flag volume (“TŒ^—á 0:locked, 1:”wŒi,  255‘OŒi)
+  std::vector< byte*  > m_flg4d ; //flag volume (å…¸å‹ä¾‹ 0:locked, 1:èƒŒæ™¯,  255å‰æ™¯)
   std::vector< byte*  > m_mask4d; //mask volume (mask id)
 
-  //3D volume to send GPU (private‚É‚µ‚½‚¢)
+  //3D volume to send GPU (privateã«ã—ãŸã„)
   OglImage3D  m_vol     ;
   OglImage3D  m_vol_flg ;
   OglImage3D  m_vol_mask;
@@ -173,16 +173,16 @@ public:
   }
 
   inline int GetVoxelIndex(const EVec3f& position){
-    const int x = t_crop( 0, m_reso[0] - 1, (int)(position[0] / m_pitch[0]));
-    const int y = t_crop( 0, m_reso[1] - 1, (int)(position[1] / m_pitch[1]));
-    const int z = t_crop( 0, m_reso[2] - 1, (int)(position[2] / m_pitch[2]));
+    const int x = Crop( 0, m_reso[0] - 1, (int)(position[0] / m_pitch[0]));
+    const int y = Crop( 0, m_reso[1] - 1, (int)(position[1] / m_pitch[1]));
+    const int z = Crop( 0, m_reso[2] - 1, (int)(position[2] / m_pitch[2]));
     return x + y * m_reso[0] + z * m_reso[0] * m_reso[1];
   }
 
   inline EVec4i GetVoxelIndexXYZI(const EVec3f& position) {
-    const int x = t_crop( 0, m_reso[0] - 1, (int)(position[0] / m_pitch[0]));
-    const int y = t_crop( 0, m_reso[1] - 1, (int)(position[1] / m_pitch[1]));
-    const int z = t_crop( 0, m_reso[2] - 1, (int)(position[2] / m_pitch[2]));
+    const int x = Crop( 0, m_reso[0] - 1, (int)(position[0] / m_pitch[0]));
+    const int y = Crop( 0, m_reso[1] - 1, (int)(position[1] / m_pitch[1]));
+    const int z = Crop( 0, m_reso[2] - 1, (int)(position[2] / m_pitch[2]));
     return EVec4i(x,y,z, x + y * m_reso[0] + z * m_reso[0] * m_reso[1]);
   }
 
@@ -205,7 +205,7 @@ public:
 void CalcDistanceTransform(
   const EVec3f &pitch,
   const EVec3f &reso ,
-  const float  max_dist, //‚±‚Ì’lˆÈã‚Ì—Ìˆæ‚ÍŒvZ‚µ‚È‚¢
+  const float  max_dist, //ã“ã®å€¤ä»¥ä¸Šã®é ˜åŸŸã¯è¨ˆç®—ã—ãªã„
   const std::vector<EVec4i> &seed_voxels, //xyzI
   
   float* vol_dt //should be allocated

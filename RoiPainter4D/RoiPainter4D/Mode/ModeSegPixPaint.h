@@ -6,16 +6,16 @@
 #include "GlslShader.h"
 
 //UI 
-// ‚±‚±‚ÉUI‚ÌŠT—v‚ğ‘‚­
+// ã“ã“ã«UIã®æ¦‚è¦ã‚’æ›¸ã
 // shift + L drag : paint voxel / drawa lasso for foreground
 // shift + R drag : paint voxel / drawa lasso for background
 //
 //
 
 //vol_flg
-//0   : ‘ÎÛŠO
-//1   : ”wŒi
-//255 : —ÎFƒnƒCƒ‰ƒCƒg
+//0   : å¯¾è±¡å¤–
+//1   : èƒŒæ™¯
+//255 : ç·‘è‰²ãƒã‚¤ãƒ©ã‚¤ãƒˆ
 
 
 //TODO
@@ -47,7 +47,7 @@ public:
   static ModeSegPixPaint* GetInst() { static ModeSegPixPaint p; return &p; }
 
   // overload functions ---------------------------------------------
-  MODE_ID getModeID() { return MODE_SEG_PIXPAINT; }
+  MODE_ID GetModeID() { return MODE_SEG_PIXPAINT; }
 
   void LBtnUp   (const EVec2i &p, OglForCLI *ogl);
   void RBtnUp   (const EVec2i &p, OglForCLI *ogl);
@@ -61,12 +61,12 @@ public:
   void MouseMove(const EVec2i &p, OglForCLI *ogl);
   void MouseWheel(const EVec2i &p, short zDelta, OglForCLI *ogl);
 
-  void keyDown(int nChar);
-  void keyUp(int nChar);
+  void KeyDown(int nChar);
+  void KeyUp(int nChar);
 
-  bool canEndMode();
-  void startMode();
-  void drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+  bool CanEndMode();
+  void StartMode();
+  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
   //-----------------------------------------------------------------
 
   void FinishSegmentation();

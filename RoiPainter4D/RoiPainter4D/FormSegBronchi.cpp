@@ -1,4 +1,4 @@
-﻿#pragma managed
+#pragma managed
 #include "FormSegBronchi.h"
 #include "FormVisParam.h"
 #include "FormMain.h"

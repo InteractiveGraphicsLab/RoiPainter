@@ -2,11 +2,11 @@
 
 // FormVisParam (managed class)
 //
-// ‰Eã‚Ì‰Â‹‰»ƒpƒ‰ƒ[ƒ^—p‚Ìƒ_ƒCƒAƒƒO
-// Volume rendering ‚É‚©‚©‚í‚éƒpƒ‰ƒ[ƒ^‚ÌUI‚ğ’ñ‹Ÿ‚·‚é
+// å³ä¸Šã®å¯è¦–åŒ–ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ç”¨ã®ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+// Volume rendering ã«ã‹ã‹ã‚ã‚‹ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®UIã‚’æä¾›ã™ã‚‹
 // 
-// Singleton‚ÅÀ‘•
-// ƒpƒ‰ƒ[ƒ^•ÏX‚É”º‚¢AImageCore‚ÆFormMain‚É class‚ÉƒAƒNƒZƒX‚·‚é
+// Singletonã§å®Ÿè£…
+// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿å¤‰æ›´ã«ä¼´ã„ã€ImageCoreã¨FormMainã« classã«ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹
 
 #define TRANS_FUNC_SIZE 256
 #define HIST_BIN_SIZE   256
@@ -21,7 +21,7 @@ namespace RoiPainter3D {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// FormVisParam ‚ÌŠT—v
+	/// FormVisParam ã®æ¦‚è¦
 	/// </summary>
 	public ref class FormVisParam : public System::Windows::Forms::Form
 	{    
@@ -128,7 +128,7 @@ namespace RoiPainter3D {
     
 	protected:
 		/// <summary>
-		/// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+		/// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
 		/// </summary>
 		~FormVisParam()
 		{
@@ -140,14 +140,14 @@ namespace RoiPainter3D {
 
 	private:
 		/// <summary>
-		/// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+		/// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-		/// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+		/// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+		/// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
 		/// </summary>
 		void InitializeComponent(void)
 		{
@@ -215,7 +215,7 @@ namespace RoiPainter3D {
       // 
       // pitchZ
       // 
-      this->pitchZ->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->pitchZ->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->pitchZ->Location = System::Drawing::Point(210, 29);
       this->pitchZ->Name = L"pitchZ";
       this->pitchZ->Size = System::Drawing::Size(60, 23);
@@ -224,7 +224,7 @@ namespace RoiPainter3D {
       // 
       // pitchY
       // 
-      this->pitchY->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->pitchY->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->pitchY->Location = System::Drawing::Point(146, 29);
       this->pitchY->Name = L"pitchY";
       this->pitchY->Size = System::Drawing::Size(60, 23);
@@ -233,7 +233,7 @@ namespace RoiPainter3D {
       // 
       // pitchX
       // 
-      this->pitchX->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->pitchX->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->pitchX->Location = System::Drawing::Point(81, 29);
       this->pitchX->Name = L"pitchX";
       this->pitchX->Size = System::Drawing::Size(60, 23);
@@ -243,7 +243,7 @@ namespace RoiPainter3D {
       // sizeZ
       // 
       this->sizeZ->BackColor = System::Drawing::SystemColors::Info;
-      this->sizeZ->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->sizeZ->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->sizeZ->Location = System::Drawing::Point(212, 3);
       this->sizeZ->Name = L"sizeZ";
       this->sizeZ->ReadOnly = true;
@@ -253,7 +253,7 @@ namespace RoiPainter3D {
       // sizeY
       // 
       this->sizeY->BackColor = System::Drawing::SystemColors::Info;
-      this->sizeY->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->sizeY->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->sizeY->Location = System::Drawing::Point(147, 3);
       this->sizeY->Name = L"sizeY";
       this->sizeY->ReadOnly = true;
@@ -263,7 +263,7 @@ namespace RoiPainter3D {
       // sizeX
       // 
       this->sizeX->BackColor = System::Drawing::SystemColors::Info;
-      this->sizeX->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->sizeX->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->sizeX->Location = System::Drawing::Point(82, 3);
       this->sizeX->Name = L"sizeX";
       this->sizeX->ReadOnly = true;
@@ -274,7 +274,7 @@ namespace RoiPainter3D {
       // 
       this->isGray->AutoSize = true;
       this->isGray->Checked = true;
-      this->isGray->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->isGray->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->isGray->Location = System::Drawing::Point(215, 179);
       this->isGray->Name = L"isGray";
@@ -288,7 +288,7 @@ namespace RoiPainter3D {
       // isBlack
       // 
       this->isBlack->AutoSize = true;
-      this->isBlack->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->isBlack->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->isBlack->Location = System::Drawing::Point(153, 179);
       this->isBlack->Name = L"isBlack";
@@ -301,7 +301,7 @@ namespace RoiPainter3D {
       // isWhite
       // 
       this->isWhite->AutoSize = true;
-      this->isWhite->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->isWhite->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->isWhite->Location = System::Drawing::Point(90, 179);
       this->isWhite->Name = L"isWhite";
@@ -316,7 +316,7 @@ namespace RoiPainter3D {
       this->isRendIndi->AutoSize = true;
       this->isRendIndi->Checked = true;
       this->isRendIndi->CheckState = System::Windows::Forms::CheckState::Checked;
-      this->isRendIndi->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->isRendIndi->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->isRendIndi->Location = System::Drawing::Point(172, 135);
       this->isRendIndi->Name = L"isRendIndi";
@@ -342,7 +342,7 @@ namespace RoiPainter3D {
       this->isRendVolume->AutoSize = true;
       this->isRendVolume->Checked = true;
       this->isRendVolume->CheckState = System::Windows::Forms::CheckState::Checked;
-      this->isRendVolume->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->isRendVolume->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->isRendVolume->Location = System::Drawing::Point(68, 113);
       this->isRendVolume->Margin = System::Windows::Forms::Padding(4, 5, 4, 5);
       this->isRendVolume->Name = L"isRendVolume";
@@ -357,7 +357,7 @@ namespace RoiPainter3D {
       this->isRendPseudo->AutoSize = true;
       this->isRendPseudo->Checked = true;
       this->isRendPseudo->CheckState = System::Windows::Forms::CheckState::Checked;
-      this->isRendPseudo->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->isRendPseudo->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->isRendPseudo->Location = System::Drawing::Point(135, 113);
       this->isRendPseudo->Margin = System::Windows::Forms::Padding(4, 5, 4, 5);
       this->isRendPseudo->Name = L"isRendPseudo";
@@ -408,7 +408,7 @@ namespace RoiPainter3D {
       // sliceLabel
       // 
       this->sliceLabel->AutoSize = true;
-      this->sliceLabel->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->sliceLabel->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->sliceLabel->Location = System::Drawing::Point(134, 205);
       this->sliceLabel->Name = L"sliceLabel";
       this->sliceLabel->Size = System::Drawing::Size(33, 17);
@@ -418,7 +418,7 @@ namespace RoiPainter3D {
       // transLabel
       // 
       this->transLabel->AutoSize = true;
-      this->transLabel->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->transLabel->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->transLabel->Location = System::Drawing::Point(6, 205);
       this->transLabel->Name = L"transLabel";
       this->transLabel->Size = System::Drawing::Size(37, 17);
@@ -427,7 +427,7 @@ namespace RoiPainter3D {
       // 
       // winLevelMaxTextBox
       // 
-      this->winLevelMaxTextBox->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->winLevelMaxTextBox->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->winLevelMaxTextBox->Location = System::Drawing::Point(61, 83);
       this->winLevelMaxTextBox->Name = L"winLevelMaxTextBox";
       this->winLevelMaxTextBox->ReadOnly = true;
@@ -436,7 +436,7 @@ namespace RoiPainter3D {
       // 
       // winLevelMinTextBox
       // 
-      this->winLevelMinTextBox->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->winLevelMinTextBox->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->winLevelMinTextBox->Location = System::Drawing::Point(60, 57);
       this->winLevelMinTextBox->Name = L"winLevelMinTextBox";
       this->winLevelMinTextBox->ReadOnly = true;
@@ -446,7 +446,7 @@ namespace RoiPainter3D {
       // winLevelMaxLabel
       // 
       this->winLevelMaxLabel->AutoSize = true;
-      this->winLevelMaxLabel->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->winLevelMaxLabel->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->winLevelMaxLabel->Location = System::Drawing::Point(30, 86);
       this->winLevelMaxLabel->Name = L"winLevelMaxLabel";
@@ -457,7 +457,7 @@ namespace RoiPainter3D {
       // winLevelMinLabel
       // 
       this->winLevelMinLabel->AutoSize = true;
-      this->winLevelMinLabel->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->winLevelMinLabel->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->winLevelMinLabel->Location = System::Drawing::Point(32, 60);
       this->winLevelMinLabel->Name = L"winLevelMinLabel";
@@ -468,7 +468,7 @@ namespace RoiPainter3D {
       // winLevelLabel
       // 
       this->winLevelLabel->AutoSize = true;
-      this->winLevelLabel->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->winLevelLabel->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->winLevelLabel->Location = System::Drawing::Point(4, 74);
       this->winLevelLabel->Name = L"winLevelLabel";
       this->winLevelLabel->Size = System::Drawing::Size(41, 17);
@@ -478,7 +478,7 @@ namespace RoiPainter3D {
       // bgColorLabel
       // 
       this->bgColorLabel->AutoSize = true;
-      this->bgColorLabel->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->bgColorLabel->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->bgColorLabel->Location = System::Drawing::Point(6, 179);
       this->bgColorLabel->Name = L"bgColorLabel";
       this->bgColorLabel->Size = System::Drawing::Size(74, 17);
@@ -488,7 +488,7 @@ namespace RoiPainter3D {
       // planeLabel
       // 
       this->planeLabel->AutoSize = true;
-      this->planeLabel->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->planeLabel->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->planeLabel->Location = System::Drawing::Point(8, 162);
       this->planeLabel->Name = L"planeLabel";
       this->planeLabel->Size = System::Drawing::Size(37, 17);
@@ -500,7 +500,7 @@ namespace RoiPainter3D {
       this->isRendPlaneZX->AutoSize = true;
       this->isRendPlaneZX->Checked = true;
       this->isRendPlaneZX->CheckState = System::Windows::Forms::CheckState::Checked;
-      this->isRendPlaneZX->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->isRendPlaneZX->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->isRendPlaneZX->Location = System::Drawing::Point(213, 158);
       this->isRendPlaneZX->Name = L"isRendPlaneZX";
       this->isRendPlaneZX->Size = System::Drawing::Size(39, 21);
@@ -514,7 +514,7 @@ namespace RoiPainter3D {
       this->isRendPlaneYZ->AutoSize = true;
       this->isRendPlaneYZ->Checked = true;
       this->isRendPlaneYZ->CheckState = System::Windows::Forms::CheckState::Checked;
-      this->isRendPlaneYZ->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->isRendPlaneYZ->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->isRendPlaneYZ->Location = System::Drawing::Point(152, 158);
       this->isRendPlaneYZ->Name = L"isRendPlaneYZ";
       this->isRendPlaneYZ->Size = System::Drawing::Size(39, 21);
@@ -528,7 +528,7 @@ namespace RoiPainter3D {
       this->isRendPlaneXY->AutoSize = true;
       this->isRendPlaneXY->Checked = true;
       this->isRendPlaneXY->CheckState = System::Windows::Forms::CheckState::Checked;
-      this->isRendPlaneXY->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->isRendPlaneXY->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->isRendPlaneXY->Location = System::Drawing::Point(90, 158);
       this->isRendPlaneXY->Name = L"isRendPlaneXY";
       this->isRendPlaneXY->Size = System::Drawing::Size(39, 21);
@@ -542,7 +542,7 @@ namespace RoiPainter3D {
       this->isRendFrame->AutoSize = true;
       this->isRendFrame->Checked = true;
       this->isRendFrame->CheckState = System::Windows::Forms::CheckState::Checked;
-      this->isRendFrame->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->isRendFrame->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->isRendFrame->Location = System::Drawing::Point(6, 113);
       this->isRendFrame->Margin = System::Windows::Forms::Padding(4, 5, 4, 5);
       this->isRendFrame->Name = L"isRendFrame";
@@ -566,7 +566,7 @@ namespace RoiPainter3D {
       // isRendGradMag
       // 
       this->isRendGradMag->AutoSize = true;
-      this->isRendGradMag->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->isRendGradMag->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->isRendGradMag->Location = System::Drawing::Point(6, 135);
       this->isRendGradMag->Margin = System::Windows::Forms::Padding(4, 5, 4, 5);
       this->isRendGradMag->Name = L"isRendGradMag";
@@ -581,7 +581,7 @@ namespace RoiPainter3D {
       this->doInterpolation->AutoSize = true;
       this->doInterpolation->Checked = true;
       this->doInterpolation->CheckState = System::Windows::Forms::CheckState::Checked;
-      this->doInterpolation->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->doInterpolation->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->doInterpolation->Location = System::Drawing::Point(68, 135);
       this->doInterpolation->Margin = System::Windows::Forms::Padding(4, 5, 4, 5);
       this->doInterpolation->Name = L"doInterpolation";
@@ -594,7 +594,7 @@ namespace RoiPainter3D {
       // isRendOtherRoi
       // 
       this->isRendOtherRoi->AutoSize = true;
-      this->isRendOtherRoi->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 8));
+      this->isRendOtherRoi->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 8));
       this->isRendOtherRoi->Location = System::Drawing::Point(204, 113);
       this->isRendOtherRoi->Margin = System::Windows::Forms::Padding(4, 5, 4, 5);
       this->isRendOtherRoi->Name = L"isRendOtherRoi";

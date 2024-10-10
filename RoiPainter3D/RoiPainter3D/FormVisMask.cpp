@@ -24,11 +24,11 @@ void FormVisMask::updateList()
   const int &maskSelectedId = ImageCore::GetInst()->GetActiveMaskID();
 
 
-  //‰Šú‰»
+  //åˆæœŸåŒ–
   maskList->Rows->Clear();
   for (int i = 0; i < maskData.size(); ++i) maskList->Rows->Add();
 
-  //‚±‚Ìƒ^ƒCƒ~ƒ“ƒO‚Åhighlight‚ğoff‚É
+  //ã“ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§highlightã‚’offã«
   maskList->CurrentCell = nullptr;
 
   //cell colors
@@ -65,7 +65,7 @@ System::Void FormVisMask::maskList_SelectionChanged(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  //FormVisMask::updateList ‚Ì maskList->Rows->Clear(); ‚Ìƒ^ƒCƒ~ƒ“ƒO‚ÅŒÄ‚Î‚ê‚Ä‚µ‚Ü‚¤‚Ì‚ÅA‚»‚ÌÛ‚Í‰½‚à‚µ‚È‚¢
+  //FormVisMask::updateList ã® maskList->Rows->Clear(); ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§å‘¼ã°ã‚Œã¦ã—ã¾ã†ã®ã§ã€ãã®éš›ã¯ä½•ã‚‚ã—ãªã„
   if (m_bListUpdating) return;
 
   std::cout << "selection changed " << maskList->CurrentCell->RowIndex << " " << maskList->CurrentCell->ColumnIndex << "\n";
@@ -149,7 +149,7 @@ System::Void FormVisMask::btnMargeTo_Click(
   {
     const char* m = 
       "specify multiple ids to marge\n"
-      "ƒ}[ƒW‚·‚é•¡”ID‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢";
+      "ãƒãƒ¼ã‚¸ã™ã‚‹è¤‡æ•°IDã‚’æŒ‡å®šã—ã¦ãã ã•ã„";
     CLI_MessageBox_OK_Show( m, "message");
     return;
   }
@@ -198,7 +198,7 @@ System::Void FormVisMask::btnFillHole_Click(
   {
     const char* m = 
       "Select multiple ids to calc fillhole\n"
-      "ŒŠ–„‚ß‚É—˜—p‚·‚é—Ìˆæ‚ğ•¡”w’è‚µ‚Ä‚­‚¾‚³‚¢";
+      "ç©´åŸ‹ã‚ã«åˆ©ç”¨ã™ã‚‹é ˜åŸŸã‚’è¤‡æ•°æŒ‡å®šã—ã¦ãã ã•ã„";
     CLI_MessageBox_OK_Show( m, "message");
     return;
   }
@@ -244,7 +244,7 @@ System::Void FormVisMask::btnSmartFillHole_Click(
   {
     const char* m = 
       "Select multiple ids to calc fillhole\n"
-      "ŒŠ–„‚ß‚É—˜—p‚·‚é—Ìˆæ‚ğ•¡”w’è‚µ‚Ä‚­‚¾‚³‚¢";
+      "ç©´åŸ‹ã‚ã«åˆ©ç”¨ã™ã‚‹é ˜åŸŸã‚’è¤‡æ•°æŒ‡å®šã—ã¦ãã ã•ã„";
     CLI_MessageBox_OK_Show( m, "message");
     return;
   }
@@ -255,7 +255,7 @@ System::Void FormVisMask::btnSmartFillHole_Click(
   {
     const char* m = 
       "Set radius of dilation for smart holefil\n"
-      "holefill ’¼‘O‚És‚¤dilation‰ñ”‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢";
+      "holefill ç›´å‰ã«è¡Œã†dilationå›æ•°ã‚’æŒ‡å®šã—ã¦ãã ã•ã„";
       CLI_MessageBox_OK_Show( m, "message");
     return;
   } 

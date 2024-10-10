@@ -37,10 +37,10 @@ bool t_getTagValInt(DcmDataset *DataSet, DcmTagKey tagKey, int &value)
 
 double getValueInsideKakko(const std::string s)
 {
-//ˆÈ‰º‚Ì‚æ‚¤‚Èstring‚É‚¨‚¢‚ÄA[ ]“à‚ÌA1‚Â‚ß‚Ì”š‚ğ•Ô‚·Bi2‚Â–Ú‚Ì”š‚Í–³‹j
-//—á1
+//ä»¥ä¸‹ã®ã‚ˆã†ãªstringã«ãŠã„ã¦ã€[ ]å†…ã®ã€1ã¤ã‚ã®æ•°å­—ã‚’è¿”ã™ã€‚ï¼ˆ2ã¤ç›®ã®æ•°å­—ã¯ç„¡è¦–ï¼‰
+//ä¾‹1
 //        (0018,0050) DS [0.5]                                    #   4, 1 SliceThickness
-//—á2
+//ä¾‹2
 //        (0028,0030) DS [0.468\0.468]                            #  12, 2 PixelSpacing
   const int startPos  = (int) s.find("[") +1;
   const int kakkoToji = (int) s.find("]");

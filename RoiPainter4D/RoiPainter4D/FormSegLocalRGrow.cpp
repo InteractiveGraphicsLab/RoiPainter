@@ -36,12 +36,12 @@ void FormSegLocalRGrow::InitAllItems(
   m_text_threshmin->Text =  m_bar_threshmin->Value.ToString();
   m_text_threshmax->Text =  m_bar_threshmax->Value.ToString();
 
-  //����ύX���Ȃ��i�O��̏�Ԃ��ێ��j
+  //毎回変更しない（前回の状態を維持）
   //m_checkbox_allframesamepos   ->Checked = false;
   //m_checkbox_allframesamethresh->Checked = true ;
   //m_checkbox_allframesamerad   ->Checked = true ;
 
-  //���ɕK�v�͂Ȃ�����btn�����p�\�ɂ��Ă���
+  //特に必要はないけどbtnも利用可能にしておく
   m_btn_cancel->Enabled = true;
   m_btn_finish->Enabled = true;
   m_btn_loadseedinfo->Enabled = true;
@@ -51,7 +51,7 @@ void FormSegLocalRGrow::InitAllItems(
 
 
 
-//�V�[�h�̑I����Ԃ��ω������Ƃ��Ƀo�[�̒l���X�V����
+//シードの選択状態が変化したときにバーの値を更新する
 void FormSegLocalRGrow::UpdateSeedInfoItems( )
 {
   std::cout << "UpdateSeedInfoItems\n";
@@ -185,7 +185,7 @@ void FormSegLocalRGrow::TextboxRadiusChangedLeave(bool b_Leave)
   float x;
   if ( float::TryParse( m_text_radius->Text, x)) 
   {
-    x = t_crop( m_bar_radius->Minimum / 10.0f, m_bar_radius->Maximum / 10.0f, x );
+    x = Crop( m_bar_radius->Minimum / 10.0f, m_bar_radius->Maximum / 10.0f, x );
   }
   else 
   {
@@ -227,11 +227,11 @@ System::Void FormSegLocalRGrow::textboxThreshMaxChanged(System::Object^  sender,
   int x;
   if ( Int32::TryParse(m_text_threshmax->Text, x)) 
   {
-    x = t_crop(m_bar_threshmax->Minimum, m_bar_threshmax->Maximum, x);
+    x = Crop(m_bar_threshmax->Minimum, m_bar_threshmax->Maximum, x);
   }
   else if(m_text_threshmax->Text == "-")
   {
-    x = t_crop(m_bar_threshmax->Minimum, m_bar_threshmax->Maximum, 0);
+    x = Crop(m_bar_threshmax->Minimum, m_bar_threshmax->Maximum, 0);
   }
   else 
   {
@@ -259,11 +259,11 @@ System::Void FormSegLocalRGrow::textboxThreshMinChanged(System::Object^  sender,
   int x;
   if ( Int32::TryParse( m_text_threshmin->Text, x)) 
   {
-    x = t_crop(m_bar_threshmin->Minimum, m_bar_threshmin->Maximum, x);
+    x = Crop(m_bar_threshmin->Minimum, m_bar_threshmin->Maximum, x);
   }
   else if( m_text_threshmin->Text == "-" )
   {
-    x = t_crop(m_bar_threshmin->Minimum, m_bar_threshmin->Maximum, 0);    
+    x = Crop(m_bar_threshmin->Minimum, m_bar_threshmin->Maximum, 0);    
   }
   else 
   {
@@ -281,19 +281,19 @@ System::Void FormSegLocalRGrow::textboxThreshMinChanged(System::Object^  sender,
 }
 
 
-//cancel�{�^���N���b�N
+//cancelボタンクリック
 System::Void FormSegLocalRGrow::BtnCancelClick(System::Object^  sender, System::EventArgs^  e)
 {
   ModeSegLocalRGrow::GetInst()->CancelSegmentation();
 }
 
-//OK�{�^��
+//OKボタン
 System::Void FormSegLocalRGrow::BtnFinishClick(System::Object^  sender, System::EventArgs^  e)
 {
   ModeSegLocalRGrow::GetInst()->FinishSegmentation();
 }
 
-//�V�[�h����
+//シード成長
 System::Void FormSegLocalRGrow::BtnRunLocalRGrowAllFrameClick(System::Object^  sender, System::EventArgs^  e)
 {
   ModeSegLocalRGrow::GetInst()->RunLocalRegionGrow_Allframe();

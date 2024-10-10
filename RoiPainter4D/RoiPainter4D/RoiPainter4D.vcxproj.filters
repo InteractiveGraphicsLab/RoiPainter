@@ -183,6 +183,9 @@
     <ClCompile Include="..\..\COMMON\tvolumelader.cpp">
       <Filter>COMMON</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\COMMON\DeformationStrokes.cpp">
+      <Filter>COMMON</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FormMain.h">
@@ -363,6 +366,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="..\..\COMMON\tvolumelader.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\DeformationStrokes.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\deform_by_stroke.h">
       <Filter>COMMON</Filter>
     </ClInclude>
   </ItemGroup>

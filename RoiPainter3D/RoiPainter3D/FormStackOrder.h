@@ -10,7 +10,7 @@ namespace RoiPainter3D {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// FormStackOrder ‚ÌŠT—v
+	/// FormStackOrder ã®æ¦‚è¦
 	/// </summary>
 	public ref class FormStackOrder : public System::Windows::Forms::Form
 	{
@@ -23,7 +23,7 @@ namespace RoiPainter3D {
     int m_flg;
 	protected:
 		/// <summary>
-		/// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+		/// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
 		/// </summary>
 		~FormStackOrder()
 		{
@@ -39,14 +39,14 @@ namespace RoiPainter3D {
 
 	private:
 		/// <summary>
-		/// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+		/// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-		/// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+		/// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+		/// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
 		/// </summary>
 		void InitializeComponent(void)
 		{
@@ -69,26 +69,26 @@ namespace RoiPainter3D {
       // btn_ascending
       // 
       this->btn_ascending->DialogResult = System::Windows::Forms::DialogResult::OK;
-      this->btn_ascending->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_ascending->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_ascending->Location = System::Drawing::Point(47, 380);
       this->btn_ascending->Name = L"btn_ascending";
       this->btn_ascending->Size = System::Drawing::Size(146, 43);
       this->btn_ascending->TabIndex = 1;
-      this->btn_ascending->Text = L"ascending(¸‡)";
+      this->btn_ascending->Text = L"ascending(æ˜‡é †)";
       this->btn_ascending->UseVisualStyleBackColor = true;
       this->btn_ascending->Click += gcnew System::EventHandler(this, &FormStackOrder::btn_ascending_Click);
       // 
       // btn_descending
       // 
       this->btn_descending->DialogResult = System::Windows::Forms::DialogResult::OK;
-      this->btn_descending->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_descending->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_descending->Location = System::Drawing::Point(314, 380);
       this->btn_descending->Name = L"btn_descending";
       this->btn_descending->Size = System::Drawing::Size(146, 43);
       this->btn_descending->TabIndex = 1;
-      this->btn_descending->Text = L"decending(~‡)";
+      this->btn_descending->Text = L"decending(é™é †)";
       this->btn_descending->UseVisualStyleBackColor = true;
       this->btn_descending->Click += gcnew System::EventHandler(this, &FormStackOrder::btn_descending_Click);
       // 
@@ -127,7 +127,7 @@ namespace RoiPainter3D {
     FormStackOrder ^modal = gcnew FormStackOrder();
     if (modal->ShowDialog() == DialogResult::OK) return modal->m_flg;
 
-    //ƒLƒƒƒ“ƒZƒ‹ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚Ä‚µ‚Ü‚Á‚½‚ç‚à‚¤ˆê“x‚¾‚¯•\¦iescapeƒL[‚È‚Çj
+    //ã‚­ãƒ£ãƒ³ã‚»ãƒ«ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚Œã¦ã—ã¾ã£ãŸã‚‰ã‚‚ã†ä¸€åº¦ã ã‘è¡¨ç¤ºï¼ˆescapeã‚­ãƒ¼ãªã©ï¼‰
     if (modal->ShowDialog() == DialogResult::OK) return modal->m_flg;
     return 0;
   }

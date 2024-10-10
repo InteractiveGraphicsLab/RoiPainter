@@ -20,22 +20,22 @@ using namespace RoiPainter3D;
 
 
 /*
-memo undo‚Ìd‘g‚İ
+memo undoã®ä»•çµ„ã¿
 
-1) ƒXƒgƒ[ƒN‚ª‘‚©‚ê‚½‚ç
-    1) m_undo_idx ‚ğ 1i‚ß‚é
-    2) m_redo_max ‚É m_undo_idx ‚ğ‘ã“ü
-    3) m_undo_vol “à‚Ì m_redo_idxˆÈã‚Ì‰æ‘f’l‚ğ0‚É
-    4) m_undo_vol “à‚Ì íœ‚³‚ê‚½‰æ‘f‚É m_undo_idx‚ğ‘ã“ü
+1) ã‚¹ãƒˆãƒ­ãƒ¼ã‚¯ãŒæ›¸ã‹ã‚ŒãŸã‚‰
+    1) m_undo_idx ã‚’ 1é€²ã‚ã‚‹
+    2) m_redo_max ã« m_undo_idx ã‚’ä»£å…¥
+    3) m_undo_vol å†…ã® m_redo_idxä»¥ä¸Šã®ç”»ç´ å€¤ã‚’0ã«
+    4) m_undo_vol å†…ã® å‰Šé™¤ã•ã‚ŒãŸç”»ç´ ã« m_undo_idxã‚’ä»£å…¥
 
-2) UndoÀs
-    1) m_undo_vol “à‚Ì m_undo_idx‰æ‘f‚ğ íœ‘O‚Ìó‘Ô‚É
-    2) m_undo_idx‚ğ1–ß‚·
+2) Undoå®Ÿè¡Œ
+    1) m_undo_vol å†…ã® m_undo_idxç”»ç´ ã‚’ å‰Šé™¤å‰ã®çŠ¶æ…‹ã«
+    2) m_undo_idxã‚’1æˆ»ã™
 
-3) RedoÀs
-    1) m_undo_idx < m_redo_idx‚Ì‚Æ‚«‚Ì‚İÀs‰Â
-    2) m_undo_idx‚ğ1i‚ß‚é
-    3) m_undo_vol “à‚Ì m_undo_idx‰æ‘f‚ğ íœ
+3) Redoå®Ÿè¡Œ
+    1) m_undo_idx < m_redo_idxã®ã¨ãã®ã¿å®Ÿè¡Œå¯
+    2) m_undo_idxã‚’1é€²ã‚ã‚‹
+    3) m_undo_vol å†…ã® m_undo_idxç”»ç´ ã‚’ å‰Šé™¤
 */
 
 
@@ -141,14 +141,16 @@ void ModeRefStrokeTrim::finishSegmentation()
 {
   //export log
   time_t currenttime = time(NULL);
-  struct tm *t = localtime(&currenttime);
+  struct tm t;
+  errno_t err;
+  err = localtime_s(&t, &currenttime);
   std::string fname = 
-      std::to_string( t->tm_year+1900 )
-    + std::to_string( t->tm_mon + 1   )
-    + std::string((t->tm_mday < 10 ) ? "0" : "") + std::to_string( t->tm_mday )
-    + std::string((t->tm_hour < 10 ) ? "0" : "") + std::to_string( t->tm_hour )
-    + std::string((t->tm_min  < 10 ) ? "0" : "") + std::to_string( t->tm_min  )
-    + std::string((t->tm_sec  < 10 ) ? "0" : "") + std::to_string( t->tm_sec  )
+      std::to_string( t.tm_year+1900 )
+    + std::to_string( t.tm_mon + 1   )
+    + std::string((t.tm_mday < 10 ) ? "0" : "") + std::to_string( t.tm_mday )
+    + std::string((t.tm_hour < 10 ) ? "0" : "") + std::to_string( t.tm_hour )
+    + std::string((t.tm_min  < 10 ) ? "0" : "") + std::to_string( t.tm_min  )
+    + std::string((t.tm_sec  < 10 ) ? "0" : "") + std::to_string( t.tm_sec  )
     + std::string("_trimming_log.txt");
   LogCore::GetInst()->CloseLogger(fname);
 
@@ -160,14 +162,14 @@ void ModeRefStrokeTrim::finishSegmentation()
 	byte  *flg3d = ImageCore::GetInst()->m_vol_flag.GetVolumePtr();
 
 
-	//ˆê’U ƒgƒŠƒ€‚³‚ê‚½‰æ‘f‚ÌID‚ğ0‚É
+	//ä¸€æ—¦ ãƒˆãƒªãƒ ã•ã‚ŒãŸç”»ç´ ã®IDã‚’0ã«
 	for( int i= 0; i < num_voxels; ++i)
 	{
 		if( msk3d[i] == m_trgt_maskid && flg3d[i] != 255 ) msk3d[i] = 0;
 	}
   ImageCore::GetInst()->ClearMaskSurface(m_trgt_maskid);
 
-	//ƒgƒŠƒ€‚³‚ê‚½—Ìˆæ‚ğV‚µ‚¢—Ìˆæ‚Æ‚µ‚Ä’Ç‰Á
+	//ãƒˆãƒªãƒ ã•ã‚ŒãŸé ˜åŸŸã‚’æ–°ã—ã„é ˜åŸŸã¨ã—ã¦è¿½åŠ 
   bool bTrimRegionExist = false;
 	for( int i= 0; i < num_voxels; ++i) 
   {
@@ -360,11 +362,11 @@ void ModeRefStrokeTrim::KeyUp(int nChar) {}
 
 void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center)
 {
-  //rendering‚É•K—p‚Èƒpƒ‰ƒ[ƒ^‚ğW‚ß‚Ä‚¨‚­
+  //renderingã«å¿…ç”¨ãªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’é›†ã‚ã¦ãŠã
 
   if (m_b_drawingstroke && m_stroke3d.size() > 1)
 	{
-    t_DrawPolyLine( EVec3f(1,0,1), 4, m_stroke3d, true );
+    DrawPolyLine( EVec3f(1,0,1), 4, m_stroke3d, true );
 	}
 	
 	//bind volumes ---------------------------------------
@@ -406,13 +408,13 @@ static bool IsInClosedStroke(double x, double y, const std::vector<EVec2i> &stro
 
 	d1 << stroke.back ()[0] - x, stroke.back() [1] - y;
 	d2 << stroke.front()[0] - x, stroke.front()[1] - y;
-	sum = t_CalcAngle(d1,d2);
+	sum = CalcAngle(d1,d2);
 	
 	for (int i = 1; i < (int)stroke.size(); ++i)
 	{
 		d1 << stroke[i-1][0] - x, stroke[i-1][1] - y;
 		d2 << stroke[ i ][0] - x, stroke[ i ][1] - y;
-		sum += t_CalcAngle(d1,d2);
+		sum += CalcAngle(d1,d2);
 	}
 
 	return fabs(sum) > M_PI * 1.5;
@@ -459,7 +461,7 @@ void ModeRefStrokeTrim::UpdateVolFlgByStroke( OglForCLI *ogl)
 	for( auto &p : m_stroke2d) p[1] = viewport[3] - p[1];
 
 	EVec2i bb_min, bb_max;
-	t_CalcBoundingBox(m_stroke2d, bb_min, bb_max);
+	CalcBoundingBox(m_stroke2d, bb_min, bb_max);
 	bb_min[0] = std::max( 0           , bb_min[0] - 1);
 	bb_min[1] = std::max( 0           , bb_min[1] - 1);
 	bb_max[0] = std::min(viewport[2]-1, bb_max[0] + 1);

@@ -30,8 +30,8 @@ int main()
   std::cout << "start main function\n";
 
   //Initialize non-managed Singletons
-  //”ñmanaged‚ÈƒVƒ“ƒOƒ‹ƒgƒ“‚Í‚±‚±‚Å‰Šú‰»
-  //‚¾‚½‚µ‚±‚Ìƒ^ƒCƒ~ƒ“ƒO‚Å‚ÍAForm‚ğ¶¬‚µshow‚µ‚Ä‚Í‚¾‚ßD
+  //émanagedãªã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã¯ã“ã“ã§åˆæœŸåŒ–
+  //ã ãŸã—ã“ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§ã¯ã€Formã‚’ç”Ÿæˆã—showã—ã¦ã¯ã ã‚ï¼
     
   ModeCore  ::GetInst();
   ImageCore ::GetInst();
@@ -115,12 +115,12 @@ int main()
 /*
 
 todo 
-fav‘Î‰
-Fav‚ÌƒRƒ“ƒpƒCƒ‹
-1. xerces_c_3.1.4‚ğæ“¾
-2. xerces-c-3.1.4\projects\Win32\VC14\xerces-all“à‚ÌƒvƒƒWƒFƒNƒgƒtƒ@ƒCƒ‹‚ğŠJ‚­
-3. x64‚Ìreleaseƒ‚[ƒh‚Ædebugƒ‚[ƒh‚ÅƒRƒ“ƒpƒCƒ‹
-4. fav-project‚ğƒNƒ[ƒ“
-5. favƒvƒƒWƒFƒNƒg“à@fav-project\FavLibrary\FavLibrary.Win\packages\‚Éxerces-c-3.1.4ƒtƒHƒ‹ƒ_‚ğƒRƒs[
-6. favƒvƒƒWƒFƒNƒg‚ğƒRƒ“ƒpƒCƒ‹ (FavLibrary.dll/FavLibrary.lib‚ª‚Å‚«‚é)
+favå¯¾å¿œ
+Favã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
+1. xerces_c_3.1.4ã‚’å–å¾—
+2. xerces-c-3.1.4\projects\Win32\VC14\xerces-allå†…ã®ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
+3. x64ã®releaseãƒ¢ãƒ¼ãƒ‰ã¨debugãƒ¢ãƒ¼ãƒ‰ã§ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
+4. fav-projectã‚’ã‚¯ãƒ­ãƒ¼ãƒ³
+5. favãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆå†…ã€€fav-project\FavLibrary\FavLibrary.Win\packages\ã«xerces-c-3.1.4ãƒ•ã‚©ãƒ«ãƒ€ã‚’ã‚³ãƒ”ãƒ¼
+6. favãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ« (FavLibrary.dll/FavLibrary.libãŒã§ãã‚‹)
 */

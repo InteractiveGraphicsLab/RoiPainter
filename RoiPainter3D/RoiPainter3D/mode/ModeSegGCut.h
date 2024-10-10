@@ -4,7 +4,7 @@
 
 //--------------------------------------------------------------
 // class ModeSegGCut  
-// GraphCut‚É‚æ‚ésegmentation‚ğs‚È‚¤ƒ‚[ƒh
+// GraphCutã«ã‚ˆã‚‹segmentationã‚’è¡Œãªã†ãƒ¢ãƒ¼ãƒ‰
 // 
 //--------------------------------------------------------------
 
@@ -163,7 +163,7 @@ class ModeSegGCut : public ModeInterface
   // wsd nodes (array)
   GCWsdNode  *m_wsdnodes ;
 
-  //1 ring neighbors of each wsd node wsdNode[i] (•Ğ•ûŒü, ¬‚³‚¢ƒ‰ƒxƒ‹’lNode‚É‘å‚«‚¢ƒ‰ƒxƒ‹’lNode‚ğ’Ç‰Á --)
+  //1 ring neighbors of each wsd node wsdNode[i] (ç‰‡æ–¹å‘, å°ã•ã„ãƒ©ãƒ™ãƒ«å€¤Nodeã«å¤§ãã„ãƒ©ãƒ™ãƒ«å€¤Nodeã‚’è¿½åŠ  --)
 	std::set<int> *m_wsdnode_neibor; 
 
   ModeSegGCut();

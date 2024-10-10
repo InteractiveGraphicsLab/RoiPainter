@@ -1,4 +1,4 @@
-﻿#pragma unmanaged
+#pragma unmanaged
 #include "OglImage.h"
 #include "tqueue.h"
 #include "timageloader.h"
@@ -11,7 +11,7 @@
 //  0:never change 
 //  1:background
 //255:foreground
-void t_Erode3D(const int& W, const int& H, const int& D, byte* vol)
+void Erode3D(const int& W, const int& H, const int& D, byte* vol)
 {
   const int WH = W * H, WHD = W * H * D;
 
@@ -42,7 +42,7 @@ void t_Erode3D(const int& W, const int& H, const int& D, byte* vol)
 //  0:never change 
 //  1:background
 //255:foreground
-inline void t_Dilate3D(const int& W, const int& H, const int& D, byte* vol)
+inline void Dilate3D(const int& W, const int& H, const int& D, byte* vol)
 {
   const int WH = W * H, WHD = W * H * D;
 
@@ -71,7 +71,7 @@ inline void t_Dilate3D(const int& W, const int& H, const int& D, byte* vol)
 //voxel value (input/output)
 //  0 : background
 //255 : foreground
-inline void t_FillHole3D(const int& W, const int& H, const int& D, byte* vol)
+inline void FillHole3D(const int& W, const int& H, const int& D, byte* vol)
 {
   const int WH = W * H, WHD = W * H * D;
   TQueue<EVec3i> Q(WHD / 3);
@@ -120,40 +120,40 @@ inline void t_FillHole3D(const int& W, const int& H, const int& D, byte* vol)
 
 
 //voxel value 0:never change, 1:background, 255:foreground
-void t_Erode3D(OglImage3D& v)
+void Erode3D(OglImage3D& v)
 {
-  t_Erode3D(v.GetW(), v.GetH(), v.GetD(), v.GetVolumePtr());
+  Erode3D(v.GetW(), v.GetH(), v.GetD(), v.GetVolumePtr());
   v.SetUpdated();
 }
 
 //voxel value 0:never cahnge, 1:background, 255:foreground
-void t_Dilate3D(OglImage3D& v)
+void Dilate3D(OglImage3D& v)
 {
-  t_Dilate3D(v.GetW(), v.GetH(), v.GetD(), v.GetVolumePtr());
+  Dilate3D(v.GetW(), v.GetH(), v.GetD(), v.GetVolumePtr());
   v.SetUpdated();
 }
 
 //voxel value 0: background, 255:foreground
-void t_FillHole3D(OglImage3D& v)
+void FillHole3D(OglImage3D& v)
 {
-  t_FillHole3D(v.GetW(), v.GetH(), v.GetD(), v.GetVolumePtr());
+  FillHole3D(v.GetW(), v.GetH(), v.GetD(), v.GetVolumePtr());
   v.SetUpdated();
 }
 
 
-void t_Erode3D(const EVec3i& reso, byte* vol)
+void Erode3D(const EVec3i& reso, byte* vol)
 {
-  t_Erode3D(reso[0], reso[1], reso[2], vol);
+  Erode3D(reso[0], reso[1], reso[2], vol);
 }
 
-void t_Dilate3D(const EVec3i& reso, byte* vol)
+void Dilate3D(const EVec3i& reso, byte* vol)
 {
-  t_Dilate3D(reso[0], reso[1], reso[2], vol);
+  Dilate3D(reso[0], reso[1], reso[2], vol);
 }
 
-void t_FillHole3D(const EVec3i& reso, byte* vol)
+void FillHole3D(const EVec3i& reso, byte* vol)
 {
-  t_FillHole3D(reso[0], reso[1], reso[2], vol);
+  FillHole3D(reso[0], reso[1], reso[2], vol);
 }
 
 
@@ -178,19 +178,19 @@ bool OglImage2D<CH_RGBA>::Allocate(const char* fname)
   m_name_gpu = -1;
   m_image = nullptr;
   m_is_updated = true;
-  return t_loadImage(fname, m_resolution[0], m_resolution[1], m_image);
+  return LoadImage(fname, m_resolution[0], m_resolution[1], m_image);
 }
 
 
 bool OglImage2D<CH_RGBA>::SaveAs(const char* fname)
 {
-  t_saveImage(fname, m_resolution[0], m_resolution[1], m_image);
+  SaveImage(fname, m_resolution[0], m_resolution[1], m_image);
   return true;
 }
 
 bool OglImage2D<CH_INTES>::SaveAs(const char* fname)
 {
-  t_saveImage_gray(fname, m_resolution[0], m_resolution[1], m_image);
+  SaveImageGray(fname, m_resolution[0], m_resolution[1], m_image);
   return true;
 }
 
@@ -265,7 +265,7 @@ void OglImage1D<CH_RGBA>::Allocate(const char* fname)
 
   int W, H;
   GLubyte* rgba;
-  if (t_loadImage(fname, W, H, rgba))
+  if (LoadImage(fname, W, H, rgba))
   {
     Allocate(W);
     for (int i = 0; i < W; ++i) 

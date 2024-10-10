@@ -38,7 +38,7 @@ ModeSegPixPaint::~ModeSegPixPaint()
 }
 
 
-bool ModeSegPixPaint::canEndMode()
+bool ModeSegPixPaint::CanEndMode()
 {
   if (!m_b_modified) return true;
   return ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Leaving?");
@@ -71,7 +71,7 @@ void ModeSegPixPaint::FinishSegmentation()
 
   ImageCore::GetInst()->mask_storeCurrentForeGround();
 
-  //Ç±ÇÃÉ^ÉCÉ~ÉìÉOÇ≈isModified = false (ÇµÇ»Ç¢Ç∆canEndModeÇ≈É_ÉCÉAÉçÉOÇ™ï\é¶Ç≥ÇÍÇÈ)
+  //„Åì„ÅÆ„Çø„Ç§„Éü„É≥„Ç∞„ÅßisModified = false („Åó„Å™„ÅÑ„Å®canEndMode„Åß„ÉÄ„Ç§„Ç¢„É≠„Ç∞„ÅåË°®Á§∫„Åï„Çå„Çã)
   m_b_modified = false;
   ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   formMain_RedrawMainPanel();
@@ -81,7 +81,7 @@ void ModeSegPixPaint::FinishSegmentation()
 
 void ModeSegPixPaint::CancelSegmentation()
 {
-  if (!m_b_modified || ShowMsgDlgYesNo("åªç›ÇÃï™äÑåãâ Çîjä¸ÇµÇƒÇÊÇ¢Ç≈Ç∑Ç©\nDo you want to cancel current segmentation?", "cancel?"))
+  if (!m_b_modified || ShowMsgDlgYesNo("ÁèæÂú®„ÅÆÂàÜÂâ≤ÁµêÊûú„ÇíÁ†¥Ê£Ñ„Åó„Å¶„Çà„ÅÑ„Åß„Åô„Åã\nDo you want to cancel current segmentation?", "cancel?"))
   {
     m_b_modified = false;
     ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
@@ -91,7 +91,7 @@ void ModeSegPixPaint::CancelSegmentation()
 
 
 
-void ModeSegPixPaint::startMode()
+void ModeSegPixPaint::StartMode()
 {
   //initialize field
   m_bL = m_bR = m_bM = false;
@@ -150,7 +150,7 @@ static void c_DrawCubes
 //Functions for Lasso /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-//íçñ⁄ÇµÇƒÇ¢ÇÈì_Ç™ lasso ÇÃì‡ë§Ç≈Ç†ÇÈÇ©îªíË
+//Ê≥®ÁõÆ„Åó„Å¶„ÅÑ„ÇãÁÇπ„Åå lasso „ÅÆÂÜÖÂÅ¥„Åß„ÅÇ„Çã„ÅãÂà§ÂÆö
 static bool t_IsInsideLasso
 (
 	const EVec3f         &pos, 
@@ -166,7 +166,7 @@ static bool t_IsInsideLasso
 	double sum = 0;
   for( int i=0; i < N; ++i)
   {
-		sum += t_CalcAngle(lasso_stroke[ i ]-pos, lasso_stroke[ (i==N-1)?0:i+1 ]-pos, axis);
+		sum += CalcAngle(lasso_stroke[ i ]-pos, lasso_stroke[ (i==N-1)?0:i+1 ]-pos, axis);
   }
 
 	return fabs(2 * M_PI - fabs(sum)) < M_PI * 0.5;
@@ -174,9 +174,9 @@ static bool t_IsInsideLasso
 
 
 
-//lassoÇÃì‡ë§Ç…Ç†ÇÈvoxelÇ fore/backÇ…ïœçX
-//b_fore = true  --> vFlg 1   --> 255Ç…
-//b_fore = false --> vFlg 255 --> 1Ç…
+//lasso„ÅÆÂÜÖÂÅ¥„Å´„ÅÇ„Çãvoxel„Çí fore/back„Å´Â§âÊõ¥
+//b_fore = true  --> vFlg 1   --> 255„Å´
+//b_fore = false --> vFlg 255 --> 1„Å´
 static void t_addPixsInsideLasso
 (
 	const CRSSEC_ID       id   ,
@@ -193,13 +193,13 @@ static void t_addPixsInsideLasso
 	const int D = reso[2], WH = W*H;
 
   std::vector<EVec3f> lasso;
-  const int new_num = std::max( 10, std::min( (int)lasso_stroke.size(), (int)( t_verts_Length(lasso_stroke, true)/pitch[0]) ));
+  const int new_num = std::max( 10, std::min( (int)lasso_stroke.size(), (int)( VertsLength(lasso_stroke, true)/pitch[0]) ));
 
-  t_verts_ResampleEqualInterval( new_num, lasso_stroke, lasso);
+  VertsResampleEqualInterval( new_num, lasso_stroke, lasso);
 
   //compute bounding box
   EVec3f tmp_min, tmp_max;
-  t_CalcBoundingBox( lasso, tmp_min, tmp_max);
+  CalcBoundingBox( lasso, tmp_min, tmp_max);
   EVec3i bb_min ( (int) (tmp_min[0]/pitch[0] ), (int) (tmp_min[1]/pitch[1] ), (int) (tmp_min[2]/pitch[2] ) );
   EVec3i bb_max ( (int) (tmp_max[0]/pitch[0] ), (int) (tmp_max[1]/pitch[1] ), (int) (tmp_max[2]/pitch[2] ) );
   bb_min[0] = std::max( 0 ,bb_min[0] - 1);
@@ -286,7 +286,7 @@ void ModeSegPixPaint::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
   m_bL = true;
 
-  if (isShiftKeyOn())
+  if (IsShiftKeyOn())
   {
     if (formSegPixPaint_bLassoMode() || formSegPixPaint_bLassoAllMode())
     {
@@ -314,7 +314,7 @@ void ModeSegPixPaint::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 void ModeSegPixPaint::RBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
   m_bR = true;
-  if (isShiftKeyOn())
+  if (IsShiftKeyOn())
   {
     if ( formSegPixPaint_bLassoMode() || formSegPixPaint_bLassoAllMode())
     {
@@ -490,16 +490,16 @@ void ModeSegPixPaint::LBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeSegPixPaint::RBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeSegPixPaint::MBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 
-void ModeSegPixPaint::keyDown(int nChar) {}
-void ModeSegPixPaint::keyUp(int nChar) {}
+void ModeSegPixPaint::KeyDown(int nChar) {}
+void ModeSegPixPaint::KeyUp(int nChar) {}
 
 
-void ModeSegPixPaint::drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+void ModeSegPixPaint::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
 {
   const EVec3i reso = ImageCore::GetInst()->GetReso();
 
   BindAllVolumes();
-  DrawCrossSections(cuboid, reso, !isSpaceKeyOn(), m_crssec_shader);
+  DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader);
 
   if (formVisParam_bRendVol())
   {
@@ -507,7 +507,7 @@ void ModeSegPixPaint::drawScene(const EVec3f &cuboid, const EVec3f &camP, const 
     glEnable(GL_BLEND);
     const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
     DrawVolumeSlices( cuboid, reso, camP, camF, 
-                     !isSpaceKeyOn(), b_onmanip, m_volume_shader);
+                     !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
   }

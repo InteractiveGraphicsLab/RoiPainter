@@ -384,7 +384,7 @@ public:
      */
     virtual void setRecordsOriginFile(const char *fname);
 
-    /// get the filename from which this directory record was read from, NULL íf not set
+    /// get the filename from which this directory record was read from, NULL å‡¬ not set
     virtual const char* getRecordsOriginFile();
 
     /// get the offset in file of this directory record
