@@ -1,0 +1,141 @@
+  RoiPainter3D.FormIntegerSelection.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormMain.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormMaskIDselection.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormRefSplitByPlane.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormRefStrokeTrim.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormSegGCut.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormSegLocalRGrow.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormSegParallelWires.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormSegRGrow.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormSegVoxelPaint.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormStackOrder.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormSubView.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormVisMask.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormVisNorm.resources - Embedded, ContainedInManifestFile, 
+  RoiPainter3D.FormVisParam.resources - Embedded, ContainedInManifestFile, 
+ImageRuntimeVersion: v4.0.30319
+Assembly RoiPainter3D, Version=1.0.*, Culture=ロケールに依存しない言語 (ロケールに依存しない国): 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a: 
+	hash=None, flags=None
+Assembly System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Class RoiPainter3D.FormIntegerSelection: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(Int32, Int32, Int32, SByte*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Methods:
+    GetValue(): PrivateScope, Public, HideBySig
+Class RoiPainter3D.FormMain: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    redrawMainPanel(): PrivateScope, Public, HideBySig
+    initCameraPosition(): PrivateScope, Public, HideBySig
+    setBkColor(Single, Single, Single): PrivateScope, Public, HideBySig
+    GetOgl(): PrivateScope, Public, HideBySig
+Class RoiPainter3D.FormSubView: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInstX(): PrivateScope, Public, Static, HideBySig
+    getInstY(): PrivateScope, Public, Static, HideBySig
+    getInstZ(): PrivateScope, Public, Static, HideBySig
+    RedrawPanel(): PrivateScope, Public, HideBySig
+    InitCamera(): PrivateScope, Public, HideBySig
+Class RoiPainter3D.FormVisParam: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    initAllItemsForNewImg(): PrivateScope, Public, HideBySig
+    updateHistogramBmp(): PrivateScope, Public, HideBySig
+    redrawTransFuncPictBox(): PrivateScope, Public, HideBySig
+    PitchUpdated(): PrivateScope, Public, HideBySig
+    bRendFrame(): PrivateScope, Public, HideBySig
+    bRendIndi(): PrivateScope, Public, HideBySig
+    bPlaneXY(): PrivateScope, Public, HideBySig
+    bPlaneYZ(): PrivateScope, Public, HideBySig
+    bPlaneZX(): PrivateScope, Public, HideBySig
+    bRendVol(): PrivateScope, Public, HideBySig
+    bGradMag(): PrivateScope, Public, HideBySig
+    bDoPsued(): PrivateScope, Public, HideBySig
+    bOtherRoi(): PrivateScope, Public, HideBySig
+    bOnManip(): PrivateScope, Public, HideBySig
+    doImgInterpolation(): PrivateScope, Public, HideBySig
+    getAlpha(): PrivateScope, Public, HideBySig
+    getSliceNum(): PrivateScope, Public, HideBySig
+    bindTfImg(): PrivateScope, Public, HideBySig
+    bindPsuImg(): PrivateScope, Public, HideBySig
+    LockPitchBox(): PrivateScope, Public, HideBySig
+    UnlockPitchBox(): PrivateScope, Public, HideBySig
+    SetPlanesCheck(Boolean(HasFieldMarshal), Boolean(HasFieldMarshal), Boolean(HasFieldMarshal)): PrivateScope, Public, HideBySig
+Class RoiPainter3D.FormVisNorm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    setVolumeValVis(Int16): PrivateScope, Public, HideBySig
+Class RoiPainter3D.FormVisMask: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    updateList(): PrivateScope, Public, HideBySig
+Class RoiPainter3D.FormSegRGrow: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    InitAllItems(Int16, Int16): PrivateScope, Public, HideBySig
+    DoLimitIteration(): PrivateScope, Public, HideBySig
+    GetMaxIteration(): PrivateScope, Public, HideBySig
+Class RoiPainter3D.FormSegGCut: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+Class RoiPainter3D.FormSegThreshfieldPaint: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+Class RoiPainter3D.FormSegVoxelPaint: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    bLassoMode(): PrivateScope, Public, HideBySig
+Class RoiPainter3D.FormSegLocalRGrow: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+    UpdateAllItems(): PrivateScope, Public, HideBySig
+    UpdateList(): PrivateScope, Public, HideBySig
+    UpdateSliders(): PrivateScope, Public, HideBySig
+    SetSliderRange(Single, Int16, Int16): PrivateScope, Public, HideBySig
+Class RoiPainter3D.FormSegParallelWires: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    GetInst(): PrivateScope, Public, Static, HideBySig
+    IsTrgetXY(): PrivateScope, Public, HideBySig
+    IsTrgetYZ(): PrivateScope, Public, HideBySig
+    IsTrgetZX(): PrivateScope, Public, HideBySig
+    IsDrawAllWires(): PrivateScope, Public, HideBySig
+Class RoiPainter3D.FormRefStrokeTrim: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+Class RoiPainter3D.FormRefSplitByPlane: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+  Methods:
+    getInst(): PrivateScope, Public, Static, HideBySig
+Class RoiPainter3D.FormMaskIDselection: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(std.vector<MaskData\,std::allocator<MaskData> >*, Int32, Boolean): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Methods:
+    getTrgtIDs(set<int\,std::less<int>\,std::allocator<int> >* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+Class RoiPainter3D.FormStackOrder: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    Int32 m_flg : Public
