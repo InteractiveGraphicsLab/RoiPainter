@@ -1,43 +1,43 @@
-//—Œ¤İĞ’†AˆäK‚ªCG Gems JP—p‚ÉOpenSource‚Æ‚µ‚ÄŒöŠJ‚µ‚½ƒR[ƒh
+//ç†ç ”åœ¨ç±ä¸­ã€äº•å°»ãŒCG Gems JPç”¨ã«OpenSourceã¨ã—ã¦å…¬é–‹ã—ãŸã‚³ãƒ¼ãƒ‰
 
 /*------------------------------------------------------------------------------------
-–{ƒ\ƒtƒgƒEƒGƒA‚Í NYSLƒ‰ƒCƒZƒ“ƒX (Version 0.9982) ‚É‚ÄŒöŠJ‚µ‚Ü‚·
+æœ¬ã‚½ãƒ•ãƒˆã‚¦ã‚¨ã‚¢ã¯ NYSLãƒ©ã‚¤ã‚»ãƒ³ã‚¹ (Version 0.9982) ã«ã¦å…¬é–‹ã—ã¾ã™
 
-A. –{ƒ\ƒtƒgƒEƒFƒA‚Í Everyone'sWare ‚Å‚·B‚±‚Ìƒ\ƒtƒg‚ğè‚É‚µ‚½ˆêlˆêl‚ªA
-   ‚²©•ª‚Ìì‚Á‚½‚à‚Ì‚ğˆµ‚¤‚Ì‚Æ“¯‚¶‚æ‚¤‚ÉA©—R‚É—˜—p‚·‚é‚±‚Æ‚ªo—ˆ‚Ü‚·B
+A. æœ¬ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã¯ Everyone'sWare ã§ã™ã€‚ã“ã®ã‚½ãƒ•ãƒˆã‚’æ‰‹ã«ã—ãŸä¸€äººä¸€äººãŒã€
+   ã”è‡ªåˆ†ã®ä½œã£ãŸã‚‚ã®ã‚’æ‰±ã†ã®ã¨åŒã˜ã‚ˆã†ã«ã€è‡ªç”±ã«åˆ©ç”¨ã™ã‚‹ã“ã¨ãŒå‡ºæ¥ã¾ã™ã€‚
 
-  A-1. ƒtƒŠ[ƒEƒFƒA‚Å‚·BìÒ‚©‚ç‚Íg—p—¿“™‚ğ—v‹‚µ‚Ü‚¹‚ñB
-  A-2. —L—¿–³—¿‚â”}‘Ì‚Ì”@‰½‚ğ–â‚í‚¸A©—R‚É“]ÚEÄ”z•z‚Å‚«‚Ü‚·B
-  A-3. ‚¢‚©‚È‚éí—Ş‚Ì ‰ü•ÏE‘¼ƒvƒƒOƒ‰ƒ€‚Å‚Ì—˜—p ‚ğs‚Á‚Ä‚à\‚¢‚Ü‚¹‚ñB
-  A-4. •ÏX‚µ‚½‚à‚Ì‚â•”•ª“I‚Ég—p‚µ‚½‚à‚Ì‚ÍA‚ ‚È‚½‚Ì‚à‚Ì‚É‚È‚è‚Ü‚·B
-       ŒöŠJ‚·‚éê‡‚ÍA‚ ‚È‚½‚Ì–¼‘O‚Ì‰º‚Ås‚Á‚Ä‰º‚³‚¢B
+  A-1. ãƒ•ãƒªãƒ¼ã‚¦ã‚§ã‚¢ã§ã™ã€‚ä½œè€…ã‹ã‚‰ã¯ä½¿ç”¨æ–™ç­‰ã‚’è¦æ±‚ã—ã¾ã›ã‚“ã€‚
+  A-2. æœ‰æ–™ç„¡æ–™ã‚„åª’ä½“ã®å¦‚ä½•ã‚’å•ã‚ãšã€è‡ªç”±ã«è»¢è¼‰ãƒ»å†é…å¸ƒã§ãã¾ã™ã€‚
+  A-3. ã„ã‹ãªã‚‹ç¨®é¡ã® æ”¹å¤‰ãƒ»ä»–ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã§ã®åˆ©ç”¨ ã‚’è¡Œã£ã¦ã‚‚æ§‹ã„ã¾ã›ã‚“ã€‚
+  A-4. å¤‰æ›´ã—ãŸã‚‚ã®ã‚„éƒ¨åˆ†çš„ã«ä½¿ç”¨ã—ãŸã‚‚ã®ã¯ã€ã‚ãªãŸã®ã‚‚ã®ã«ãªã‚Šã¾ã™ã€‚
+       å…¬é–‹ã™ã‚‹å ´åˆã¯ã€ã‚ãªãŸã®åå‰ã®ä¸‹ã§è¡Œã£ã¦ä¸‹ã•ã„ã€‚
 
-B. ‚±‚Ìƒ\ƒtƒg‚ğ—˜—p‚·‚é‚±‚Æ‚É‚æ‚Á‚Ä¶‚¶‚½‘¹ŠQ“™‚É‚Â‚¢‚ÄAìÒ‚Í
-   Ó”C‚ğ•‰‚í‚È‚¢‚à‚Ì‚Æ‚µ‚Ü‚·BŠe©‚ÌÓ”C‚É‚¨‚¢‚Ä‚²—˜—p‰º‚³‚¢B
+B. ã“ã®ã‚½ãƒ•ãƒˆã‚’åˆ©ç”¨ã™ã‚‹ã“ã¨ã«ã‚ˆã£ã¦ç”Ÿã˜ãŸæå®³ç­‰ã«ã¤ã„ã¦ã€ä½œè€…ã¯
+   è²¬ä»»ã‚’è² ã‚ãªã„ã‚‚ã®ã¨ã—ã¾ã™ã€‚å„è‡ªã®è²¬ä»»ã«ãŠã„ã¦ã”åˆ©ç”¨ä¸‹ã•ã„ã€‚
 
-C. ’˜ìÒlŠiŒ ‚Í ˆäKŒh(—‰»ŠwŒ¤‹†Š)‚É‹A‘®‚µ‚Ü‚·B’˜ìŒ ‚Í•úŠü‚µ‚Ü‚·B
+C. è‘—ä½œè€…äººæ ¼æ¨©ã¯ äº•å°»æ•¬(ç†åŒ–å­¦ç ”ç©¶æ‰€)ã«å¸°å±ã—ã¾ã™ã€‚è‘—ä½œæ¨©ã¯æ”¾æ£„ã—ã¾ã™ã€‚
 
-D. ˆÈã‚Ì‚R€‚ÍAƒ\[ƒXEÀsƒoƒCƒiƒŠ‚Ì‘o•û‚É“K—p‚³‚ê‚Ü‚·B
+D. ä»¥ä¸Šã®ï¼“é …ã¯ã€ã‚½ãƒ¼ã‚¹ãƒ»å®Ÿè¡Œãƒã‚¤ãƒŠãƒªã®åŒæ–¹ã«é©ç”¨ã•ã‚Œã¾ã™ã€‚
 ----------------------------------------------------------------------------------*/
 
 
 //----Boykov and Kolmogorov algorithm (dual search tree)----------------------------
 //
-//c—]ƒOƒ‰ƒtã‚ÉCŸ‚Ì2í‚Ì’Tõ–Ø‚ğ\’z‚µCSouce --> Sink ƒpƒXŒø‰Ê“I‚ÉŒŸõ‚·‚é
-//n“_‚ğƒ‹[ƒg‚Æ‚·‚é’Tõ–Ø uSv@@
-//I“_‚ğƒ‹[ƒg‚Æ‚·‚é’Tõ–Ø uTv@
-// ¦c—]ƒOƒ‰ƒt‚Ìnode‚Í, ’Tõ–ØS, ’Tõ–ØT, –Ø‚ÉŠÜ‚Ü‚ê‚È‚¢ ‚Ì‚¢‚¸‚ê‚©‚Ìó‘Ô‚ğ‚Â. ƒtƒ‰ƒO@f_inST@‚ÅŠÇ—)
+//æ®‹ä½™ã‚°ãƒ©ãƒ•ä¸Šã«ï¼Œæ¬¡ã®2ç¨®ã®æ¢ç´¢æœ¨ã‚’æ§‹ç¯‰ã—ï¼ŒSouce --> Sink ãƒ‘ã‚¹åŠ¹æœçš„ã«æ¤œç´¢ã™ã‚‹
+//å§‹ç‚¹ã‚’ãƒ«ãƒ¼ãƒˆã¨ã™ã‚‹æ¢ç´¢æœ¨ ã€ŒSã€ã€€ã€€
+//çµ‚ç‚¹ã‚’ãƒ«ãƒ¼ãƒˆã¨ã™ã‚‹æ¢ç´¢æœ¨ ã€ŒTã€ã€€
+// â€»æ®‹ä½™ã‚°ãƒ©ãƒ•ã®nodeã¯, æ¢ç´¢æœ¨S, æ¢ç´¢æœ¨T, æœ¨ã«å«ã¾ã‚Œãªã„ ã®ã„ãšã‚Œã‹ã®çŠ¶æ…‹ã‚’æŒã¤. ãƒ•ãƒ©ã‚°ã€€f_inSTã€€ã§ç®¡ç†)
 //
-//ƒAƒ‹ƒSƒŠƒYƒ€: ’Tõ–Ø S T ‚ğÅ‰‚Éˆê“x\’z‚µC‚»‚ÌŒã 1-4‚ğŒJ‚è•Ô‚·
-// 1. GROWTH       : ’Tõ–Ø S T ‚Ì¬’·‚³‚¹‘‰Á‰Â”\Œo˜H‚ğ’Tõ
-// 2. AUGMENTATION : ‘‰Á‰Â”\Œo˜H‚Éƒtƒ[‚ğ—¬‚·
-// 3. ADOPTION_S   : ’Tõ–ØS‚Ìedge‚ªØ‚êC–Ø\‘¢‚ª‰ó‚ê‚Ä‚¢‚é‰Â”\«‚ª‚ ‚é‚Ì‚ÅC•œ‚·‚é adoption‚Í—{q‰‘g‚ÌˆÓ–¡
-// 4. ADOPTION_T   : ’Tõ–ØT‚Ìedge‚ªØ‚êC–Ø\‘¢‚ª‰ó‚ê‚Ä‚¢‚é‰Â”\«‚ª‚ ‚é‚Ì‚ÅC•œ‚·‚é 
+//ã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ : æ¢ç´¢æœ¨ S T ã‚’æœ€åˆã«ä¸€åº¦æ§‹ç¯‰ã—ï¼Œãã®å¾Œ 1-4ã‚’ç¹°ã‚Šè¿”ã™
+// 1. GROWTH       : æ¢ç´¢æœ¨ S T ã®æˆé•·ã•ã›å¢—åŠ å¯èƒ½çµŒè·¯ã‚’æ¢ç´¢
+// 2. AUGMENTATION : å¢—åŠ å¯èƒ½çµŒè·¯ã«ãƒ•ãƒ­ãƒ¼ã‚’æµã™
+// 3. ADOPTION_S   : æ¢ç´¢æœ¨Sã®edgeãŒåˆ‡ã‚Œï¼Œæœ¨æ§‹é€ ãŒå£Šã‚Œã¦ã„ã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã®ã§ä¿®å¾©ã™ã‚‹ adoptionã¯é¤Šå­ç¸çµ„ã®æ„å‘³
+// 4. ADOPTION_T   : æ¢ç´¢æœ¨Tã®edgeãŒåˆ‡ã‚Œï¼Œæœ¨æ§‹é€ ãŒå£Šã‚Œã¦ã„ã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã®ã§ä¿®å¾©ã™ã‚‹ 
 //
-// ¬’·—\’è‚Ì’Tõ–Ø’¸“_ ‚ğ‚ÂƒLƒ…[ ‚ğ linked list‚ÅÀ‘• 
-//w TFlowNetwork_BK4::m_actHead xƒLƒ…[
-//w TFlowNetwork_BK4::m_actTail xƒLƒ…[
-//w TFlowNetwork_BK4::m_actHead xƒLƒ…[
+// æˆé•·äºˆå®šã®æ¢ç´¢æœ¨é ‚ç‚¹ ã‚’æŒã¤ã‚­ãƒ¥ãƒ¼ ã‚’ linked listã§å®Ÿè£… 
+//ã€ TFlowNetwork_BK4::m_actHead ã€ã‚­ãƒ¥ãƒ¼
+//ã€ TFlowNetwork_BK4::m_actTail ã€ã‚­ãƒ¥ãƒ¼
+//ã€ TFlowNetwork_BK4::m_actHead ã€ã‚­ãƒ¥ãƒ¼
 //----------------------------------------------------------------------------------
 
 
@@ -55,7 +55,7 @@ D. ˆÈã‚Ì‚R€‚ÍAƒ\[ƒXEÀsƒoƒCƒiƒŠ‚Ì‘o•û‚É“K—p‚³‚ê‚Ü‚·B
 //#endif
 
 
-//‚±‚ÌÀ‘•‚ÍAƒOƒ‰ƒtƒJƒbƒg–@‚Ìì‚éƒtƒ[ƒlƒbƒgƒ[ƒN‚É“Á‰»‚µ‚Ä‚¢‚é‚½‚ßA’Êí‚Ìƒtƒ[ƒlƒbƒgƒ[ƒN‚É‚Íg‚¦‚È‚¢
+//ã“ã®å®Ÿè£…ã¯ã€ã‚°ãƒ©ãƒ•ã‚«ãƒƒãƒˆæ³•ã®ä½œã‚‹ãƒ•ãƒ­ãƒ¼ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã«ç‰¹åŒ–ã—ã¦ã„ã‚‹ãŸã‚ã€é€šå¸¸ã®ãƒ•ãƒ­ãƒ¼ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã«ã¯ä½¿ãˆãªã„
 
 //Node & Edge data structure//
 class BK4_Edge;
@@ -65,12 +65,12 @@ class BK4_Node;
 class BK4_Node
 {
 public:
-	BK4_Edge  *e_first ;//‘S‚Ä‚Ì•Ó‚ğ„‚éÛ‚Ì Å‰‚Ì•Ó
-	BK4_Edge  *e_parent;//’Tõ–Ø‚Ìeedge‚Ö‚Ìƒ|ƒCƒ“ƒ^D0‚È‚çe‚È‚µ(ƒ‹[ƒg‚©’Tõ–Ø‚Ìƒm[ƒh‚Å‚È‚¢) 
-	int        flgST   ;//0:’Tõ–Ø‚Ìƒm[ƒh‚Å‚È‚¢   1:’Tõ–ØS‚Ìƒm[ƒh  -1:’Tõ–ØT‚Ìƒm[ƒh  
+	BK4_Edge  *e_first ;//å…¨ã¦ã®è¾ºã‚’å·¡ã‚‹éš›ã® æœ€åˆã®è¾º
+	BK4_Edge  *e_parent;//æ¢ç´¢æœ¨ã®è¦ªedgeã¸ã®ãƒã‚¤ãƒ³ã‚¿ï¼0ãªã‚‰è¦ªãªã—(ãƒ«ãƒ¼ãƒˆã‹æ¢ç´¢æœ¨ã®ãƒãƒ¼ãƒ‰ã§ãªã„) 
+	int        flgST   ;//0:æ¢ç´¢æœ¨ã®ãƒãƒ¼ãƒ‰ã§ãªã„   1:æ¢ç´¢æœ¨Sã®ãƒãƒ¼ãƒ‰  -1:æ¢ç´¢æœ¨Tã®ãƒãƒ¼ãƒ‰  
 
-	BK4_Node  *n_actF;//active node Ÿ‚Ö‚Ìƒ|ƒCƒ“ƒ^(FIFOƒLƒ…[‚ğ‚±‚±‚ÅÀ‘•)
-	BK4_Node  *n_actB;//active node ‘O‚Ö‚Ìƒ|ƒCƒ“ƒ^(FIFOƒLƒ…[‚ğ‚±‚±‚ÅÀ‘•)
+	BK4_Node  *n_actF;//active node æ¬¡ã¸ã®ãƒã‚¤ãƒ³ã‚¿(FIFOã‚­ãƒ¥ãƒ¼ã‚’ã“ã“ã§å®Ÿè£…)
+	BK4_Node  *n_actB;//active node å‰ã¸ã®ãƒã‚¤ãƒ³ã‚¿(FIFOã‚­ãƒ¥ãƒ¼ã‚’ã“ã“ã§å®Ÿè£…)
 
 	int ts  ;//time stamp
 	int dist;//dist from source
@@ -88,11 +88,11 @@ public:
 class BK4_Edge
 {
 public:
-	double   capa; // —e—Ê
-	BK4_Node *n_from; // •Ó‚ÌŒ³‚Ì ’¸“_ 
-	BK4_Node *n_to  ; // •Ó‚Ìæ‚Ì ’¸“_ 
-	BK4_Edge *e_rev ; // ‹t•Às•Ó
-	BK4_Edge *e_next; // ’¸“_‚©‚ço‚é‘S‚Ä‚Ì•Ó‚ğ„‚éÛ‚Ì Ÿ‚Ì•Ó (null‚È‚çI‚í‚è)
+	double   capa; // å®¹é‡
+	BK4_Node *n_from; // è¾ºã®å…ƒã® é ‚ç‚¹ 
+	BK4_Node *n_to  ; // è¾ºã®å…ˆã® é ‚ç‚¹ 
+	BK4_Edge *e_rev ; // é€†ä¸¦è¡Œè¾º
+	BK4_Edge *e_next; // é ‚ç‚¹ã‹ã‚‰å‡ºã‚‹å…¨ã¦ã®è¾ºã‚’å·¡ã‚‹éš›ã® æ¬¡ã®è¾º (nullãªã‚‰çµ‚ã‚ã‚Š)
 
 	BK4_Edge(){
 		n_from = n_to  = 0;
@@ -108,15 +108,15 @@ public:
 
 class TFlowNetwork_BK4
 {
-	const int m_nNum     ;//’¸“_‚Ì”     (‰Šú‰»‚ÉŒˆ’è)
-	const int m_eNumMax  ;//Å‘å‚Ì•Ó‚Ì” (‰Šú‰»‚ÉŒˆ’è) 
-	int       m_eNum     ;//ÀÛ‚Ì•Ó‚Ì” (addEdge‚ğŒÄ‚Ô‚½‚Ñ2–{‘‚¦‚é)
+	const int m_nNum     ;//é ‚ç‚¹ã®æ•°     (åˆæœŸåŒ–æ™‚ã«æ±ºå®š)
+	const int m_eNumMax  ;//æœ€å¤§ã®è¾ºã®æ•° (åˆæœŸåŒ–æ™‚ã«æ±ºå®š) 
+	int       m_eNum     ;//å®Ÿéš›ã®è¾ºã®æ•° (addEdgeã‚’å‘¼ã¶ãŸã³2æœ¬å¢—ãˆã‚‹)
 
-	BK4_Edge *m_e        ;//•Ó  ‚Ì”z—ñ
-	BK4_Node *m_n        ;//’¸“_‚Ì”z—ñ
+	BK4_Edge *m_e        ;//è¾º  ã®é…åˆ—
+	BK4_Node *m_n        ;//é ‚ç‚¹ã®é…åˆ—
 
-	BK4_Node *m_actHead  ;//active node‚ÌƒLƒ…[‚Ìhead
-	BK4_Node *m_actTail  ;//active node‚ÌƒLƒ…[‚Ìtail
+	BK4_Node *m_actHead  ;//active nodeã®ã‚­ãƒ¥ãƒ¼ã®head
+	BK4_Node *m_actTail  ;//active nodeã®ã‚­ãƒ¥ãƒ¼ã®tail
 
 	int m_time ;
 	double m_trimed_tLink_capa;
@@ -135,29 +135,29 @@ public:
 		m_actHead = m_actTail = 0;
 		m_trimed_tLink_capa = 0;
 
-		//‚±‚±‚Å’Tõ–Ø‚ğ‰Šú‰» 
+		//ã“ã“ã§æ¢ç´¢æœ¨ã‚’åˆæœŸåŒ– 
 		m_n[ SourceID ].flgST =  1;   
 		m_n[ SinkID   ].flgST = -1;   
 
  	}
 
 	//////////////////////////////////////////////////////////////////////////////////
-	//•Ó‚Ì’Ç‰Á :: •Ó(from,to).—e—Ê=capa1 ‚Æ@•Ó(to,from).—e—Ê=capa2  ‚Ì2•Ó‚ª’Ç‰Á‚³‚ê‚é
+	//è¾ºã®è¿½åŠ  :: è¾º(from,to).å®¹é‡=capa1 ã¨ã€€è¾º(to,from).å®¹é‡=capa2  ã®2è¾ºãŒè¿½åŠ ã•ã‚Œã‚‹
 	void addEdge(const int &from, const int &to, const double &capa1, const double &capa2)
 	{
 		BK4_Node *nF = &m_n[ from   ], *nT   = &m_n[ to ];
 		BK4_Edge *e  = &m_e[ m_eNum ], *eRev = &m_e[ m_eNum + 1 ];
 
-		//«•Ó(from,to)            //«•Ó(to, from)
+		//â†“è¾º(from,to)            //â†“è¾º(to, from)
 		e->n_from = nF         ;   eRev->n_from = nT    ;
 		e->n_to   = nT         ;   eRev->n_to   = nF    ;
 		e->e_rev  = eRev       ;   eRev->e_rev  = e     ;
 		e->capa   = capa1      ;   eRev->capa   = capa2 ;
 
-		e->e_next = nF->e_first;   eRev->e_next = nT->e_first; // ’¸“_‚©‚ço‚é‘S‚Ä‚Ì•ÓŒŸõ‚Ì‚½‚ß‚Ì •Óƒ|ƒCƒ“ƒ^‚Ì•t‚¯‘Ö‚¦
+		e->e_next = nF->e_first;   eRev->e_next = nT->e_first; // é ‚ç‚¹ã‹ã‚‰å‡ºã‚‹å…¨ã¦ã®è¾ºæ¤œç´¢ã®ãŸã‚ã® è¾ºãƒã‚¤ãƒ³ã‚¿ã®ä»˜ã‘æ›¿ãˆ
 		nF->e_first = e        ;   nT->e_first  = eRev;
 		
-		m_eNum += 2;//•Ó‚Ì”XV
+		m_eNum += 2;//è¾ºã®æ•°æ›´æ–°
 	}
 
 	void add_nLink( const int &pIdx, const int &qIdx, const double &capa)
@@ -165,7 +165,7 @@ public:
 		addEdge( pIdx, qIdx, capa, capa );
 	}
 
-	//–{•¶’†‚Ì t-link‚ÌƒgƒŠƒ~ƒ“ƒOQÆA‚³‚ç‚É‚±‚Ìƒ^ƒCƒ~ƒ“ƒO‚Å’Tõ–Ø‚ğ¬’·‚³‚¹‚é
+	//æœ¬æ–‡ä¸­ã® t-linkã®ãƒˆãƒªãƒŸãƒ³ã‚°å‚ç…§ã€ã•ã‚‰ã«ã“ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§æ¢ç´¢æœ¨ã‚’æˆé•·ã•ã›ã‚‹
 	void add_tLink( const int &sIdx, const int &tIdx, const int &pIdx, const double &capaSP, const double &capaPT)
 	{
 		if     ( capaSP > capaPT ) 
@@ -195,7 +195,7 @@ public:
 
 
 	//////////////////////////////////////////////////////////////////////////////////
-	////////////////////active ’¸“_ ‚Ì fifo queue/////////////////////////////////////
+	////////////////////active é ‚ç‚¹ ã® fifo queue/////////////////////////////////////
 	inline bool actNode_empty(){ return m_actHead == 0; }
 	inline void actNode_push(BK4_Node *n)
 	{
@@ -217,7 +217,7 @@ public:
 		m_actHead = m_actHead->n_actB; top->n_actB = 0;
 		
 		if( m_actHead != 0 ) m_actHead->n_actF = 0;
-		//m_actHead == 0‚È‚çqueue‚ª‹ó‚É‚È‚Á‚½
+		//m_actHead == 0ãªã‚‰queueãŒç©ºã«ãªã£ãŸ
 	}
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
@@ -225,7 +225,7 @@ public:
 
 
 /*-----------------------------------------------------------------------------------------
-// Boykov and Kolmogorov algorithm (dual search tree)									@//
+// Boykov and Kolmogorov algorithm (dual search tree)									ã€€//
 -----------------------------------------------------------------------------------------*/
 	double calcMaxFlow(const int FROM, const int TO, byte *minCut)
 	{
@@ -238,22 +238,22 @@ public:
 		TQueue< BK4_Edge* > aug_pathS    (80,40), aug_pathT    (80,40);
 
 
-		//0...’Tõ–Ø‚Í‰Šú‰»Ï‚İ 
+		//0...æ¢ç´¢æœ¨ã¯åˆæœŸåŒ–æ¸ˆã¿ 
 
 		BK4_Edge *pathE, *eS, *eT;
 		while( true )
 		{
-			//1...GROWTH ’Tõ–ØS‚ÆT‚ªÚG‚·‚é•Ó pathE‚ğ•Ô‚·-------------------
+			//1...GROWTH æ¢ç´¢æœ¨Sã¨TãŒæ¥è§¦ã™ã‚‹è¾º pathEã‚’è¿”ã™-------------------
 			pathE = GROWTH( );
 			if( pathE == 0 ) break;
 		
-			//2-1 AUGMENTATION ‘‰Á‰Â”\‚ÈÅ‘å—e—ÊŒŸõ-------------------------
+			//2-1 AUGMENTATION å¢—åŠ å¯èƒ½ãªæœ€å¤§å®¹é‡æ¤œç´¢-------------------------
 			double pathMaxFlow = pathE->capa;
 
 			aug_pathS.clear();
 			aug_pathT.clear();
 
-			eS = pathE->n_from->e_parent; //–ØS‚ğ‚³‚©‚Ì‚Ú‚é
+			eS = pathE->n_from->e_parent; //æœ¨Sã‚’ã•ã‹ã®ã¼ã‚‹
 			while( 1 ) 
 			{
 				if( eS->capa < pathMaxFlow) pathMaxFlow = eS->capa; 
@@ -262,7 +262,7 @@ public:
 				eS = eS->n_from->e_parent;
 			}
 
-			eT = pathE->n_to  ->e_parent; //–ØT‚ğ‚·‚·‚ß‚é
+			eT = pathE->n_to  ->e_parent; //æœ¨Tã‚’ã™ã™ã‚ã‚‹
 			while( 1 ) 
 			{
 				if( eT->capa < pathMaxFlow) pathMaxFlow = eT->capa; 
@@ -271,11 +271,11 @@ public:
 				eT = eT->n_to  ->e_parent;
 			}
 
-			//2-2 AUGMENTATION ƒtƒ[’Ç‰Á-------------------------------------
+			//2-2 AUGMENTATION ãƒ•ãƒ­ãƒ¼è¿½åŠ -------------------------------------
 			pathE->capa         -=  pathMaxFlow;
 			pathE->e_rev->capa  +=  pathMaxFlow;
 
-			//Œo˜H‚ÌÅŒã •Ó (s,p) (p,t) ‚Ì—e—Ê‚ğ•Ï‰» (‹t•Às•Ó‚Í–³‹)
+			//çµŒè·¯ã®æœ€å¾Œ è¾º (s,p) (p,t) ã®å®¹é‡ã‚’å¤‰åŒ– (é€†ä¸¦è¡Œè¾ºã¯ç„¡è¦–)
 			eS->capa        -=  pathMaxFlow; 
 			if( eS->capa == 0 ){ orphanNodes_S.push_back( eS->n_to   ); eS->n_to  ->e_parent = 0; }
 
@@ -312,7 +312,7 @@ public:
 
 private:
 
-	//’Tõ–ØS‚ÆT‚ªÚG‚·‚é•Ó‚ğ•Ô‚· (‚à‚Á‚Æ‚‘¬‰»‚·‚é‚È‚ç if(e->capa)‚Ì•ªŠò‚ğ‚È‚­‚·H•v‚ª•K—v
+	//æ¢ç´¢æœ¨Sã¨TãŒæ¥è§¦ã™ã‚‹è¾ºã‚’è¿”ã™ (ã‚‚ã£ã¨é«˜é€ŸåŒ–ã™ã‚‹ãªã‚‰ if(e->capa)ã®åˆ†å²ã‚’ãªãã™å·¥å¤«ãŒå¿…è¦
 	BK4_Edge* GROWTH( )
 	{
 		BK4_Node *pivN;
@@ -321,7 +321,7 @@ private:
 		{
 			if( actNode_empty() ) break;
 
-			switch( m_actHead->flgST )//m_actHead©‚±‚ê‚ª queue A ‚Ìfront—v‘f
+			switch( m_actHead->flgST )//m_actHeadâ†ã“ã‚ŒãŒ queue A ã®frontè¦ç´ 
 			{
 			case 1 :
 				e = m_actHead->e_first;
@@ -364,7 +364,7 @@ private:
 				}
 				break;
 			}
-			actNode_pop();//‚·‚×‚Ä‚Ìqƒm[ƒh‚ğ’²‚×I‚í‚Á‚Ä‚©‚çpop‚·‚é
+			actNode_pop();//ã™ã¹ã¦ã®å­ãƒãƒ¼ãƒ‰ã‚’èª¿ã¹çµ‚ã‚ã£ã¦ã‹ã‚‰popã™ã‚‹
 		}
 		return 0; // not found!!	
 	}
@@ -400,15 +400,15 @@ private:
 			}
 			if( parent_candidate != 0 ){
 				orphN->e_parent = parent_candidate;
-				continue; //e”­Œ©!
+				continue; //è¦ªç™ºè¦‹!
 			}
 
-			//e‚¢‚È‚¢
-			orphN->flgST = 0; //orphN‚ğ–Ø‚©‚çíœ
+			//è¦ªã„ãªã„
+			orphN->flgST = 0; //orphNã‚’æœ¨ã‹ã‚‰å‰Šé™¤
 			for( e = orphN->e_first; e ; e = e->e_next) 
 			{
 				v = e->n_to;
-				if( v->e_parent == e ){ orphanNodes.push_back( v ); v->e_parent = 0; }//orphN‚Ì‚·‚×‚Ä‚Ìq‚ğŒÇ—§‚³‚¹‚é
+				if( v->e_parent == e ){ orphanNodes.push_back( v ); v->e_parent = 0; }//orphNã®ã™ã¹ã¦ã®å­ã‚’å­¤ç«‹ã•ã›ã‚‹
 				if( v->flgST > 0 && e->e_rev->capa ) actNode_push( v );   
 			}
 		}
@@ -443,23 +443,23 @@ private:
 			}
 			if( parent_candidate != 0 ) {
 				orphN->e_parent = parent_candidate;
-				continue; //e”­Œ©!
+				continue; //è¦ªç™ºè¦‹!
 			}
 
-			orphN->flgST = 0; //orphN‚ğ–Ø‚©‚çíœ‚µ
+			orphN->flgST = 0; //orphNã‚’æœ¨ã‹ã‚‰å‰Šé™¤ã—
 			for( BK4_Edge *e = orphN->e_first; e ; e = e->e_next) 
 			{
 				v = e->n_to;
-				if( v->e_parent && v->e_parent->n_to == orphN) { orphanNodes.push_back( v ); v->e_parent = 0; } //orphN‚Ì‚·‚×‚Ä‚Ìq‚ğŒÇ—§‚³‚¹‚é
+				if( v->e_parent && v->e_parent->n_to == orphN) { orphanNodes.push_back( v ); v->e_parent = 0; } //orphNã®ã™ã¹ã¦ã®å­ã‚’å­¤ç«‹ã•ã›ã‚‹
 				if( v->flgST < 0 && e->capa ) actNode_push( v ); 
 			}
 		}
 	}
-	//ª‚Ö‚ÌƒpƒX‚ª‚ ‚ê‚ÎAª‚Ü‚Å‚Ì‹——£+1@–³‚¯‚ê‚Î0‚ğ•Ô‚·
+	//æ ¹ã¸ã®ãƒ‘ã‚¹ãŒã‚ã‚Œã°ã€æ ¹ã¾ã§ã®è·é›¢+1ã€€ç„¡ã‘ã‚Œã°0ã‚’è¿”ã™
 	inline int isValidParent_S( const BK4_Node *FROM, const BK4_Node *n)
 	{
-		if( n->flgST  != 1       ) return 0; //’Tõ–ØS‚Ìƒm[ƒh‚Å‚È‚¯‚ê‚Î 0
-		//if( n         == FROM  ) return 1; //’Tõ–ØS‚Ìƒ‹[ƒg‚È‚ç       1
+		if( n->flgST  != 1       ) return 0; //æ¢ç´¢æœ¨Sã®ãƒãƒ¼ãƒ‰ã§ãªã‘ã‚Œã° 0
+		//if( n         == FROM  ) return 1; //æ¢ç´¢æœ¨Sã®ãƒ«ãƒ¼ãƒˆãªã‚‰       1
 		
 		BK4_Node *v;
 		int d = 2;
@@ -476,8 +476,8 @@ private:
 
 	inline int isValidParent_T( const BK4_Node *TO, const BK4_Node *n)
 	{
-		if( n->flgST != -1   ) return 0; //’Tõ–ØT‚Ìƒm[ƒh‚Å‚È‚¯‚ê‚Î 0 
-		//if( n        == TO ) return 1; //’Tõ–ØT‚Ìƒ‹[ƒg‚È‚ç       1
+		if( n->flgST != -1   ) return 0; //æ¢ç´¢æœ¨Tã®ãƒãƒ¼ãƒ‰ã§ãªã‘ã‚Œã° 0 
+		//if( n        == TO ) return 1; //æ¢ç´¢æœ¨Tã®ãƒ«ãƒ¼ãƒˆãªã‚‰       1
 		BK4_Node *v;
 
 		int d = 2; 

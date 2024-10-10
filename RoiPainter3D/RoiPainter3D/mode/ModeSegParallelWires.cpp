@@ -61,10 +61,10 @@ ModeSegParallelWires::~ModeSegParallelWires()
 
 
 
-// ‚±‚Ìƒ‚[ƒh‚Å‚Í plane ‚ð‚¿‚å‚¤‚Ç‰æ‘f’†S‚ð’Ê‚éˆÊ’u‚É”z’u‚µ‚½‚¢ 
+// ã“ã®ãƒ¢ãƒ¼ãƒ‰ã§ã¯ plane ã‚’ã¡ã‚‡ã†ã©ç”»ç´ ä¸­å¿ƒã‚’é€šã‚‹ä½ç½®ã«é…ç½®ã—ãŸã„ 
 //
-// D = 5‚È‚ç
-// plane_xy‚ÍC0.1, 0.3, 0.5, 0.7, 0.9 ‚É”z’u‚µ‚½‚¢
+// D = 5ãªã‚‰
+// plane_xyã¯ï¼Œ0.1, 0.3, 0.5, 0.7, 0.9 ã«é…ç½®ã—ãŸã„
 // position = 
 
 void ModeSegParallelWires::StartMode ()
@@ -220,7 +220,7 @@ void ModeSegParallelWires::CancelSegmentation()
   if ( !CLI_MessageBox_YESNO_Show("Do you want leave this mode?", "dlg.") )
     return; 
 
-  //wire‚ðíœi‚µ‚È‚¢‚ÆAcanEndMode‚Åƒ_ƒCƒAƒƒO‚ª•\Ž¦‚³‚ê‚é)
+  //wireã‚’å‰Šé™¤ï¼ˆã—ãªã„ã¨ã€canEndModeã§ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãŒè¡¨ç¤ºã•ã‚Œã‚‹)
   m_wires_xy.clear();
   m_wires_yz.clear();
   m_wires_zx.clear();
@@ -415,7 +415,7 @@ void ModeSegParallelWires::MouseWheel(
   if ( trgt_id == CRSSEC_XY )
   {
     m_planexy_idx += (zDelta>0)?1:-1;
-    m_planexy_idx = t_crop<int>(0, D-1,m_planexy_idx);
+    m_planexy_idx = Crop<int>(0, D-1,m_planexy_idx);
 
     float xy_pos = (m_planexy_idx + 0.5f) * (1.0f / D);
     CrssecCore::GetInst()->SetPlaneXyPosition( xy_pos );
@@ -423,7 +423,7 @@ void ModeSegParallelWires::MouseWheel(
   else if (trgt_id == CRSSEC_YZ) 
   { 
     m_planeyz_idx += (zDelta>0)?1:-1;
-    m_planeyz_idx = t_crop<int>(0, W-1,m_planeyz_idx);
+    m_planeyz_idx = Crop<int>(0, W-1,m_planeyz_idx);
 
     float yz_pos = (m_planeyz_idx + 0.5f) * (1.0f / W);
     CrssecCore::GetInst()->SetPlaneYzPosition( yz_pos );
@@ -431,7 +431,7 @@ void ModeSegParallelWires::MouseWheel(
   else if (trgt_id == CRSSEC_ZX)
   {
     m_planezx_idx += (zDelta>0)?1:-1;
-    m_planezx_idx = t_crop<int>(0, H-1,m_planezx_idx);
+    m_planezx_idx = Crop<int>(0, H-1,m_planezx_idx);
 
     float zx_pos = (m_planezx_idx + 0.5f) * (1.0f / H);
     CrssecCore::GetInst()->SetPlaneZxPosition( zx_pos );
@@ -460,7 +460,7 @@ void ModeSegParallelWires::KeyDown(int nChar)
     if ( FormParallelWires_bPlaneXY() )
     {
       m_planexy_idx += step;
-      m_planexy_idx = t_crop<int>(0, D-1,m_planexy_idx);
+      m_planexy_idx = Crop<int>(0, D-1,m_planexy_idx);
 
       float xy_pos = (m_planexy_idx + 0.5f) * (1.0f / D);
       CrssecCore::GetInst()->SetPlaneXyPosition( xy_pos );
@@ -468,7 +468,7 @@ void ModeSegParallelWires::KeyDown(int nChar)
     else if ( FormParallelWires_bPlaneYZ() ) 
     { 
       m_planeyz_idx += step;
-      m_planeyz_idx = t_crop<int>(0, W-1,m_planeyz_idx);
+      m_planeyz_idx = Crop<int>(0, W-1,m_planeyz_idx);
 
       float yz_pos = (m_planeyz_idx + 0.5f) * (1.0f / W);
       CrssecCore::GetInst()->SetPlaneYzPosition( yz_pos );
@@ -476,7 +476,7 @@ void ModeSegParallelWires::KeyDown(int nChar)
     else if ( FormParallelWires_bPlaneZX() )
     {
       m_planezx_idx += step;
-      m_planezx_idx = t_crop<int>(0, H-1,m_planezx_idx);
+      m_planezx_idx = Crop<int>(0, H-1,m_planezx_idx);
 
       float zx_pos = (m_planezx_idx + 0.5f) * (1.0f / H);
       CrssecCore::GetInst()->SetPlaneZxPosition( zx_pos );
@@ -655,10 +655,10 @@ int SplineWire::AddCtrlPt (const EVec3f &p)
   float found_dist = FLT_MAX;
   for ( int i = 1; i < (int)m_cps.size(); ++i )
   { 
-    //’†S : 0.5 * ( m_cp[i-1] + m_cp[i] ) 
-    //”¼Œa : 0.5 * | m_cp[i-1] - m_cp[i] |
-    //‚Ì‰~‚É“ü‚Á‚Ä‚¢‚ê‚Î i-1 ` i ‚ÌŠÔ‚É‘}“ü
-    //•¡”‚Ì‰~‚É“ü‚é‚Ì‚Å‚ ‚ê‚ÎÅ‚à‹ß‚¢ü•ª‚É‘}“ü
+    //ä¸­å¿ƒ : 0.5 * ( m_cp[i-1] + m_cp[i] ) 
+    //åŠå¾„ : 0.5 * | m_cp[i-1] - m_cp[i] |
+    //ã®å††ã«å…¥ã£ã¦ã„ã‚Œã° i-1 ï½ž i ã®é–“ã«æŒ¿å…¥
+    //è¤‡æ•°ã®å††ã«å…¥ã‚‹ã®ã§ã‚ã‚Œã°æœ€ã‚‚è¿‘ã„ç·šåˆ†ã«æŒ¿å…¥
     
     EVec3f c = 0.5f * (m_cps[i-1] + m_cps[i]);
     float  r = 0.5f * (m_cps[i-1] - m_cps[i]).norm(); 
@@ -700,7 +700,7 @@ int SplineWire::PickCtrlPt( const EVec3f &ray_pos, const EVec3f &ray_dir)
 {
   for ( int i = 0; i < (int)m_cps.size(); ++i)
   {
-    if( t_DistRayAndPoint( ray_pos, ray_dir, m_cps[i] ) < m_cp_radius ) 
+    if( DistRayAndPoint( ray_pos, ray_dir, m_cps[i] ) < m_cp_radius ) 
       return i;
   }
   return -1;
@@ -729,7 +729,7 @@ void SplineWire::UpdateCurveFromCPs()
   if( m_cps.size() < 3 ) return;
   
   //convert point 3D --> 2D 
-  std::vector<EVec2d> cps_2d ( m_cps.size() ) ;
+  std::vector<EVec2f> cps_2d ( m_cps.size() ) ;
   if ( m_plane_id == PLANE_ID::PLANE_XY ) 
   {
     for ( int i = 0; i < (int) m_cps.size(); ++i)
@@ -749,13 +749,14 @@ void SplineWire::UpdateCurveFromCPs()
   //prepare num of sampling points
   EVec3f pitch        = ImageCore::GetInst()->GetPitch();
   float  ave_pitch    = (pitch[0] + pitch[1] + pitch[2]) / 3.0f;
-  float  total_length = t_verts_Length( m_cps, true );
+  float  total_length = VertsLength( m_cps, true );
   int    num_samples  = (int)( total_length / ave_pitch / 10.0);
   if ( num_samples < 15 ) num_samples = 15; 
 
   //compute curve
-  std::vector<EVec2d> new_cps, curve_2d;
-  compute_kCurves( cps_2d, num_samples, new_cps, curve_2d);
+  //std::vector<EVec2d> new_cps, curve_2d;
+  //compute_kCurves( cps_2d, num_samples, new_cps, curve_2d);
+  std::vector<EVec2f> curve_2d = KCurves::CalcKCurvesOpen(cps_2d);
     
 
   //convert curve 3D --> 2D 
@@ -817,7 +818,7 @@ void SplineWire::DrawWire(
   
   glDisable( GL_LIGHTING );
   glTranslated( offset[0], offset[1], offset[2]);
-  t_DrawPolyLine ( color, width, m_curve, true );
+  DrawPolyLine ( color, width, m_curve, true );
   glTranslated(-offset[0],-offset[1],-offset[2]);
 }
 

@@ -10,7 +10,7 @@ namespace RoiPainter4D {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// FormSegBronchi ‚ÌŠT—v
+	/// FormSegBronchi ã®æ¦‚è¦
 	/// </summary>
 	public ref class FormSegBronchi : public System::Windows::Forms::Form
 	{
@@ -20,7 +20,7 @@ namespace RoiPainter4D {
 		{
 			InitializeComponent();
 			//
-			//TODO: ‚±‚±‚ÉƒRƒ“ƒXƒgƒ‰ƒNƒ^[ ƒR[ƒh‚ğ’Ç‰Á‚µ‚Ü‚·
+			//TODO: ã“ã“ã«ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ¼ ã‚³ãƒ¼ãƒ‰ã‚’è¿½åŠ ã—ã¾ã™
 			//
 		}
 	private: 
@@ -78,7 +78,7 @@ namespace RoiPainter4D {
 
 	protected:
 		/// <summary>
-		/// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+		/// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
 		/// </summary>
 		~FormSegBronchi()
 		{
@@ -99,14 +99,14 @@ public:
 
 	private:
 		/// <summary>
-		/// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+		/// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
 		/// </summary>
 
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-		/// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+		/// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+		/// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
 		/// </summary>
 		void InitializeComponent(void)
 		{
@@ -275,7 +275,7 @@ public:
 			this->formerAge->Name = L"formerAge";
 			this->formerAge->Size = System::Drawing::Size(162, 14);
 			this->formerAge->TabIndex = 14;
-			this->formerAge->Text = L"ã•”—Ìˆæ‚Ì‰ŠúŠg’£ƒTƒCƒY";
+			this->formerAge->Text = L"ä¸Šéƒ¨é ˜åŸŸã®åˆæœŸæ‹¡å¼µã‚µã‚¤ã‚º";
 			// 
 			// latterAge
 			// 
@@ -286,7 +286,7 @@ public:
 			this->latterAge->Name = L"latterAge";
 			this->latterAge->Size = System::Drawing::Size(134, 14);
 			this->latterAge->TabIndex = 16;
-			this->latterAge->Text = L"‰º•”—Ìˆæ‚ÌŠg’£ƒTƒCƒY";
+			this->latterAge->Text = L"ä¸‹éƒ¨é ˜åŸŸã®æ‹¡å¼µã‚µã‚¤ã‚º";
 			// 
 			// latterAge_textBox
 			// 
@@ -396,7 +396,7 @@ public:
 			this->latterBLayer->Name = L"latterBLayer";
 			this->latterBLayer->Size = System::Drawing::Size(70, 14);
 			this->latterBLayer->TabIndex = 31;
-			this->latterBLayer->Text = L"‹«ŠE‚Ì[‚³";
+			this->latterBLayer->Text = L"å¢ƒç•Œã®æ·±ã•";
 			// 
 			// latterLayerB_textBox
 			// 
@@ -414,7 +414,7 @@ public:
 			this->threshMax_latter->Name = L"threshMax_latter";
 			this->threshMax_latter->Size = System::Drawing::Size(119, 14);
 			this->threshMax_latter->TabIndex = 33;
-			this->threshMax_latter->Text = L"Thresh Max  AˆÈ~";
+			this->threshMax_latter->Text = L"Thresh Max  Aä»¥é™";
 			// 
 			// maxThresholdLatter_textBox
 			// 
@@ -442,7 +442,7 @@ public:
 			this->growth_label->Name = L"growth_label";
 			this->growth_label->Size = System::Drawing::Size(83, 16);
 			this->growth_label->TabIndex = 36;
-			this->growth_label->Text = L"Šg’£ƒTƒCƒY";
+			this->growth_label->Text = L"æ‹¡å¼µã‚µã‚¤ã‚º";
 			// 
 			// regionGrowLabel
 			// 
@@ -511,7 +511,7 @@ public:
 			this->latterALabel->Name = L"latterALabel";
 			this->latterALabel->Size = System::Drawing::Size(94, 14);
 			this->latterALabel->TabIndex = 43;
-			this->latterALabel->Text = L"Œã”¼ƒŒƒCƒ„[FA";
+			this->latterALabel->Text = L"å¾ŒåŠãƒ¬ã‚¤ãƒ¤ãƒ¼ï¼šA";
 			// 
 			// addCpButton
 			// 

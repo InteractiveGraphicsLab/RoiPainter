@@ -45,8 +45,8 @@ static void t_constructWsdNodesFromLabel
 	const short *vol      ,
 
   int        &num_wsdnodes,
-	GCWsdNode* &wsdNodes  ,// ‚±‚ÌŠÖ”“à‚Åallocate‚³‚ê‚é
-	std::set<int> * &wsdNodeNei // ‚±‚ÌŠÖ”“à‚Åallocate‚³‚ê‚é
+	GCWsdNode* &wsdNodes  ,// ã“ã®é–¢æ•°å†…ã§allocateã•ã‚Œã‚‹
+	std::set<int> * &wsdNodeNei // ã“ã®é–¢æ•°å†…ã§allocateã•ã‚Œã‚‹
 );
 
 
@@ -112,7 +112,7 @@ void ModeSegGCut::StartMode()
     if( m_vol_wsdid != 0 ) delete[] m_vol_wsdid;
     m_vol_wsdid = new int[WHD];
 
-    //backup file‚Ì“Ç‚İ‚İ‚ğ‚·
+    //backup fileã®èª­ã¿è¾¼ã¿ã‚’è©¦ã™
 		std::string backUpFilePath = ImageCore::GetInst()->GetFilePath() + ".RpWsdPre";
 	  if( t_loadWsdLabel( backUpFilePath, WHD, m_vol_wsdid) )
 	  {
@@ -122,10 +122,10 @@ void ModeSegGCut::StartMode()
 		  return;
 	  }
 
-	  //thread‚ğ‹N“®‚µwatershed‚ğŒvZ‚·‚é
+	  //threadã‚’èµ·å‹•ã—watershedã‚’è¨ˆç®—ã™ã‚‹
     if( m_b_wsdnode_computing )
     {
-      CLI_MessageBox_OK_Show("Œ»İ GraphCut—p‚Ì‘OŒvZiwatershedj’†‚Å‚·D\nŒvZ‚ªI‚í‚é‚ÆrunGraphCutƒ{ƒ^ƒ“‚ª\n—LŒø‚É‚È‚è‚Ü‚·", "message");
+      CLI_MessageBox_OK_Show("ç¾åœ¨ GraphCutç”¨ã®å‰è¨ˆç®—ï¼ˆwatershedï¼‰ä¸­ã§ã™ï¼\nè¨ˆç®—ãŒçµ‚ã‚ã‚‹ã¨runGraphCutãƒœã‚¿ãƒ³ãŒ\næœ‰åŠ¹ã«ãªã‚Šã¾ã™", "message");
     }
     else
     {
@@ -149,7 +149,7 @@ void ModeSegGCut::FinishSegmemntation ()
 		return;
 	}
 
-	//CP‚ğíœi‚µ‚È‚¢‚ÆAcanEndMode‚Åƒ_ƒCƒAƒƒO‚ª•\¦‚³‚ê‚é)
+	//CPã‚’å‰Šé™¤ï¼ˆã—ãªã„ã¨ã€canEndModeã§ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãŒè¡¨ç¤ºã•ã‚Œã‚‹)
 	m_cps_fore.clear();
 	m_cps_back.clear();
 
@@ -162,7 +162,7 @@ void ModeSegGCut::FinishSegmemntation ()
 
 void ModeSegGCut::CancelSegmentation ()
 {
-  //CP‚ğíœi‚µ‚È‚¢‚ÆAcanEndMode‚Åƒ_ƒCƒAƒƒO‚ª•\¦‚³‚ê‚é)
+  //CPã‚’å‰Šé™¤ï¼ˆã—ãªã„ã¨ã€canEndModeã§ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãŒè¡¨ç¤ºã•ã‚Œã‚‹)
 	m_cps_fore.clear();
 	m_cps_back.clear();
 	ModeCore::GetInst()->ModeSwitch( MODE_VIS_MASK );
@@ -286,14 +286,14 @@ void ModeSegGCut::MouseMove(const EVec2i &p, OglForCLI *ogl)
     //erase control points
 		for (int i = 0; i < (int)m_cps_fore.size(); ++i)
 		{
-			if (t_DistRayAndPoint(ray_pos, ray_dir, m_cps_fore[i].m_pos) < m_cp_radius)
+			if (DistRayAndPoint(ray_pos, ray_dir, m_cps_fore[i].m_pos) < m_cp_radius)
       {
         m_cps_fore.erase( m_cps_fore.begin() + i );
       }
 		}
 		for (int i = 0; i < (int)m_cps_back.size(); ++i)
 		{
-			if ( t_DistRayAndPoint(ray_pos, ray_dir, m_cps_back[i].m_pos) < m_cp_radius)
+			if ( DistRayAndPoint(ray_pos, ray_dir, m_cps_back[i].m_pos) < m_cp_radius)
       {
         m_cps_back.erase( m_cps_back.begin() + i );
       }
@@ -398,7 +398,7 @@ void ModeSegGCut::DrawScene (
 
 
   //draw cut stroke 
-  if (m_b_draw_cutsrtoke) t_DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
+  if (m_b_draw_cutsrtoke) DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
 
 }
 
@@ -410,7 +410,7 @@ void ModeSegGCut::DrawScene (
 //////////////////////////////////////////////////////////////////////////////////////
 //Watershed segmentation//////////////////////////////////////////////////////////////
 
-//try to load backup wsd segmentation file (ˆê“xŒvZ‚µ‚½‚çbackup‚ğ‚µ‚Ä‚¨‚¢‚ÄÄ—˜—p‚·‚é)
+//try to load backup wsd segmentation file (ä¸€åº¦è¨ˆç®—ã—ãŸã‚‰backupã‚’ã—ã¦ãŠã„ã¦å†åˆ©ç”¨ã™ã‚‹)
 // fname = volume_file_name.RpWsdPre
 
 static bool t_loadWsdLabel 
@@ -436,7 +436,7 @@ static bool t_loadWsdLabel
 
 	//check user's intension
 	std::cout << "fname:" << fname.c_str() << "\n\n";
-	if(!CLI_MessageBox_YESNO_Show( "watershed‚Ì‘OŒvZƒtƒ@ƒCƒ‹‚ª—˜—p‚Å‚«‚Ü‚·B—˜—p‚µ‚Ü‚·‚©H", "Use precompute file?") )
+	if(!CLI_MessageBox_YESNO_Show( "watershedã®å‰è¨ˆç®—ãƒ•ã‚¡ã‚¤ãƒ«ãŒåˆ©ç”¨ã§ãã¾ã™ã€‚åˆ©ç”¨ã—ã¾ã™ã‹ï¼Ÿ", "Use precompute file?") )
 	{
 		fclose( fp); 
 		return false;
@@ -475,9 +475,9 @@ void t_constructWsdNodesFromLabel
 	const int   *vol_label,
 	const short *vol      ,
   
-  int         &num_wsdnodes, //‚±‚ÌŠÖ”“à‚ÅŒvZ‚³‚ê‚é
-	GCWsdNode*  &wsdNodes    , //‚±‚ÌŠÖ”“à‚Åallocate‚³‚ê‚é
-	std::set <int>*  &wsdNodeNei    // ‚±‚ÌŠÖ”“à‚Åallocate‚³‚ê‚é
+  int         &num_wsdnodes, //ã“ã®é–¢æ•°å†…ã§è¨ˆç®—ã•ã‚Œã‚‹
+	GCWsdNode*  &wsdNodes    , //ã“ã®é–¢æ•°å†…ã§allocateã•ã‚Œã‚‹
+	std::set <int>*  &wsdNodeNei    // ã“ã®é–¢æ•°å†…ã§allocateã•ã‚Œã‚‹
 )
 {
 	time_t t0 = clock();
@@ -535,7 +535,7 @@ void t_constructWsdNodesFromLabel
 
 
 
-//thread‚Æ‚µ‚Ä‹N“®‚³‚ê‚é
+//threadã¨ã—ã¦èµ·å‹•ã•ã‚Œã‚‹
 void ModeSegGCut::InitializeWsdNodes_thread(void *pParam)
 {
 	std::cout << "initWsdNodes_thread start!!\n";
@@ -548,7 +548,7 @@ void ModeSegGCut::InitializeWsdNodes_thread(void *pParam)
 	const short  *vol      = ImageCore::GetInst()->m_vol_orig   ;
 	const float  *vol_gm   = ImageCore::GetInst()->m_vol_origgm ;
 	
-	//calc WsdLabel 0:‹«ŠE‰æ‘f, >0:ƒ‰ƒxƒ‹’l
+	//calc WsdLabel 0:å¢ƒç•Œç”»ç´ , >0:ãƒ©ãƒ™ãƒ«å€¤
 	int *vox_wsdid = p_modeseggcut->m_vol_wsdid;
 
   time_t t1 = clock();
@@ -654,7 +654,7 @@ void t_wsd_DivideOneLabel(
 			if( z<D-1&& vLabel[I+WH]==TRGT ){ fQ.push_back( EVec4i(x,y,z+1,I+WH) ); vLabel[I+WH] = F_LABEL; }
 		}
 	}
-	//fore label ‚Ì’l‚ğŒ³‚É–ß‚·
+	//fore label ã®å€¤ã‚’å…ƒã«æˆ»ã™
   for ( int i=0, s = W*H*D; i < s; ++i)
   {
     if( vLabel[i] == F_LABEL ) vLabel[i] = TRGT;
@@ -754,7 +754,7 @@ inline static float t_CalcE2( const float &v1, const float &v2, const float &lam
 	return  lambda / ( 1.0f + (v1-v2)*(v1-v2) ); 
 }
 
-//d•¡‚ğíœ (sort --> unique --> erase)
+//é‡è¤‡ã‚’å‰Šé™¤ (sort --> unique --> erase)
 static void t_VectorUnique(std::vector<int> &vectInt)
 {
 	sort( vectInt.begin(), vectInt.end() ); 
@@ -777,7 +777,7 @@ void t_RemoveIsolatedForeRegion(
 {	
 	const int WH = W*H, WHD = W*H*D;
 
-	//V‚½‚È foreground‚ğ254‚Æ‚µ‚Ä—ÌˆæŠg’£‚·‚é
+	//æ–°ãŸãª foregroundã‚’254ã¨ã—ã¦é ˜åŸŸæ‹¡å¼µã™ã‚‹
 	TQueue<EVec4i> Q;
 	for (const auto &cp : cps_fore)
 	{
@@ -817,7 +817,7 @@ void ModeSegGCut::RunGraphCutWsdLv(float lambda)
 {
 	if (m_b_wsdnode_computing || !m_b_wsdnode_initialized)
 	{
-		CLI_MessageBox_OK_Show("Œ»İ‘OŒvZ’†‚Å‚·A­X‚¨‘Ò‚¿‚­‚¾‚³‚¢", "Message from Graph cut tool");
+		CLI_MessageBox_OK_Show("ç¾åœ¨å‰è¨ˆç®—ä¸­ã§ã™ã€å°‘ã€…ãŠå¾…ã¡ãã ã•ã„", "Message from Graph cut tool");
 		return;
 	}
 
@@ -831,7 +831,7 @@ void ModeSegGCut::RunGraphCutWsdLv(float lambda)
   byte *vol_flg          = ImageCore::GetInst()->m_vol_flag.GetVolumePtr();
 
 
-	// ‚Ğ‚Æ‚Â‚Ìƒm[ƒh‚É“ñ‚ÂˆÈã‚Ì‘OŒiE”wŒi§Œä“_‚ª”z’u‚³‚ê‚Ä‚¢‚½‚çA•ªŠ„‚·‚é
+	// ã²ã¨ã¤ã®ãƒãƒ¼ãƒ‰ã«äºŒã¤ä»¥ä¸Šã®å‰æ™¯ãƒ»èƒŒæ™¯åˆ¶å¾¡ç‚¹ãŒé…ç½®ã•ã‚Œã¦ã„ãŸã‚‰ã€åˆ†å‰²ã™ã‚‹
 	if ( t_wsd_CheckAndSolveConflictCP(W,H,D, m_cps_fore, m_cps_back, m_vol_wsdid) )
 	{
 		t_constructWsdNodesFromLabel( W,H,D, m_vol_wsdid, vol, m_num_wsdnodes, m_wsdnodes, m_wsdnode_neibor );
@@ -890,7 +890,7 @@ void ModeSegGCut::RunGraphCutWsdLv(float lambda)
   }
 
 
-	//n-link b_enable‚Èƒm[ƒhŠÔ‚Ì‚İ
+	//n-link b_enableãªãƒãƒ¼ãƒ‰é–“ã®ã¿
 	for (int i = 0; i < m_num_wsdnodes; ++i) if( m_wsdnodes[i].m_b_enable ) 
 	{
 		for( const auto &neiI : m_wsdnode_neibor[i] )
@@ -934,14 +934,14 @@ void ModeSegGCut::RunGraphCutWsdLv(float lambda)
 
 
 
-//float lambda,        ŒW”ƒ‰ƒ€ƒ_
-//int bandWidth,@@   ŒvZ—Ìˆæ‚Ìwidth
-//bool genBundOnlyBack ŒvZ—Ìˆæ‚ğ”wŒiƒ{ƒNƒZƒ‹‚Ì‚İ‚©‚ç¶¬‚·‚é
+//float lambda,        ä¿‚æ•°ãƒ©ãƒ ãƒ€
+//int bandWidth,ã€€ã€€   è¨ˆç®—é ˜åŸŸã®width
+//bool genBundOnlyBack è¨ˆç®—é ˜åŸŸã‚’èƒŒæ™¯ãƒœã‚¯ã‚»ãƒ«ã®ã¿ã‹ã‚‰ç”Ÿæˆã™ã‚‹
 void ModeSegGCut::RunGraphCutVoxLv(float lambda, int band_width, bool b_genband_onlybackground)
 {
 	if (m_b_wsdnode_computing || !m_b_wsdnode_initialized)
 	{
-		CLI_MessageBox_OK_Show("Œ»İ‘OŒvZ’†‚Å‚·A­X‚¨‘Ò‚¿‚­‚¾‚³‚¢", "Message from Graph cut tool");
+		CLI_MessageBox_OK_Show("ç¾åœ¨å‰è¨ˆç®—ä¸­ã§ã™ã€å°‘ã€…ãŠå¾…ã¡ãã ã•ã„", "Message from Graph cut tool");
 		return;
 	}
     
@@ -952,9 +952,9 @@ void ModeSegGCut::RunGraphCutVoxLv(float lambda, int band_width, bool b_genband_
 	byte  *vol_flg       = ImageCore::GetInst()->m_vol_flag.GetVolumePtr();
 
 
-	// ‘OŒi-”wŒi ‹«ŠE‘Ñó—Ìˆæ‚Ì¶¬
+	// å‰æ™¯-èƒŒæ™¯ å¢ƒç•Œå¸¯çŠ¶é ˜åŸŸã®ç”Ÿæˆ
 
-	// v_mapNodeId --> -1:fore, -2:back, 0ˆÈã: nodeIdx
+	// v_mapNodeId --> -1:fore, -2:back, 0ä»¥ä¸Š: nodeIdx
 	int  *vol_nodeid = new int[ WHD ];  
 	
 	for( int i=0; i < WHD; ++i) vol_nodeid[i] = (vol_flg[i] == 255) ? -1 : -2;
@@ -1010,7 +1010,7 @@ void ModeSegGCut::RunGraphCutVoxLv(float lambda, int band_width, bool b_genband_
 		const EVec4i vI = t_voxIdx(W, WH, vox_nodes[ni].m_idx);
 		const int     I = vI[3];
 
-		int state = 0; // -2 : ”wŒi—×Ú   -1 :‘OŒi—×Ú   >=0:‚»‚Ì‘¼
+		int state = 0; // -2 : èƒŒæ™¯éš£æ¥   -1 :å‰æ™¯éš£æ¥   >=0:ãã®ä»–
 		if( vI[0] != 0  && vol_nodeid[ I-1 ] < 0 ) state = vol_nodeid[ I-1  ]; // = -1 or -2
 		if( vI[1] != 0  && vol_nodeid[ I-W ] < 0 ) state = vol_nodeid[ I-W  ]; 
 		if( vI[2] != 0  && vol_nodeid[ I-WH] < 0 ) state = vol_nodeid[ I-WH ]; 
@@ -1049,12 +1049,12 @@ void ModeSegGCut::RunGraphCutVoxLv(float lambda, int band_width, bool b_genband_
 
 void ModeSegGCut::NewVolLoaded()
 {
-  //watershed ŒvZ“r’†‚ÉV‚µ‚¢ volume“Ç‚İ‚İ‚ªs‚È‚í‚ê‚éê‡‚ª‚ ‚é
-  //thread‚ÉƒƒbƒZ[ƒW‚ğ“Š‚°‚é‚×‚«
-  //Œ»İ‚ÍCmessege box‚É‚æ‚èƒ†[ƒU‚ÉŒx‚ğ‘—‚é‚¾‚¯
+  //watershed è¨ˆç®—é€”ä¸­ã«æ–°ã—ã„ volumeèª­ã¿è¾¼ã¿ãŒè¡Œãªã‚ã‚Œã‚‹å ´åˆãŒã‚ã‚‹
+  //threadã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æŠ•ã’ã‚‹ã¹ã
+  //ç¾åœ¨ã¯ï¼Œmessege boxã«ã‚ˆã‚Šãƒ¦ãƒ¼ã‚¶ã«è­¦å‘Šã‚’é€ã‚‹ã ã‘
   if ( m_b_wsdnode_computing )
   {
-    CLI_MessageBox_OK_Show( "graph cut mode‚ª watershed‚ğ\nŒvZ‚µ‚Ä‚¢‚éÅ’†‚ÉV‚µ‚¢volume‚ª“Ç‚İ‚Ü‚ê‚Ü‚µ‚½D\n ‚±‚Ìƒ\ƒtƒgƒEƒGƒA‚ğÄ‹N“®‚·‚é‚±‚Æ‚ğ‚¨Š©‚ß“¾‚µ‚Ü‚·D", "caution");
+    CLI_MessageBox_OK_Show( "graph cut modeãŒ watershedã‚’\nè¨ˆç®—ã—ã¦ã„ã‚‹æœ€ä¸­ã«æ–°ã—ã„volumeãŒèª­ã¿è¾¼ã¾ã‚Œã¾ã—ãŸï¼\n ã“ã®ã‚½ãƒ•ãƒˆã‚¦ã‚¨ã‚¢ã‚’å†èµ·å‹•ã™ã‚‹ã“ã¨ã‚’ãŠå‹§ã‚å¾—ã—ã¾ã™ï¼", "caution");
   }
   m_b_wsdnode_initialized = false; 
 }

@@ -10,7 +10,7 @@ namespace RoiPainter3D {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// FormRefSplitByPlane ‚ÌŠT—v
+	/// FormRefSplitByPlane ã®æ¦‚è¦
 	/// </summary>
 	public ref class FormRefSplitByPlane : public System::Windows::Forms::Form
 	{
@@ -31,7 +31,7 @@ namespace RoiPainter3D {
 		}
 	protected:
 		/// <summary>
-		/// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+		/// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
 		/// </summary>
 		~FormRefSplitByPlane()
 		{
@@ -51,14 +51,14 @@ namespace RoiPainter3D {
 
 	private:
 		/// <summary>
-		/// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+		/// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-		/// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+		/// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+		/// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
 		/// </summary>
 		void InitializeComponent(void)
 		{
@@ -73,7 +73,7 @@ namespace RoiPainter3D {
 			// 
 			// btn_finish
 			// 
-			this->btn_finish->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->btn_finish->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->btn_finish->Location = System::Drawing::Point(96, 167);
 			this->btn_finish->Margin = System::Windows::Forms::Padding(2);
@@ -86,7 +86,7 @@ namespace RoiPainter3D {
 			// 
 			// btn_cancel
 			// 
-			this->btn_cancel->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->btn_cancel->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->btn_cancel->Location = System::Drawing::Point(11, 167);
 			this->btn_cancel->Margin = System::Windows::Forms::Padding(2);
@@ -100,7 +100,7 @@ namespace RoiPainter3D {
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->label1->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->label1->Location = System::Drawing::Point(16, 18);
 			this->label1->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
@@ -111,7 +111,7 @@ namespace RoiPainter3D {
 			// 
 			// btn_gen_plane
 			// 
-			this->btn_gen_plane->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->btn_gen_plane->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->btn_gen_plane->Location = System::Drawing::Point(11, 47);
 			this->btn_gen_plane->Margin = System::Windows::Forms::Padding(2);
@@ -124,7 +124,7 @@ namespace RoiPainter3D {
 			// 
 			// btn_split_by_plane
 			// 
-			this->btn_split_by_plane->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->btn_split_by_plane->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->btn_split_by_plane->Location = System::Drawing::Point(11, 79);
 			this->btn_split_by_plane->Margin = System::Windows::Forms::Padding(2);
@@ -137,7 +137,7 @@ namespace RoiPainter3D {
 			// 
 			// btn_perform_analysis
 			// 
-			this->btn_perform_analysis->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->btn_perform_analysis->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->btn_perform_analysis->Location = System::Drawing::Point(11, 113);
 			this->btn_perform_analysis->Margin = System::Windows::Forms::Padding(2);
@@ -150,7 +150,7 @@ namespace RoiPainter3D {
 			// 
 			// btn_flip_plane
 			// 
-			this->btn_flip_plane->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->btn_flip_plane->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
 			this->btn_flip_plane->Location = System::Drawing::Point(175, 47);
 			this->btn_flip_plane->Margin = System::Windows::Forms::Padding(2);

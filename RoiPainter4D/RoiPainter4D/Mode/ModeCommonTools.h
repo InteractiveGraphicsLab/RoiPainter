@@ -1,4 +1,4 @@
-﻿#ifndef MODE_COMMONTOOLS_H_
+#ifndef MODE_COMMONTOOLS_H_
 #define MODE_COMMONTOOLS_H_
 
 #pragma unmanaged

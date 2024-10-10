@@ -9,11 +9,11 @@
 
 class LocalSeed
 {
-  //vector‚Åframe”•ª‚¾‚¯ŠÇ—‚·‚é
+  //vectorã§frameæ•°åˆ†ã ã‘ç®¡ç†ã™ã‚‹
   std::vector<float > m_radius  ;
-  std::vector<EVec3f> m_position; // ˆÊ’u
-  std::vector<EVec2i> m_thresh  ; // è‡’l
-  std::vector<bool  > m_b_edit  ; // [i] = 1 ‚È‚ç i-th frame‚É‚¨‚¢‚Ä”¼ŒaEè‡’lEˆÊ’u‚Ì‚Ç‚ê‚©‚ªƒ†[ƒU‚É‚æ‚è•ÒW‚³‚ê‚½
+  std::vector<EVec3f> m_position; // ä½ç½®
+  std::vector<EVec2i> m_thresh  ; // é–¾å€¤
+  std::vector<bool  > m_b_edit  ; // [i] = 1 ãªã‚‰ i-th frameã«ãŠã„ã¦åŠå¾„ãƒ»é–¾å€¤ãƒ»ä½ç½®ã®ã©ã‚Œã‹ãŒãƒ¦ãƒ¼ã‚¶ã«ã‚ˆã‚Šç·¨é›†ã•ã‚ŒãŸ
 
 public:
 
@@ -103,8 +103,8 @@ public:
 
 
 
-//sphere ‚Ì‚İ‚ÌLocal Region Growing
-// curved cylinder‚ğ—Ì‚·‚é‚Ì‚Í ModeSegBolus 
+//sphere ã®ã¿ã®Local Region Growing
+// curved cylinderã‚’é ˜ã™ã‚‹ã®ã¯ ModeSegBolus 
 
 
 class ModeSegLocalRGrow : public ModeInterface
@@ -117,7 +117,7 @@ class ModeSegLocalRGrow : public ModeInterface
   TMesh m_unitsphere;
   float m_cp_radius;
 
-  int   m_active_seed_id; //”¼Œa‚âè‡’l‚ğ•ÏX‚·‚é‘ÎÛ‚ÌƒV[ƒhid
+  int   m_active_seed_id; //åŠå¾„ã‚„é–¾å€¤ã‚’å¤‰æ›´ã™ã‚‹å¯¾è±¡ã®ã‚·ãƒ¼ãƒ‰id
   bool  m_is_drag_activeseed;
   bool  m_is_resize_activeseed;
 
@@ -132,7 +132,7 @@ public:
     return &p;
   }
 
-  MODE_ID getModeID() { return MODE_SEG_LCLRGROW; }
+  MODE_ID GetModeID() { return MODE_SEG_LCLRGROW; }
   void LBtnUp    (const EVec2i &p, OglForCLI *ogl);
   void RBtnUp    (const EVec2i &p, OglForCLI *ogl);
   void MBtnUp    (const EVec2i &p, OglForCLI *ogl);
@@ -145,15 +145,15 @@ public:
   void MouseMove (const EVec2i &p, OglForCLI *ogl);
   void MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl);
 
-  void keyDown( int nChar );
-  void keyUp  ( int nChar );
+  void KeyDown( int nChar );
+  void KeyUp  ( int nChar );
 
   //this function is called before switch the mode (if return false, the mode will not be switched)
-  bool canEndMode();
+  bool CanEndMode();
 
   //this function is called just after switch the mode
-  void startMode();
-  void drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+  void StartMode();
+  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
 
 
   void FinishSegmentation();
@@ -163,7 +163,7 @@ public:
   void LoadSeedInfo(std::string fname);
   void SaveSeedInfo(std::string fname);
 
-  //ƒŠƒXƒg‚Å‘I‘ğ‚µ‚Ä‚¢‚éƒV[ƒh‚Ìİ’è
+  //ãƒªã‚¹ãƒˆã§é¸æŠã—ã¦ã„ã‚‹ã‚·ãƒ¼ãƒ‰ã®è¨­å®š
   void SetSelectedSeedId(int id) { if (id < 0) return; m_active_seed_id = id; }
   int  GetSelectedSeedId() { return m_active_seed_id; }
 
@@ -182,7 +182,7 @@ public:
   void RunLocalRegionGrow_OnlyCurrentFrame();
 
 private:
-  int  PickSeeds(const EVec3f &rayP, const EVec3f &rayD);//ƒV[ƒh‚ğ‚Â‚Ü‚ñ‚Å“®‚©‚·ŠÖ”
+  int  PickSeeds(const EVec3f &rayP, const EVec3f &rayD);//ã‚·ãƒ¼ãƒ‰ã‚’ã¤ã¾ã‚“ã§å‹•ã‹ã™é–¢æ•°
   void RunLocalRegionGrow_OnlyTrgtFrame(int trgt_frame_idx);
 };
 

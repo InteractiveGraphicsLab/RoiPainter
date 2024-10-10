@@ -15,7 +15,7 @@ namespace RoiPainter3D {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// FormMaskIDselection ‚ÌŠT—v
+	/// FormMaskIDselection ã®æ¦‚è¦
 	/// </summary>
 	public ref class FormMaskIDselection : public System::Windows::Forms::Form
 	{
@@ -71,7 +71,7 @@ namespace RoiPainter3D {
 
 	protected:
 		/// <summary>
-		/// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+		/// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
 		/// </summary>
 		~FormMaskIDselection()
 		{
@@ -91,14 +91,14 @@ System::Windows::Forms::DataGridViewTextBoxColumn^  colorColumn;
 
 	private:
 		/// <summary>
-		/// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+		/// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-		/// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+		/// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+		/// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
 		/// </summary>
 		void InitializeComponent(void)
 		{
@@ -172,7 +172,7 @@ System::Windows::Forms::DataGridViewTextBoxColumn^  colorColumn;
       // m_label
       // 
       this->m_label->AutoSize = true;
-      this->m_label->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->m_label->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(0)));
       this->m_label->Location = System::Drawing::Point(141, 20);
       this->m_label->Name = L"m_label";
@@ -233,7 +233,7 @@ System::Windows::Forms::DataGridViewTextBoxColumn^  colorColumn;
   }
 
 
-  //‘I‘ğ‚³‚ê‚È‚©‚Á‚½ê‡‚Í‹ó‚Ìvector‚ª•Ô‚é
+  //é¸æŠã•ã‚Œãªã‹ã£ãŸå ´åˆã¯ç©ºã®vectorãŒè¿”ã‚‹
   inline std::set<int> formMaskIdSelection_DoMultiSelection(
     const std::vector<MaskData> &mask_set, 
     const int default_mask_id)

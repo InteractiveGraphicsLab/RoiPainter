@@ -1,4 +1,4 @@
-﻿#ifndef MODE_INTERFACE_H_
+#ifndef MODE_INTERFACE_H_
 #define MODE_INTERFACE_H_
 #pragma unmanaged
 
@@ -65,7 +65,7 @@ protected:
 	ModeInterface() { m_bL = m_bR = m_bM = false; }
 
 public:
-	virtual MODE_ID getModeID() = 0;
+	virtual MODE_ID GetModeID() = 0;
 	virtual void LBtnUp		 (const EVec2i &p, OglForCLI *ogl) = 0;
 	virtual void RBtnUp		 (const EVec2i &p, OglForCLI *ogl) = 0;
 	virtual void MBtnUp		 (const EVec2i &p, OglForCLI *ogl) = 0;
@@ -78,16 +78,16 @@ public:
 	virtual void MouseMove (const EVec2i &p, OglForCLI *ogl) = 0;
 	virtual void MouseWheel(const EVec2i &p, short zDelta, OglForCLI *ogl) = 0;
 
-	virtual void keyDown(int nChar) = 0;
-	virtual void keyUp  (int nChar) = 0;
+	virtual void KeyDown(int nChar) = 0;
+	virtual void KeyUp  (int nChar) = 0;
 
 	//this function is called before switch the mode (if return false, the mode will not be switched)
-	virtual bool canEndMode() = 0;
+	virtual bool CanEndMode() = 0;
 	
   //this function is called just after switch the mode
-	virtual void startMode() = 0;
+	virtual void StartMode() = 0;
 
-	virtual void drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF) = 0;
+	virtual void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF) = 0;
 };
 
 
@@ -146,37 +146,37 @@ public:
 };
 
 
-inline bool isCtrKeyOn  () { return GetKeyState(VK_CONTROL) < 0; }
-inline bool isSpaceKeyOn() { return GetKeyState(VK_SPACE  ) < 0; }
-inline bool isShiftKeyOn() { return GetKeyState(VK_SHIFT  ) < 0; }
-inline bool isAltKeyOn  () { return GetKeyState(VK_MENU   ) < 0; }
-//inline bool isAKeyOn  ()   { return GetKeyState(0x41) < 0; }
-//inline bool isBKeyOn  ()   { return GetKeyState(0x42) < 0; }
-//inline bool isCKeyOn  ()   { return GetKeyState(0x43) < 0; }
-//inline bool isDKeyOn  ()   { return GetKeyState(0x44) < 0; }
-//inline bool isEKeyOn  ()   { return GetKeyState(0x45) < 0; }
-//inline bool isFKeyOn  ()   { return GetKeyState(0x46) < 0; }
-//inline bool isGKeyOn  ()   { return GetKeyState(0x47) < 0; }
-//inline bool isHKeyOn  ()   { return GetKeyState(0x48) < 0; }
-//inline bool isIKeyOn  ()   { return GetKeyState(0x49) < 0; }
-//inline bool isJKeyOn  ()   { return GetKeyState(0x4A) < 0; }
-//inline bool isKKeyOn  ()   { return GetKeyState(0x4B) < 0; }
-//inline bool isLKeyOn  ()   { return GetKeyState(0x4C) < 0; }
-//inline bool isMKeyOn  ()   { return GetKeyState(0x4D) < 0; }
-//inline bool isNKeyOn  ()   { return GetKeyState(0x4E) < 0; }
-//inline bool isOKeyOn  ()   { return GetKeyState(0x4F) < 0; }
-//inline bool isPKeyOn  ()   { return GetKeyState(0x50) < 0; }
-//inline bool isQKeyOn  ()   { return GetKeyState(0x51) < 0; }
-//inline bool isRKeyOn  ()   { return GetKeyState(0x52) < 0; }
-inline bool isSKeyOn  ()   { return GetKeyState(0x53) < 0; }
-//inline bool isTKeyOn  ()   { return GetKeyState(0x54) < 0; }
-//inline bool isUKeyOn  ()   { return GetKeyState(0x55) < 0; }
-//inline bool isVKeyOn  ()   { return GetKeyState(0x56) < 0; }
-//inline bool isWKeyOn  ()   { return GetKeyState(0x57) < 0; }
-//inline bool isXKeyOn  ()   { return GetKeyState(0x58) < 0; }
-//inline bool isYKeyOn  ()   { return GetKeyState(0x59) < 0; }
-//inline bool isZKeyOn  ()   { return GetKeyState(0x5A) < 0; }
-//inline bool isTabKeyOn  (){ return GetKeyState( VK_TAB     ) < 0 ; }
+inline bool IsCtrKeyOn  () { return GetKeyState(VK_CONTROL) < 0; }
+inline bool IsSpaceKeyOn() { return GetKeyState(VK_SPACE  ) < 0; }
+inline bool IsShiftKeyOn() { return GetKeyState(VK_SHIFT  ) < 0; }
+inline bool IsAltKeyOn  () { return GetKeyState(VK_MENU   ) < 0; }
+//inline bool IsAKeyOn  ()   { return GetKeyState(0x41) < 0; }
+//inline bool IsBKeyOn  ()   { return GetKeyState(0x42) < 0; }
+inline bool IsCKeyOn  ()   { return GetKeyState(0x43) < 0; }
+//inline bool IsDKeyOn  ()   { return GetKeyState(0x44) < 0; }
+//inline bool IsEKeyOn  ()   { return GetKeyState(0x45) < 0; }
+//inline bool IsFKeyOn  ()   { return GetKeyState(0x46) < 0; }
+//inline bool IsGKeyOn  ()   { return GetKeyState(0x47) < 0; }
+//inline bool IsHKeyOn  ()   { return GetKeyState(0x48) < 0; }
+//inline bool IsIKeyOn  ()   { return GetKeyState(0x49) < 0; }
+//inline bool IsJKeyOn  ()   { return GetKeyState(0x4A) < 0; }
+//inline bool IsKKeyOn  ()   { return GetKeyState(0x4B) < 0; }
+//inline bool IsLKeyOn  ()   { return GetKeyState(0x4C) < 0; }
+//inline bool IsMKeyOn  ()   { return GetKeyState(0x4D) < 0; }
+//inline bool IsNKeyOn  ()   { return GetKeyState(0x4E) < 0; }
+//inline bool IsOKeyOn  ()   { return GetKeyState(0x4F) < 0; }
+//inline bool IsPKeyOn  ()   { return GetKeyState(0x50) < 0; }
+//inline bool IsQKeyOn  ()   { return GetKeyState(0x51) < 0; }
+//inline bool IsRKeyOn  ()   { return GetKeyState(0x52) < 0; }
+inline bool IsSKeyOn  ()   { return GetKeyState(0x53) < 0; }
+//inline bool IsTKeyOn  ()   { return GetKeyState(0x54) < 0; }
+//inline bool IsUKeyOn  ()   { return GetKeyState(0x55) < 0; }
+//inline bool IsVKeyOn  ()   { return GetKeyState(0x56) < 0; }
+//inline bool IsWKeyOn  ()   { return GetKeyState(0x57) < 0; }
+//inline bool IsXKeyOn  ()   { return GetKeyState(0x58) < 0; }
+//inline bool IsYKeyOn  ()   { return GetKeyState(0x59) < 0; }
+//inline bool IsZKeyOn  ()   { return GetKeyState(0x5A) < 0; }
+//inline bool IsTabKeyOn  (){ return GetKeyState( VK_TAB     ) < 0 ; }
 
 // Common functions for Mode*.cpp
 

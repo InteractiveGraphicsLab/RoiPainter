@@ -26,14 +26,16 @@ void LogCore::Add( std::string s)
   if(!m_b_recording ) return;
 
   time_t currenttime = time(NULL);
-  struct tm *t = localtime(&currenttime);
+  struct tm t;
+  errno_t err;
+  err = localtime_s(&t, &currenttime);
   std::string log = 
-      std::to_string( t->tm_year+1900 )
-    + std::to_string( t->tm_mon + 1   )
-    + std::string((t->tm_mday < 10 ) ? "0" : "") + std::to_string( t->tm_mday )
-    + std::string((t->tm_hour < 10 ) ? "0" : "") + std::to_string( t->tm_hour )
-    + std::string((t->tm_min  < 10 ) ? "0" : "") + std::to_string( t->tm_min  )
-    + std::string((t->tm_sec  < 10 ) ? "0" : "") + std::to_string( t->tm_sec  );
+      std::to_string( t.tm_year+1900 )
+    + std::to_string( t.tm_mon + 1   )
+    + std::string((t.tm_mday < 10 ) ? "0" : "") + std::to_string( t.tm_mday )
+    + std::string((t.tm_hour < 10 ) ? "0" : "") + std::to_string( t.tm_hour )
+    + std::string((t.tm_min  < 10 ) ? "0" : "") + std::to_string( t.tm_min  )
+    + std::string((t.tm_sec  < 10 ) ? "0" : "") + std::to_string( t.tm_sec  );
   m_lines.push_back(std::make_pair(log,s));
 }
 

@@ -1,9 +1,9 @@
-﻿#ifndef COMMON_TIMAGELOADER_H_
+#ifndef COMMON_TIMAGELOADER_H_
 #define COMMON_TIMAGELOADER_H_
 
 #pragma managed
 
-inline bool t_loadImage(
+inline bool LoadImage(
   const char *fname,
   int &W,
   int &H,
@@ -86,7 +86,7 @@ inline bool t_loadImage(
 
 
 
-inline void t_saveImage(
+inline void SaveImage(
   const char *fname,
   const int &W,
   const int &H,
@@ -132,7 +132,7 @@ inline void t_saveImage(
 }
 
 
-inline void t_saveImage_gray(
+inline void SaveImageGray(
   const char *fname,
   const int &W,
   const int &H,

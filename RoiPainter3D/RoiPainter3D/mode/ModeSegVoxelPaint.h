@@ -4,10 +4,10 @@
 
 // class ModeSegVoxelPaint
 // support 
-//   1. Segmentation Voxel paint  : paint mode‚Å‚ ‚é—Ìˆæ‚ğ¶¬‚·‚é 
-//   2. Refinement   Voxel paint  : paint mode‚Å‚ ‚é—Ìˆæ‚ğC³‚·‚é
+//   1. Segmentation Voxel paint  : paint modeã§ã‚ã‚‹é ˜åŸŸã‚’ç”Ÿæˆã™ã‚‹ 
+//   2. Refinement   Voxel paint  : paint modeã§ã‚ã‚‹é ˜åŸŸã‚’ä¿®æ­£ã™ã‚‹
 //
-// “ñí—Ş‚ÌƒyƒCƒ“ƒgƒ‚[ƒhi’¼ÚƒyƒCƒ“ƒgE‚ç‚Á‚»j‚ğƒTƒ|[ƒg‚·‚é
+// äºŒç¨®é¡ã®ãƒšã‚¤ãƒ³ãƒˆãƒ¢ãƒ¼ãƒ‰ï¼ˆç›´æ¥ãƒšã‚¤ãƒ³ãƒˆãƒ»ã‚‰ã£ãï¼‰ã‚’ã‚µãƒãƒ¼ãƒˆã™ã‚‹
 
 #include "ModeInterface.h"
 #include "GlslShader.h"

@@ -1,4 +1,4 @@
-﻿#ifndef COMMON_TMATH_H_
+#ifndef COMMON_TMATH_H_
 #define COMMON_TMATH_H_
 #pragma unmanaged
 
@@ -52,7 +52,7 @@ typedef unsigned char byte;
 
 
 template<class T>
-inline T t_crop(const T &minV, const T &maxV, const T &v)
+inline T Crop(const T &minV, const T &maxV, const T &v)
 {
   return std::min(maxV, std::max(minV, v));
 }
@@ -68,7 +68,7 @@ enum CRSSEC_ID
 };
 
 
-inline bool t_bInWindow3D(
+inline bool BInWindow3D(
   const EVec3f &minW, 
   const EVec3f &maxW, 
   const EVec3f &p   , float offset = 0)
@@ -80,7 +80,7 @@ inline bool t_bInWindow3D(
 }
 
 
-inline float t_DistSq(const EVec3f& p1, const EVec3f& p2)
+inline float DistSq(const EVec3f& p1, const EVec3f& p2)
 {
   return (p1[0] - p2[0]) * (p1[0] - p2[0]) +
          (p1[1] - p2[1]) * (p1[1] - p2[1]) +
@@ -88,7 +88,7 @@ inline float t_DistSq(const EVec3f& p1, const EVec3f& p2)
 }
 
 
-inline double t_Dist(const EVec3d &p1, const EVec3d &p2)
+inline double Dist(const EVec3d &p1, const EVec3d &p2)
 {
   return sqrt((p1[0] - p2[0]) * (p1[0] - p2[0]) +
               (p1[1] - p2[1]) * (p1[1] - p2[1]) +
@@ -96,7 +96,7 @@ inline double t_Dist(const EVec3d &p1, const EVec3d &p2)
 }
 
 
-inline float t_Dist(const EVec3f &p1, const EVec3f &p2)
+inline float Dist(const EVec3f &p1, const EVec3f &p2)
 {
   return sqrt((p1[0] - p2[0]) * (p1[0] - p2[0]) +
               (p1[1] - p2[1]) * (p1[1] - p2[1]) +
@@ -106,7 +106,7 @@ inline float t_Dist(const EVec3f &p1, const EVec3f &p2)
 
 //	  | a b | |s|    w1
 //    | c d | |t|  = w2
-inline bool t_SolveLinearEq2d(
+inline bool SolveLinearEq2d(
     const double a,  const double b,
     const double c,  const double d, 
     const double w1, const double w2,
@@ -121,7 +121,7 @@ inline bool t_SolveLinearEq2d(
 }
 
 
-inline bool t_SolveLinearEq2f(
+inline bool SolveLinearEq2f(
   const float a,  const float b,
   const float c,  const float d, 
   const float w1, const float w2,
@@ -185,7 +185,7 @@ inline void Trace(const char* text, const Eigen::VectorXd &x)
 
 //distance between
 //ray(ray_pos + t * ray_dir) and a point
-inline float t_DistRayAndPoint(
+inline float DistRayAndPoint(
     const EVec3f &ray_pos, 
     const EVec3f &ray_dir, 
     const EVec3f &point   ,
@@ -196,18 +196,18 @@ inline float t_DistRayAndPoint(
 }
 
 
-inline float t_DistRayAndPoint(
+inline float DistRayAndPoint(
   const EVec3f &ray_pos, 
   const EVec3f &ray_dir, 
   const EVec3f &point)
 {
   float t;
-  return t_DistRayAndPoint(ray_pos, ray_dir, point,t);
+  return DistRayAndPoint(ray_pos, ray_dir, point,t);
 }
 
 
 
-inline float t_DistPointAndLineSegm_sq(
+inline float DistPointAndLineSegmSq(
   const EVec3f &p,
   const EVec3f &line_p0,
   const EVec3f &line_p1, 
@@ -225,25 +225,25 @@ inline float t_DistPointAndLineSegm_sq(
                  (t > 1) ? line_p1 : 
                            line_p0 + t * dir;
   }
-  return t_DistSq( p, nearestpos) ;
+  return DistSq( p, nearestpos) ;
 }
 
 
-inline float t_DistPointAndLineSegm_sq(
+inline float DistPointAndLineSegmSq(
   const EVec3f &p,
   const EVec3f &line_p0,
   const EVec3f &line_p1)
 {
   EVec3f tmp;
-  return t_DistPointAndLineSegm_sq( p, line_p0, line_p1, tmp);
+  return DistPointAndLineSegmSq( p, line_p0, line_p1, tmp);
 }
 
 
-inline float t_DistPointAndLineSegm(const EVec3f &p,
+inline float DistPointAndLineSegm(const EVec3f &p,
   const EVec3f &line_p0,
   const EVec3f &line_p1)
 {
-  return sqrt(t_DistPointAndLineSegm_sq(p, line_p0, line_p1));
+  return sqrt(DistPointAndLineSegmSq(p, line_p0, line_p1));
 }
 
 
@@ -255,7 +255,7 @@ inline float t_DistPointAndLineSegm(const EVec3f &p,
 // idear : (h1-h0)*(line_p1-line_p0) = 0
 //
 // return (distance, 3D point on line segment) 
-inline std::tuple<float,EVec3f> t_DistRayAndLineSegm
+inline std::tuple<float,EVec3f> DistRayAndLineSegm
 (
   const EVec3f &ray_pos, const EVec3f ray_dir,
   const EVec3f &line_p0, const EVec3f line_p1
@@ -268,14 +268,14 @@ inline std::tuple<float,EVec3f> t_DistRayAndLineSegm
   float c = dl.dot(dr), d = -dl.dot(dl), b1 = dl.dot(line_p0 - ray_pos);
 
   float t0,t1;
-  t_SolveLinearEq2f( a,b,c,d, b0,b1, t0,t1);
+  SolveLinearEq2f( a,b,c,d, b0,b1, t0,t1);
 
   if(      t1 <= 0 ) {
-    float dist = t_DistRayAndPoint( ray_pos, ray_dir, line_p0);
+    float dist = DistRayAndPoint( ray_pos, ray_dir, line_p0);
     return std::forward_as_tuple( dist, line_p0 ) ;
   }
   else if( 1  <= t1) {
-    float dist = t_DistRayAndPoint( ray_pos, ray_dir, line_p1);
+    float dist = DistRayAndPoint( ray_pos, ray_dir, line_p1);
     return std::forward_as_tuple( dist, line_p1 ) ;
   }
   else{
@@ -285,7 +285,7 @@ inline std::tuple<float,EVec3f> t_DistRayAndLineSegm
 }
 
 
-inline EVec3f t_Mult( const EMat4d &m, const EVec3f &v)
+inline EVec3f Mult( const EMat4d &m, const EVec3f &v)
 {
   EMat3d R;
   EVec3d t;
@@ -297,7 +297,7 @@ inline EVec3f t_Mult( const EMat4d &m, const EVec3f &v)
 }
 
 
-inline EVec3f t_MultOnlyRot( const EMat4d &m, const EVec3f &v)
+inline EVec3f MultOnlyRot( const EMat4d &m, const EVec3f &v)
 {
   EMat3d R;
   R(0,0)=m(0,0);  R(0,1)=m(0,1);  R(0,2)=m(0,2);
@@ -308,7 +308,7 @@ inline EVec3f t_MultOnlyRot( const EMat4d &m, const EVec3f &v)
 }
 
 
-inline bool t_intersectRayToTriangle
+inline bool IntersectRayToTriangle
 (
   const EVec3f &rayP,
   const EVec3f &rayD,
@@ -337,7 +337,7 @@ inline bool t_intersectRayToTriangle
 }
 
 
-inline bool t_intersectRayToQuad
+inline bool IntersectRayToQuad
 (
   const EVec3f &rayP,
   const EVec3f &rayD,
@@ -350,15 +350,15 @@ inline bool t_intersectRayToQuad
   EVec3f &pos
 )
 {
-  if (t_intersectRayToTriangle(rayP, rayD, x0, x1, x2, pos)) return true;
-  if (t_intersectRayToTriangle(rayP, rayD, x0, x2, x3, pos)) return true;
+  if (IntersectRayToTriangle(rayP, rayD, x0, x1, x2, pos)) return true;
+  if (IntersectRayToTriangle(rayP, rayD, x0, x2, x3, pos)) return true;
   return false;
 }
 
 
 // intersection h = v0 + s(v1-v0) + t(v2-v0) = (x,y,z)    
 // two of x,y,z are known , v0,v1,v2 are known 
-inline bool t_IntersectRayXToTriangle(
+inline bool IntersectRayXToTriangle(
   const EVec3f& v0,
   const EVec3f& v1,
   const EVec3f& v2,
@@ -374,7 +374,7 @@ inline bool t_IntersectRayXToTriangle(
       (z > v0[2] && z > v1[2] && z > v2[2])) return false;
 
   double s, t;
-  if (!t_SolveLinearEq2d(v1[1] - v0[1], v2[1] - v0[1],
+  if (!SolveLinearEq2d(v1[1] - v0[1], v2[1] - v0[1],
     v1[2] - v0[2], v2[2] - v0[2], y - v0[1], z - v0[2], s, t)) return false;
   if (s < 0 || t < 0 || s + t > 1) return false;
 
@@ -383,7 +383,7 @@ inline bool t_IntersectRayXToTriangle(
 }
 
 
-inline bool t_IntersectRayYToTriangle(
+inline bool IntersectRayYToTriangle(
   const EVec3f& v0,
   const EVec3f& v1,
   const EVec3f& v2,
@@ -399,7 +399,7 @@ inline bool t_IntersectRayYToTriangle(
       (z > v0[2] && z > v1[2] && z > v2[2])) return false;
 
   double s, t;
-  if (!t_SolveLinearEq2d(v1[0] - v0[0], v2[0] - v0[0],
+  if (!SolveLinearEq2d(v1[0] - v0[0], v2[0] - v0[0],
     v1[2] - v0[2], v2[2] - v0[2], x - v0[0], z - v0[2], s, t)) return false;
   if (s < 0 || t < 0 || s + t > 1) return false;
 
@@ -407,7 +407,7 @@ inline bool t_IntersectRayYToTriangle(
   return true;
 }
 
-inline bool t_intersectRayToPlane(
+inline bool IntersectRayToPlane(
     const EVec3f &ray_pos,
     const EVec3f &ray_dir,
     const EVec3f &plane_pos, 
@@ -431,7 +431,7 @@ inline bool t_intersectRayToPlane(
 
 
 template<class T>
-void t_getMaxMinOfArray(const int N, const T* src, T& minV, T& maxV)
+void GetMaxMinOfArray(const int N, const T* src, T& minV, T& maxV)
 {
   if (N == 0) return;
 
@@ -447,7 +447,7 @@ void t_getMaxMinOfArray(const int N, const T* src, T& minV, T& maxV)
 
 
 template<class T>
-inline T t_CalcCentroid(const std::vector<T> &vs)
+inline T CalcCentroid(const std::vector<T> &vs)
 {
   T gc(0, 0, 0);
   if (vs.size() == 0) return gc;
@@ -458,7 +458,7 @@ inline T t_CalcCentroid(const std::vector<T> &vs)
 }
 
 
-inline EVec3f t_CalcGravityCenter(const std::vector<EVec3f>& vs)
+inline EVec3f CalcGravityCenter(const std::vector<EVec3f>& vs)
 {
   EVec3f gc(0, 0, 0);
   if (vs.size() == 0) return gc;
@@ -469,9 +469,9 @@ inline EVec3f t_CalcGravityCenter(const std::vector<EVec3f>& vs)
 }
 
 
-inline EMat3f t_CalcCovMatrix(const std::vector<EVec3f>& vs)
+inline EMat3f CalcCovMatrix(const std::vector<EVec3f>& vs)
 {
-  EVec3f c = t_CalcGravityCenter(vs);
+  EVec3f c = CalcGravityCenter(vs);
   EMat3f A;
   A << 0, 0, 0, 0, 0, 0, 0, 0, 0;
 
@@ -493,27 +493,27 @@ inline EMat3f t_CalcCovMatrix(const std::vector<EVec3f>& vs)
 //functions for vertices std::vector<EVec3f> verts/////////////////////
 
 //calc length of a polyline
-inline float t_verts_Length(
+inline float VertsLength(
     const std::vector<EVec3f> &verts, 
     bool bClosed = false)
 {
   const int N = (int)verts.size();
   float d = 0;
-  if (bClosed && N >= 2) d += t_Dist(verts.back(), verts.front());
+  if (bClosed && N >= 2) d += Dist(verts.back(), verts.front());
 
-  for (int i = 1; i < N; ++i) d += t_Dist(verts[i], verts[i - 1]);
+  for (int i = 1; i < N; ++i) d += Dist(verts[i], verts[i - 1]);
 
   return d;
 }
 
 
-inline void t_verts_Translate(const EVec3f vec, std::vector<EVec3f> &verts)
+inline void VertsTranslate(const EVec3f vec, std::vector<EVec3f> &verts)
 {
   for (auto& it : verts) it += vec;
 }
 
 
-inline void t_verts_Rotate(
+inline void VertsRotate(
     const Eigen::AngleAxis<float> &R, 
     const EVec3f &center, 
     std::vector<EVec3f> &verts)
@@ -528,7 +528,7 @@ inline void t_verts_Rotate(
 // resampling a polyline into "n" section with equal interval
 // This function returns n+1 points
 // ---------------------------------------------------------------------
-inline void t_verts_ResampleEqualInterval
+inline void VertsResampleEqualInterval
 (
   const int n,
   const std::vector<EVec3f> &verts,
@@ -538,7 +538,7 @@ inline void t_verts_ResampleEqualInterval
   result.clear();
   if (verts.size() < 2) { result.resize(n + 1); return; }
 
-  const float stepD = t_verts_Length(verts) / (float)n;
+  const float stepD = VertsLength(verts) / (float)n;
 
   if (stepD == 0) {
     result.resize(n + 1);
@@ -552,7 +552,7 @@ inline void t_verts_ResampleEqualInterval
 
   for (int index = 1; index < (int)verts.size();)
   {
-    distance += t_Dist(verts[index], pivot);
+    distance += Dist(verts[index], pivot);
 
     if (distance >= stepD)//steo over
     {
@@ -573,7 +573,7 @@ inline void t_verts_ResampleEqualInterval
 }
 
 
-inline void t_verts_Smoothing(std::vector<EVec3f> &verts)
+inline void VertsSmoothing(std::vector<EVec3f> &verts)
 {
   const int N = (int)verts.size();
   if (N < 2) return;
@@ -585,13 +585,13 @@ inline void t_verts_Smoothing(std::vector<EVec3f> &verts)
 }
 
 
-inline void t_verts_Smoothing(const int times, std::vector<EVec3f> &verts)
+inline void VertsSmoothing(const int times, std::vector<EVec3f> &verts)
 {
-  for (int i = 0; i < times; ++i) t_verts_Smoothing(verts);
+  for (int i = 0; i < times; ++i) VertsSmoothing(verts);
 }
 
 
-inline void t_verts_GetNearestPoint(
+inline void VertsGetNearestPoint(
     const int     vSize, 
     const EVec3f *verts, 
     const EVec3f  &pos, 
@@ -602,7 +602,7 @@ inline void t_verts_GetNearestPoint(
 
   for ( int i = 0; i < vSize; ++i ) 
   { 
-    float d = t_DistSq( pos, verts[i] );
+    float d = DistSq( pos, verts[i] );
     if( d < dist_sq ) { 
       dist_sq = d; 
       idx = i;
@@ -612,7 +612,7 @@ inline void t_verts_GetNearestPoint(
 
 
 
-inline void t_CalcBoundingBox(
+inline void CalcBoundingBox(
   const EVec3f& v0,
   const EVec3f& v1,
   const EVec3f& v2,
@@ -628,7 +628,7 @@ inline void t_CalcBoundingBox(
 }
 
 
-inline void t_CalcBoundingBox(
+inline void CalcBoundingBox(
   const int N,
   const EVec3f* verts,
   EVec3f& BBmin,
@@ -649,7 +649,7 @@ inline void t_CalcBoundingBox(
 }
 
 
-inline void t_CalcBoundingBox(
+inline void CalcBoundingBox(
   const std::vector<EVec2i>& verts,
   EVec2i& BBmin,
   EVec2i& BBmax)
@@ -667,7 +667,7 @@ inline void t_CalcBoundingBox(
 }
 
 
-inline void t_CalcBoundingBox
+inline void CalcBoundingBox
 (
   const std::vector<EVec3f>& verts,
   EVec3f& BBmin,
@@ -690,7 +690,7 @@ inline void t_CalcBoundingBox
 
 //calculate the angle of two 3D vectors
 //axisに対して右ねじ方向が正
-inline double t_CalcAngle(
+inline double CalcAngle(
   const EVec3f& v1,
   const EVec3f& v2,
   const EVec3f& axis
@@ -708,18 +708,18 @@ inline double t_CalcAngle(
 }
 
 
-inline EMat3f t_CalcRotationMat(
+inline EMat3f CalcRotationMat(
   const EVec3f& v1,
   const EVec3f& v2,
   const EVec3f& axis)
 {
-  double t = t_CalcAngle(v1,v2,axis);
+  double t = CalcAngle(v1,v2,axis);
   return Eigen::AngleAxis<float>((float)t, axis).matrix();
 }
 
 //3この角度の平均をとる
 //（単純な平均ではなく、一度単位ベクトルにして、その和の変革を利用）
-inline float t_CalcAverageAngle3(float t0, float t1, float t2) 
+inline float CalcAverageAngle3(float t0, float t1, float t2) 
 {
   float x = cos(t0) + cos(t1) + cos(t2);
   float y = sin(t0) + sin(t1) + sin(t2);
@@ -731,12 +731,12 @@ inline float t_CalcAverageAngle3(float t0, float t1, float t2)
 
 
 //2D座標系において左回りが正（右ねじ座標系でz(0,0,1)を軸にして右回りが正）
-inline double t_CalcAngle(const EVec2d& d1, const EVec2d& d2)
+inline double CalcAngle(const EVec2d& d1, const EVec2d& d2)
 {
   double l = d1.norm() * d2.norm();
   if (l == 0) return 0;
 
-  double cosT = t_crop<double>(-1., 1., (d1.dot(d2)) / l);
+  double cosT = Crop<double>(-1., 1., (d1.dot(d2)) / l);
 
   if (d1[0] * d2[1] - d1[1] * d2[0] >= 0)
     return  acos(cosT);
@@ -746,7 +746,7 @@ inline double t_CalcAngle(const EVec2d& d1, const EVec2d& d2)
 
 
 
-inline EVec3f t_projectPointToPlane(
+inline EVec3f ProjectPointToPlane(
   const EVec3f &plane_pos, 
   const EVec3f &plane_norm,
   const EVec3f &point)
@@ -758,7 +758,7 @@ inline EVec3f t_projectPointToPlane(
 }
 
 
-static double t_CalcTriangleArea(
+static double CalcTriangleArea(
   const EVec3f &x0,
   const EVec3f &x1,
   const EVec3f &x2
@@ -814,7 +814,7 @@ inline void ReadFromFstream(std::ifstream& fs, EVec3f& v)
 // 
 // edgeCostV and edgeCostH store edge capacity
 //
-static double c_findShortestPathByDP(
+static double FindShortestPathByDP(
   const int pivPi,
   const int pN,
   const int qN,
@@ -871,7 +871,7 @@ enum POLY_MACH_METRIC
 };
 
 
-inline void c_polylineMatching
+inline void PolylineMatching
 (
   const std::vector<EVec3f>   &P,
   const std::vector<EVec3f>   &Q,
@@ -900,8 +900,8 @@ inline void c_polylineMatching
     for (int q = 0; q <= qNum; ++q)
     {
       if (metric == PMM_AREA) {
-        edgeCostV[p][q] = t_CalcTriangleArea(P[p % pNum], Q[q % qNum], P[(p + 1) % pNum]);
-        edgeCostH[p][q] = t_CalcTriangleArea(P[p % pNum], Q[q % qNum], Q[(q + 1) % qNum]);
+        edgeCostV[p][q] = CalcTriangleArea(P[p % pNum], Q[q % qNum], P[(p + 1) % pNum]);
+        edgeCostH[p][q] = CalcTriangleArea(P[p % pNum], Q[q % qNum], Q[(q + 1) % qNum]);
       }
       else
       {
@@ -920,7 +920,7 @@ inline void c_polylineMatching
   for (int pivPi = 0; pivPi < pNum; ++pivPi)
   {
     std::list< std::pair<int, int> > pivPiPath;
-    double pivPiCost = c_findShortestPathByDP(pivPi, pNum, qNum, edgeCostV, edgeCostH, costArray, fromArray, pivPiPath);
+    double pivPiCost = FindShortestPathByDP(pivPi, pNum, qNum, edgeCostV, edgeCostH, costArray, fromArray, pivPiPath);
     if (pivPiCost < minCost)
     {
       matchedIds = pivPiPath;
@@ -1108,7 +1108,7 @@ inline void CalcDistanceTransform(
 //  A_ls / b_ls / mu consists of active set
 //  size of result_mu is same as b_ls(full) and 0 for non active
 //
-static void SolveQP_ActiveSetMethod_step1
+static void SolveQPActiveSetMethodStep1
 (
   const Eigen::MatrixXd &Q     ,
   const Eigen::VectorXd &c     , 
@@ -1190,7 +1190,7 @@ static void SolveQP_ActiveSetMethod_step1
 }
 
 
-static void t_GetMinIdxAndValue(const Eigen::VectorXd &x, int &idx, double &value)
+static void GetMinIdxAndValue(const Eigen::VectorXd &x, int &idx, double &value)
 {
   idx = -1;
   value = DBL_MAX;
@@ -1224,7 +1224,7 @@ static void t_GetMinIdxAndValue(const Eigen::VectorXd &x, int &idx, double &valu
 //   step 3-2. (if no )  
 //      perform projection
 //
-static Eigen::VectorXd SolveQp_ActiveSetMethod
+static Eigen::VectorXd SolveQpActiveSetMethod
 (
     const Eigen::MatrixXd &Q     ,
     const Eigen::VectorXd &c     , 
@@ -1257,7 +1257,7 @@ static Eigen::VectorXd SolveQp_ActiveSetMethod
 
     //step1 solve KKT only with active set
     Eigen::VectorXd res_x, res_lambda, res_mu;
-    SolveQP_ActiveSetMethod_step1( Q, c, A_eq, b_eq, A_ls, b_ls,
+    SolveQPActiveSetMethodStep1( Q, c, A_eq, b_eq, A_ls, b_ls,
                                    b_active, res_x,res_lambda, res_mu); 
     
     if( b_vis_debug ) Trace( "step1. ", res_x);
@@ -1276,7 +1276,7 @@ static Eigen::VectorXd SolveQp_ActiveSetMethod
       //step 3.1 check all mu
       double min_mu;
       int    min_mu_idx;
-      t_GetMinIdxAndValue ( res_mu, min_mu_idx, min_mu);
+      GetMinIdxAndValue ( res_mu, min_mu_idx, min_mu);
       
       if( b_vis_debug ) Trace("step2. mu = ", res_mu);
       if( b_vis_debug ) std::cout << "(min_mu, min_mu_idx)=" 

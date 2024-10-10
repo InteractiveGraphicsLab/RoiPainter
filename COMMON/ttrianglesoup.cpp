@@ -1,4 +1,4 @@
-﻿#pragma unmanaged
+#pragma unmanaged
 #include "ttrianglesoup.h"
 
 //3rdparty/glew
@@ -102,8 +102,11 @@ void TTriangleSoup::UpdateNormal()
   
 bool TTriangleSoup::ExportAsStl(const char *fname)
 {
-  FILE* fp = fopen(fname, "w");
-  if (!fp) return false;
+  FILE* fp;
+  errno_t err;
+  err = fopen_s(&fp, fname, "w");
+
+  if (err != 0) return false;
 
   fprintf(fp, "solid ttrianglesoup\n");
   for (int i = 0; i < m_num_triangles; ++i)
@@ -273,7 +276,7 @@ bool TTriangleSoup::PickByRay(
 
   for (int t = 0; t < m_num_triangles; ++t)
   {
-    if (t_intersectRayToTriangle(rayP, rayD, 
+    if (IntersectRayToTriangle(rayP, rayD, 
                                   m_triangles[t].m_verts[0], 
                                   m_triangles[t].m_verts[1], 
                                   m_triangles[t].m_verts[2], tmpPos))
@@ -294,7 +297,7 @@ bool TTriangleSoup::PickByRay(
 
 
 // cast ray in Y axis ( divide ZX plane )  
-void GenBinaryVolumeFromMesh_Y
+void GenBinaryVolumeFromMeshY
 (
   const EVec3i        &reso,
   const EVec3f        &pitch,
@@ -333,11 +336,11 @@ void GenBinaryVolumeFromMesh_Y
     const TTriangle &t = tris[p];
 
     EVec3f bbMin, bbMax;
-    t_CalcBoundingBox( t.m_verts[0], t.m_verts[1], t.m_verts[2], bbMin, bbMax);
-    int xS = t_crop<int>(0, BIN_SIZE - 1, (int)(bbMin[0] / cuboid[0] * BIN_SIZE));
-    int zS = t_crop<int>(0, BIN_SIZE - 1, (int)(bbMin[2] / cuboid[2] * BIN_SIZE));
-    int xE = t_crop<int>(0, BIN_SIZE - 1, (int)(bbMax[0] / cuboid[0] * BIN_SIZE));
-    int zE = t_crop<int>(0, BIN_SIZE - 1, (int)(bbMax[2] / cuboid[2] * BIN_SIZE));
+    CalcBoundingBox( t.m_verts[0], t.m_verts[1], t.m_verts[2], bbMin, bbMax);
+    int xS = Crop<int>(0, BIN_SIZE - 1, (int)(bbMin[0] / cuboid[0] * BIN_SIZE));
+    int zS = Crop<int>(0, BIN_SIZE - 1, (int)(bbMin[2] / cuboid[2] * BIN_SIZE));
+    int xE = Crop<int>(0, BIN_SIZE - 1, (int)(bbMax[0] / cuboid[0] * BIN_SIZE));
+    int zE = Crop<int>(0, BIN_SIZE - 1, (int)(bbMax[2] / cuboid[2] * BIN_SIZE));
 
     for (int z = zS; z <= zE; ++z) for (int x = xS; x <= xE; ++x) polyID_Bins[z*BIN_SIZE + x].push_back(p);
   }
@@ -350,8 +353,8 @@ void GenBinaryVolumeFromMesh_Y
     {
       double x = (0.5 + xI) * px;
       double z = (0.5 + zI) * pz;
-      int bin_xi = t_crop<int>( 0, BIN_SIZE-1, (int)(x / cuboid[0] * BIN_SIZE) );
-      int bin_zi = t_crop<int>( 0, BIN_SIZE-1, (int)(z / cuboid[2] * BIN_SIZE) );
+      int bin_xi = Crop<int>( 0, BIN_SIZE-1, (int)(x / cuboid[0] * BIN_SIZE) );
+      int bin_zi = Crop<int>( 0, BIN_SIZE-1, (int)(z / cuboid[2] * BIN_SIZE) );
       std::vector<int> &trgtBin = polyID_Bins[bin_zi * BIN_SIZE + bin_xi];
 
       std::multimap<double, double> blist;// (xPos, normInXdir);
@@ -360,7 +363,7 @@ void GenBinaryVolumeFromMesh_Y
       {
         const TTriangle &t = tris[pi];
         double y;
-        if (t_IntersectRayYToTriangle(t.m_verts[0], t.m_verts[1], t.m_verts[2], x, z, y))
+        if (IntersectRayYToTriangle(t.m_verts[0], t.m_verts[1], t.m_verts[2], x, z, y))
           blist.insert( std::make_pair(y, norms[pi][1] )); //(y 座標, normal)
       }
 

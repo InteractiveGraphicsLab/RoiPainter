@@ -1,4 +1,4 @@
-﻿#pragma unmanaged
+#pragma unmanaged
 #include "ModeSegBronchi.h"
 #include "ModeCommonTools.h"
 #include "ImageCore.h"
@@ -67,7 +67,7 @@ ModeSegBronchi::~ModeSegBronchi()
 }
 
 
-void ModeSegBronchi::startMode()
+void ModeSegBronchi::StartMode()
 {
   if (DEBUG_MODE) std::cout << "ModeSegBronchi...startMode--------------------------\n";
 
@@ -98,7 +98,7 @@ void ModeSegBronchi::startMode()
 }
 
 
-bool ModeSegBronchi::canEndMode()
+bool ModeSegBronchi::CanEndMode()
 {
   return true;
 }
@@ -140,13 +140,13 @@ void ModeSegBronchi::FinishSegmentation()
 }
 
 
-void ModeSegBronchi::drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF)
+void ModeSegBronchi::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF)
 {
   BindAllVolumes();
 
   if (m_b_draw_cutstroke)
   {
-    t_DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke, false);
+    DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke, false);
   }
 
   //control points
@@ -207,13 +207,13 @@ void ModeSegBronchi::drawScene(const EVec3f& cuboid, const EVec3f& camP, const E
         //path
         if (is_rend_path)
           for (const auto& paths : piv_cp->GetPathsToChildren())
-            t_DrawPolyLine(EVec3f(0, 0, 1), TreeObj::GetPathWidth(), paths, false);
+            DrawPolyLine(EVec3f(0, 0, 1), TreeObj::GetPathWidth(), paths, false);
        
         //tree structure path
         if (is_rend_tree)
           for (const auto& child_cp : piv_cp->GetChildren()){
             std::vector<EVec3f> polyline = { piv_cp->GetPos(), child_cp->GetPos() };
-            t_DrawPolyLine(EVec3f(1, 0, 0), TreeObj::GetPathWidth(), polyline, false);
+            DrawPolyLine(EVec3f(1, 0, 0), TreeObj::GetPathWidth(), polyline, false);
           }
       }
     }
@@ -226,7 +226,7 @@ void ModeSegBronchi::drawScene(const EVec3f& cuboid, const EVec3f& camP, const E
   const bool b_xy = formVisParam_bPlaneXY();
   const bool b_yz = formVisParam_bPlaneYZ();
   const bool b_zx = formVisParam_bPlaneZX();
-  m_crssec_shader.bind(0, 1, 2, 3, 6, reso, false, isSpaceKeyOn());
+  m_crssec_shader.bind(0, 1, 2, 3, 6, reso, false, IsSpaceKeyOn());
   CrssecCore::DrawCrssec(b_xy, b_yz, b_zx, cuboid);
   m_crssec_shader.unbind();
   if (DEBUG_DRAWSCENE) std::cout << "draw cross section後\n";
@@ -242,7 +242,7 @@ void ModeSegBronchi::drawScene(const EVec3f& cuboid, const EVec3f& camP, const E
 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
-    m_volume_shader.bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, camP, b_pseudo, !isSpaceKeyOn());
+    m_volume_shader.bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, camP, b_pseudo, !IsSpaceKeyOn());
     t_drawSlices(num_slice, camP, camF, cuboid);
     m_volume_shader.unbind();
     glDisable(GL_BLEND);
@@ -259,12 +259,12 @@ void ModeSegBronchi::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
   m_bL = true;
 
-  if (isCtrKeyOn())
+  if (IsCtrKeyOn())
   {
     m_stroke.clear();
     m_b_draw_cutstroke = true;
   }
-  else if (isShiftKeyOn())
+  else if (IsShiftKeyOn())
   {
     EVec3f ray_pos, ray_dir, pos;
     ogl->GetCursorRay(p, ray_pos, ray_dir);
@@ -323,12 +323,12 @@ void ModeSegBronchi::RBtnDown(const EVec2i &p, OglForCLI *ogl)
   ogl->GetCursorRay(p, ray_pos, ray_dir);
   TreeObj *piv_cp = PickControlPoints(ray_pos, ray_dir);
 
-  if (isShiftKeyOn() && isCtrKeyOn() &&piv_cp!= nullptr)
+  if (IsShiftKeyOn() && IsCtrKeyOn() &&piv_cp!= nullptr)
   {
     const int frame_idx = formVisParam_getframeI();
     DeleteCp(frame_idx, piv_cp);
   }
-  else if (isShiftKeyOn() &&piv_cp!= nullptr)
+  else if (IsShiftKeyOn() &&piv_cp!= nullptr)
   {
     //Add Cp Mode時、親切り替え
     if (formSegBronchi_GetIsAddCpMode()) m_selected_cp = piv_cp;
@@ -411,7 +411,7 @@ void ModeSegBronchi::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 }
 
 
-void ModeSegBronchi::keyDown(int nChar) 
+void ModeSegBronchi::KeyDown(int nChar) 
 {
   if (DEBUG_MODE) std::cout << "start keyD\n";
 
@@ -430,7 +430,7 @@ void ModeSegBronchi::keyDown(int nChar)
 }
 
 
-void ModeSegBronchi::keyUp(int nChar) {}
+void ModeSegBronchi::KeyUp(int nChar) {}
 
 
 
@@ -741,7 +741,7 @@ TreeObj* ModeSegBronchi::PickControlPoints(
     Q.pop();
 
     // TODO Planeの座標が取れたら、Plane付近・手前のみ掴めるようにしたい（カメラPosとPlanePos？の間なら、掴める）
-    if (t_DistRayAndPoint(ray_pos, ray_dir, piv->GetPos()) < TreeObj::GetRadius())
+    if (DistRayAndPoint(ray_pos, ray_dir, piv->GetPos()) < TreeObj::GetRadius())
       return piv;
 
     for (const auto& child_cp : piv->GetChildren())

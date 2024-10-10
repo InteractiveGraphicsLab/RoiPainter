@@ -2,8 +2,8 @@
 #include <numeric>
 
 
-//���b�V���̊e�O�p�`��P�ʋ��ʏ�ɓ��e���A�����t���Ŗʐς��v�Z
-//���a��2�Έȏ�Ȃ���A�ȉ��Ȃ�O
+//メッシュの各三角形を単位球面上に投影し、符号付きで面積を計算
+//総和が2π以上なら内、以下なら外
 template <typename VertType>
 bool InOutJudge
 ( const vector<VertType> meshVertices
@@ -42,9 +42,9 @@ bool InOutJudge
 
 
 
-//���b�V���̊e�O�p�`��P�ʋ��ʏ�ɓ��e���A�����t���Ŗʐς��v�Z
-//���a��2�Έȏ�Ȃ���A�ȉ��Ȃ�O
-//�����̃N�G�����܂Ƃ߂ď�������Ȃ炱�����̂ق��������I
+//メッシュの各三角形を単位球面上に投影し、符号付きで面積を計算
+//総和が2π以上なら内、以下なら外
+//多くのクエリをまとめて処理するならこっちのほうが効率的
 template <typename VertType>
 void InOutJudge
 ( const vector<VertType>  meshVertices

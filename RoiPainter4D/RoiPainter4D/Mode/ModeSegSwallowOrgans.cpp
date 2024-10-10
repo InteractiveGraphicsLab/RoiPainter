@@ -14,68 +14,75 @@
 #pragma unmanaged
 
 #include <fstream>
-#include <iomanip> //setwóp(objèoóÕéûÇÃÉtÉ@ÉCÉãñºÅj
+#include <iomanip> //setwÁî®(objÂá∫ÂäõÊôÇ„ÅÆ„Éï„Ç°„Ç§„É´ÂêçÔºâ
 
-// 2020îN11åéçÏã∆ÉÅÉÇ
-//1 ïKóvÇ»ïîï™Ç…à»â∫ÇÃí«â¡  OK
+// 2020Âπ¥11Êúà‰ΩúÊ•≠„É°„É¢
+//1 ÂøÖË¶Å„Å™ÈÉ®ÂàÜ„Å´‰ª•‰∏ã„ÅÆËøΩÂä†  OK
 //    m_manip_log.clear();
 //    m_undo_piv = -1;
-//2 ïœå`Çî∫Ç§ïîï™Ç≈ m_manip_logÇ…push OK 
-//3 ïœå`ëOÇ…å≥å`èÛÇãLò^ OK 
-//4 âEÉNÉäÉbÉNéûÇ…å≥Ç…ñﬂÇ∑ OK 
-//5 scalingÇÃÉnÉìÉhÉãÇ™Ç®Ç©ÇµÇ¢  OK
-//6 Ç®ÇªÇÁÇ≠âëúìxÇ™ë´ÇËÇ∏Ç…ïœÇ»ïœå`Ç™ãNÇ´ÇƒÇÈÅEâΩÇ™ãNÇ´ÇƒÇÈÇ©ämîF
-//7 ÉÅÉbÉVÉÖÇÃì«Ç›çûÇ›Ç∆ï\é¶
+//2 Â§âÂΩ¢„Çí‰º¥„ÅÜÈÉ®ÂàÜ„Åß m_manip_log„Å´push OK 
+//3 Â§âÂΩ¢Ââç„Å´ÂÖÉÂΩ¢Áä∂„ÇíË®òÈå≤ OK 
+//4 Âè≥„ÇØ„É™„ÉÉ„ÇØÊôÇ„Å´ÂÖÉ„Å´Êàª„Åô OK 
+//5 scaling„ÅÆ„Éè„É≥„Éâ„É´„Åå„Åä„Åã„Åó„ÅÑ  OK
+//6 „Åä„Åù„Çâ„ÅèËß£ÂÉèÂ∫¶„ÅåË∂≥„Çä„Åö„Å´Â§â„Å™Â§âÂΩ¢„ÅåËµ∑„Åç„Å¶„Çã„Éª‰Ωï„ÅåËµ∑„Åç„Å¶„Çã„ÅãÁ¢∫Ë™ç
+//7 „É°„ÉÉ„Ç∑„É•„ÅÆË™≠„ÅøËæº„Åø„Å®Ë°®Á§∫
 
 
 // User interface --> 4 modes
 //
 // Selection 
-// + Shift + R drag  --> í∏ì_ÇÃãÈå`ëIë
-// + Shift + R click --> í∏ì_ÇÃÉNÉäÉbÉNëIë
-// + s key + L drag  --> í∏ì_ÇÃãÈå`ëIë
-// + s key + L click --> í∏ì_ÇÃÉNÉäÉbÉNëIë
+// + Shift + R drag  --> È†ÇÁÇπ„ÅÆÁü©ÂΩ¢ÈÅ∏Êäû
+// + Shift + R click --> È†ÇÁÇπ„ÅÆ„ÇØ„É™„ÉÉ„ÇØÈÅ∏Êäû
+// + s key + L drag  --> È†ÇÁÇπ„ÅÆÁü©ÂΩ¢ÈÅ∏Êäû
+// + s key + L click --> È†ÇÁÇπ„ÅÆ„ÇØ„É™„ÉÉ„ÇØÈÅ∏Êäû
 //
 //
 // Modification 
-// + Shift + L - drag : Ç‹Ç∆ÇﬂÇƒâÒì]ÅEïΩçsà⁄ìÆÅEägëÂ 
-//   (modeÇÕÉ_ÉCÉAÉçÉOÇÊÇËêÿÇËë÷Ç¶â¬î\)
+// + Shift + L - drag : „Åæ„Å®„ÇÅ„Å¶ÂõûËª¢„ÉªÂπ≥Ë°åÁßªÂãï„ÉªÊã°Â§ß 
+//   (mode„ÅØ„ÉÄ„Ç§„Ç¢„É≠„Ç∞„Çà„ÇäÂàá„ÇäÊõø„ÅàÂèØËÉΩ)
 //
 // Others
-// + meshÇ∆cageÇÕÉ_ÉCÉAÉçÉOÇÊÇËÉçÅ[Éhâ¬î\
-// + ëºÇÃóÃàÊÇï\Ç∑meshÇ‡É_ÉCÉAÉçÉOÇÊÇËÉçÅ[Éhâ¬î\
+// + mesh„Å®cage„ÅØ„ÉÄ„Ç§„Ç¢„É≠„Ç∞„Çà„Çä„É≠„Éº„ÉâÂèØËÉΩ
+// + ‰ªñ„ÅÆÈ†òÂüü„ÇíË°®„Åômesh„ÇÇ„ÉÄ„Ç§„Ç¢„É≠„Ç∞„Çà„Çä„É≠„Éº„ÉâÂèØËÉΩ
 
 
 
 //DONE Visualization 
-//êßå‰ì_ÇÃÉVÉFÅ[ÉfÉBÉìÉO   
-//ÉnÉìÉhÉãÇÃÉVÉFÅ[ÉfÉBÉìÉO 
-//ñÓàÛÉnÉìÉhÉãå©Ç¶Ç»Ç¢ -->ÉnÉìÉhÉãÇÃå`èÛïœâª    
-//êßå‰ì_ÇÃëÂÇ´Ç≥Çâ¬ïœÇ…  --> dialogÇ…cp sizeÇí«â¡
-//ÉOÉâÉtÇÃyé≤ï˚å¸ÇÉXÉPÅ[ÉäÉìÉO 
+//Âà∂Âæ°ÁÇπ„ÅÆ„Ç∑„Çß„Éº„Éá„Ç£„É≥„Ç∞   
+//„Éè„É≥„Éâ„É´„ÅÆ„Ç∑„Çß„Éº„Éá„Ç£„É≥„Ç∞ 
+//Áü¢Âç∞„Éè„É≥„Éâ„É´Ë¶ã„Åà„Å™„ÅÑ -->„Éè„É≥„Éâ„É´„ÅÆÂΩ¢Áä∂Â§âÂåñ    
+//Âà∂Âæ°ÁÇπ„ÅÆÂ§ß„Åç„Åï„ÇíÂèØÂ§â„Å´  --> dialog„Å´cp size„ÇíËøΩÂä†
+//„Ç∞„É©„Éï„ÅÆyËª∏ÊñπÂêë„Çí„Çπ„Ç±„Éº„É™„É≥„Ç∞ 
 
 //TODO ?
-//ÉOÉâÉtè„Ç…ï°êîÇÃí∏ì_Çâ¬éãâª  
-//ëΩéãì_viewÇÃï\é¶
-//ï°êîí∏ì_ÇÃìØéûà⁄ìÆÅiìØó / gaussian modeà⁄ìÆó Ç™ãóó£Ç…âûÇ∂Çƒå∏êäÅj
+//„Ç∞„É©„Éï‰∏ä„Å´Ë§áÊï∞„ÅÆÈ†ÇÁÇπ„ÇíÂèØË¶ñÂåñ  
+//Â§öË¶ñÁÇπview„ÅÆË°®Á§∫
+//Ë§áÊï∞È†ÇÁÇπ„ÅÆÂêåÊôÇÁßªÂãïÔºàÂêåÈáè/ gaussian modeÁßªÂãïÈáè„ÅåË∑ùÈõ¢„Å´Âøú„Åò„Å¶Ê∏õË°∞Ôºâ
 //
-//â€ëË : ìÆÇ©ÇµÇƒÇ¢ÇÈÇ§ÇøÇ…Ç™ÇΩÇ™ÇΩÇ…Ç»ÇÈ --> ïΩääâªÅH
+//Ë™≤È°å : Âãï„Åã„Åó„Å¶„ÅÑ„Çã„ÅÜ„Å°„Å´„Åå„Åü„Åå„Åü„Å´„Å™„Çã --> Âπ≥ÊªëÂåñÔºü
 
 
-//êßå‰ì_Ç™ñßèWÇµÇƒÇ¢ÇÈÇ∆Ç±ÇÎÇ≈ÇÕïœå`Ç…ÉmÉCÉY?Ç™ÇÃÇ¡ÇƒääÇÁÇ©Ç≈Ç»Ç≠Ç»ÇÈ
-//--> âëúìxïsë´ÇÃâ¬î\ê´Ç†ÇËÅiçAì™Åj
-//Ç∑Ç≈Ç…ï™äÑÇµÇΩóÃàÊÇÃmask volumeÇÃï\é¶ Åiâ¬î\ Å® É}ÉXÉNñàÇ…êßå‰ÇµÇ»Ç≠ÇƒÇÊÇØÇÍÇŒä»íPÅjóDêÊìxçÇ   
-//ïsóv ? ÉOÉâÉtÇÃàÍòAÇÃì_ÇÉXÉgÉçÅ[ÉNÇ≈éwíËâ¬î\Ç…
+//Âà∂Âæ°ÁÇπ„ÅåÂØÜÈõÜ„Åó„Å¶„ÅÑ„Çã„Å®„Åì„Çç„Åß„ÅØÂ§âÂΩ¢„Å´„Éé„Ç§„Ç∫?„Åå„ÅÆ„Å£„Å¶Êªë„Çâ„Åã„Åß„Å™„Åè„Å™„Çã
+//--> Ëß£ÂÉèÂ∫¶‰∏çË∂≥„ÅÆÂèØËÉΩÊÄß„ÅÇ„ÇäÔºàÂñâÈ†≠Ôºâ
+//„Åô„Åß„Å´ÂàÜÂâ≤„Åó„ÅüÈ†òÂüü„ÅÆmask volume„ÅÆË°®Á§∫ ÔºàÂèØËÉΩ ‚Üí „Éû„Çπ„ÇØÊØé„Å´Âà∂Âæ°„Åó„Å™„Åè„Å¶„Çà„Åë„Çå„Å∞Á∞°ÂçòÔºâÂÑ™ÂÖàÂ∫¶È´ò   
+//‰∏çË¶Å ? „Ç∞„É©„Éï„ÅÆ‰∏ÄÈÄ£„ÅÆÁÇπ„Çí„Çπ„Éà„É≠„Éº„ÇØ„ÅßÊåáÂÆöÂèØËÉΩ„Å´
 
 
 using namespace RoiPainter4D;
+
+
+const std::string ModeSegSwallowOrgans::m_vtxshader_fname =
+std::string("shader/cagemeshVtx.glsl");
+const std::string ModeSegSwallowOrgans::m_frgshader_fname =
+std::string("shader/cagemeshFrg.glsl");
+GLuint  ModeSegSwallowOrgans::m_gl2Program = -1;
 
 
 //////////////////////////////////////////////////////////////////////////
 /////////ModeSegSwallowOrgans////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-ModeSegSwallowOrgans::ModeSegSwallowOrgans() : 
+ModeSegSwallowOrgans::ModeSegSwallowOrgans() :
   //m_volume_shader("shader/volVtx.glsl", "shader/volFlg.glsl"),   // normal volume vis
   m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl"), // mask volume vis
   m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
@@ -98,7 +105,7 @@ ModeSegSwallowOrgans::~ModeSegSwallowOrgans()
 
 
 
-void ModeSegSwallowOrgans::startMode()
+void ModeSegSwallowOrgans::StartMode()
 {
   m_bL = m_bR = m_bM = false;
   m_draghandle_id = OHDL_NON;
@@ -106,15 +113,17 @@ void ModeSegSwallowOrgans::startMode()
   m_manip_log.clear();
   m_undo_piv = -1;
   m_meshseq.Clear();
+  m_gl2Program = -1;
+  is_vismesh_transparent = false;
 
   auto c = ImageCore::GetInst()->GetCuboidF();
   int cprate = FormSegSwqllowOrgans_GetCpSize();
-  m_meshseq.SetHandleLength      ( c[0] * 0.03f   * cprate);
-  m_meshseq.SetControlPointRadius( c[0] * 0.0015f * cprate);
+  m_meshseq.SetHandleLength(c[0] * 0.03f * cprate);
+  m_meshseq.SetControlPointRadius(c[0] * 0.0015f * cprate);
 
   //initialize vFlg
-  ImageCore::GetInst()->InitializeFlg4dByMask( formMain_SetProgressValue );
-  
+  ImageCore::GetInst()->InitializeFlg4dByMask(formMain_SetProgressValue);
+
   //show dialog
   FormSegSwallowOrgans_Show();
   FormSegSwallowOrgans_InitAllItems();
@@ -124,26 +133,26 @@ void ModeSegSwallowOrgans::startMode()
   UpdateImageCoreVisVolumes();
 
   //initialize cage point growp
-  for ( int i=0; i < NUM_POINT_GROUPS; ++i )
+  for (int i = 0; i < NUM_POINT_GROUPS; ++i)
   {
     m_groups[i].m_name = "na";
     m_groups[i].m_ids.clear();
   }
 
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  FormSegSwallowTimeline_StartMode( num_frames );
+  FormSegSwallowTimeline_StartMode(num_frames);
   FormSegSwallowTimeline_Show();
   FormSegSwallowOrgans_UpdateList();
 }
 
 
 
-bool ModeSegSwallowOrgans::canEndMode()
+bool ModeSegSwallowOrgans::CanEndMode()
 {
-  if( !m_meshseq.IsInitialized() ) 
+  if (!m_meshseq.IsInitialized())
     return true;
-  else return 
-    ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Leaving?"); 
+  else return
+    ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Leaving?");
 }
 
 
@@ -167,7 +176,7 @@ void ModeSegSwallowOrgans::FinishSegmentation()
     }
   }
 
-  if ( !b_fore_exist )
+  if (!b_fore_exist)
   {
     ShowMsgDlg_OK(MESSAGE_NO_FOREGROUND, "no foreground");
     return;
@@ -176,7 +185,7 @@ void ModeSegSwallowOrgans::FinishSegmentation()
   ImageCore::GetInst()->mask_storeCurrentForeGround();
 
   m_meshseq.Clear();
-  
+
   //NOTE: do not clear (m_isovalue and m_isosurfaces)
   ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   formMain_RedrawMainPanel();
@@ -186,8 +195,8 @@ void ModeSegSwallowOrgans::FinishSegmentation()
 
 void ModeSegSwallowOrgans::CancelSegmentation()
 {
-  if( !m_meshseq.IsInitialized() || 
-    ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "cancel?") )
+  if (!m_meshseq.IsInitialized() ||
+    ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "cancel?"))
   {
     ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
     formMain_RedrawMainPanel();
@@ -198,38 +207,38 @@ void ModeSegSwallowOrgans::CancelSegmentation()
 
 void ModeSegSwallowOrgans::FillInMesh()
 {
-  if ( !m_meshseq.IsInitialized() )
+  if (!m_meshseq.IsInitialized())
   {
     return;
   }
 
   const EVec3i   resolution = ImageCore::GetInst()->GetReso();
-  const EVec3f   pitch      = ImageCore::GetInst()->GetPitch();
-  std::vector<byte*> &flg4d = ImageCore::GetInst()->m_flg4d;
+  const EVec3f   pitch = ImageCore::GetInst()->GetPitch();
+  std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;
 
   const int num_voxels = ImageCore::GetInst()->GetNumVoxels();
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
 
-  byte *flgInOut = new byte[num_voxels];
+  byte* flgInOut = new byte[num_voxels];
 
   for (int f = 0; f < num_frames; ++f)
   {
-    TMesh &m = m_meshseq.GetMesh(f);
+    TMesh& m = m_meshseq.GetMesh(f);
 
 
     std::cout << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    GenBinaryVolumeFromMesh_Y(resolution, pitch, m, flgInOut);
+    GenBinaryVolumeFromMeshY(resolution, pitch, m, flgInOut);
     std::cout << "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 
     byte* flg3d = flg4d[f];
 #pragma omp parallel for
     for (int i = 0; i < num_voxels; ++i)
     {
-      flg3d[i] = (flg3d[i]    == 0) ? 0 :
-                 (flgInOut[i] == 1) ? 255 : 1;
+      flg3d[i] = (flg3d[i] == 0) ? 0 :
+        (flgInOut[i] == 1) ? 255 : 1;
     }
 
-    formMain_SetProgressValue( f / (float)num_frames );
+    formMain_SetProgressValue(f / (float)num_frames);
     std::cout << "fillInMesh " << f << "/" << num_frames << "\n";
   }
   delete[] flgInOut;
@@ -248,26 +257,26 @@ void ModeSegSwallowOrgans::FillInMesh()
 
 void ModeSegSwallowOrgans::LoadNewMeshAndCage
 (
-    std::string mesh_path, 
-    std::string cage_path
+  std::string mesh_path,
+  std::string cage_path
 )
 {
   m_fpath_mesh = mesh_path;
   m_fpath_cage = cage_path;
 
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  const EVec3f cuboid  = ImageCore::GetInst()->GetCuboidF();
-  m_meshseq.Initialize( num_frames, cuboid, mesh_path, cage_path);
+  const EVec3f cuboid = ImageCore::GetInst()->GetCuboidF();
+  m_meshseq.Initialize(num_frames, cuboid, mesh_path, cage_path);
 
   //initialize group
-  for ( int i=0; i < NUM_POINT_GROUPS; ++i )
+  for (int i = 0; i < NUM_POINT_GROUPS; ++i)
   {
     m_groups[i].m_name = "na";
     m_groups[i].m_ids.clear();
   }
 
   m_groups[0].m_name = "all";
-  for( int i=0; i < m_meshseq.GetNumCageVertex(); ++i) 
+  for (int i = 0; i < m_meshseq.GetNumCageVertex(); ++i)
     m_groups[0].m_ids.insert(i);
 
   m_manip_log.clear();
@@ -275,18 +284,18 @@ void ModeSegSwallowOrgans::LoadNewMeshAndCage
 
   FormSegSwallowOrgans_UpdateList();
   formMain_RedrawMainPanel();
-}  
+}
 
 
 
-static const char *MESSAGE_FOR_CANCEL =  
-  "The system is going to copy current shape to the other all frames, OK?\n"
-  "åªç›frameÇÃå`èÛÇëSÉtÉåÅ[ÉÄÇ…ÉRÉsÅ[ÇµÇƒÇÊÇ¢Ç≈Ç∑Ç©ÅH\n"
-  "Ç±ÇÃèàóùÇçsÇ§Ç∆Ç±Ç±Ç‹Ç≈ÇÃundoÇ™Ç≈Ç´Ç»Ç≠Ç»ÇËÇ‹Ç∑";
+static const char* MESSAGE_FOR_CANCEL =
+"The system is going to copy current shape to the other all frames, OK?\n"
+"ÁèæÂú®frame„ÅÆÂΩ¢Áä∂„ÇíÂÖ®„Éï„É¨„Éº„É†„Å´„Ç≥„Éî„Éº„Åó„Å¶„Çà„ÅÑ„Åß„Åô„ÅãÔºü\n"
+"„Åì„ÅÆÂá¶ÁêÜ„ÇíË°å„ÅÜ„Å®„Åì„Åì„Åæ„Åß„ÅÆundo„Åå„Åß„Åç„Å™„Åè„Å™„Çä„Åæ„Åô";
 
 void ModeSegSwallowOrgans::CopyCurrentMeshToOtherFrames()
 {
-  if( !ShowMsgDlgYesNo( MESSAGE_FOR_CANCEL, "Message") ) 
+  if (!ShowMsgDlgYesNo(MESSAGE_FOR_CANCEL, "Message"))
     return;
 
   const int frame_idx = formVisParam_getframeI();
@@ -316,43 +325,43 @@ void ModeSegSwallowOrgans::SaveCageMeshSequenceTxt(std::string fname, bool b_cag
 void ModeSegSwallowOrgans::LoadCageSequence(std::string fname)
 {
   m_meshseq.ImportCageSequenceFromTxt(fname);
-  
+
   m_manip_log.clear();
   m_undo_piv = -1;
   formMain_RedrawMainPanel();
-} 
+}
 
 
 
 //  DeformImportedCage
-//1. êVÇµÇ≠ obj (éüÇÃäKëwÇÃÉPÅ[ÉW)Çì«Ç›çûÇ›ÅA
-//2. ïœå`ópÇÃhamonic coordinateçÏê¨
-//3. åªç›ÇÃïœå`åãâ ÇìKópÇµÅAobjÇÃïœå`ÇèoóÕÇ∑ÇÈ
+//1. Êñ∞„Åó„Åè obj (Ê¨°„ÅÆÈöéÂ±§„ÅÆ„Ç±„Éº„Ç∏)„ÇíË™≠„ÅøËæº„Åø„ÄÅ
+//2. Â§âÂΩ¢Áî®„ÅÆhamonic coordinate‰ΩúÊàê
+//3. ÁèæÂú®„ÅÆÂ§âÂΩ¢ÁµêÊûú„ÇíÈÅ©Áî®„Åó„ÄÅobj„ÅÆÂ§âÂΩ¢„ÇíÂá∫Âäõ„Åô„Çã
 void ModeSegSwallowOrgans::DeformImportedCage(
-    std::string fname_obj,
-    std::string fname_output)
+  std::string fname_obj,
+  std::string fname_output)
 {
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  const EVec3f cuboid  = ImageCore::GetInst()->GetCuboidF();
+  const EVec3f cuboid = ImageCore::GetInst()->GetCuboidF();
 
   CagedMeshSequence meshseq;
   meshseq.Initialize(num_frames, cuboid, fname_obj, m_fpath_cage);
 
-  //3-1. åªç›ÇÃïœå`åãâ ÇìKóp
+  //3-1. ÁèæÂú®„ÅÆÂ§âÂΩ¢ÁµêÊûú„ÇíÈÅ©Áî®
   const int num_cage_vtx = meshseq.GetNumCageVertex();
   for (int f = 0; f < num_frames; ++f)
   {
     for (int i = 0; i < num_cage_vtx; ++i)
     {
-      EVec3f p = m_meshseq.GetCageVertex(f,i);
-      meshseq.SetCageVertex(f,i,p,false);
+      EVec3f p = m_meshseq.GetCageVertex(f, i);
+      meshseq.SetCageVertex(f, i, p, false);
     }
     meshseq.UpdateMeshShape(f);
   }
-  
-  //3-2. cageí∏ì_ÇèoóÕ
+
+  //3-2. cageÈ†ÇÁÇπ„ÇíÂá∫Âäõ
   meshseq.ExportCageMeshSequenceAsTxt(fname_output, false);
- 
+
 }
 
 
@@ -362,55 +371,55 @@ void ModeSegSwallowOrgans::DeformImportedCage(
 //Mouse Listener///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-void ModeSegSwallowOrgans::LBtnDown(const EVec2i &p, OglForCLI *ogl)
+void ModeSegSwallowOrgans::LBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
   m_bL = true;
-  
+
   const int frame_idx = formVisParam_getframeI();
   EVec3f ray_p, ray_d;
-  std::tie(ray_p, ray_d) = ogl->GetCursorRay1( p );
+  std::tie(ray_p, ray_d) = ogl->GetCursorRay1(p);
 
-  if ( isCtrKeyOn() )
+  if (IsCtrKeyOn())
   {
     m_stroke.clear();
     m_b_draw_cutstroke = true;
   }
-  else if ( isShiftKeyOn() && m_meshseq.IsInitialized() )
+  else if (IsShiftKeyOn() && m_meshseq.IsInitialized())
   {
-    if(m_meshseq.GetNumSelectedVtx() > 0)
+    if (m_meshseq.GetNumSelectedVtx() > 0)
     {
       //deformation
-      const int trs = FormSegSwallowOrgans_IsModeTranslate() ? 0 : 
-                      FormSegSwallowOrgans_IsModeRotate   () ? 1: 2;
+      const int trs = FormSegSwallowOrgans_IsModeTranslate() ? 0 :
+        FormSegSwallowOrgans_IsModeRotate() ? 1 : 2;
 
-      m_draghandle_id = m_meshseq.PickCageHandle(frame_idx, ray_p, ray_d, trs );
+      m_draghandle_id = m_meshseq.PickCageHandle(frame_idx, ray_p, ray_d, trs);
 
-      if (m_draghandle_id > 0) 
+      if (m_draghandle_id > 0)
       {
         m_cagevtx_prev = m_meshseq.GetCageVertices(frame_idx);
       }
     }
 
-    if(m_draghandle_id == OHDL_NON)
+    if (m_draghandle_id == OHDL_NON)
     {
-      if(isSKeyOn()) m_meshseq.ClearSelectedVtx();
+      if (IsSKeyOn()) m_meshseq.ClearSelectedVtx();
 
       //pick to add
-      m_meshseq.SelectCageVtxByPick( frame_idx, ray_p, ray_d);
-      FormSegSwallowOrgans_SetNumSelectVtx( m_meshseq.GetNumSelectedVtx() );
+      m_meshseq.SelectCageVtxByPick(frame_idx, ray_p, ray_d);
+      FormSegSwallowOrgans_SetNumSelectVtx(m_meshseq.GetNumSelectedVtx());
       FormSegSwallowTimeline_RedrawPanel();
-      
+
       //start drawing rect
       m_b_draw_selectionrect = true;
-      
-      for ( int i = 0; i < 4; ++i)
+
+      for (int i = 0; i < 4; ++i)
       {
-        m_selectrect[i] = EVec3f(0,0,0);
+        m_selectrect[i] = EVec3f(0, 0, 0);
       }
 
       formMain_RedrawMainPanel();
     }
-  } 
+  }
   else
   {
     ogl->BtnDown_Trans(p);
@@ -422,14 +431,14 @@ void ModeSegSwallowOrgans::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 
 
 
-void ModeSegSwallowOrgans::LBtnUp(const EVec2i &p, OglForCLI *ogl)
+void ModeSegSwallowOrgans::LBtnUp(const EVec2i& p, OglForCLI* ogl)
 {
   if (m_b_draw_cutstroke)
   {
     EVec3f cuboid = ImageCore::GetCuboid();
-    CrssecCore::CreateCurvedCrssec( cuboid, ogl->GetCamPos(), m_stroke);
+    CrssecCore::CreateCurvedCrssec(cuboid, ogl->GetCamPos(), m_stroke);
   }
-  
+
   if (m_draghandle_id != OHDL_NON)
   {
     const int frameidx = formVisParam_getframeI();
@@ -437,21 +446,21 @@ void ModeSegSwallowOrgans::LBtnUp(const EVec2i &p, OglForCLI *ogl)
 
     if (m_undo_piv < (int)m_manip_log.size() - 1)
     {
-      //m_manip_log[m_undo_piv + 1...]ÇçÌèú
-      m_manip_log.erase( m_manip_log.begin() + m_undo_piv+1, m_manip_log.end());
+      //m_manip_log[m_undo_piv + 1...]„ÇíÂâäÈô§
+      m_manip_log.erase(m_manip_log.begin() + m_undo_piv + 1, m_manip_log.end());
     }
 
     m_manip_log.push_back(CageManipLog(frameidx, m_cagevtx_prev, verts));
     m_undo_piv = (int)m_manip_log.size() - 1;
   }
 
-  if ( m_b_draw_selectionrect && m_meshseq.IsInitialized() )
+  if (m_b_draw_selectionrect && m_meshseq.IsInitialized())
   {
-    m_meshseq.SelectCageVtxByRect( formVisParam_getframeI(), m_initpt, p, ogl);
-    FormSegSwallowOrgans_SetNumSelectVtx( m_meshseq.GetNumSelectedVtx() );
+    m_meshseq.SelectCageVtxByRect(formVisParam_getframeI(), m_initpt, p, ogl);
+    FormSegSwallowOrgans_SetNumSelectVtx(m_meshseq.GetNumSelectedVtx());
     FormSegSwallowTimeline_RedrawPanel();
 
-    if( FormSegSwallowOrgans_bFitCrssec() ) FitCrssecToSelectedCageVtx();
+    if (FormSegSwallowOrgans_bFitCrssec()) FitCrssecToSelectedCageVtx();
   }
 
   m_draghandle_id = OHDL_NON;
@@ -466,11 +475,11 @@ void ModeSegSwallowOrgans::LBtnUp(const EVec2i &p, OglForCLI *ogl)
 
 
 
-void ModeSegSwallowOrgans::RBtnDown  (const EVec2i &p, OglForCLI *ogl)
+void ModeSegSwallowOrgans::RBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
-  if ( m_draghandle_id != OHDL_NON )
+  if (m_draghandle_id != OHDL_NON)
   {
-    //TranslateÇÃÉhÉâÉbÉOíÜÇÃâEÉNÉäÉbÉNÉLÉÉÉìÉZÉã
+    //Translate„ÅÆ„Éâ„É©„ÉÉ„Ç∞‰∏≠„ÅÆÂè≥„ÇØ„É™„ÉÉ„ÇØ„Ç≠„É£„É≥„Çª„É´
     const int frame_idx = formVisParam_getframeI();
     m_meshseq.SetCageVertices(frame_idx, m_cagevtx_prev);
 
@@ -483,7 +492,7 @@ void ModeSegSwallowOrgans::RBtnDown  (const EVec2i &p, OglForCLI *ogl)
 
 
 
-void ModeSegSwallowOrgans::RBtnUp    (const EVec2i &p, OglForCLI *ogl)
+void ModeSegSwallowOrgans::RBtnUp(const EVec2i& p, OglForCLI* ogl)
 {
   m_bR = false;
   ogl->BtnUp();
@@ -492,7 +501,7 @@ void ModeSegSwallowOrgans::RBtnUp    (const EVec2i &p, OglForCLI *ogl)
 
 
 
-void ModeSegSwallowOrgans::MBtnDown  (const EVec2i &p, OglForCLI *ogl)
+void ModeSegSwallowOrgans::MBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
   m_bM = true;
   ogl->BtnDown_Zoom(p);
@@ -500,7 +509,7 @@ void ModeSegSwallowOrgans::MBtnDown  (const EVec2i &p, OglForCLI *ogl)
 
 
 
-void ModeSegSwallowOrgans::MBtnUp    (const EVec2i &p, OglForCLI *ogl)
+void ModeSegSwallowOrgans::MBtnUp(const EVec2i& p, OglForCLI* ogl)
 {
   m_bM = false;
   ogl->BtnUp();
@@ -509,64 +518,64 @@ void ModeSegSwallowOrgans::MBtnUp    (const EVec2i &p, OglForCLI *ogl)
 
 
 
-void ModeSegSwallowOrgans::MouseMove (const EVec2i &p, OglForCLI *ogl)
+void ModeSegSwallowOrgans::MouseMove(const EVec2i& p, OglForCLI* ogl)
 {
   const int frame_idx = formVisParam_getframeI();
   EVec3f ray_pos, ray_dir, pos;
   ogl->GetCursorRay(p, ray_pos, ray_dir);
-  if ( !m_bL && !m_bR && !m_bM )
+  if (!m_bL && !m_bR && !m_bM)
   {
     formMain_setCursorDefault();
-    if ( isShiftKeyOn() && m_meshseq.IsInitialized() && m_meshseq.GetNumSelectedVtx() > 0)
+    if (IsShiftKeyOn() && m_meshseq.IsInitialized() && m_meshseq.GetNumSelectedVtx() > 0)
     {
-      const int trs = FormSegSwallowOrgans_IsModeTranslate() ? 0 : 
-                      FormSegSwallowOrgans_IsModeRotate()    ? 1 : 2;
-      auto tmp_draghandle_id = m_meshseq.PickCageHandle(frame_idx, ray_pos, ray_dir, trs );
-      if(tmp_draghandle_id != OHDL_NON) formMain_setCursorNESW();
+      const int trs = FormSegSwallowOrgans_IsModeTranslate() ? 0 :
+        FormSegSwallowOrgans_IsModeRotate() ? 1 : 2;
+      auto tmp_draghandle_id = m_meshseq.PickCageHandle(frame_idx, ray_pos, ray_dir, trs);
+      if (tmp_draghandle_id != OHDL_NON) formMain_setCursorNESW();
     }
     return;
   }
-    
-  if ( m_b_draw_cutstroke )
+
+  if (m_b_draw_cutstroke)
   {
     //cut stroke 
     m_stroke.push_back(ray_pos + 0.1f * ray_dir);
   }
-  else if ( m_draghandle_id != OHDL_NON )
+  else if (m_draghandle_id != OHDL_NON)
   {
-    if ( FormSegSwallowOrgans_IsModeTranslate() )
+    if (FormSegSwallowOrgans_IsModeTranslate())
     {
-      m_meshseq.TranslateSelectedVerts( frame_idx, m_prevpt, p, m_draghandle_id, ogl);
+      m_meshseq.TranslateSelectedVerts(frame_idx, m_prevpt, p, m_draghandle_id, ogl);
     }
-    else if ( FormSegSwallowOrgans_IsModeRotate() )
+    else if (FormSegSwallowOrgans_IsModeRotate())
     {
-      m_meshseq.RotateSelectedVerts( frame_idx, m_prevpt, p, m_draghandle_id, ogl);
+      m_meshseq.RotateSelectedVerts(frame_idx, m_prevpt, p, m_draghandle_id, ogl);
     }
-    else if ( FormSegSwallowOrgans_IsModeScale() )
+    else if (FormSegSwallowOrgans_IsModeScale())
     {
-      m_meshseq.ScaleSelectedVerts( frame_idx, m_prevpt, p, ogl);
+      m_meshseq.ScaleSelectedVerts(frame_idx, m_prevpt, p, ogl);
     }
-    
-    if( FormSegSwallowOrgans_bFitCrssec() ) FitCrssecToSelectedCageVtx();
+
+    if (FormSegSwallowOrgans_bFitCrssec()) FitCrssecToSelectedCageVtx();
     FormSegSwallowTimeline_RedrawPanel();
 
   }
-  else if ( m_b_draw_selectionrect )
+  else if (m_b_draw_selectionrect)
   {
     //draw selecting rect
-    EVec2i rectpt[4] = { 
-      EVec2i(std::min(p[0],m_initpt[0]), std::min(p[1],m_initpt[1]) ),
-      EVec2i(std::min(p[0],m_initpt[0]), std::max(p[1],m_initpt[1]) ),
-      EVec2i(std::max(p[0],m_initpt[0]), std::max(p[1],m_initpt[1]) ),
-      EVec2i(std::max(p[0],m_initpt[0]), std::min(p[1],m_initpt[1]) ) };
+    EVec2i rectpt[4] = {
+      EVec2i(std::min(p[0],m_initpt[0]), std::min(p[1],m_initpt[1])),
+      EVec2i(std::min(p[0],m_initpt[0]), std::max(p[1],m_initpt[1])),
+      EVec2i(std::max(p[0],m_initpt[0]), std::max(p[1],m_initpt[1])),
+      EVec2i(std::max(p[0],m_initpt[0]), std::min(p[1],m_initpt[1])) };
 
-    for ( int i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
-      auto ray = ogl->GetCursorRay1( rectpt[i] );
+      auto ray = ogl->GetCursorRay1(rectpt[i]);
       m_selectrect[i] = std::get<0>(ray) + 0.1f * std::get<1>(ray);
     }
   }
-  else 
+  else
   {
     ogl->MouseMove(p);
   }
@@ -578,53 +587,57 @@ void ModeSegSwallowOrgans::MouseMove (const EVec2i &p, OglForCLI *ogl)
 
 
 void ModeSegSwallowOrgans::MouseWheel(
-    const EVec2i &p, 
-    short z_delta, 
-    OglForCLI *ogl)
+  const EVec2i& p,
+  short z_delta,
+  OglForCLI* ogl)
 {
-  if(!WheelingCrssec(p, z_delta, ogl) ) 
+  if (!WheelingCrssec(p, z_delta, ogl))
     ogl->ZoomCamera(z_delta * 0.1f);
   formMain_RedrawMainPanel();
 }
 
 
 
-void ModeSegSwallowOrgans::LBtnDclk  (const EVec2i &p, OglForCLI *ogl){}
-void ModeSegSwallowOrgans::RBtnDclk  (const EVec2i &p, OglForCLI *ogl){}
-void ModeSegSwallowOrgans::MBtnDclk  (const EVec2i &p, OglForCLI *ogl){}
+void ModeSegSwallowOrgans::LBtnDclk(const EVec2i& p, OglForCLI* ogl) {}
+void ModeSegSwallowOrgans::RBtnDclk(const EVec2i& p, OglForCLI* ogl) {}
+void ModeSegSwallowOrgans::MBtnDclk(const EVec2i& p, OglForCLI* ogl) {}
 
 
 
-void ModeSegSwallowOrgans::keyDown( int nChar )
+void ModeSegSwallowOrgans::KeyDown(int nChar)
 {
-  if ( nChar == 'C' )
+  if (nChar == 'C')
   {
     SelectedCageVtx_Clear();
     FormSegSwallowOrgans_SetNumSelectVtx(0);
     FormSegSwallowTimeline_RedrawPanel();
   }
-  else if ( nChar == 'R'){ this->RegistPointGroup(); }
-  else if ( nChar == '0'){ this->CheckoutPointGroup(0); }
-  else if ( nChar == '1'){ this->CheckoutPointGroup(1); }
-  else if ( nChar == '2'){ this->CheckoutPointGroup(2); }
-  else if ( nChar == '3'){ this->CheckoutPointGroup(3); }
-  else if ( nChar == '4'){ this->CheckoutPointGroup(4); }
-  else if ( nChar == '5'){ this->CheckoutPointGroup(5); }
-  else if ( nChar == '6'){ this->CheckoutPointGroup(6); }
-  else if ( nChar == '7'){ this->CheckoutPointGroup(7); }
-  else if ( nChar == '8'){ this->CheckoutPointGroup(8); }
-  else if ( nChar == '9'){ this->CheckoutPointGroup(9); }
-  else if ( nChar == 'Z' && isCtrKeyOn()) {
+  else if (nChar == 'R') { this->RegistPointGroup(); }
+  else if (nChar == '0') { this->CheckoutPointGroup(0); }
+  else if (nChar == '1') { this->CheckoutPointGroup(1); }
+  else if (nChar == '2') { this->CheckoutPointGroup(2); }
+  else if (nChar == '3') { this->CheckoutPointGroup(3); }
+  else if (nChar == '4') { this->CheckoutPointGroup(4); }
+  else if (nChar == '5') { this->CheckoutPointGroup(5); }
+  else if (nChar == '6') { this->CheckoutPointGroup(6); }
+  else if (nChar == '7') { this->CheckoutPointGroup(7); }
+  else if (nChar == '8') { this->CheckoutPointGroup(8); }
+  else if (nChar == '9') { this->CheckoutPointGroup(9); }
+  else if (nChar == 'Z' && IsCtrKeyOn()) {
     this->UndoCpManipulation();
   }
-  else if (nChar == 'Y' && isCtrKeyOn()) {
+  else if (nChar == 'Y' && IsCtrKeyOn()) {
     this->RedoCpManipulation();
+  }
+  else if (nChar == VK_F12)
+  {
+    is_vismesh_transparent = !is_vismesh_transparent;
   }
   //std::cout << nChar << "\n";
 }
 
 
-void ModeSegSwallowOrgans::keyUp  ( int nChar )
+void ModeSegSwallowOrgans::KeyUp(int nChar)
 {
 
 }
@@ -654,14 +667,14 @@ static float ambi_vis[5][4] = {
   {0.5f,0.5f,0.7f,0.2f},
 };
 static float spec[4] = { 0.9f,0.9f,0.9f,0.2f };
-static float shin[1] = { 54.0f};
+static float shin[1] = { 54.0f };
 
 
 
-void ModeSegSwallowOrgans::drawScene(
-    const EVec3f &cuboid, 
-    const EVec3f &cam_pos, 
-    const EVec3f &cam_center)
+void ModeSegSwallowOrgans::DrawScene(
+  const EVec3f& cuboid,
+  const EVec3f& cam_pos,
+  const EVec3f& cam_center)
 {
   const EVec3i reso = ImageCore::GetInst()->GetReso();
   const int frame_idx = formVisParam_getframeI();
@@ -672,45 +685,45 @@ void ModeSegSwallowOrgans::drawScene(
 
   //bind volumes ---------------------------------------
   BindAllVolumes();
-  DrawCrossSections(cuboid, reso, !isSpaceKeyOn(), m_crssec_shader);
-  
+  DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader);
+
   //draw cut stroke
-  if ( m_b_draw_cutstroke )
+  if (m_b_draw_cutstroke)
   {
-    t_DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
+    DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke, false);
   }
- 
+
   //draw selection rect
-  if ( m_b_draw_selectionrect )
+  if (m_b_draw_selectionrect)
   {
-    t_DrawPolyLine( EVec3f(1,1,0), 3, 4, m_selectrect, true);
+    DrawPolyLine(EVec3f(1, 1, 0), 3, 4, m_selectrect, true);
   }
 
   //draw cage (handle or normam)
-  if ( isShiftKeyOn() && m_meshseq.GetNumSelectedVtx() > 0)
+  if (IsShiftKeyOn() && m_meshseq.GetNumSelectedVtx() > 0)
   {
     int trans_rot_scale = FormSegSwallowOrgans_IsModeTranslate() ? 0 :
-                          FormSegSwallowOrgans_IsModeRotate()    ? 1 : 2;
-    m_meshseq.DrawHandle( frame_idx, trans_rot_scale);
+      FormSegSwallowOrgans_IsModeRotate() ? 1 : 2;
+    m_meshseq.DrawHandle(frame_idx, trans_rot_scale);
   }
 
-  if ( !isSpaceKeyOn() )
+  if (!IsSpaceKeyOn())
   {
-    m_meshseq.DrawCage( frame_idx , !FormSegSwallowOrgans_bShowOnlySelectedPts());
+    m_meshseq.DrawCage(frame_idx, !FormSegSwallowOrgans_bShowOnlySelectedPts());
   }
 
-  
-  bool draw_bound      = FormSegSwallowOrgans_bVisBound();
+
+  bool draw_bound = FormSegSwallowOrgans_bVisBound();
   bool draw_surf_trans = FormSegSwallowOrgans_bVisSurfTrans();
   bool draw_surf_solid = FormSegSwallowOrgans_bVisSurfSolid();
-  bool draw_vismeshes  = FormSegSwallowOrgans_bVisMeshes();
+  bool draw_vismeshes = FormSegSwallowOrgans_bVisMeshes();
 
-  if ( !isSpaceKeyOn() && (draw_bound || draw_surf_trans) )
+  if (!IsSpaceKeyOn() && (draw_bound || draw_surf_trans))
   {
     //draw cage & mesh 
-    glDisable( GL_CULL_FACE );
-    glDepthMask( false );
-    glEnable( GL_BLEND );
+    glDisable(GL_CULL_FACE);
+    glDepthMask(false);
+    glEnable(GL_BLEND);
 
     const bool b_xy = formVisParam_bPlaneXY();
     const bool b_yz = formVisParam_bPlaneYZ();
@@ -718,22 +731,22 @@ void ModeSegSwallowOrgans::drawScene(
     float planexy = b_xy ? CrssecCore::GetInst()->GetPlanePosXY() : -1;
     float planeyz = b_yz ? CrssecCore::GetInst()->GetPlanePosYZ() : -1;
     float planezx = b_zx ? CrssecCore::GetInst()->GetPlanePosZX() : -1;
-    if ( !draw_bound)
+    if (!draw_bound)
     {
       planexy = planeyz = planezx = -1;
     }
 
-    float opacity = draw_surf_trans ? (float) 0.4 : (float) 0;
-    m_meshseq.DrawMesh( frame_idx, planeyz, planezx, planexy, opacity, cuboid);
+    float opacity = draw_surf_trans ? (float)0.4 : (float)0;
+    m_meshseq.DrawMesh(frame_idx, planeyz, planezx, planexy, opacity, cuboid);
 
     //glEnable( GL_DEPTH_TEST );
-    glDepthMask( true );
-    glDisable( GL_BLEND );
-    glEnable( GL_CULL_FACE );
+    glDepthMask(true);
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
   }
-  
+
   //draw mesh (solid)
-  if (!isSpaceKeyOn() && draw_surf_solid)
+  if (!IsSpaceKeyOn() && draw_surf_solid)
   {
     //draw cage & mesh 
     glDisable(GL_CULL_FACE);
@@ -742,29 +755,66 @@ void ModeSegSwallowOrgans::drawScene(
   }
 
   //draw vis meshes
-  if (!isSpaceKeyOn() && draw_vismeshes)
+  if (!IsSpaceKeyOn() && draw_vismeshes)
   {
     glEnable(GL_LIGHTING);
     glDisable(GL_CULL_FACE);
     for (int i = 0; i < m_vismeshes.size(); ++i)
     {
-      const TMeshSequence &ms = m_vismeshes[i];
-      const int color_idx = i % VIS_COL_MAX;
-      if (frame_idx >= ms.m_meshes.size()) continue;
-      ms.m_meshes[frame_idx].Draw(diff_vis[color_idx], ambi_vis[color_idx], spec, shin);
+      if (!is_vismesh_transparent)
+      {
+        const TMeshSequence& ms = m_vismeshes[i];
+        const int color_idx = i % VIS_COL_MAX;
+        if (frame_idx >= ms.m_meshes.size()) continue;
+        ms.m_meshes[frame_idx].Draw(diff_vis[color_idx], ambi_vis[color_idx], spec, shin);
+      }
+      else
+      {
+        glDisable(GL_CULL_FACE);
+        glDepthMask(false);
+        glEnable(GL_BLEND);
+        if (m_gl2Program == -1)
+        {
+          t_InitializeShader(
+            m_vtxshader_fname.c_str(),
+            m_frgshader_fname.c_str(),
+            m_gl2Program);
+        }
+        const TMeshSequence& ms = m_vismeshes[i];
+        const int color_idx = i % VIS_COL_MAX;
+        if (frame_idx >= ms.m_meshes.size()) continue;
+
+        const bool b_xy = formVisParam_bPlaneXY();
+        const bool b_yz = formVisParam_bPlaneYZ();
+        const bool b_zx = formVisParam_bPlaneZX();
+        float planexy = b_xy ? CrssecCore::GetInst()->GetPlanePosXY() : -1;
+        float planeyz = b_yz ? CrssecCore::GetInst()->GetPlanePosYZ() : -1;
+        float planezx = b_zx ? CrssecCore::GetInst()->GetPlanePosZX() : -1;
+
+        glUseProgram(m_gl2Program);
+        glUniform1f(glGetUniformLocation(m_gl2Program, "u_crssec_x_01"), planeyz);
+        glUniform1f(glGetUniformLocation(m_gl2Program, "u_crssec_y_01"), planezx);
+        glUniform1f(glGetUniformLocation(m_gl2Program, "u_crssec_z_01"), planexy);
+        glUniform1f(glGetUniformLocation(m_gl2Program, "u_cuboid_w"), cuboid[0]);
+        glUniform1f(glGetUniformLocation(m_gl2Program, "u_cuboid_h"), cuboid[1]);
+        glUniform1f(glGetUniformLocation(m_gl2Program, "u_cuboid_d"), cuboid[2]);
+        glUniform1f(glGetUniformLocation(m_gl2Program, "u_opacity"), 0.4f);
+        ms.m_meshes[frame_idx].Draw();
+        glUseProgram(0);
+      }
     }
   }
 
 
 
   //draw volume 
-  if ( formVisParam_bRendVol() )
+  if (formVisParam_bRendVol())
   {
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices( cuboid, reso, cam_pos, cam_center, 
-                    !isSpaceKeyOn(), b_onmanip, m_volume_shader);
+    DrawVolumeSlices(cuboid, reso, cam_pos, cam_center,
+      !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
   }
@@ -774,24 +824,24 @@ void ModeSegSwallowOrgans::drawScene(
 
 
 
-//PointGroupÇÃìoò^
+//PointGroup„ÅÆÁôªÈå≤
 void ModeSegSwallowOrgans::RegistPointGroup()
 {
   //find null group
   int group_idx = -1;
-  for( int i=0; i < NUM_POINT_GROUPS; ++i ) 
-    if ( m_groups[i].m_ids.size() == 0)
+  for (int i = 0; i < NUM_POINT_GROUPS; ++i)
+    if (m_groups[i].m_ids.size() == 0)
     {
       group_idx = i;
       break;
     }
 
-  if ( group_idx == -1 )
+  if (group_idx == -1)
   {
-    ShowMsgDlg_OK( "group is full/ÉOÉãÅ[ÉvêîÇ…ãÛÇ´Ç™Ç†ÇËÇ‹ÇπÇÒ", "message" );
+    ShowMsgDlg_OK("group is full/„Ç∞„É´„Éº„ÉóÊï∞„Å´Á©∫„Åç„Åå„ÅÇ„Çä„Åæ„Åõ„Çì", "message");
     return;
   }
-  
+
   m_groups[group_idx].m_ids = m_meshseq.GetSelectedCageVtx();
   m_groups[group_idx].m_name = "group";
 
@@ -800,19 +850,19 @@ void ModeSegSwallowOrgans::RegistPointGroup()
 
 
 
-//group[idx]ÇÇÊÇ—ÇæÇ∑
+//group[idx]„Çí„Çà„Å≥„Å†„Åô
 void  ModeSegSwallowOrgans::CheckoutPointGroup(int idx)
 {
   m_meshseq.ClearSelectedVtx();
 
-  if ( 0 <= idx && idx < NUM_POINT_GROUPS && 
-       m_groups[idx].m_ids.size() != 0 ) 
+  if (0 <= idx && idx < NUM_POINT_GROUPS &&
+    m_groups[idx].m_ids.size() != 0)
   {
     m_meshseq.SetCageVtxSelected(m_groups[idx].m_ids);
-    FormSegSwallowOrgans_SetNumSelectVtx( m_meshseq.GetNumSelectedVtx() );
+    FormSegSwallowOrgans_SetNumSelectVtx(m_meshseq.GetNumSelectedVtx());
     FormSegSwallowTimeline_RedrawPanel();
 
-    if( FormSegSwallowOrgans_bFitCrssec() ) FitCrssecToSelectedCageVtx();
+    if (FormSegSwallowOrgans_bFitCrssec()) FitCrssecToSelectedCageVtx();
   }
 
   formMain_RedrawMainPanel();
@@ -820,41 +870,41 @@ void  ModeSegSwallowOrgans::CheckoutPointGroup(int idx)
 
 
 
-//group[idx]ÇçÌèú
+//group[idx]„ÇíÂâäÈô§
 void  ModeSegSwallowOrgans::DeletePointGroup(int idx)
 {
   m_meshseq.ClearSelectedVtx();
 
-  if ( 0 <= idx && idx < NUM_POINT_GROUPS && 
-       m_groups[idx].m_ids.size() != 0 ) 
+  if (0 <= idx && idx < NUM_POINT_GROUPS &&
+    m_groups[idx].m_ids.size() != 0)
   {
     m_groups[idx].m_name = "na";
-    m_groups[idx].m_ids .clear();
+    m_groups[idx].m_ids.clear();
 
     FormSegSwallowOrgans_UpdateList();
     formMain_RedrawMainPanel();
   }
- 
+
 }
 
 
 
 void  ModeSegSwallowOrgans::LoadPointGroup(std::string fname)
 {
-  if ( m_meshseq.GetNumCageVertex() == 0 ) return;
+  if (m_meshseq.GetNumCageVertex() == 0) return;
 
-  std::ifstream ifs( fname );
+  std::ifstream ifs(fname);
 
   if (ifs.fail())
   {
-    std::cout <<  "error when opening "<< fname.c_str() << "\n";
-    return ;
+    std::cout << "error when opening " << fname.c_str() << "\n";
+    return;
   }
 
   std::string str;
   int tmp_numgroups;
   ifs >> str >> tmp_numgroups;
-  
+
   for (int i = 0; i < tmp_numgroups && i < NUM_POINT_GROUPS; ++i)
   {
     int idx, num_points;
@@ -862,13 +912,13 @@ void  ModeSegSwallowOrgans::LoadPointGroup(std::string fname)
     ifs >> idx >> name >> num_points;
     m_groups[i].m_name = name;
 
-    for ( int j = 0; j < num_points; ++j )
+    for (int j = 0; j < num_points; ++j)
     {
       int point_idx;
       ifs >> point_idx;
-      m_groups[i].m_ids.insert( point_idx );
+      m_groups[i].m_ids.insert(point_idx);
     }
-  } 
+  }
   ifs.close();
 
   FormSegSwallowOrgans_UpdateList();
@@ -879,23 +929,23 @@ void  ModeSegSwallowOrgans::LoadPointGroup(std::string fname)
 
 void  ModeSegSwallowOrgans::SavePointGroup(std::string fname)
 {
-  std::ofstream fp( fname );
+  std::ofstream fp(fname);
 
-	if ( !fp.is_open() )
-	{
-    std::cout <<  "error when opening "<< fname.c_str() << "\n";
-		return ;
-	}
-
-  fp << "roipainter4d_Swallowingtool_pointgroup " << NUM_POINT_GROUPS <<"\n" ;
-  for ( int i=0; i < NUM_POINT_GROUPS; ++i )
+  if (!fp.is_open())
   {
-    fp << i << " " << m_groups[i].m_name << " " 
-       << m_groups[i].m_ids.size() << "\n";
-    
-    for ( auto& it : m_groups[i].m_ids ) 
+    std::cout << "error when opening " << fname.c_str() << "\n";
+    return;
+  }
+
+  fp << "roipainter4d_Swallowingtool_pointgroup " << NUM_POINT_GROUPS << "\n";
+  for (int i = 0; i < NUM_POINT_GROUPS; ++i)
+  {
+    fp << i << " " << m_groups[i].m_name << " "
+      << m_groups[i].m_ids.size() << "\n";
+
+    for (auto& it : m_groups[i].m_ids)
       fp << it << " ";
- 
+
     fp << "\n\n";
   }
 
@@ -927,13 +977,13 @@ std::vector<std::vector<EVec3f>> ModeSegSwallowOrgans::SelectedCageVtx_Get1RingS
 
 
 void ModeSegSwallowOrgans::SelectedCageVtx_Move(
-    int frame_idx, 
-    int dim_xyz, 
-    float pos)
+  int frame_idx,
+  int dim_xyz,
+  float pos)
 {
-  //Ç±Ç±Ç≈Ç‡m_manip_logÇ…ìoò^ÇçsÇ¢ÇΩÇ¢Ç™ÅAåªç›ÇÕdlgÇÃmouse moveÇ≈åƒÇ‘é¿ëïÇ»ÇÃÇ≈
-  //Ç±ÇÃëÄçÏÇÕundoÇ≈Ç´Ç»Ç¢Ç±Ç∆Ç…Ç∑ÇÈ
-  m_meshseq.SetSelectedCageVtxPos(frame_idx, dim_xyz, pos );
+  //„Åì„Åì„Åß„ÇÇm_manip_log„Å´ÁôªÈå≤„ÇíË°å„ÅÑ„Åü„ÅÑ„Åå„ÄÅÁèæÂú®„ÅØdlg„ÅÆmouse move„ÅßÂëº„Å∂ÂÆüË£Ö„Å™„ÅÆ„Åß
+  //„Åì„ÅÆÊìç‰Ωú„ÅØundo„Åß„Åç„Å™„ÅÑ„Åì„Å®„Å´„Åô„Çã
+  m_meshseq.SetSelectedCageVtxPos(frame_idx, dim_xyz, pos);
 }
 
 
@@ -942,7 +992,7 @@ void ModeSegSwallowOrgans::SelectedCageVtx_Smoothing(std::vector<int> trgt_fids)
   m_meshseq.SelectedCageVtx_Smoothing(trgt_fids);
 }
 
-void ModeSegSwallowOrgans::SelectedCageVtx_CopyLeft (std::vector<int> trgt_fids)
+void ModeSegSwallowOrgans::SelectedCageVtx_CopyLeft(std::vector<int> trgt_fids)
 {
   m_meshseq.SelectedCageVtx_CopyFromLeft(trgt_fids);
 }
@@ -955,13 +1005,13 @@ void ModeSegSwallowOrgans::SelectedCageVtx_CopyRight(std::vector<int> trgt_fids)
 
 void ModeSegSwallowOrgans::FitCrssecToSelectedCageVtx()
 {
-  if( !FormSegSwallowOrgans_bFitCrssec()) return;
-  if ( m_meshseq.GetNumSelectedVtx() <= 0 ) return;
+  if (!FormSegSwallowOrgans_bFitCrssec()) return;
+  if (m_meshseq.GetNumSelectedVtx() <= 0) return;
 
   const int    frame_idx = formVisParam_getframeI();
-  const EVec3i reso      = ImageCore::GetInst()->GetReso();
-  const EVec3f pitch     = ImageCore::GetInst()->GetPitch();
-  const EVec3f gc        = m_meshseq.GetSelectedVtxCentroid( frame_idx );  
+  const EVec3i reso = ImageCore::GetInst()->GetReso();
+  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
+  const EVec3f gc = m_meshseq.GetSelectedVtxCentroid(frame_idx);
   CrssecCore::FitCrssecToPosition(reso, pitch, gc, CRSSEC_XY);
   CrssecCore::FitCrssecToPosition(reso, pitch, gc, CRSSEC_YZ);
   CrssecCore::FitCrssecToPosition(reso, pitch, gc, CRSSEC_ZX);
@@ -972,7 +1022,7 @@ void ModeSegSwallowOrgans::FitCrssecToSelectedCageVtx()
 void ModeSegSwallowOrgans::UndoCpManipulation()
 {
   std::cout << "UndoCpManipulation";
-  //m_manip_log[m_undo_piv] Ç∆Ç¢Ç§ëÄçÏÇÇ‡Ç∆Ç…ñﬂÇ∑
+  //m_manip_log[m_undo_piv] „Å®„ÅÑ„ÅÜÊìç‰Ωú„Çí„ÇÇ„Å®„Å´Êàª„Åô
   if (0 <= m_undo_piv && m_undo_piv < (int)m_manip_log.size())
   {
     m_meshseq.SetCageVertices(m_manip_log[m_undo_piv].m_frame, m_manip_log[m_undo_piv].m_point_prev);
@@ -986,11 +1036,11 @@ void ModeSegSwallowOrgans::RedoCpManipulation()
 {
   std::cout << "RedoCpManipulation";
 
-  //m_manip_log[m_undo_piv+1] Ç∆Ç¢Ç§ëÄçÏÇçƒìxé¿é{Ç∑ÇÈ
+  //m_manip_log[m_undo_piv+1] „Å®„ÅÑ„ÅÜÊìç‰Ωú„ÇíÂÜçÂ∫¶ÂÆüÊñΩ„Åô„Çã
 
-  if (0 <= m_undo_piv+1 && m_undo_piv+1 < (int)m_manip_log.size())
+  if (0 <= m_undo_piv + 1 && m_undo_piv + 1 < (int)m_manip_log.size())
   {
-    m_meshseq.SetCageVertices(m_manip_log[m_undo_piv].m_frame, m_manip_log[m_undo_piv+1].m_point_new);
+    m_meshseq.SetCageVertices(m_manip_log[m_undo_piv].m_frame, m_manip_log[m_undo_piv + 1].m_point_new);
     m_undo_piv += 1;
   }
 }

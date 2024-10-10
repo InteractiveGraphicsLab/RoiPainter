@@ -278,8 +278,8 @@ System::Void FormVisParam::isGray_CheckedChanged(System::Object^  sender, System
 
 
 
-// mouse down‚ÌuŠÔ‚©‚çCdown‚ª‹N‚«‚½panel‚Ì‚Ý‚É‘Î‚µ‚ÄmoveƒCƒxƒ“ƒg‚ª”ò‚Ô‚Ì‚ÅC
-// ‘ÎÛpanel‚ð–¾Ž¦‚·‚é•K—v‚Í‚È‚¢
+// mouse downã®çž¬é–“ã‹ã‚‰ï¼ŒdownãŒèµ·ããŸpanelã®ã¿ã«å¯¾ã—ã¦moveã‚¤ãƒ™ãƒ³ãƒˆãŒé£›ã¶ã®ã§ï¼Œ
+// å¯¾è±¡panelã‚’æ˜Žç¤ºã™ã‚‹å¿…è¦ã¯ãªã„
 
 System::Void FormVisParam::pictBox1_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) 
 {
@@ -310,10 +310,10 @@ System::Void FormVisParam::pictBox1_MouseMove(System::Object^  sender, System::W
   const int W = pictBox1->Width;
   const int H = pictBox1->Height;
 
-  int x1 = t_crop(0, TRANS_FUNC_SIZE, (int)(m_mouseX / (double)W * TRANS_FUNC_SIZE));
-  int x2 = t_crop(0, TRANS_FUNC_SIZE, (int)(e->Location.X / (double)W * TRANS_FUNC_SIZE));
-  int y1 = t_crop(0, 255            , (int)((H - m_mouseY) / (double)H * 255));
-  int y2 = t_crop(0, 255            , (int)((H - e->Location.Y) / (double)H * 255));
+  int x1 = Crop(0, TRANS_FUNC_SIZE, (int)(m_mouseX / (double)W * TRANS_FUNC_SIZE));
+  int x2 = Crop(0, TRANS_FUNC_SIZE, (int)(e->Location.X / (double)W * TRANS_FUNC_SIZE));
+  int y1 = Crop(0, 255            , (int)((H - m_mouseY) / (double)H * 255));
+  int y2 = Crop(0, 255            , (int)((H - e->Location.Y) / (double)H * 255));
 
   if (x1 > x2) 
   {
@@ -343,10 +343,10 @@ System::Void FormVisParam::pictBox2_MouseMove(System::Object^  sender, System::W
   const int W = pictBox2->Width;
   const int H = pictBox2->Height;
 
-  int x1 = t_crop(0, TRANS_FUNC_SIZE, (int)(m_mouseX / (double)W * TRANS_FUNC_SIZE));
-  int x2 = t_crop(0, TRANS_FUNC_SIZE, (int)(e->Location.X / (double)W * TRANS_FUNC_SIZE));
-  int y1 = t_crop(0, 255            , (int)((H - m_mouseY) / (double)H * 255));
-  int y2 = t_crop(0, 255            , (int)((H - e->Location.Y) / (double)H * 255));
+  int x1 = Crop(0, TRANS_FUNC_SIZE, (int)(m_mouseX / (double)W * TRANS_FUNC_SIZE));
+  int x2 = Crop(0, TRANS_FUNC_SIZE, (int)(e->Location.X / (double)W * TRANS_FUNC_SIZE));
+  int y1 = Crop(0, 255            , (int)((H - m_mouseY) / (double)H * 255));
+  int y2 = Crop(0, 255            , (int)((H - e->Location.Y) / (double)H * 255));
 
   if (x1 > x2) 
   {

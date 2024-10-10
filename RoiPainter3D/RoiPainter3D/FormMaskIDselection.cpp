@@ -12,11 +12,11 @@ System::Void FormMaskIDselection::initList(
   m_bListInit = true;
 
  
-  //‰Šú‰»
+  //åˆæœŸåŒ–
   maskIdList->Rows->Clear();
   for (int i = 0; i < mask_set.size(); ++i) maskIdList->Rows->Add();
 
-  //‚±‚Ìƒ^ƒCƒ~ƒ“ƒO‚Åhighlight‚ğoff‚É
+  //ã“ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§highlightã‚’offã«
   maskIdList->CurrentCell = nullptr;
 
   //cell colors
@@ -55,8 +55,8 @@ System::Void FormMaskIDselection::maskIdList_SelectionChanged(
   System::Object^  sender, 
   System::EventArgs^  e)
 {
-  //FormVisMask::updateList ‚Ì maskList->Rows->Clear(); 
-  //‚Ìƒ^ƒCƒ~ƒ“ƒO‚ÅŒÄ‚Î‚ê‚Ä‚µ‚Ü‚¤‚Ì‚ÅA‚»‚ÌÛ‚Í‰½‚à‚µ‚È‚¢
+  //FormVisMask::updateList ã® maskList->Rows->Clear(); 
+  //ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§å‘¼ã°ã‚Œã¦ã—ã¾ã†ã®ã§ã€ãã®éš›ã¯ä½•ã‚‚ã—ãªã„
   if (m_bListInit) return;
 
   if( m_bMultiSelect )

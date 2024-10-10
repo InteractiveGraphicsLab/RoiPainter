@@ -162,7 +162,7 @@ CRSSEC_ID CrssecCore::PickCrssec_(
     }
 
     EVec3f pos;
-    if (!t_intersectRayToQuad(ray_pos, ray_dir, p[0], p[1], p[2], p[3], pos))
+    if (!IntersectRayToQuad(ray_pos, ray_dir, p[0], p[1], p[2], p[3], pos))
       continue;
 
     double d = (pos - ray_pos).norm();
@@ -199,13 +199,13 @@ void CrssecCore::MoveCrssec_(
   float c = (float) delta / 120.0f; 
  
   if (id == CRSSEC_XY){
-    m_plane_xy = t_crop(0.f, 1.f, m_plane_xy + c/(float)reso[0]);
+    m_plane_xy = Crop(0.f, 1.f, m_plane_xy + c/(float)reso[0]);
   }
   else if (id == CRSSEC_YZ) {
-    m_plane_yz = t_crop(0.f, 1.f, m_plane_yz + c/(float)reso[1]);
+    m_plane_yz = Crop(0.f, 1.f, m_plane_yz + c/(float)reso[1]);
   }
   else if (id == CRSSEC_ZX) {
-    m_plane_zx = t_crop(0.f, 1.f, m_plane_zx + c/(float)reso[2]);
+    m_plane_zx = Crop(0.f, 1.f, m_plane_zx + c/(float)reso[2]);
   }
   else if (id == CRSSEC_CURVE) {
     m_curve_crssec.Translate(m_curve_crssec_norm * c * pitch[0]);
@@ -452,7 +452,7 @@ void t_drawSlices(
 
 /*-----------------------------------------------------------------------------
 bool t_intersectRayToCuboid
-const EVec3f &rayPÅ@: input ray point
+const EVec3f &rayP„ÄÄ: input ray point
 const EVec3f &rayD  : input ray direction
 EVec3f &nearP : output intersection point (close to rayP)
 EVec3f &farP  : output intersection point (far from rayP)
@@ -476,7 +476,7 @@ bool t_intersectRayToCuboid(
     EVec3f tmpP1 = rayP + t1 * rayD;
     EVec3f tmpP2 = rayP + t2 * rayD;
 
-    if (t_bInWindow3D(EVec3f(0, 0, 0), cube, tmpP1, 0.001f)) {
+    if (BInWindow3D(EVec3f(0, 0, 0), cube, tmpP1, 0.001f)) {
       if (rayD[xyz] < 0) {
         nearP = tmpP1;
         hasNear = true;
@@ -486,7 +486,7 @@ bool t_intersectRayToCuboid(
         hasFar = true;
       }
     }
-    if (t_bInWindow3D(EVec3f(0, 0, 0), cube, tmpP2, 0.001f)) {
+    if (BInWindow3D(EVec3f(0, 0, 0), cube, tmpP2, 0.001f)) {
       if (rayD[xyz] > 0) {
         nearP = tmpP2;
         hasNear = true;
@@ -520,16 +520,16 @@ void CrssecCore::CreateCurvedCrssec_(
 
   // smoothing and resampling stroke
   std::vector<EVec3f> tmp = _stroke, stroke3D;
-  t_verts_Smoothing(2, tmp);
+  VertsSmoothing(2, tmp);
 
   int strN = std::min(100, std::max(30, (int)tmp.size()));
-  t_verts_ResampleEqualInterval(strN, tmp, stroke3D);
+  VertsResampleEqualInterval(strN, tmp, stroke3D);
 
   //gen surface
   std::vector<EVec3f> Vs;
   std::vector<TPoly > Ps;
 
-  if ( t_bInWindow3D(EVec3f(0, 0, 0), cuboid, cam_pos))
+  if ( BInWindow3D(EVec3f(0, 0, 0), cuboid, cam_pos))
   {
     Vs.push_back(cam_pos);
 

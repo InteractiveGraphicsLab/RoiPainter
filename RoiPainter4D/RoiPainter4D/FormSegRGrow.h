@@ -9,7 +9,7 @@ namespace RoiPainter4D {
   using namespace System::Drawing;
 
   /// <summary>
-  /// FormSegRGrow ‚ÌŠT—v
+  /// FormSegRGrow ã®æ¦‚è¦
   /// </summary>
   public ref class FormSegRGrow : public System::Windows::Forms::Form
   {
@@ -62,7 +62,7 @@ private:
 
   protected:
     /// <summary>
-    /// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+    /// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
     /// </summary>
     ~FormSegRGrow()
     {
@@ -76,14 +76,14 @@ private:
 
   private:
     /// <summary>
-    /// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+    /// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
     /// </summary>
     System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
     /// <summary>
-    /// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-    /// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+    /// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+    /// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
     /// </summary>
     void InitializeComponent(void)
     {
@@ -117,7 +117,7 @@ private:
       // 
       // btn_runThresholding
       // 
-      this->btn_runThresholding->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_runThresholding->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_runThresholding->Location = System::Drawing::Point(14, 22);
       this->btn_runThresholding->Name = L"btn_runThresholding";
@@ -130,7 +130,7 @@ private:
       // 
       // btn_runRegionGrow
       // 
-      this->btn_runRegionGrow->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_runRegionGrow->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_runRegionGrow->Location = System::Drawing::Point(14, 55);
       this->btn_runRegionGrow->Name = L"btn_runRegionGrow";
@@ -143,7 +143,7 @@ private:
       // 
       // btn_erode
       // 
-      this->btn_erode->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_erode->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_erode->Location = System::Drawing::Point(14, 90);
       this->btn_erode->Name = L"btn_erode";
@@ -156,7 +156,7 @@ private:
       // 
       // btn_dilate
       // 
-      this->btn_dilate->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_dilate->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_dilate->Location = System::Drawing::Point(14, 113);
       this->btn_dilate->Name = L"btn_dilate";
@@ -169,7 +169,7 @@ private:
       // 
       // btn_fillHole
       // 
-      this->btn_fillHole->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_fillHole->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_fillHole->Location = System::Drawing::Point(14, 136);
       this->btn_fillHole->Name = L"btn_fillHole";
@@ -182,7 +182,7 @@ private:
       // 
       // btn_ok
       // 
-      this->btn_ok->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_ok->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_ok->Location = System::Drawing::Point(8, 314);
       this->btn_ok->Name = L"btn_ok";
@@ -195,7 +195,7 @@ private:
       // 
       // btn_cancel
       // 
-      this->btn_cancel->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_cancel->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_cancel->Location = System::Drawing::Point(182, 314);
       this->btn_cancel->Name = L"btn_cancel";
@@ -209,7 +209,7 @@ private:
       // minThreshLabel
       // 
       this->minThreshLabel->AutoSize = true;
-      this->minThreshLabel->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->minThreshLabel->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->minThreshLabel->Location = System::Drawing::Point(12, 98);
       this->minThreshLabel->Name = L"minThreshLabel";
@@ -220,7 +220,7 @@ private:
       // maxThreshLabel
       // 
       this->maxThreshLabel->AutoSize = true;
-      this->maxThreshLabel->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->maxThreshLabel->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->maxThreshLabel->Location = System::Drawing::Point(12, 119);
       this->maxThreshLabel->Name = L"maxThreshLabel";
@@ -268,7 +268,7 @@ private:
       // 
       // btn_runThresholding_1frame
       // 
-      this->btn_runThresholding_1frame->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_runThresholding_1frame->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_runThresholding_1frame->Location = System::Drawing::Point(13, 22);
       this->btn_runThresholding_1frame->Name = L"btn_runThresholding_1frame";
@@ -280,7 +280,7 @@ private:
       // 
       // btn_runRegionGrow_1frame
       // 
-      this->btn_runRegionGrow_1frame->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_runRegionGrow_1frame->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_runRegionGrow_1frame->Location = System::Drawing::Point(13, 55);
       this->btn_runRegionGrow_1frame->Name = L"btn_runRegionGrow_1frame";
@@ -298,7 +298,7 @@ private:
       this->groupBox1->Controls->Add(this->btn_erode);
       this->groupBox1->Controls->Add(this->btn_runRegionGrow);
       this->groupBox1->Controls->Add(this->btn_runThresholding);
-      this->groupBox1->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->groupBox1->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->groupBox1->Location = System::Drawing::Point(140, 145);
       this->groupBox1->Name = L"groupBox1";
@@ -312,7 +312,7 @@ private:
       // 
       this->groupBox2->Controls->Add(this->btn_runRegionGrow_1frame);
       this->groupBox2->Controls->Add(this->btn_runThresholding_1frame);
-      this->groupBox2->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->groupBox2->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->groupBox2->Location = System::Drawing::Point(8, 145);
       this->groupBox2->Name = L"groupBox2";
@@ -324,7 +324,7 @@ private:
       // label1
       // 
       this->label1->AutoSize = true;
-      this->label1->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label1->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label1->Location = System::Drawing::Point(11, 76);
       this->label1->Name = L"label1";
@@ -335,7 +335,7 @@ private:
       // label2
       // 
       this->label2->AutoSize = true;
-      this->label2->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label2->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label2->Location = System::Drawing::Point(8, 2);
       this->label2->Name = L"label2";
@@ -346,7 +346,7 @@ private:
       // label3
       // 
       this->label3->AutoSize = true;
-      this->label3->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label3->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label3->Location = System::Drawing::Point(8, 19);
       this->label3->Name = L"label3";
@@ -357,7 +357,7 @@ private:
       // label4
       // 
       this->label4->AutoSize = true;
-      this->label4->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->label4->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label4->Location = System::Drawing::Point(8, 35);
       this->label4->Name = L"label4";
@@ -368,7 +368,7 @@ private:
       // label5
       // 
       this->label5->AutoSize = true;
-      this->label5->Font = (gcnew System::Drawing::Font(L"ŸàƒSƒVƒbƒN", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->label5->Font = (gcnew System::Drawing::Font(L"æ¸¸ã‚´ã‚·ãƒƒã‚¯", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label5->Location = System::Drawing::Point(8, 51);
       this->label5->Name = L"label5";

@@ -144,7 +144,7 @@ bool t_LoadMatLabMat(
 	float* &vol
 	)
 {
-	AfxMessageBox("TODO ‚±‚Ì‹@”\‚Í–¢À‘•‚Å‚·B");
+	AfxMessageBox("TODO ã“ã®æ©Ÿèƒ½ã¯æœªå®Ÿè£…ã§ã™ã€‚");
 	//todo
 	return false;
 }
@@ -212,7 +212,7 @@ static bool t_LoadBMP_TIFs(
 	{
 		OglImage2D<CH_RGBA> slice;
 		slice.Allocate( fnames[z].c_str(), bFlip );
-		if( bFlip ) {}//do nothing (¶ã‚ªŒ´“_‚ÅOK)
+		if( bFlip ) {}//do nothing (å·¦ä¸ŠãŒåŸç‚¹ã§OK)
 
 		if( slice.getWidth() != W || slice.getHeight() != H )
 		{
@@ -313,7 +313,7 @@ static bool t_LoadDCM3D(
 	pitch[0] = 1;//(float) tdcm.getPitchX();
 	pitch[1] = 1;//(float) tdcm.getPitchY();
 	pitch[2] = 1;//pitch[0];
-	AfxMessageBox("pitchî•ñ‚Í“Ç‚İ‚ñ‚Å‚¢‚Ü‚¹‚ñB³‚µ‚¢’l‚ğƒ_ƒCƒAƒƒO‚æ‚èw’è‚µ‚Ä‚µ‚Ä‚­‚¾‚³‚¢");
+	AfxMessageBox("pitchæƒ…å ±ã¯èª­ã¿è¾¼ã‚“ã§ã„ã¾ã›ã‚“ã€‚æ­£ã—ã„å€¤ã‚’ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚ˆã‚ŠæŒ‡å®šã—ã¦ã—ã¦ãã ã•ã„");
 
 	fprintf( stderr, "resolution %d %d %d\n", reso[0], reso[1], reso[2]);
 
@@ -506,7 +506,7 @@ bool TexCore::LoadVolume(vector<string> fnames, string fext)
 
 	bool strangePitch = m_Pitch[0] <= 0 || m_Pitch[1] <= 0 || m_Pitch[2] <= 0;
 	if( success && strangePitch ){
-		AfxMessageBox( "Pitchî•ñ‚ğ“Ç‚İ‚ß‚Ü‚¹‚ñ‚Å‚µ‚½B\n³‚µ‚¢’l‚ğƒ_ƒCƒAƒƒO‚æ‚èw’è‚µ‚Ä‚­‚¾‚³‚¢.");
+		AfxMessageBox( "Pitchæƒ…å ±ã‚’èª­ã¿è¾¼ã‚ã¾ã›ã‚“ã§ã—ãŸã€‚\næ­£ã—ã„å€¤ã‚’ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚ˆã‚ŠæŒ‡å®šã—ã¦ãã ã•ã„.");
 		m_Pitch[0] = m_Pitch[1] = m_Pitch[2] = 1;
 	}
 
@@ -518,7 +518,7 @@ bool TexCore::LoadVolume(vector<string> fnames, string fext)
 
 		if( trgtId == 10 && !strangePitch)
 		{
-			AfxMessageBox("Dicom Slice‚ğ“Ç‚İ‚İ‚Ü‚µ‚½B\n dcm‘®«’l‚æ‚è‰æ‘œ‚ÌƒXƒ^ƒbƒN•ûŒü‚ğ©“®Œˆ’è‚µ‚Ü‚µ‚½B\ni”O‚Ì‚½‚ß¶‰E”½“]‚Ì—L–³‚ğŠm”F‚µ‚Ä‚­‚¾‚³‚¢Bj");
+			AfxMessageBox("Dicom Sliceã‚’èª­ã¿è¾¼ã¿ã¾ã—ãŸã€‚\n dcmå±æ€§å€¤ã‚ˆã‚Šç”»åƒã®ã‚¹ã‚¿ãƒƒã‚¯æ–¹å‘ã‚’è‡ªå‹•æ±ºå®šã—ã¾ã—ãŸã€‚\nï¼ˆå¿µã®ãŸã‚å·¦å³åè»¢ã®æœ‰ç„¡ã‚’ç¢ºèªã—ã¦ãã ã•ã„ã€‚ï¼‰");
 		}
 		else
 		{
@@ -854,12 +854,12 @@ void TexCore::ActvMsk_margeTo()
 	const int N = m_Reso[0] * m_Reso[1] * m_Reso[2];
 	fprintf( stderr, "active %d, trgt, %d\n", m_maskActiveId, trgtMaskID);
 
-	/*ŒÃ‚¢À‘•iƒoƒO—L‚èj
+	/*å¤ã„å®Ÿè£…ï¼ˆãƒã‚°æœ‰ã‚Šï¼‰
 	
-	// region, 0,1,2 ‚ª‚ ‚é‚Æ‚«‚É
-	act = 2, trgt=1‚Æ‚·‚é‚Æ
-	0 1 2 --> 0,2,1‚Á‚Ä‚È‚é‚Ì‚Å‚¾‚ß
-	0 1 2 --> 0 2 2 ‚Æ‚µ‚Ä‚©‚ç --> 0 1 1‚Æ‚·‚ê‚Î‚¨‚‹
+	// region, 0,1,2 ãŒã‚ã‚‹ã¨ãã«
+	act = 2, trgt=1ã¨ã™ã‚‹ã¨
+	0 1 2 --> 0,2,1ã£ã¦ãªã‚‹ã®ã§ã ã‚
+	0 1 2 --> 0 2 2 ã¨ã—ã¦ã‹ã‚‰ --> 0 1 1ã¨ã™ã‚Œã°ãŠï½‹
 
 	for( int i = 0; i < N; ++i ) 
 	{

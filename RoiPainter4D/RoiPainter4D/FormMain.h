@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 class OglForCLI;
 
@@ -87,6 +87,7 @@ namespace RoiPainter4D {
   public:
     OglForCLI* GetOgl();
     void RedrawMainPanel();
+    void ActivateMainForm();
     void SetBackColor(float r, float g, float b, float a);
     void SetCursorNESW();
     void SetCursorDefault();
@@ -522,6 +523,11 @@ namespace RoiPainter4D {
   inline void formMain_RedrawMainPanel()
   {
     FormMain::GetInst()->RedrawMainPanel();
+  }
+
+  inline void formMain_ActivateMainForm()
+  {
+    FormMain::GetInst()->ActivateMainForm();
   }
 
   inline void formMain_setBackColorBlack(float r, float g, float b, float a)

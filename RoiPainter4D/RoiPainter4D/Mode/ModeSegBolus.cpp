@@ -29,7 +29,7 @@
 using namespace RoiPainter4D;
 #pragma warning(disable : 4996)
 
-//flg4d‚Ìg‚¢•û
+//flg4dã®ä½¿ã„æ–¹
 // 0 : never change
 // 1 : background
 //255: foreground
@@ -44,7 +44,7 @@ ModeSegBolus::ModeSegBolus() :
 
 
 //////start and finish seg///////////
-void ModeSegBolus::startMode()
+void ModeSegBolus::StartMode()
 {
   //mouse manipuration
 	m_bL = m_bR = m_bM = false;
@@ -60,7 +60,7 @@ void ModeSegBolus::startMode()
 
   m_thresh_max = m_thresh_min = 0;
 
-  //ˆÈ‰ºC—p“r•s–¾field
+  //ä»¥ä¸‹ï¼Œç”¨é€”ä¸æ˜field
   m_b_updated_cylinder = false;
 	m_sub_thread = 0;
 
@@ -88,7 +88,7 @@ void ModeSegBolus::startMode()
 }
 
 
-bool ModeSegBolus::canEndMode()
+bool ModeSegBolus::CanEndMode()
 {
 	if (!m_b_modified) return true;
 
@@ -143,7 +143,7 @@ void ModeSegBolus::FinishSegmentation()
 		return;
 	}
 
-	//ƒVƒŠƒ“ƒ_[î•ñ‚ğƒtƒ@ƒCƒ‹‚É‹L˜^
+	//ã‚·ãƒªãƒ³ãƒ€ãƒ¼æƒ…å ±ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã«è¨˜éŒ²
   ExportCylinderInfoByText("");
 
 	ImageCore::GetInst()->mask_storeCurrentForeGround( );
@@ -163,7 +163,7 @@ void ModeSegBolus::FinishSegmentation()
 ////////////////////////////////////////////////////////////////////
 
 
-void ModeSegBolus::keyDown(int nChar)
+void ModeSegBolus::KeyDown(int nChar)
 {
   formMain_RedrawMainPanel();
 }
@@ -209,12 +209,12 @@ void ModeSegBolus::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
 	m_bL = true;
 
-  if ( isCtrKeyOn() )
+  if ( IsCtrKeyOn() )
   {
     m_stroke.clear();
     m_b_draw_cutstroke = true;
   }
-  else if ( isShiftKeyOn() )
+  else if ( IsShiftKeyOn() )
 	{
     //drag cpid or drag seed
 	  EVec3f ray_pos, ray_dir, pos;
@@ -240,7 +240,7 @@ void ModeSegBolus::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 void ModeSegBolus::RBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
 	m_bR = true;
-  if(isCtrKeyOn() && 0 <= m_active_cid && m_active_cid < m_cylinders.size() )
+  if(IsCtrKeyOn() && 0 <= m_active_cid && m_active_cid < m_cylinders.size() )
   {
     m_b_drag_cylinder = true;
     m_pre_pos = p;
@@ -254,7 +254,7 @@ void ModeSegBolus::MBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
 	m_bM = true;
 
-  if( isShiftKeyOn() )
+  if( IsShiftKeyOn() )
   {
     EVec3f ray_pos, ray_dir, pos;
     ogl->GetCursorRay(p, ray_pos, ray_dir);
@@ -271,7 +271,7 @@ void ModeSegBolus::MBtnDown(const EVec2i &p, OglForCLI *ogl)
 
 void ModeSegBolus::LBtnDclk(const EVec2i &p, OglForCLI *ogl)
 {
-  if( !isShiftKeyOn() ) return;
+  if( !IsShiftKeyOn() ) return;
   // cylinder mode --> add cylinder cp 
   // reg grow mode --> add region grow seed
 
@@ -305,7 +305,7 @@ void ModeSegBolus::LBtnDclk(const EVec2i &p, OglForCLI *ogl)
 
 void ModeSegBolus::RBtnDclk(const EVec2i &p, OglForCLI *ogl)
 {
-  if( !isShiftKeyOn() ) return;
+  if( !IsShiftKeyOn() ) return;
 
   EVec3f ray_pos, ray_dir, pos;
   ogl->GetCursorRay(p, ray_pos, ray_dir);
@@ -392,23 +392,23 @@ void ModeSegBolus::ExportCylinderInfoByText(std::string file_path )
 {
   if( file_path.length() == 0)
   {  
-    //file_path‚ª‹ó‚È‚ç©“®‚Åƒtƒ@ƒCƒ‹–¼‚ğ¶¬‚·‚é
+    //file_pathãŒç©ºãªã‚‰è‡ªå‹•ã§ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ç”Ÿæˆã™ã‚‹
 
     char exe_path[MAX_PATH + 1];
-    if ( GetModuleFileName(nullptr, exe_path, MAX_PATH) == 0 )
+    if ( GetModuleFileName(nullptr, (LPWSTR)exe_path, MAX_PATH) == 0 )
       return;
 
     char drive[MAX_PATH + 1], dir[MAX_PATH + 1], fname[MAX_PATH + 1], ext[MAX_PATH + 1];
     _splitpath(exe_path, drive, dir, fname, ext);
 
-		//Œ»İ“ú‚ğæ“¾‚µŒ`®‚ğ•ÏŠ· (file–¼‚É—˜—p)
+		//ç¾åœ¨æ—¥æ™‚ã‚’å–å¾—ã—å½¢å¼ã‚’å¤‰æ› (fileåã«åˆ©ç”¨)
 		time_t time_val = time(nullptr);
 		const tm* local_time = localtime(&time_val);
 		std::stringstream s;
 		s << "20";
 		s << local_time->tm_year - 100; 
 		s << local_time->tm_mon + 1; 
-		s << local_time->tm_mday; //‚»‚Ì‚Ü‚Ü
+		s << local_time->tm_mday; //ãã®ã¾ã¾
 		s << local_time->tm_hour << local_time->tm_min << local_time->tm_sec;
 
     file_path = std::string(drive) + std::string(dir) + std::string("___RecordCylinder___\\");
@@ -487,7 +487,7 @@ void ModeSegBolus::LoadCylinderInfoFromFile(std::string filePath, bool to_perfor
 
   std::string str;
 
-  //1s–Ú[roipainter4d_localregiongrow_cylinders]“Ç‚İ”ò‚Î‚·
+  //1è¡Œç›®[roipainter4d_localregiongrow_cylinders]èª­ã¿é£›ã°ã™
   ifs >> str;
   std::cout << str << "\n";
 
@@ -522,7 +522,7 @@ void ModeSegBolus::LoadCylinderInfoFromFile(std::string filePath, bool to_perfor
   m_b_updated_cylinder = true;
 
 
-  //TODO to_perform_fitting œ—Ìˆæ‚ğ—˜—p‚µ‚Äfitting‚ğ‚·‚é 
+  //TODO to_perform_fitting éª¨é ˜åŸŸã‚’åˆ©ç”¨ã—ã¦fittingã‚’ã™ã‚‹ 
 }
 
 
@@ -531,17 +531,17 @@ void ModeSegBolus::LoadCylinderInfoFromFile(std::string filePath, bool to_perfor
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////draw scene//////////////////////////////////////
 
-void ModeSegBolus::drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF) 
+void ModeSegBolus::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF) 
 {
 	const EVec3i reso = ImageCore::GetInst()->GetReso();
 
   BindAllVolumes();
-  DrawCrossSections(cuboid, reso, !isSpaceKeyOn(), m_crssec_shader);
+  DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader);
   
   //cut stroke
   if ( m_b_draw_cutstroke )
   {
-    t_DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
+    DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
   }
   
   //draw volume 
@@ -553,7 +553,7 @@ void ModeSegBolus::drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVe
 		glEnable(GL_BLEND);
     GlslShaderVolume &s = formSegBolus_IsNormalVolRend() ? m_volume_shader_norm:
                                                            m_volume_shader_segm ;
-    DrawVolumeSlices(cuboid, reso, camP, camF, !isSpaceKeyOn(), b_manip, s); 
+    DrawVolumeSlices(cuboid, reso, camP, camF, !IsSpaceKeyOn(), b_manip, s); 
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 	}
@@ -696,8 +696,8 @@ void ModeSegBolus::AddNewCylinder()
   EVec3f cp1 = EVec3f( 0,  0,  0);
   EVec3f cp2 = EVec3f(10, 10, 10);
 
-  //‰––ìèŒN‚ÌÀ‘•i—vC³j
-	//mainform‚Éƒ}ƒEƒX‚ªæ‚é‘O‚ÉŒÄ‚Î‚ê‚é‚Ænullpointer—áŠO‚ªo‚é
+  //å¡©é‡å´å›ã®å®Ÿè£…ï¼ˆè¦ä¿®æ­£ï¼‰
+	//mainformã«ãƒã‚¦ã‚¹ãŒä¹—ã‚‹å‰ã«å‘¼ã°ã‚Œã‚‹ã¨nullpointerä¾‹å¤–ãŒå‡ºã‚‹
 	try
 	{
 		EVec3f ray_dir = cam_center - cam_pos;
@@ -803,7 +803,7 @@ void ModeSegBolus::RunErosionOneFrame()
   std::vector<byte*> &flg4d  = ImageCore::GetInst()->m_flg4d;
 
   std::cout << "RunErosionOneFrame...\n";
-  t_Erode3D(reso[0], reso[1], reso[2], flg4d[frame_idx]);
+  Erode3D(reso[0], reso[1], reso[2], flg4d[frame_idx]);
   std::cout << "RunErosionOneFrame...DONE\n";
 
 	m_b_modified = true;
@@ -822,7 +822,7 @@ void ModeSegBolus::RunErosionAllFrame()
   std::cout << "RunErosionAllFrame...\n";
 #pragma omp parallel for 
   for (int i = 0; i < num_frame; ++i)
-    t_Erode3D(reso[0], reso[1], reso[2], flg4d[i]);
+    Erode3D(reso[0], reso[1], reso[2], flg4d[i]);
   std::cout << "RunErosionAllFrame...DONE\n";
 
 	m_b_modified = true;
@@ -843,9 +843,9 @@ void ModeSegBolus::RunDilationOneFrame()
   byte* flg3d  = ImageCore::GetInst()->m_flg4d[frame_idx];
 
   std::cout << "RunDilationOneFrame...\n";
-  t_Dilate3D(reso[0], reso[1], reso[2], flg3d );
+  Dilate3D(reso[0], reso[1], reso[2], flg3d );
   
-  //‚Í‚İo‚µƒ`ƒFƒbƒN
+  //ã¯ã¿å‡ºã—ãƒã‚§ãƒƒã‚¯
   for(int i=0; i < num_voxels; ++i) {
     if( flg3d[i] == 255 && m_vol_cyl[i] == 0) {
       flg3d[i] = 1;
@@ -876,9 +876,9 @@ void ModeSegBolus::RunDilationAllFrame()
   for (int fI = 0; fI < num_frames; ++fI)
   {
     byte* flg3d = flg4d[fI];
-    t_Dilate3D(reso[0], reso[1], reso[2], flg3d );
+    Dilate3D(reso[0], reso[1], reso[2], flg3d );
 
-    //‚Í‚İo‚µƒ`ƒFƒbƒN
+    //ã¯ã¿å‡ºã—ãƒã‚§ãƒƒã‚¯
     for(int i=0; i < num_voxels; ++i) {
       if( flg3d[i] == 255 && m_vol_cyl[i] == 0) {
         flg3d[i] = 1;
@@ -897,10 +897,10 @@ void ModeSegBolus::RunDilationAllFrame()
 ///////////////////////////////////////////////////////////////////////////////
 //Region Growing In Cylinder///////////////////////////////////////////////////
 
-//region growing ‚Ì seed ‰Šú‰»
-// generalizedCylinder‚Ì²ã‚Ì‰æ‘f --> Q‚Ö’Ç‰Á
-// RegionGrowSeedã‚Ì‰æ‘f          --> Q‚Ö’Ç‰Á
-// ‚½‚¾‚µCˆÈ‰º‚Ì‰æ‘fi‚Íseed‚Æ‚µ‚ÄÌ—p‚µ‚È‚¢
+//region growing ã® seed åˆæœŸåŒ–
+// generalizedCylinderã®è»¸ä¸Šã®ç”»ç´  --> Qã¸è¿½åŠ 
+// RegionGrowSeedä¸Šã®ç”»ç´           --> Qã¸è¿½åŠ 
+// ãŸã ã—ï¼Œä»¥ä¸‹ã®ç”»ç´ iã¯seedã¨ã—ã¦æ¡ç”¨ã—ãªã„
 //  - flg3d[i] == 0
 //  - vol_cyl[i] == 0
 //  - img3d[i] < minv or maxv < img3d[i]
@@ -1005,12 +1005,12 @@ void RemoveForeVoxelCloseToOtherMask
 
 		    const int idx = x + y * W + z * W * H;
         if( flg3d[idx] != 255 ) continue;
-        int xs = t_crop(0,W-1,x-distance);
-        int ys = t_crop(0,H-1,y-distance);
-        int zs = t_crop(0,D-1,z-distance);
-        int xe = t_crop(0,W-1,x+distance);
-        int ye = t_crop(0,H-1,y+distance);
-        int ze = t_crop(0,D-1,z+distance);
+        int xs = Crop(0,W-1,x-distance);
+        int ys = Crop(0,H-1,y-distance);
+        int zs = Crop(0,D-1,z-distance);
+        int xe = Crop(0,W-1,x+distance);
+        int ye = Crop(0,H-1,y+distance);
+        int ze = Crop(0,D-1,z+distance);
 
         bool flg = false;
         for (int dz = zs; dz <= ze && !flg; ++dz){
@@ -1250,7 +1250,7 @@ EMat4f ModeSegBolus::boneRegistration(string srcBoneObjFilePath, int targetMaskI
   }
   catch (const cv::Exception)
   {
-    cout << "*** surface‚ÌŒ`ó‚Ü‚½‚ÍˆÊ’u‚ª‘å‚«‚­ˆÙ‚È‚é‚½‚ß’ÇÕ‚É¸”s‚µ‚Ü‚µ‚½ ***\n";
+    cout << "*** surfaceã®å½¢çŠ¶ã¾ãŸã¯ä½ç½®ãŒå¤§ããç•°ãªã‚‹ãŸã‚è¿½è·¡ã«å¤±æ•—ã—ã¾ã—ãŸ ***\n";
   }
 
   EMat4f resM;
@@ -1286,7 +1286,7 @@ void ModeSegBolus::convertMaskToSurf(int selectedMskId, TMesh& targetMesh)
 
 	short *v = new short[N];
 	int frameN = (int)imCore->m_img4d.size();
-	//target‚ÍÅIƒtƒŒ[ƒ€‚ÅŒÅ’è
+	//targetã¯æœ€çµ‚ãƒ•ãƒ¬ãƒ¼ãƒ ã§å›ºå®š
 	for (int i = 0; i < N; ++i) v[i] = (imCore->m_mask4d[frameN - 1][i] == selectedMskId) ? 255 : 0;
 
 	marchingcubes::t_MarchingCubes(reso, pitch, v, 128, 0, 0, targetMesh);

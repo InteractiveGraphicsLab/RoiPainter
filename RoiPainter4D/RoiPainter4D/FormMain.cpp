@@ -1,4 +1,4 @@
-﻿#pragma managed
+#pragma managed
 #include "FormMain.h"
 #include "FormVisParam.h"
 #include "FormVisNorm.h"
@@ -295,12 +295,18 @@ void FormMain::RedrawMainPanel()
 
   InitializeLights();
   if (FormVisParam::GetInst()->bRendFrame()) t_DrawFrame(cuboid);
-  ModeCore::GetInst()->drawScene(cuboid, cam_pos, cam_cnt);
+  ModeCore::GetInst()->DrawScene(cuboid, cam_pos, cam_cnt);
   if (FormVisParam::GetInst()->bRendIndi())
   {
     ViewIndiCore::getInst()->DrawIndicator(pw, ph, cam_pos, cam_cnt, cam_up);
   }
   m_ogl->OnDrawEnd();
+}
+
+
+void FormMain::ActivateMainForm()
+{
+  this->Activate();
 }
 
 
@@ -887,14 +893,14 @@ System::Void FormMain::FormMain_KeyDown (
   if (      (int)e->KeyCode == 37) FormVisParam::GetInst()->ChangeFrameI(-1);
   else if ( (int)e->KeyCode == 39) FormVisParam::GetInst()->ChangeFrameI(+1);
 
-  ModeCore::GetInst()->keyDown((int)e->KeyCode);
+  ModeCore::GetInst()->KeyDown((int)e->KeyCode);
   m_prevKeyID = (int)e->KeyCode;
   RedrawMainPanel();
 }
 
 System::Void FormMain::FormMain_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e)
 {
-  ModeCore::GetInst()->keyUp((int)e->KeyCode);
+  ModeCore::GetInst()->KeyUp((int)e->KeyCode);
   m_prevKeyID = -1;
   RedrawMainPanel();
 }

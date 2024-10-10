@@ -1,4 +1,4 @@
-﻿#pragma unmanaged
+#pragma unmanaged
 
 #include "tvolumelader.h"
 #include "../tdcmtk.h"
@@ -200,7 +200,7 @@ template bool WriteTraw3d(const std::string &fname, const EVec3i& reso, const EV
 
 
 
-bool Open4DImg_traw3d(
+bool Open4DImgTraw3D(
     const std::vector<std::string>& fnames,
     EVec3i& reso,
     EVec3f& pitch,
@@ -226,7 +226,7 @@ bool Open4DImg_traw3d(
 }
 
 
-bool Open4DImg_mha(
+bool Open4DImgMha(
     const std::vector<std::string>& fnames,
     EVec3i& reso,
     EVec3f& pitch,
@@ -273,7 +273,7 @@ bool Open4DImg_mha(
 
 
 
-bool Open4DImg_raw8bit(
+bool Open4DImgRaw8bit(
     const std::vector<std::string>& fnames,
     EVec3i& reso,
     EVec3f& pitch,
@@ -332,7 +332,7 @@ bool Open4DImg_raw8bit(
 
 
 
-bool Open4DImg_dcm2Ds(
+bool Open4DImgDcm2Ds(
     std::vector<std::vector<std::string>> filesInDirs,
     EVec3i& reso,
     EVec3f& pitch,
@@ -395,7 +395,7 @@ bool Open4DImg_dcm2Ds(
 
 
 
-bool Open4DImg_dcm3Ds(
+bool Open4DImgDcm3Ds(
     const std::vector<std::string>& fnames,
     EVec3i& reso,
     EVec3f& pitch,

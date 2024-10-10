@@ -6,7 +6,7 @@
 
 
 //////////////////////////////////////////////////////////////////////////////////
-//‚±‚ÌƒR[ƒh‚ÍˆäK‚ª—Œ¤İĞ’†‚ÉACGGemsJP—p‚ÉOpen Source‚Æ‚µ‚ÄŒöŠJ‚µ‚½ƒR[ƒh‚ÉŠî‚Ã‚­
+//ã“ã®ã‚³ãƒ¼ãƒ‰ã¯äº•å°»ãŒç†ç ”åœ¨ç±ä¸­ã«ã€CGGemsJPç”¨ã«Open Sourceã¨ã—ã¦å…¬é–‹ã—ãŸã‚³ãƒ¼ãƒ‰ã«åŸºã¥ã
 //
 //Implemented by TakashiIjiri @ Riken based on 
 //"The water shed transform definitions algorithms and parallelization strategies"
@@ -20,7 +20,7 @@
 #define TWS_MASK       -2
 #define TWS_FICTITIOUS -3
 
-// gradient magnitude ‚ÌƒŒƒ“ƒW‚Í [0, 1024] ‚Æ‚µ‚Ä‚¨‚­
+// gradient magnitude ã®ãƒ¬ãƒ³ã‚¸ã¯ [0, 1024] ã¨ã—ã¦ãŠã
 #define WSD_HMIN   0
 #define WSD_HMAX 255
 
@@ -29,7 +29,7 @@ class TWsPixelEx
 {
   unsigned short m_val   ;//pixel intensity 
   int            m_label ;//pixel label INIT
-  int            m_dist  ;//mask‚Ìbasin/watershed pixel‚©‚ç‚Ì‹——£
+  int            m_dist  ;//maskæ™‚ã®basin/watershed pixelã‹ã‚‰ã®è·é›¢
 
   TWsPixelEx    *m_neighborPtr[26];
   int            m_num_neighbors  ;
@@ -47,9 +47,9 @@ public:
 
 	TWsPixelEx( const TWsPixelEx &p)
 	{
-		m_val   = p.m_val  ;//pixel‚Ì‹P“x’l
-		m_label = p.m_label;//pixel‚É‚Â‚­ƒ‰ƒxƒ‹ INIT
-		m_dist  = p.m_dist ;//mask‚Ìbasin/watershed pixel‚©‚ç‚Ì‹——£
+		m_val   = p.m_val  ;//pixelã®è¼åº¦å€¤
+		m_label = p.m_label;//pixelã«ã¤ããƒ©ãƒ™ãƒ« INIT
+		m_dist  = p.m_dist ;//maskæ™‚ã®basin/watershed pixelã‹ã‚‰ã®è·é›¢
     m_num_neighbors = p.m_num_neighbors;
 		for(int i=0; i < m_num_neighbors; ++i) m_neighborPtr[i] = p.m_neighborPtr[i] ;
 	}
@@ -114,48 +114,48 @@ public:
 
 /*
 watershed algorithm
-QÆ 1) Digital image processing
+å‚ç…§ 1) Digital image processing
      2) "The watershed transform: definitions, algorithms and parallelization strategies"
 
-À‘•‚Í, 2)‚Ìalgorithm 4.1‚É‚ ‚é‚à‚ÌD
-‚½‚¾‚µA36-52‚ÉŠÔˆá‚¢‚ª‚ ‚é‚Á‚Û‚¢‚Ì‚Å’ù³‚µ‚½D
+å®Ÿè£…ã¯, 2)ã®algorithm 4.1ã«ã‚ã‚‹ã‚‚ã®ï¼
+ãŸã ã—ã€36-52ã«é–“é•ã„ãŒã‚ã‚‹ã£ã½ã„ã®ã§è¨‚æ­£ã—ãŸï¼
 
-“à—e
+å†…å®¹
 preprocess (1 - 13)
-  pixel‚ÌF‚É‰‚¶‚Äƒ\[ƒg
-  pixel‚Ì‹ß–T‚ğƒZƒbƒg
+  pixelã®è‰²ã«å¿œã˜ã¦ã‚½ãƒ¼ãƒˆ
+  pixelã®è¿‘å‚ã‚’ã‚»ãƒƒãƒˆ
 
 flooding process (15 - 70)
   
-mask‚ÆfifoƒLƒ…[‰Šú‰»(17 - 24)
-    ’lh‚ğ‚Âpixel‚Émaskƒtƒ‰ƒO‚ğ—§‚Ä‚é
-    Œ»İ‚Ìbasin‚Æwatershed pixel‚ÉÚ‚µ‚Ä‚¢‚é‚à‚Ì‚ğfifoƒLƒ…[‚É“ü‚ê‚é
+maskã¨fifoã‚­ãƒ¥ãƒ¼åˆæœŸåŒ–(17 - 24)
+    å€¤hã‚’æŒã¤pixelã«maskãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
+    ç¾åœ¨ã®basinã¨watershed pixelã«æ¥ã—ã¦ã„ã‚‹ã‚‚ã®ã‚’fifoã‚­ãƒ¥ãƒ¼ã«å…¥ã‚Œã‚‹
   
-mask—Ìˆæ“à‚Ìpixel‚Ìƒ‰ƒxƒ‹‚ğŠm’è‚·‚é(25 - 52)
-    ƒLƒ…[‚ğ‚¤‚Ü‚¢‚±‚Æg‚¤‚±‚Æ‚ÅAŠù‘¶‚Ìbasin‚©‚ç‚Ì—£U‹——£‚É‰‚¶‚ÄClabeling—Ìˆæ‚ğL‚°‚Ä‚¢‚­
+maské ˜åŸŸå†…ã®pixelã®ãƒ©ãƒ™ãƒ«ã‚’ç¢ºå®šã™ã‚‹(25 - 52)
+    ã‚­ãƒ¥ãƒ¼ã‚’ã†ã¾ã„ã“ã¨ä½¿ã†ã“ã¨ã§ã€æ—¢å­˜ã®basinã‹ã‚‰ã®é›¢æ•£è·é›¢ã«å¿œã˜ã¦ï¼Œlabelingé ˜åŸŸã‚’åºƒã’ã¦ã„ã
 
 local minima detection(53 - 68)
-    local minima‚ğŒ©‚Â‚¯‚Ä,Šelocal minima“à‚Ìpixel‚ÉˆêŠÑ‚µ‚½label‚ğ‘Å‚Â
+    local minimaã‚’è¦‹ã¤ã‘ã¦,å„local minimaå†…ã®pixelã«ä¸€è²«ã—ãŸlabelã‚’æ‰“ã¤
 
-*’ˆÓ* flat‚È—Ìˆæ‚ª‚ ‚é‚½‚ßAã‚Ì‚æ‚¤‚È‘å•Ï‚Èalgorithm‚É‚È‚Á‚½‚Á‚Û‚¢‚Å‚·‚ËB
+*æ³¨æ„* flatãªé ˜åŸŸãŒã‚ã‚‹ãŸã‚ã€ä¸Šã®ã‚ˆã†ãªå¤§å¤‰ãªalgorithmã«ãªã£ãŸã£ã½ã„ã§ã™ã­ã€‚
 
-25-52‚Å‚ÍAmaskƒtƒ‰ƒO‚ª—§‚Á‚½ŠeƒsƒNƒZƒ‹‚ğ,@Šù‘¶‚Ìbasin pixel‚âwatershed@pixel‚©‚ç‚Ì‹——£‡‚É
-ƒ‰‚×ƒŠƒ“ƒO‚µ‚Ä‚¢‚­.
+25-52ã§ã¯ã€maskãƒ•ãƒ©ã‚°ãŒç«‹ã£ãŸå„ãƒ”ã‚¯ã‚»ãƒ«ã‚’,ã€€æ—¢å­˜ã®basin pixelã‚„watershedã€€pixelã‹ã‚‰ã®è·é›¢é †ã«
+ãƒ©ã¹ãƒªãƒ³ã‚°ã—ã¦ã„ã.
 
-‚ ‚épixel p (dist = d) ‚Ì‚·‚×‚Ä‚Ì‹ß–T q‚ğŒ©‚½‚Æ‚«‚ÉAq‚Ìó‘Ô‚Æ‚µ‚Ä‚ ‚è“¾‚é‚à‚Ì‚Í
-A) basinAwatershedAmaskƒtƒ‰ƒO‚Ì‚¢‚¸‚ê‚Å‚à‚È‚¢  dist = 0       && label = INIT
-B) basin“à•”‚Ìpixel                              dist = 0 / d-1 && label = LABEL 
+ã‚ã‚‹pixel p (dist = d) ã®ã™ã¹ã¦ã®è¿‘å‚ qã‚’è¦‹ãŸã¨ãã«ã€qã®çŠ¶æ…‹ã¨ã—ã¦ã‚ã‚Šå¾—ã‚‹ã‚‚ã®ã¯
+A) basinã€watershedã€maskãƒ•ãƒ©ã‚°ã®ã„ãšã‚Œã§ã‚‚ãªã„  dist = 0       && label = INIT
+B) basinå†…éƒ¨ã®pixel                              dist = 0 / d-1 && label = LABEL 
 C) watershed pixel                               dist = 0 / d-1 && label = WATERSHED
-D) maskƒtƒ‰ƒO ‚©‚Â dist = 0 ‚Ü‚¾ƒLƒ…[‚É“ü‚Á‚Ä‚¢‚È‚¢@@@@@@@ label = MASK
-E) maskƒtƒ‰ƒO ‚©‚Â dist = d pixel p‚Æ“¯—ñ‚Éˆµ‚í‚ê‚Ä‚¢‚é            label = MASK                        
+D) maskãƒ•ãƒ©ã‚° ã‹ã¤ dist = 0 ã¾ã ã‚­ãƒ¥ãƒ¼ã«å…¥ã£ã¦ã„ãªã„ã€€ã€€ã€€ã€€ã€€ã€€ã€€ label = MASK
+E) maskãƒ•ãƒ©ã‚° ã‹ã¤ dist = d pixel pã¨åŒåˆ—ã«æ‰±ã‚ã‚Œã¦ã„ã‚‹            label = MASK                        
 
-pixel p‚Ì‚·‚×‚Ä‚Ì‹ß–T q‚ğloop‚µ‚ÄA
-@@1, ó‘ÔD‚Ìq‚ğƒLƒ…[‚É“ü‚ê‚é@q.dist = d + 1‚Æ‚·‚é
-  @2, ó‘ÔB‚Ìpixel‚ ‚èA‚·‚×‚Ä‚Ìƒ‰ƒxƒ‹‚ª‚¨‚ñ‚È‚¶ --> p.label = LABEL
-  @3, ó‘ÔB‚Ìpixel‚ ‚èAƒ‰ƒxƒ‹‚Ìí—Ş‚ªˆÙ‚È‚é     --> p.label = WATERSHED
-    4, ó‘ÔC‚Ìpixel‚µ‚©‚È‚¢                       --> p.label = WATERSHED
+pixel pã®ã™ã¹ã¦ã®è¿‘å‚ qã‚’loopã—ã¦ã€
+ã€€ã€€1, çŠ¶æ…‹Dã®qã‚’ã‚­ãƒ¥ãƒ¼ã«å…¥ã‚Œã‚‹ã€€q.dist = d + 1ã¨ã™ã‚‹
+  ã€€2, çŠ¶æ…‹Bã®pixelã‚ã‚Šã€ã™ã¹ã¦ã®ãƒ©ãƒ™ãƒ«ãŒãŠã‚“ãªã˜ --> p.label = LABEL
+  ã€€3, çŠ¶æ…‹Bã®pixelã‚ã‚Šã€ãƒ©ãƒ™ãƒ«ã®ç¨®é¡ãŒç•°ãªã‚‹     --> p.label = WATERSHED
+    4, çŠ¶æ…‹Cã®pixelã—ã‹ãªã„                       --> p.label = WATERSHED
 
-	labels‚ÍAwater shed‚ª0, ‚»‚êˆÈŠO‚Ìpixel‚É‚Í1‚©‚çn‚Ü‚é˜A‘±‚Ìƒ‰ƒxƒ‹‚ª“\‚ç‚ê‚é
+	labelsã¯ã€water shedãŒ0, ãã‚Œä»¥å¤–ã®pixelã«ã¯1ã‹ã‚‰å§‹ã¾ã‚‹é€£ç¶šã®ãƒ©ãƒ™ãƒ«ãŒè²¼ã‚‰ã‚Œã‚‹
 */
 
 inline void runWatershedAlgorithmEx(int size, TWsPixelEx **sortedPixPtr, void (*progressFunc)(double) = 0 )
@@ -166,7 +166,7 @@ inline void runWatershedAlgorithmEx(int size, TWsPixelEx **sortedPixPtr, void (*
 	int heightIndex2 = 0;
 	TWsFIFO queue;
 
-	for(int h = WSD_HMIN; h <= WSD_HMAX; ++h) //h‚ğ‚Â•¨‚·‚×‚Ä‚Émaskƒtƒ‰ƒO‚ğ—§‚ÄAŠù‘¶basin/watershed pixel‚Ì—×Úpixel‚ğqueue‚É“ü‚ê‚é
+	for(int h = WSD_HMIN; h <= WSD_HMAX; ++h) //hã‚’æŒã¤ç‰©ã™ã¹ã¦ã«maskãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã€æ—¢å­˜basin/watershed pixelã®éš£æ¥pixelã‚’queueã«å…¥ã‚Œã‚‹
 	{	
 		for(int pIdx = heightIndex1 ; pIdx < size; ++pIdx) 
 		{
@@ -189,7 +189,7 @@ inline void runWatershedAlgorithmEx(int size, TWsPixelEx **sortedPixPtr, void (*
 		} 
 
 		queue.fifo_add( new TWsPixelEx() );//add fictitious pixel
-	  //¡‚ÌƒLƒ…[‚Ì’†g -->  mark pix pix pix ... pix ‚Åmark‚Ífictitious‚ÅApix‚ÍAŠù‘¶‚Ìbasin/watershed‚É—×Ú‚µ‚½—Ìˆæ
+	  //ä»Šã®ã‚­ãƒ¥ãƒ¼ã®ä¸­èº« -->  mark pix pix pix ... pix ã§markã¯fictitiousã§ã€pixã¯ã€æ—¢å­˜ã®basin/watershedã«éš£æ¥ã—ãŸé ˜åŸŸ
 
 		int curdist = 1;
 	  while(true) //extend basins 
@@ -207,7 +207,7 @@ inline void runWatershedAlgorithmEx(int size, TWsPixelEx **sortedPixPtr, void (*
 				}
 			}
 
-			//neighbors‚Ìó‹µ‚É‚æ‚èp‚ğƒ‰‚×ƒŠƒ“ƒO * ˆÈ‰º‚Éà–¾‚ ‚è
+			//neighborsã®çŠ¶æ³ã«ã‚ˆã‚Špã‚’ãƒ©ã¹ãƒªãƒ³ã‚° * ä»¥ä¸‹ã«èª¬æ˜ã‚ã‚Š
 			bool hasNeighboringWsPix = false;
       const int num_neighbors  = p->GetNumNeighbor();
 
@@ -226,12 +226,12 @@ inline void runWatershedAlgorithmEx(int size, TWsPixelEx **sortedPixPtr, void (*
         }
 				else if( (q.getDistance() <= curdist) && q.getLabel() > 0 ) 
 				{ 
-          //q‚ÍŠù‘¶‚Ìbasin‚É“ü‚Á‚Ä‚¢‚é
+          //qã¯æ—¢å­˜ã®basinã«å…¥ã£ã¦ã„ã‚‹
 					if     ( p->isLabelMASK()                  ) p->setLabel(q.getLabel());
 					else if( p->getLabel()    != q.getLabel()  ) p->setLabelToWSHED();
 				}
 			}
-			if( p->isLabelMASK() && hasNeighboringWsPix ) p->setLabelToWSHED();//‚±‚±‚ª“Ëo‚µ‚½wspixel‚ğì‚Á‚Ä‚¢‚é‚ª‚Å‚«‚é
+			if( p->isLabelMASK() && hasNeighboringWsPix ) p->setLabelToWSHED();//ã“ã“ãŒçªå‡ºã—ãŸwspixelã‚’ä½œã£ã¦ã„ã‚‹ãŒã§ãã‚‹
 		}
 
 	  //Detect and process new minima at level h 
@@ -247,7 +247,7 @@ inline void runWatershedAlgorithmEx(int size, TWsPixelEx **sortedPixPtr, void (*
 				p.setLabel(curlab);		    
 				queue.fifo_add(&p);
 			    
-			  //p‚©‚ç“¯‚¶’l(MASKƒ‰ƒxƒ‹)‚Ìpixel‚Éfloodfill
+			  //pã‹ã‚‰åŒã˜å€¤(MASKãƒ©ãƒ™ãƒ«)ã®pixelã«floodfill
 				while(!queue.fifo_empty()) 
 				{
 					TWsPixelEx &q = *queue.fifo_remove();
@@ -283,10 +283,10 @@ inline void TWatershed2DEx(int W, int H, const byte *img, int *pixel_labels)
 	//construct pixels and sort it///////////////////////////////////////////////
 	const int WH = W * H;
 	TWsPixelEx *pixels        = new TWsPixelEx [WH];//
-	TWsPixelEx **sortedPixPtr = new TWsPixelEx*[WH];//sort‚µ‚½‚à‚Ì
+	TWsPixelEx **sortedPixPtr = new TWsPixelEx*[WH];//sortã—ãŸã‚‚ã®
 	for(int i = 0; i < WH; ++i) sortedPixPtr[i] = &pixels[i];
 
-	//‹P“x’l‚Æneighbors‚ğƒZƒbƒg
+	//è¼åº¦å€¤ã¨neighborsã‚’ã‚»ãƒƒãƒˆ
 	int idx = 0;
 	for(int y = 0; y < H; ++y) 
 	for(int x = 0; x < W; ++x, ++idx) 
@@ -327,10 +327,10 @@ inline void TWatershed3DEx
 
 	//construct pixels and sort it///////////////////////////////////////////////
 	TWsPixelEx *pixels        = new TWsPixelEx [WHD];//
-	TWsPixelEx **sortedPixPtr = new TWsPixelEx*[WHD];//sort‚µ‚½‚à‚Ì
+	TWsPixelEx **sortedPixPtr = new TWsPixelEx*[WHD];//sortã—ãŸã‚‚ã®
 	for(int i = 0; i < WHD; ++i) sortedPixPtr[i] = &pixels[i];
 
-	// 9 + 8 + 9‹ß–T
+	// 9 + 8 + 9è¿‘å‚
 #pragma omp parallel for 
 	for ( int z = 0; z < D; ++z)
   {
@@ -341,7 +341,7 @@ inline void TWatershed3DEx
         const int idx = x + y * W + z * WH;
         pixels[ idx ].Set( (unsigned short)( gMagCoef * gMagImg[idx] ) );
         
-        //add 26 ‹ß–T
+        //add 26 è¿‘å‚
         if ( x>0  &&  y>0 && z>0  ) pixels[idx].addNeighbour( &pixels[ idx-1-W-WH] );
         if (          y>0 && z>0  ) pixels[idx].addNeighbour( &pixels[ idx  -W-WH] );
         if ( x<W-1&&  y>0 && z>0  ) pixels[idx].addNeighbour( &pixels[ idx+1-W-WH] );
@@ -408,12 +408,12 @@ inline void TWatershed3DEx
 
 
 
-//ˆÈ‰º‚ÌŠÖ”‚ÍˆäK@—§–½‚ª’Ç‰Á
+//ä»¥ä¸‹ã®é–¢æ•°ã¯äº•å°»@ç«‹å‘½ãŒè¿½åŠ 
 //20160826 
 
 
 // computer watershed segmentation
-// label‚Í, 
+// labelã¯, 
 void t_wsd_CalcLabelFromGMag
 ( 
 	const int W, 
@@ -427,7 +427,7 @@ void t_wsd_CalcLabelFromGMag
 {
 	if( W * H > 1024*1024*4 ) 
 	{ 
-		std::cout << "ƒf[ƒ^ƒTƒCƒY‚ª‘å‚«‚·‚¬‚Ü‚·\n" ; 
+		std::cout << "ãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚ºãŒå¤§ãã™ãã¾ã™\n" ; 
 		return;
 	}
 
@@ -441,7 +441,7 @@ void t_wsd_CalcLabelFromGMag
 	std::vector< std::vector<int> > tmpLabels( iterN, std::vector<int>() );
 	
 
-	//calc water shed for each layers (ƒƒ‚ƒŠ‚Éæ‚ç‚È‚¢ê‡‚ğl—¶‚µ‚Ä•¡”ƒŒƒCƒ„‚É•ªŠ„‚µ‚Äˆ—)
+	//calc water shed for each layers (ãƒ¡ãƒ¢ãƒªã«ä¹—ã‚‰ãªã„å ´åˆã‚’è€ƒæ…®ã—ã¦è¤‡æ•°ãƒ¬ã‚¤ãƒ¤ã«åˆ†å‰²ã—ã¦å‡¦ç†)
 	for( int i = 0; i < iterN; ++i)
 	{
     std::cout << "wsd " << i << "/" << iterN << "\n";
@@ -473,8 +473,8 @@ void t_wsd_CalcLabelFromGMag
 
 
 
-// watershed‚Ì‹«ŠEƒsƒNƒZƒ‹ilabels[i] == 0)‚ğ‹ß–T‚Ì—Ìˆæ‚Éƒ}[ƒW‚·‚é
-//‚È‚é‚×‚­F‚Ì‹ß‚¢—Ìˆæ‚Éƒ}[ƒW‚·‚é
+// watershedã®å¢ƒç•Œãƒ”ã‚¯ã‚»ãƒ«ï¼ˆlabels[i] == 0)ã‚’è¿‘å‚ã®é ˜åŸŸã«ãƒãƒ¼ã‚¸ã™ã‚‹
+//ãªã‚‹ã¹ãè‰²ã®è¿‘ã„é ˜åŸŸã«ãƒãƒ¼ã‚¸ã™ã‚‹
 void t_wsd_CollapseWsdPixels3D(
 	const int W, 
 	const int H, 
@@ -496,16 +496,16 @@ void t_wsd_CollapseWsdPixels3D(
 		for( int y = 0; y < H; ++y        )	
 		for( int x = 0; x < W; ++x, ++idx ) if( labels[ idx ] <= 0 )
 		{	
-			//¶A‰EAãA‰º
+			//å·¦ã€å³ã€ä¸Šã€ä¸‹
 			float colDiff = FLT_MAX;
 
 			for( int c = 0; c<6; ++c)
 			{
 				int neiIdx = 0;
-				if     ( c == 0 && x >   0 ) neiIdx = idx - 1 ;//¶
-				else if( c == 1 && x < W-1 ) neiIdx = idx + 1 ;//‰E
-				else if( c == 2 && y >   0 ) neiIdx = idx - W ;//‰º
-				else if( c == 3 && y < H-1 ) neiIdx = idx + W ;//ã
+				if     ( c == 0 && x >   0 ) neiIdx = idx - 1 ;//å·¦
+				else if( c == 1 && x < W-1 ) neiIdx = idx + 1 ;//å³
+				else if( c == 2 && y >   0 ) neiIdx = idx - W ;//ä¸‹
+				else if( c == 3 && y < H-1 ) neiIdx = idx + W ;//ä¸Š
 				else if( c == 4 && z >   0 ) neiIdx = idx - WH;
 				else if( c == 5 && z < D-1 ) neiIdx = idx + WH;
 				else continue;
@@ -540,8 +540,8 @@ void t_wsd_CollapseWsdPixels3D(
 
 
 
-//@—v‘f”‚ª‚P‚Ì—Ìˆæ (labelID) ‚ğwatershed‹«ŠE—Ìˆæ‚É‚·‚éi‚Œø—¦‰»‚Ì‚½‚ßj
-// label‚ÌU‚è‚È‚¨‚µ‚Ì•K—v‚ª¶‚¶‚é
+//ã€€è¦ç´ æ•°ãŒï¼‘ã®é ˜åŸŸ (labelID) ã‚’watershedå¢ƒç•Œé ˜åŸŸã«ã™ã‚‹ï¼ˆé«˜åŠ¹ç‡åŒ–ã®ãŸã‚ï¼‰
+// labelã®æŒ¯ã‚ŠãªãŠã—ã®å¿…è¦ãŒç”Ÿã˜ã‚‹
 void t_wsd_RemoveOneVoxWsdLabel( const int num_voxels, int *labels)
 {
 	//max label 
@@ -551,7 +551,7 @@ void t_wsd_RemoveOneVoxWsdLabel( const int num_voxels, int *labels)
     label_max = std::max( label_max, labels[i]);
   }
 
-  //Še—Ìˆæ‚Ìvoxel”‚ğƒJƒEƒ“ƒg
+  //å„é ˜åŸŸã®voxelæ•°ã‚’ã‚«ã‚¦ãƒ³ãƒˆ
   int *label_num_voxel = new int[label_max + 1];
   memset( label_num_voxel, 0, sizeof(int) * (label_max + 1) );
 
@@ -560,14 +560,14 @@ void t_wsd_RemoveOneVoxWsdLabel( const int num_voxels, int *labels)
     ++label_num_voxel[ labels[i] ];
   }
 
-	//1 voxel‚µ‚©ŠÜ‚Ü‚È‚¢—Ìˆæ‚ğ ‹«ŠE—v‘f‚Ö
+	//1 voxelã—ã‹å«ã¾ãªã„é ˜åŸŸã‚’ å¢ƒç•Œè¦ç´ ã¸
 	for ( int i=0; i < num_voxels; ++i) if( label_num_voxel[ labels[i] ] == 1 )
 	{
 		label_num_voxel[ labels[i] ] = -1;
 		labels[i] = 0;
 	}
 
-	//label‚ğ˜A‘±‚ÉU‚è’¼‚·
+	//labelã‚’é€£ç¶šã«æŒ¯ã‚Šç›´ã™
 	int offset = 0;
 	int *new_label = new int[label_max + 1];
 

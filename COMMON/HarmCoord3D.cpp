@@ -1,4 +1,4 @@
-﻿#pragma unmanaged
+#pragma unmanaged
 #include "./HarmCoord3D.h"
 
 
@@ -38,7 +38,7 @@ void HarmCoord3D::InitMap()
   TMesh cage = m_cage;
   cage.Translate( -m_map_pos );
   EVec3f pitch(m_map_pitch, m_map_pitch,m_map_pitch);
-  GenBinaryVolumeFromMesh_Y(m_map_reso, pitch, cage, m_map_flag);
+  GenBinaryVolumeFromMeshY(m_map_reso, pitch, cage, m_map_flag);
 
   const int W = m_map_reso[0];
   const int H = m_map_reso[1];
@@ -80,7 +80,7 @@ static bool CalcBarycentricCoordinate(
 {
   const EVec3f d1 = x1-x0;
   const EVec3f d2 = x2-x0;
-  bool tf = t_SolveLinearEq2f( 
+  bool tf = SolveLinearEq2f( 
     d1.dot(d1), d1.dot(d2), 
     d1.dot(d2), d2.dot(d2),  d1.dot(p-x0), 
                              d2.dot(p-x0), s, t);
@@ -612,7 +612,7 @@ void HarmCoord3D::RefineHarmonicCoordinate(const int vsize, const EVec3f *verts)
     for ( int i = 0; i < N; ++i) x_init[i] = std::max( 0.f, hc0[i]);
 
     Eigen::VectorXd new_hc = 
-      SolveQp_ActiveSetMethod(Q,c,A_eq, b_eq,A_ls, b_ls, x_init);
+      SolveQpActiveSetMethod(Q,c,A_eq, b_eq,A_ls, b_ls, x_init);
 
     for ( int i = 0; i < N; ++i) m_verts_hc[vtx_idx][i] = (float)new_hc[i];
   }
@@ -672,7 +672,7 @@ void HarmCoord3D::Debug_showDebugInfo(const int vsize, const EVec3f *verts)
       if ( m_verts_hc[i][j] < -0.0000001f ) isAllSemiPositive = false;
     }
     std::cout << "cagevtx[" << i << "](sum,diff,allposi)"
-              << sum << " " << t_Dist(p, verts[i]) 
+              << sum << " " << Dist(p, verts[i]) 
               << " posi:"   << isAllSemiPositive << "\n"; 
   }
 }

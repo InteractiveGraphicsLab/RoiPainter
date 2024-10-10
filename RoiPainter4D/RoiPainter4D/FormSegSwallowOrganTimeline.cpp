@@ -26,10 +26,10 @@ static int CP_RADIUS = 5;
 // remove copy function from maindialog
 //
 
-//ˆÚ“®‘O‚Ì gc sequence (‰EƒNƒŠƒbƒNƒLƒƒƒ“ƒZƒ‹—p)
+//ç§»å‹•å‰ã® gc sequence (å³ã‚¯ãƒªãƒƒã‚¯ã‚­ãƒ£ãƒ³ã‚»ãƒ«ç”¨)
 static std::vector<EVec3f> m_prev_centers; 
 
-//double buffering—p‚ÌƒnƒbƒN
+//double bufferingç”¨ã®ãƒãƒƒã‚¯
 //https://www.codeproject.com/Questions/226895/Double-buffered-painting-of-a-panel
 public ref class MyPanel : public System::Windows::Forms::Panel
 {
@@ -51,7 +51,7 @@ FormSegSwallowOrganTimeline::FormSegSwallowOrganTimeline(void)
   m_selectx0 = m_selectx1 = -1;   
 
   m_bLbtn = false;
-  //double buffering—p‚ÌƒnƒbƒN
+  //double bufferingç”¨ã®ãƒãƒƒã‚¯
   static_cast<MyPanel^>(m_panel)->SetStyle(ControlStyles::AllPaintingInWmPaint, true);
   static_cast<MyPanel^>(m_panel)->SetStyle(ControlStyles::DoubleBuffer, true);
 }
@@ -81,7 +81,7 @@ static float CHART_H_OFST = 0.05f;
 */
 
 
-// calc fi --> time (‰¡²) of T-X, T-Y, T-Z chart 
+// calc fi --> time (æ¨ªè»¸) of T-X, T-Y, T-Z chart 
 inline int ChartPos_Time(
     const int panelW    , 
     const int num_frames,
@@ -239,7 +239,7 @@ void FormSegSwallowOrganTimeline::InitChart(int num_frames)
 }
 
 
-//pixel‚Ö’¼Ú‘‚«‚İ i¡‰ñ‚Í‚µ‚È‚¢‚Ì‚ÅƒRƒƒ“ƒgƒAƒEƒgj
+//pixelã¸ç›´æ¥æ›¸ãè¾¼ã¿ ï¼ˆä»Šå›ã¯ã—ãªã„ã®ã§ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆï¼‰
 //System::Drawing::Rectangle rect = System::Drawing::Rectangle(0, 0, W,H);
 //Imaging::BitmapData^ bmpData = m_background->LockBits( rect, Imaging::ImageLockMode::ReadWrite, m_background->PixelFormat); 
 //Byte* pBuf = (Byte*)bmpData->Scan0.ToPointer();
@@ -295,7 +295,7 @@ System::Void FormSegSwallowOrganTimeline::m_panel_Paint(
   int select_x = (m_selectx0 < m_selectx1) ? m_selectx0 : m_selectx1;
   int select_w = abs( m_selectx1 - m_selectx0);
   
-  //bitmap‚ğì¬
+  //bitmapã‚’ä½œæˆ
   Bitmap^ bmp = gcnew Bitmap(m_background);
   Graphics ^g = Graphics::FromImage( bmp );
 
@@ -314,7 +314,7 @@ System::Void FormSegSwallowOrganTimeline::m_panel_Paint(
     g->DrawLine( pen_r, t, chart_top[2], t, chart_btm[2] ); 
   }
   
-  //2. ’¸“_ŒQidSj‚ğƒyƒCƒ“ƒg
+  //2. é ‚ç‚¹ç¾¤ï¼ˆé‡å¿ƒï¼‰ã‚’ãƒšã‚¤ãƒ³ãƒˆ
   int   radius  = CP_RADIUS;
   float v_scale = (float)m_updown_yaxisscale->Value;
   
@@ -340,7 +340,7 @@ System::Void FormSegSwallowOrganTimeline::m_panel_Paint(
 
 
 
-  //3. ’¸“_ŒQidSj‚ğƒyƒCƒ“ƒg
+  //3. é ‚ç‚¹ç¾¤ï¼ˆé‡å¿ƒï¼‰ã‚’ãƒšã‚¤ãƒ³ãƒˆ
   auto  verts  = ModeSegSwallowOrgans::GetInst()->SelectedCageVtx_GetCentroidSeq();
   std::vector<EVec4i> points( verts.size() ), points_hl;
 
@@ -360,7 +360,7 @@ System::Void FormSegSwallowOrganTimeline::m_panel_Paint(
   PaintElipses(g, brs_y,brs_y,brs_y, points_hl, radius+3);
   PaintElipses(g, brs_r,brs_g,brs_b, points, radius);
 
-  //bmp‚ğpanel‚É•`‰æ
+  //bmpã‚’panelã«æç”»
   System::Drawing::Rectangle rect = System::Drawing::Rectangle(0, 0, W,H);
   e->Graphics->InterpolationMode = Drawing2D::InterpolationMode::NearestNeighbor;
   e->Graphics->DrawImage(bmp, System::Drawing::Rectangle(0, 0,W,H), rect, GraphicsUnit::Pixel);
@@ -432,11 +432,11 @@ System::Void FormSegSwallowOrganTimeline::m_panel_MouseDown
   m_bLbtn = true;
 
   //1. selection
-  if( isShiftKeyOn() )
+  if( IsShiftKeyOn() )
   {
     int minv = ChartPos_Time( W, num_frames, 0);
     int maxv = ChartPos_Time( W, num_frames, num_frames-1);
-    m_selectx0 = m_selectx1 = t_crop( minv, maxv, px);
+    m_selectx0 = m_selectx1 = Crop( minv, maxv, px);
     return;
   }
 
@@ -481,11 +481,11 @@ System::Void FormSegSwallowOrganTimeline::m_panel_MouseMove
   const int H = std::max( 1, m_panel->Height);
 
   //Selection
-  if( isShiftKeyOn() )
+  if( IsShiftKeyOn() )
   {
     int minv = (int)(W * CHART_W_OFST);
     int maxv = (int)(W * CHART_W_OFST) + (int)(W * CHART_W_RATE);
-    m_selectx1   = t_crop( minv, maxv, px);
+    m_selectx1   = Crop( minv, maxv, px);
     this->RepaintPanel();
     return;
   }

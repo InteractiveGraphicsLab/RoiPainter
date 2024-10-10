@@ -4,6 +4,7 @@
 #include "FormSegLocalRGrow.h"
 #include "FormSegSwallowOrgans.h"
 #include "FormSegSwallowOrganTimeline.h"
+#include "FormSegStrokeFfd.h"
 
 #pragma unmanaged
 #include <iostream>
@@ -245,10 +246,10 @@ System::Void FormVisParam::pictBox_MouseMove(
 
   const int W = pictBox->Width;
   const int H = pictBox->Height;
-  int x1 = t_crop(0, TRANS_FUNC_SIZE, (int)(     m_mouseX / (double)W * TRANS_FUNC_SIZE));
-  int x2 = t_crop(0, TRANS_FUNC_SIZE, (int)(e->Location.X / (double)W * TRANS_FUNC_SIZE));
-  int y1 = t_crop(0, 255, (int)((H - m_mouseY) / (double)H * 255));
-  int y2 = t_crop(0, 255, (int)((H - e->Location.Y) / (double)H * 255));
+  int x1 = Crop(0, TRANS_FUNC_SIZE, (int)(     m_mouseX / (double)W * TRANS_FUNC_SIZE));
+  int x2 = Crop(0, TRANS_FUNC_SIZE, (int)(e->Location.X / (double)W * TRANS_FUNC_SIZE));
+  int y1 = Crop(0, 255, (int)((H - m_mouseY) / (double)H * 255));
+  int y2 = Crop(0, 255, (int)((H - e->Location.Y) / (double)H * 255));
 
   if (x1 > x2) {
     std::swap(x1, x2);
@@ -293,7 +294,7 @@ void FormVisParam::ChangeFrameI(int ofst)
     timeSlider->Value = v;
     timeLabel->Text = timeSlider->Value.ToString();
   }
-  //TODO –{—ˆ‚Í ModeCoreŒo—R‚Å’Ê’m‚µ‚½‚¢(‘å•‚Èrefactoring‚ª•K—p)
+  //TODO æœ¬æ¥ã¯ ModeCoreçµŒç”±ã§é€šçŸ¥ã—ãŸã„(å¤§å¹…ãªrefactoringãŒå¿…ç”¨)
   if ( ModeCore::GetInst()->getCurrentMode() == MODE_SEG_LCLRGROW )
     FormSegLocalRGrow_FrameIdxChanged();
 
@@ -356,10 +357,11 @@ System::Void FormVisParam::scrollTime(
 {
   timeLabel->Text = timeSlider->Value.ToString();
   FormVisParam::ChangeFrameI(0);
+  FormSegStrokeFfd::GetInst()->FrameChanged();
   FormMain::GetInst()->RedrawMainPanel();
 }
 
-// TODO !! •ÏX‚µ‚½pitch‚ğ”½‰f‚³‚¹‚È‚¯‚ê‚Î...
+// TODO !! å¤‰æ›´ã—ãŸpitchã‚’åæ˜ ã•ã›ãªã‘ã‚Œã°...
 System::Void FormVisParam::pitch_KeyPress(
     System::Object^ sender, 
     System::Windows::Forms::KeyPressEventArgs^  e)

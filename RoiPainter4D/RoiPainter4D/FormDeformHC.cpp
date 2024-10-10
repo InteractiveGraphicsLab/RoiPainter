@@ -40,7 +40,7 @@ System::Void FormDeformHC::btn_LoadMesh_Click(System::Object^  sender, System::E
   checkBox_DeformMode->Checked = false;
 
   formMain_RedrawMainPanel();
-  CLI_MessageBox_OK_Show("Mesh ‚ð•¢‚¤‚æ‚¤‚É Cage’¸“_ ‚ð”z’u‚µ‚Ä‚­‚¾‚³‚¢", "caution");
+  CLI_MessageBox_OK_Show("Mesh ã‚’è¦†ã†ã‚ˆã†ã« Cageé ‚ç‚¹ ã‚’é…ç½®ã—ã¦ãã ã•ã„", "caution");
 }
 
 System::Void RoiPainter4D::FormDeformHC::btn_SaveMesh_Click(System::Object ^ sender, System::EventArgs ^ e)
@@ -111,7 +111,7 @@ System::Void FormDeformHC::btn_FillinMesh_Click(System::Object^  sender, System:
 
 System::Void FormDeformHC::textBox_scaleVal_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e)
 {
-  //0`9‚ÆAƒoƒbƒNƒXƒy[ƒXˆÈŠO‚ÌŽž‚ÍAƒCƒxƒ“ƒg‚ðƒLƒƒƒ“ƒZƒ‹‚·‚é
+  //0ã€œ9ã¨ã€ãƒãƒƒã‚¯ã‚¹ãƒšãƒ¼ã‚¹ä»¥å¤–ã®æ™‚ã¯ã€ã‚¤ãƒ™ãƒ³ãƒˆã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã™ã‚‹
   if ((e->KeyChar < '0' || '9' < e->KeyChar) && e->KeyChar != '\b' && e->KeyChar != '.')
   {
     e->Handled = true;

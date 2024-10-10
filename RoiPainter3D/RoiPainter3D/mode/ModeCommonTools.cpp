@@ -88,8 +88,8 @@ CRSSEC_ID PickCrsSec(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f* pos, 
 }
 
 
-//picking‚É¬Œ÷‚µ‚½‚ç ‚»‚Ìcross section‚ğ“®‚©‚µ‚Ä true‚ğ•Ô‚·
-//¸”s‚µ‚½‚çfalse‚ğ•Ô‚·
+//pickingã«æˆåŠŸã—ãŸã‚‰ ãã®cross sectionã‚’å‹•ã‹ã—ã¦ trueã‚’è¿”ã™
+//å¤±æ•—ã—ãŸã‚‰falseã‚’è¿”ã™
 bool PickToMoveCrossSecByWheeling(const EVec2i& p, OglForCLI* ogl, short z_delta)
 {
   EVec3f ray_pos, ray_dir, pos;

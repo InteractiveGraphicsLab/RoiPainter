@@ -82,9 +82,9 @@ void t_DrawCuboidSlices(const int num_slice, const EVec3f &cam_pos, const EVec3f
 
 
 
-//lasso‚Ì“à‘¤‚É‚ ‚évoxel‚ğ fore/back‚É•ÏX
-//b_fore = true  --> vFlg 1   --> 255‚É
-//b_fore = false --> vFlg 255 --> 1‚É
+//lassoã®å†…å´ã«ã‚ã‚‹voxelã‚’ fore/backã«å¤‰æ›´
+//b_fore = true  --> vFlg 1   --> 255ã«
+//b_fore = false --> vFlg 255 --> 1ã«
 void t_AddPixsInsideLasso
 (
 	const CRSSEC_ID id   ,

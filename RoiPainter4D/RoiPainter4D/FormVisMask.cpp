@@ -22,11 +22,11 @@ void FormVisMask::updateList()
   const auto &maskData       = ImageCore::GetInst()->GetMaskData();
   const int  &maskSelectedId = ImageCore::GetInst()->GetSelectMaskIdx();
 
-  //‰Šú‰»
+  //åˆæœŸåŒ–
   maskList->Rows->Clear();
   for (int i = 0; i < maskData.size(); ++i) maskList->Rows->Add();
 
-  //‚±‚Ìƒ^ƒCƒ~ƒ“ƒO‚Åhighlight‚ğoff‚É
+  //ã“ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§highlightã‚’offã«
   maskList->CurrentCell = nullptr;
 
   //cell colors
@@ -61,7 +61,7 @@ void FormVisMask::updateList()
 
 System::Void FormVisMask::maskList_SelectionChanged(System::Object^  sender, System::EventArgs^  e)
 {
-  //FormVisMask::updateList ‚Ì maskList->Rows->Clear(); ‚Ìƒ^ƒCƒ~ƒ“ƒO‚ÅŒÄ‚Î‚ê‚Ä‚µ‚Ü‚¤‚Ì‚ÅA‚»‚ÌÛ‚Í‰½‚à‚µ‚È‚¢
+  //FormVisMask::updateList ã® maskList->Rows->Clear(); ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§å‘¼ã°ã‚Œã¦ã—ã¾ã†ã®ã§ã€ãã®éš›ã¯ä½•ã‚‚ã—ãªã„
   if (m_bListUpdating) return;
 
   std::cout << "selection changed " << maskList->CurrentCell->RowIndex << " " << maskList->CurrentCell->ColumnIndex << "\n";

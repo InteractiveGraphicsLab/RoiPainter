@@ -1,4 +1,4 @@
-﻿#pragma unmanaged
+#pragma unmanaged
 #include "tmesh.h"
 
 //3rdparty/glew
@@ -437,7 +437,7 @@ EVec3f TMesh::GetGravityCenter() const
 
 void TMesh::GetBoundBox(EVec3f &BBmin, EVec3f &BBmax) const
 {
-  t_CalcBoundingBox(m_vSize, m_vVerts, BBmin, BBmax);
+  CalcBoundingBox(m_vSize, m_vVerts, BBmin, BBmax);
 }
 
 
@@ -588,7 +588,7 @@ bool TMesh::PickByRay(const EVec3f &rayP, const EVec3f &rayD, EVec3f &pos, int &
   for (int pi = 0; pi < m_pSize; ++pi)
   {
     const int *p = m_pPolys[pi].idx;
-    if (t_intersectRayToTriangle(rayP, rayD, m_vVerts[p[0]], m_vVerts[p[1]], m_vVerts[p[2]], tmpPos))
+    if (IntersectRayToTriangle(rayP, rayD, m_vVerts[p[0]], m_vVerts[p[1]], m_vVerts[p[2]], tmpPos))
     {
       float d = (tmpPos - rayP).norm();
       if (d < depth)
@@ -691,7 +691,7 @@ int TMesh::GetNearestVertexIdx ( const EVec3f &p ) const
 {
   int idx;
   float distsq;
-  t_verts_GetNearestPoint(m_vSize, m_vVerts, p, idx, distsq);
+  VertsGetNearestPoint(m_vSize, m_vVerts, p, idx, distsq);
   return idx;
 }
 
@@ -723,7 +723,7 @@ void TMesh::GetDistToPoint(
 		const EVec3f &x0 = m_vVerts[ nearest_vid ];
 		const EVec3f &x1 = m_vVerts[ it  ];
     EVec3f tmppos;
-    float  tmpdist = t_DistPointAndLineSegm_sq( p, x0, x1, tmppos);
+    float  tmpdist = DistPointAndLineSegmSq( p, x0, x1, tmppos);
     if ( tmpdist < dist ) {
       dist = tmpdist;
       pos_onsurf = tmppos;
@@ -740,13 +740,13 @@ void TMesh::GetDistToPoint(
 		EVec3f d1 = m_vVerts[ m_pPolys[it].idx[1] ] - x0;
 		EVec3f d2 = m_vVerts[ m_pPolys[it].idx[2] ] - x0;
 		double s,t;
-		t_SolveLinearEq2d( d1.dot(d1), d1.dot(d2), 
+		SolveLinearEq2d( d1.dot(d1), d1.dot(d2), 
 			                          d2.dot(d1), d2.dot(d2), d1.dot(p-x0),    
 			                                                  d2.dot(p-x0), s,t);
 		if (0 <= s && 0 <= t && s + t <= 1)
 		{
 			EVec3f h = x0 + (float)s * d1 + (float)t * d2;
-			double d = t_DistSq( p, h);
+			double d = DistSq( p, h);
 			if( d < dist ) {
 				dist = d; 
 				pos_onsurf = h;
@@ -898,7 +898,7 @@ void TMesh::DrawIcosaHedron(
 ///////////////////////////////////////////////////////////////////////////////
 //Mesh filling ////////////////////////////////////////////////////////////////
 
-void GenBinaryVolumeFromMesh_Y
+void GenBinaryVolumeFromMeshY
 (
   const EVec3i& reso,
   const EVec3f& pitch,
@@ -925,7 +925,7 @@ void GenBinaryVolumeFromMesh_Y
   const EVec3f cuboid((float)(W * px), (float)(H * py), (float)(D * pz));
 
   EVec3f BBmin, BBmax;
-  t_CalcBoundingBox(vSize, verts, BBmin, BBmax);
+  CalcBoundingBox(vSize, verts, BBmin, BBmax);
 
   memset(binVol, 0, sizeof(byte) * WHD);
 
@@ -937,14 +937,14 @@ void GenBinaryVolumeFromMesh_Y
   for (int p = 0; p < pSize; ++p)
   {
     EVec3f bbMin, bbMax;
-    t_CalcBoundingBox(verts[polys[p].idx[0]],
+    CalcBoundingBox(verts[polys[p].idx[0]],
       verts[polys[p].idx[1]],
       verts[polys[p].idx[2]], bbMin, bbMax);
 
-    int xS = t_crop(0, BIN_SIZE - 1, (int)(bbMin[0] / cuboid[0] * BIN_SIZE));
-    int zS = t_crop(0, BIN_SIZE - 1, (int)(bbMin[2] / cuboid[2] * BIN_SIZE));
-    int xE = t_crop(0, BIN_SIZE - 1, (int)(bbMax[0] / cuboid[0] * BIN_SIZE));
-    int zE = t_crop(0, BIN_SIZE - 1, (int)(bbMax[2] / cuboid[2] * BIN_SIZE));
+    int xS = Crop(0, BIN_SIZE - 1, (int)(bbMin[0] / cuboid[0] * BIN_SIZE));
+    int zS = Crop(0, BIN_SIZE - 1, (int)(bbMin[2] / cuboid[2] * BIN_SIZE));
+    int xE = Crop(0, BIN_SIZE - 1, (int)(bbMax[0] / cuboid[0] * BIN_SIZE));
+    int zE = Crop(0, BIN_SIZE - 1, (int)(bbMax[2] / cuboid[2] * BIN_SIZE));
     for (int z = zS; z <= zE; ++z)
       for (int x = xS; x <= xE; ++x)
         polyID_Bins[z * BIN_SIZE + x].push_back(p);
@@ -971,7 +971,7 @@ void GenBinaryVolumeFromMesh_Y
         const EVec3f& V1 = verts[polys[pi].idx[1]];
         const EVec3f& V2 = verts[polys[pi].idx[2]];
         double y;
-        if (t_IntersectRayYToTriangle(V0, V1, V2, x, z, y))
+        if (IntersectRayYToTriangle(V0, V1, V2, x, z, y))
           blist.insert(std::make_pair(y, pNorm[pi][1])); //(y 座標, normal)
       }
 

@@ -84,8 +84,8 @@ public:
 
 
 //todo gen Dlg for ManageVolInfo
-//�ȉ��͈ꎞ�I�ɍ�����_�C�A���O�̑��������N���X�ŁA
-// resolution, pitch���Ǘ�����
+//以下は一時的に作ったダイアログの代わりをするクラスで、
+// resolution, pitchを管理する
 
 class TmpVolInfoDlg
 {

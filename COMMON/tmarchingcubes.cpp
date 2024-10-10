@@ -1,4 +1,4 @@
-﻿#pragma unmanaged
+#pragma unmanaged
 #include "tmarchingcubes.h"
 
 #include <time.h>
@@ -760,7 +760,7 @@ void MarchingCubesParallel(
 // 複数頂点が一点に縮退する場合がある．
 // この時は一部の面の法線が計算できなくなるので注意
 
-void marchingcubes::t_MarchingCubes(
+void marchingcubes::MarchingCubes(
     const EVec3i &vRes,
     const EVec3f &vPitch,
     const short *volume,
@@ -970,7 +970,7 @@ void marchingcubes::t_MarchingCubes(
 */
 
 
-void marchingcubes::t_MarchingCubes_PolygonSoup(
+void marchingcubes::MarchingCubesPolygonSoup(
     const EVec3i &vRes,
     const EVec3f &vPitch,
     const short  *volume,
@@ -1095,7 +1095,7 @@ void marchingcubes::t_MarchingCubes_PolygonSoup(
 }
 
 
-void marchingcubes::t_MarchingCubes_PolygonSoup(
+void marchingcubes::MarchingCubesPolygonSoup(
     const EVec3i &vRes,
     const EVec3f &vPitch,
     const short   *volume,
@@ -1108,7 +1108,7 @@ void marchingcubes::t_MarchingCubes_PolygonSoup(
 {
   int num_tri_verts = 0;
   EVec3f *tri_verts = 0;
-  t_MarchingCubes_PolygonSoup(vRes, vPitch, volume, thresh, minIdx, maxIdx, num_tri_verts, tri_verts );
+  MarchingCubesPolygonSoup(vRes, vPitch, volume, thresh, minIdx, maxIdx, num_tri_verts, tri_verts );
 
   triangle_soup.Allocate(num_tri_verts/3, tri_verts);
 
@@ -1127,7 +1127,7 @@ void marchingcubes::t_MarchingCubes_PolygonSoup(
 
 
 
-void marchingcubes::t_MarchingCubes(
+void marchingcubes::MarchingCubes(
     const EVec3i &vRes,
     const EVec3f &vPitch,
     const short *vol,
@@ -1138,7 +1138,7 @@ void marchingcubes::t_MarchingCubes(
 {
   std::vector<EVec3f> Vs;
   std::vector<TPoly > Ps;
-  t_MarchingCubes(vRes, vPitch, vol, thresh, minIdx, maxIdx, Vs, Ps);
+  MarchingCubes(vRes, vPitch, vol, thresh, minIdx, maxIdx, Vs, Ps);
   mesh.Initialize(Vs, Ps);
 }
 

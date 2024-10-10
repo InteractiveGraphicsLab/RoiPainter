@@ -64,7 +64,7 @@ void DrawVolumeSlices(
   const bool  b_pseudo = formVisParam_bDoPsued();
   const float alpha = formVisParam_getAlpha();
   const int   num_slice = GetNumVolumeRenderSlice(is_manipulation);
-  shader.bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, cam_pos, b_pseudo, !isSpaceKeyOn());
+  shader.bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, cam_pos, b_pseudo, !IsSpaceKeyOn());
   t_drawSlices(num_slice, cam_pos, cam_focus, cuboid);
   shader.unbind();
 }

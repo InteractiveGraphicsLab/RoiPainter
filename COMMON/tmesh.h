@@ -1,4 +1,4 @@
-﻿#ifndef COMMON_TMESH_H_
+#ifndef COMMON_TMESH_H_
 #define COMMON_TMESH_H_
 #pragma unmanaged
 
@@ -170,7 +170,7 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 // Convert Mesh to voxel by filling its inside ////////////////////////////////
-void GenBinaryVolumeFromMesh_Y
+void GenBinaryVolumeFromMeshY
 (
   const EVec3i& reso,
   const EVec3f& pitch,

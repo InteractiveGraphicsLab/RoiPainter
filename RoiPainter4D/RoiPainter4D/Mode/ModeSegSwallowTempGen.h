@@ -33,16 +33,16 @@ private:
   std::vector<EVec3f>  m_stroke;
 
   //input template 
-  CagedMeshSequence m_cagedmesh_zetsu_orig; //ã
-  CagedMeshSequence m_cagedmesh_into_orig ; //ˆô“ª
-  CagedMeshSequence m_cagedmesh_koto_orig ; //Œû“ª
-  CagedMeshSequence m_cagedmesh_nank_orig ; //“îŒûŠW
+  CagedMeshSequence m_cagedmesh_zetsu_orig; //èˆŒ
+  CagedMeshSequence m_cagedmesh_into_orig ; //å’½é ­
+  CagedMeshSequence m_cagedmesh_koto_orig ; //å£é ­
+  CagedMeshSequence m_cagedmesh_nank_orig ; //è»Ÿå£è“‹
 
-  //•ÏŒ`Œã
-  CagedMeshSequence m_cagedmesh_zetsu; //ã
-  CagedMeshSequence m_cagedmesh_into ; //ˆô“ª
-  CagedMeshSequence m_cagedmesh_koto ; //Œû“ª
-  CagedMeshSequence m_cagedmesh_nank ; //“îŒûŠW
+  //å¤‰å½¢å¾Œ
+  CagedMeshSequence m_cagedmesh_zetsu; //èˆŒ
+  CagedMeshSequence m_cagedmesh_into ; //å’½é ­
+  CagedMeshSequence m_cagedmesh_koto ; //å£é ­
+  CagedMeshSequence m_cagedmesh_nank ; //è»Ÿå£è“‹
 
   ModeSegSwallowTempGen();
 
@@ -55,7 +55,7 @@ public:
   }
 
   // overload functions ---------------------------------------------
-  MODE_ID getModeID() { return MODE_VIS_NORMAL; }
+  MODE_ID GetModeID() { return MODE_VIS_NORMAL; }
 
   void LBtnUp    (const EVec2i& p, OglForCLI* ogl);
   void RBtnUp    (const EVec2i& p, OglForCLI* ogl);
@@ -69,12 +69,12 @@ public:
   void MouseMove (const EVec2i& p, OglForCLI* ogl);
   void MouseWheel(const EVec2i& p, short zDelta, OglForCLI* ogl);
 
-  void keyDown(int nChar);
-  void keyUp(int nChar);
+  void KeyDown(int nChar);
+  void KeyUp(int nChar);
 
-  bool canEndMode();
-  void startMode();
-  void drawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF);
+  bool CanEndMode();
+  void StartMode();
+  void DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF);
   
   void LoadCagedMesh( const std::string &mesh_path, 
                       const std::string &cage_path, 

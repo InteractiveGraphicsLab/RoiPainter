@@ -1,244 +1,354 @@
-﻿#ifndef COMMON_KCURVES_H_
+#ifndef COMMON_KCURVES_H_
 #define COMMON_KCURVES_H_
 #pragma unmanaged
 
-//Eigen 
-#include "Dense"
-#include "Geometry"
-#include "Sparse"
-
+#include <Core>
 #include <iostream>
 #include <vector>
 
-#ifndef EVec2i
-typedef Eigen::Vector2i EVec2i;
-typedef Eigen::Vector2d EVec2d;
-#endif
 
-//実数解を一つ返す
-//solve x^3 + a x^2 + b x + c
-inline double getRealSolutionOfCubicFunc
-(
-	const double a,
-	const double b,
-	const double c
-)
+namespace KCurves
 {
-	const double p = b - a * a / 3;
-	const double q = 2 * a*a*a / 27 - a*b/3 + c;
+  typedef Eigen::Vector2f EVec2f;
+  typedef Eigen::VectorXf EVecXf;
+  typedef Eigen::MatrixXf EMatXf;
 
-	const double tmp = q*q/4 + p*p*p / 27;
-	if( tmp < 0) return 0;
+  static const int NUMBER_ITERATION = 15;
+  static const int BEZIER_SAMPLING_INTERVAL = 15;
 
-	const double mTmp = - q / 2 + sqrt(tmp);
-	const double nTmp = - q / 2 - sqrt(tmp);
-	const double m = (mTmp < 0) ?  - pow( - mTmp, 1/3.0) :  pow(mTmp, 1/3.0);
-	const double n = (nTmp < 0) ?  - pow( - nTmp, 1/3.0) :  pow(nTmp, 1/3.0);
 
-	return - a / 3 + m + n;
+  // prototype declaration
+
+  inline float CalcArea(const EVec2f&, const EVec2f&, const EVec2f&);
+  inline float SolveFormula(const float&, const float&, const float&, const float&);
+  inline bool IsInsideTriangle(const EVec2f&, const EVec2f&, const EVec2f&, const EVec2f&);
+  inline std::vector<EVec2f> CalcBezierCPs(const std::vector<EVec2f>&);
+  inline std::vector<EVec2f> CalcBezierCurves(const std::vector<EVec2f>&, const std::vector<EVec2f>&);
+  inline std::vector<EVec2f> CalcKCurvesOpen(const std::vector<EVec2f>&);
+  //inline void show_step(const int&);
+  //inline void show_vector_EVec2f(const std::string&, const std::vector<EVec2f>&);
+  //inline void show_vector_float(const std::string&, const std::vector<float>&);
+  //inline void show_EMatXf(const std::string&, const EMatXf&);
+  //inline void show_EVecXf(const std::string&, const EVecXf&);
+  //inline void show_comment(const std::string& _comment);
+
+
+  // calculate triangle area
+  inline float CalcArea(const EVec2f& _a, const EVec2f& _b, const EVec2f& _c)
+  {
+    const EVec2f vec_a = _b - _a;
+    const EVec2f vec_b = _c - _a;
+    const float product_norm_ab = vec_a.norm() * vec_b.norm();;
+    const float theta = vec_a.dot(vec_b) / product_norm_ab;
+    const float area = product_norm_ab * sqrt(1.0f - theta * theta);
+
+    return area;
+  }
+
+
+  // solve cubic formula
+  // only real solution in the range [0, 1]
+  inline float SolveFormula(const float& _a, const float& _b, const float& _c, const float& _d)
+  {
+    const float b = _b / _a / 3;
+    const float c = _c / _a;
+    const float d = _d / _a;
+
+    const float p = c / 3 - b * b;
+    const float q = b * b * b - (b * c - d) / 2;
+    const float D = q * q + p * p * p;
+
+    if (fabsf(D) < FLT_MIN)
+    {
+      const float i = cbrtf(q) - b;
+      if (i >= 0.0f)
+      {
+        return fminf(i, 1.0f);
+      }
+      else
+      {
+        return fminf(i * -2.0f, 1.0f);
+      }
+    }
+    else if (D > 0.0f)
+    {
+      const float u = cbrtf(-q + sqrtf(D));
+      const float v = cbrtf(-q - sqrtf(D));
+      const float i = u + v - b;
+      if (i < 0.0f) return 0.0f;
+      if (i > 1.0f) return 1.0f;
+      return i;
+    }
+    else
+    {
+      const float n = 2 * sqrtf(-p);
+      const float arg = atan2f(sqrtf(-D), -q) / 3;
+      const float pi2d3 = 2 * static_cast<float>(M_PI) / 3;
+      const float i = n * cosf(arg) - b;
+      if (0 <= i && i <= 1) return i;
+      const float j = n * cosf(arg + pi2d3) - b;
+      if (0 <= j && j <= 1) return j;
+      const float k = n * cosf(arg - pi2d3) - b;
+      if (0 <= k && k <= 1) return k;
+    }
+
+    return 0.50001f;
+  }
+
+  // is the point inside or outside the triangle
+  inline bool IsInsideTriangle(const EVec2f& _p, const EVec2f& _a, const EVec2f& _b, const EVec2f& _c)
+  {
+    const EVec3f ab = { (_b - _a)[0], (_b - _a)[1], 0 };
+    const EVec3f bc = { (_c - _b)[0], (_c - _b)[1], 0 };
+    const EVec3f ca = { (_a - _c)[0], (_a - _c)[1], 0 };
+
+    const EVec3f bp = { (_p - _b)[0], (_p - _b)[1], 0 };
+    const EVec3f cp = { (_p - _c)[0], (_p - _c)[1], 0 };
+    const EVec3f ap = { (_p - _a)[0], (_p - _a)[1], 0 };
+
+    const float abp = (ab.cross(bp))[2];
+    const float bcp = (bc.cross(cp))[2];
+    const float cap = (ca.cross(ap))[2];
+
+    if (((abp > 0) && (bcp > 0) && (cap > 0)) || ((abp < 0) && (bcp < 0) && (cap < 0)))
+    {
+      return true;
+    }
+
+    return false;
+  }
+
+
+  // calculate Bezier control points from k-curves control points
+  inline std::vector<EVec2f> CalcBezierCPs(const std::vector<EVec2f>& _kcurves_cps)
+  {
+    const int number_segments = static_cast<int>(_kcurves_cps.size()) - 2;
+    std::vector<EVec2f> bezier_cps(2 * number_segments + 1);
+    std::vector<float> lambda(number_segments + 1);
+    std::vector<float> t(number_segments + 2);
+    EMatXf mat_A(number_segments + 4, number_segments + 4);
+
+    // debug
+    //show_comment("\n>>START CALC\n");
+    //show_vector_EVec2f("kcurves CPs", _kcurves_cps);
+
+    // initialize
+    bezier_cps[0] = _kcurves_cps[0];
+    bezier_cps[2 * number_segments] = _kcurves_cps[number_segments + 1];
+    lambda[0] = 0.0f;
+    lambda[number_segments] = 1.0f;
+    t[0] = 0.0f;
+    t[number_segments + 1] = 1.0f;
+    for (int i = 0; i < number_segments; ++i)
+    {
+      bezier_cps[2 * i + 1] = _kcurves_cps[i + 1];
+      t[i + 1] = 0.5f;
+    }
+    for (int i = 0; i < number_segments - 1; ++i)
+    {
+      bezier_cps[2 * i + 2] = (bezier_cps[2 * i + 1] + bezier_cps[2 * i + 3]) / 2;
+      lambda[i + 1] = 0.5f;
+    }
+    for (int i = 0; i < number_segments + 4; ++i)
+    {
+      for (int j = 0; j < number_segments + 4; ++j)
+      {
+        mat_A(i, j) = 0.0f;
+      }
+    }
+    mat_A(0, 0) = 1.0f;
+    mat_A(1, 1) = 1.0f;
+    mat_A(number_segments + 2, number_segments + 2) = 1.0f;
+    mat_A(number_segments + 3, number_segments + 3) = 1.0f;
+
+    // debug
+    //show_step(0);
+    //show_vector_EVec2f("Bezier CPs", bezier_cps);
+
+    // steps
+    for (int step = 0; step < NUMBER_ITERATION; ++step)
+    {
+      // estimate lambda
+      for (int n = 0; n < number_segments - 1; ++n)
+      {
+        const int i = n + 1;
+        const float a = sqrtf(CalcArea(bezier_cps[2 * i - 2], bezier_cps[2 * i - 1], bezier_cps[2 * i + 1]));
+        const float b = sqrtf(CalcArea(bezier_cps[2 * i - 1], bezier_cps[2 * i + 1], bezier_cps[2 * i + 2]));
+        lambda[i] = a / (a + b);
+      }
+
+      // debug
+      //show_vector_float("lambda", lambda);
+
+      // update c_(i,0), c_(i,2)
+      for (int n = 0; n < number_segments - 1; ++n)
+      {
+        const int i = n + 1;
+        bezier_cps[2 * i] = (1 - lambda[i]) * bezier_cps[2 * i - 1] + lambda[i] * bezier_cps[2 * i + 1];
+      }
+
+      // calculate t
+      for (int n = 0; n < number_segments; ++n)
+      {
+        const int i = n + 1;
+        const float a = (bezier_cps[2 * i] - bezier_cps[2 * i - 2]).squaredNorm();
+        const float b = -3 * (bezier_cps[2 * i] - bezier_cps[2 * i - 2]).dot(_kcurves_cps[i] - bezier_cps[2 * i - 2]);
+        const float c = (-3 * bezier_cps[2 * i - 2] + 2 * _kcurves_cps[i] + bezier_cps[2 * i]).dot(_kcurves_cps[i] - bezier_cps[2 * i - 2]);
+        const float d = -(_kcurves_cps[i] - bezier_cps[2 * i - 2]).squaredNorm();
+        t[i] = SolveFormula(a, b, c, d);
+      }
+
+      // debug
+      //show_vector_float("t", t);
+
+      // update c_(i, 1)
+      EVecXf vec_bx(number_segments + 4), vec_by(number_segments + 4);
+      vec_bx[0] = bezier_cps[2 * number_segments][0];
+      vec_by[0] = bezier_cps[2 * number_segments][1];
+      vec_bx[1] = _kcurves_cps[0][0];
+      vec_by[1] = _kcurves_cps[0][1];
+      vec_bx[number_segments + 2] = _kcurves_cps[number_segments + 1][0];
+      vec_by[number_segments + 2] = _kcurves_cps[number_segments + 1][1];
+      vec_bx[number_segments + 3] = bezier_cps[0][0];
+      vec_by[number_segments + 3] = bezier_cps[0][1];
+      for (int n = 0; n < number_segments; ++n)
+      {
+        const int i = n + 1;
+        const float a = (1 - lambda[i - 1]) * powf(1 - t[i], 2);
+        const float b = lambda[i - 1] * powf(1 - t[i], 2) + (2 - (1 + lambda[i]) * t[i]) * t[i];
+        const float c = lambda[i] * powf(t[i], 2);
+        mat_A(i + 1, i) = a;
+        mat_A(i + 1, i + 1) = b;
+        mat_A(i + 1, i + 2) = c;
+        vec_bx[i + 1] = _kcurves_cps[i][0];
+        vec_by[i + 1] = _kcurves_cps[i][1];
+      }
+
+      // debug
+      //show_EMatXf("mat_A", mat_A);
+      //show_EVecXf("vec_bx", vec_bx);
+      //show_EVecXf("vec_by", vec_by);
+
+      const EVecXf vec_xx = mat_A.fullPivLu().solve(vec_bx);
+      const EVecXf vec_xy = mat_A.fullPivLu().solve(vec_by);
+      for (int i = 1; i < number_segments + 1; ++i)
+      {
+        bezier_cps[2 * i - 1][0] = vec_xx[i + 1];
+        bezier_cps[2 * i - 1][1] = vec_xy[i + 1];
+      }
+
+      // debug
+      //show_EVecXf("vec_xx", vec_xx);
+      //show_EVecXf("vec_xy", vec_xy);
+
+      // debug
+      //show_step(step + 1);
+      //show_vector_EVec2f("Bezier CPs", bezier_cps);
+    }
+
+    // debug
+    //show_comment("\n>>FINISH CALC\n");
+
+    return bezier_cps;
+  }
+
+
+  // calculate Bezier curves from Bezier control points
+  inline std::vector<EVec2f> CalcBezierCurves(const std::vector<EVec2f>& _bezier_cps, const std::vector<EVec2f>& _kcurves_cps)
+  {
+    const int number_segments = static_cast<int>(_bezier_cps.size()) / 2;
+    std::vector<EVec2f> curves;
+
+    for (int i = 0; i < number_segments; ++i)
+    {
+      // check getting the right result
+      if (!IsInsideTriangle(_kcurves_cps[i + 1], _bezier_cps[i * 2], _bezier_cps[i * 2 + 1], _bezier_cps[i * 2 + 2]))
+      {
+        //std::cout << "wrong result" << std::endl; // debug
+        return std::vector<EVec2f>();
+      }
+
+      // calc curve
+      for (int j = 0; j <= BEZIER_SAMPLING_INTERVAL; ++j)
+      {
+        const float t = (float)j / BEZIER_SAMPLING_INTERVAL;
+        const EVec2f p = powf(1 - t, 2) * _bezier_cps[2 * i] + 2 * (1 - t) * t * _bezier_cps[2 * i + 1] + powf(t, 2) * _bezier_cps[2 * i + 2];
+        curves.push_back(p);
+      }
+    }
+
+    return curves;
+  }
+
+
+  // calculate open k-curves from k-curves control points
+  inline std::vector<EVec2f> CalcKCurvesOpen(const std::vector<EVec2f>& _kcurves_cps)
+  {
+    const std::vector<EVec2f> bezier_cps = CalcBezierCPs(_kcurves_cps);
+    const std::vector<EVec2f> curves = CalcBezierCurves(bezier_cps, _kcurves_cps);
+
+    return curves;
+  }
+
+
+  // for debug
+  //inline void show_step(const int& _step, const bool& _show_debug)
+  //{
+  //  std::cout << "\nSTEP: " << _step << std::endl;
+  //}
+
+
+  // for debug
+  //inline void show_vector_EVec2f(const std::string& name, const std::vector<EVec2f>& _vec)
+  //{
+  //  const int size = static_cast<int>(_vec.size());
+  //  std::cout << name << "[" << size << "]:" << std::endl;
+
+  //  for (int i = 0; i < size; ++i)
+  //  {
+  //    std::cout << "  " << _vec[i][0] << ", " << _vec[i][1] << std::endl;
+  //  }
+  //}
+
+
+  // for debug
+  //inline void show_vector_float(const std::string& name, const std::vector<float>& _vec)
+  //{
+  //  const int size = static_cast<int>(_vec.size());
+  //  std::cout << name << "[" << size << "]:" << std::endl;
+
+  //  for (int i = 0; i < size; ++i)
+  //  {
+  //    std::cout << "  " << _vec[i] << std::endl;
+  //  }
+  //}
+
+
+  // for debug
+  //inline void show_EMatXf(const std::string& name, const EMatXf& _mat)
+  //{
+  //  std::cout << name << ": \n" << _mat << std::endl;
+  //}
+
+
+  // for debug
+  //inline void show_EVecXf(const std::string& name, const EVecXf& _vec)
+  //{
+  //  const int size = static_cast<int>(_vec.size());
+  //  std::cout << name << "[" << size << "]:" << std::endl;
+
+  //  for (int i = 0; i < _vec.size(); ++i)
+  //  {
+  //    std::cout << "  " << _vec[i] << std::endl;
+  //  }
+  //}
+
+  // for debug
+  //inline void show_comment(const std::string& _comment)
+  //{
+  //  std::cout << _comment << std::endl;
+  //}
 }
 
-inline void Trace(EVec2d &p)
-{
-	std::cout << p[0] << " " << p[1] << "\n";
-}
-
-inline double TriangleArea(const EVec2d &p0, const EVec2d &p1, const EVec2d &p2)
-{
-	EVec2d v1 = p1-p0;
-	EVec2d v2 = p2-p0;
-	double v1_len = v1.norm() ;
-	double v2_len = v2.norm() ;
-	double cosT = v1.dot(v2) / (v1_len * v2_len);
-	double area = v1_len * v2_len * sqrt( 1.0 - cosT * cosT);
-
-
-	//std::cout << "area== << cosT << " " << area << "\n";
-	//Trace(v1);
-	//Trace(v2);
-	return area;
-}
-
-
-
-
-
-
-typedef Eigen::SparseMatrix<double>    ESpMat;
-typedef Eigen::Triplet<double>         ETrip ;
-
-
-
-//   solve 
-//   2  3  0  0  0     x1       8 
-//   3  0  4  0  6     x2      45
-//   0 -1 -3  2  0     x3    = -3
-//   0  0  1  0  0     x4       3
-//   0  4  2  0  1     x5      19
-inline void EigenSparseMatPractice()
-{
-	//prepare field 
-	ESpMat A(5,5);
-	Eigen::VectorXd b(5);
-
-	//fill A
-	std::vector< Eigen::Triplet<double> > entries; //{row, col, val}
-	entries.push_back( Eigen::Triplet<double>(0,0, 2) );
-	entries.push_back( Eigen::Triplet<double>(1,0, 3) );
-
-	entries.push_back( Eigen::Triplet<double>(0,1, 3) );
-	entries.push_back( Eigen::Triplet<double>(2,1,-1) );
-	entries.push_back( Eigen::Triplet<double>(4,1, 4) );
-
-	entries.push_back( Eigen::Triplet<double>(2,3, 2) );
-	
-	entries.push_back( Eigen::Triplet<double>(1,4, 6) );
-	entries.push_back( Eigen::Triplet<double>(4,4, 1) );
-
-	entries.push_back( Eigen::Triplet<double>(1,2, 4) );
-	entries.push_back( Eigen::Triplet<double>(2,2,-3) );
-	entries.push_back( Eigen::Triplet<double>(3,2, 1) );
-	entries.push_back( Eigen::Triplet<double>(4,2, 2) );
-
-
-	A.setFromTriplets( entries.begin(), entries.end() );
-
-	// fill b
-	b[0] = 8;
-	b[1] =45;
-	b[2] =-3;
-	b[3] = 3;
-	b[4] =19;
-
-	// solve Ax = b
-	Eigen::SparseLU<ESpMat> LU(A);  
-	Eigen::VectorXd x = LU.solve(b);
-	
-	//std::cout << x[0] << " " << x[1] << " " << x[2] << " " << x[3] << " "<< x[4] << "\n";
-	return;
-}
-
-
-
-
-// input : cps (2D control points,        size:N)
-// output: C1  (2D Bezier control points, size:N)
-// output:λi  (weight to compute Bezier cp, size:N)
-//
-// note
-// 各制御点 cps[i] に対して、2次ベジエ制御点 Ci0, Ci1, Ci2を生成する
-//
-// ただし，
-// C_i1 は上記の C1[i]に対応
-// C_i0, C_i+1,0 については、『C_i0 = C_i+1,0 = (1-λi) Ci + λi Ci+1 』と計算できるのでλiとC1[i]のみ保持する
-
-const int ITER_NUM = 15;	
-
-inline void compute_kCurves
-(
-	const std::vector<EVec2d> &cps,
-
-	int  sampleN, //sampling number of each curve segment
-	std::vector<EVec2d> &controlPoints, 	
-	std::vector<EVec2d> &points	
-)
-{
-	if( cps.size() < 3 ) return;
-	if( sampleN < 3) sampleN = 3;
-
-	const int N = (int)cps.size();
-	std::vector<double> lambda(N, 0.5), ti(N);
-	std::vector<EVec2d> Ci0(N), Ci1 = cps, Ci2(N);
-
-	for( int iter = 0; iter < ITER_NUM; ++iter)
-	{
-		//1. update lambda (use 0.5 for the first iteration (更新してもいい気もするけど..))
-		if( iter != 0 ) 
-		{
-			for( int i = 0; i < N; ++i)
-			{
-				int nextI = (i+1)%N;
-				double A = sqrt( TriangleArea(Ci0[i], Ci1[i    ], Ci1[nextI] ) );
-				double B = sqrt( TriangleArea(Ci0[i], Ci1[i    ], Ci1[nextI] ) );
-				double C = sqrt( TriangleArea(Ci1[i], Ci1[nextI], Ci2[nextI] ) );
-				lambda[i] = A / (B + C);
-			}
-		}
-
-		//2. update Ci0, Ci2
-		for( int i = 0; i < N; ++i)
-		{
-			int nextI = (i+1)%N;
-			Ci2[i] = Ci0[nextI] = (1 - lambda[i]) * Ci1[  i  ]  +  
-				                       lambda[i]  * Ci1[nextI];
-		}
-
-		//3. update ti
-		for( int i = 0; i < N; ++i)
-		{
-			//solve eq(4)
-			EVec2d Ci2_Ci0 = Ci2[i] - Ci0[i];
-			EVec2d Ci0_pi  = Ci0[i] - cps[i];
-			double a = Ci2_Ci0.squaredNorm();
-			double b = 3 * Ci2_Ci0.dot( Ci0_pi );
-			double c = (3 * Ci0[i] - 2 * cps[i] - Ci2[i]).dot( Ci0_pi );
-			double d = - Ci0_pi.squaredNorm();
-
-			ti[i] = (a==0) ? 0.5 : getRealSolutionOfCubicFunc(b/a, c/a, d/a);
-			//std::cout<<" ti " << ti[i] << "( " << a << " " << b << " " << c << " " d << ")\n";
-		}
-
-		//4. update C1
-		ESpMat A(N,N);
-		Eigen::VectorXd b1(N), b2(N);
-		std::vector< Eigen::Triplet<double> > entries; //{row, col, val}
-
-		for( int i = 0; i < N; ++i)
-		{
-			int nextI = (i+1) % N;
-			int prevI = (i-1) < 0 ? N - 1 : i - 1;
-			double t = ti[i];
-			double a = (1-lambda[prevI]) * (1 - t) * (1 - t);
-			double b = lambda[i] * t * t;
-			double c =   lambda[prevI] * (1 - t) * (1 - t) + (2-(1+lambda[i]) * t) * t;
-
-			entries.push_back( ETrip(i, prevI, a) );
-			entries.push_back( ETrip(i, i    , c) );
-			entries.push_back( ETrip(i, nextI, b) );
-			b1[i] = cps[i][0];
-			b2[i] = cps[i][1];
-		}
-
-
-		A.setFromTriplets(entries.begin(), entries.end());
-		// solve Ax = b
-		Eigen::SparseLU<ESpMat> LU(A);  
-		Eigen::VectorXd x = LU.solve(b1);
-		Eigen::VectorXd y = LU.solve(b2);
-
-		for( int i = 0; i < N; ++i) Ci1[i] << x[i], y[i];
-
-	}
-
-	controlPoints.clear();
-	for( int i = 0; i < N; ++i)
-	{
-		controlPoints.push_back( Ci0[i] );
-		controlPoints.push_back( Ci1[i] );
-	}
-
-	points.clear();
-	for( int i = 0; i < N; ++i)
-	{
-		const EVec2d &C0 = Ci0[i];
-		const EVec2d &C1 = Ci1[i];
-		const EVec2d &C2 = Ci2[i];
-		for( int j=0; j < sampleN; ++j)
-		{
-			double t = j * 1.0 / sampleN;
-			points.push_back(  (1-t)*(1-t)*C0 + 2*t*(1-t)*C1 +  t*t*C2 ); 
-		}
-	}
-}
 
 #endif

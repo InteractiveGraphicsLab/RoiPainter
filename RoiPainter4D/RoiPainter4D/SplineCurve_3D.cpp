@@ -81,14 +81,14 @@ void SplineCurve_3D::createSpline()
 
 	EMatXf leftSideMat = makeLeftSideMatrix();
 
-	EVecXf solves_xyz[3];//Ax = b ‚Ì‰ğ‚ğ‹L‰¯Bxyz‚Ì3ŸŒ³•ª‚ğ‹L‰¯B
+	EVecXf solves_xyz[3];//Ax = b ã®è§£ã‚’è¨˜æ†¶ã€‚xyzã®3æ¬¡å…ƒåˆ†ã‚’è¨˜æ†¶ã€‚
 	for (int xyz = 0; xyz < 3; ++xyz)
 		solves_xyz[xyz] = calcSplineCoefficient(leftSideMat, makeRightSideVector(xyz));
 
-	sampling(solves_xyz); //“¾‚ç‚ê‚½ƒXƒvƒ‰ƒCƒ“‹Èü‚ğÜ‚êü‹ß—
+	sampling(solves_xyz); //å¾—ã‚‰ã‚ŒãŸã‚¹ãƒ—ãƒ©ã‚¤ãƒ³æ›²ç·šã‚’æŠ˜ã‚Œç·šè¿‘ä¼¼
 }
 
-//ƒXƒvƒ‰ƒCƒ“‹Èü‚ğÜ‚êü‹ß—BÜ‚êü‚Ì’¸“_‚ª‚·‚×‚Ä‚Ìcontrol_point‚ğ’Ê‚èA‚©‚ÂA’¸“_‚Ìd•¡‚ª–³‚¢‚æ‚¤‚É‚·‚é
+//ã‚¹ãƒ—ãƒ©ã‚¤ãƒ³æ›²ç·šã‚’æŠ˜ã‚Œç·šè¿‘ä¼¼ã€‚æŠ˜ã‚Œç·šã®é ‚ç‚¹ãŒã™ã¹ã¦ã®control_pointã‚’é€šã‚Šã€ã‹ã¤ã€é ‚ç‚¹ã®é‡è¤‡ãŒç„¡ã„ã‚ˆã†ã«ã™ã‚‹
 void SplineCurve_3D::sampling(const EVecXf* const splineCoefficients)
 {
 	if (control_points_.size() < 2) return ;
@@ -96,27 +96,27 @@ void SplineCurve_3D::sampling(const EVecXf* const splineCoefficients)
 	verts_.resize( (control_points_.size() - 1) * sampling_num_onesegment_ + 1 );
 
 	for(int segmentI = 0; segmentI < (int)control_points_.size() - 1; ++segmentI)
-	for (int vertI = 0; vertI < sampling_num_onesegment_; ++vertI) //ƒZƒOƒƒ“ƒg‚²‚Æ‚ÉƒTƒ“ƒvƒŠƒ“ƒO
-	for (int xyz = 0; xyz < 3; ++xyz) //xyzÀ•W
+	for (int vertI = 0; vertI < sampling_num_onesegment_; ++vertI) //ã‚»ã‚°ãƒ¡ãƒ³ãƒˆã”ã¨ã«ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°
+	for (int xyz = 0; xyz < 3; ++xyz) //xyzåº§æ¨™
 	{
-		float a = splineCoefficients[xyz][4 * segmentI + 0]; // ’è”€
-		float b = splineCoefficients[xyz][4 * segmentI + 1]; // 1Ÿ‚ÌŒW”
-		float c = splineCoefficients[xyz][4 * segmentI + 2]; // 2Ÿ‚ÌŒW”
-		float d = splineCoefficients[xyz][4 * segmentI + 3]; // 3Ÿ‚ÌŒW”
+		float a = splineCoefficients[xyz][4 * segmentI + 0]; // å®šæ•°é …
+		float b = splineCoefficients[xyz][4 * segmentI + 1]; // 1æ¬¡ã®ä¿‚æ•°
+		float c = splineCoefficients[xyz][4 * segmentI + 2]; // 2æ¬¡ã®ä¿‚æ•°
+		float d = splineCoefficients[xyz][4 * segmentI + 3]; // 3æ¬¡ã®ä¿‚æ•°
 
 
 		float t = (float)vertI / sampling_num_onesegment_;
 		verts_[vertI + segmentI * sampling_num_onesegment_][xyz] = a + b * t + c * t * t + d * t * t * t;
 	}
 
-	//ÅŒã‚Ì’¸“_‚¾‚¯ŒÂ•Ê‘Î‰
+	//æœ€å¾Œã®é ‚ç‚¹ã ã‘å€‹åˆ¥å¯¾å¿œ
 	int segmentI = (int)control_points_.size() - 2;
-	for (int xyz = 0; xyz < 3; ++xyz) //xyzÀ•W
+	for (int xyz = 0; xyz < 3; ++xyz) //xyzåº§æ¨™
 	{
-		float a = splineCoefficients[xyz][4 * segmentI + 0]; // ’è”€
-		float b = splineCoefficients[xyz][4 * segmentI + 1]; // 1Ÿ‚ÌŒW”
-		float c = splineCoefficients[xyz][4 * segmentI + 2]; // 2Ÿ‚ÌŒW”
-		float d = splineCoefficients[xyz][4 * segmentI + 3]; // 3Ÿ‚ÌŒW”
+		float a = splineCoefficients[xyz][4 * segmentI + 0]; // å®šæ•°é …
+		float b = splineCoefficients[xyz][4 * segmentI + 1]; // 1æ¬¡ã®ä¿‚æ•°
+		float c = splineCoefficients[xyz][4 * segmentI + 2]; // 2æ¬¡ã®ä¿‚æ•°
+		float d = splineCoefficients[xyz][4 * segmentI + 3]; // 3æ¬¡ã®ä¿‚æ•°
 
 		float t = 1.0f;
 		verts_[sampling_num_onesegment_ + segmentI * sampling_num_onesegment_][xyz] = a + b * t + c * t * t + d * t * t * t;
@@ -124,7 +124,7 @@ void SplineCurve_3D::sampling(const EVecXf* const splineCoefficients)
 }
 
 
-//Ax = b‚ğ‰ğ‚­
+//Ax = bã‚’è§£ã
 EVecXf SplineCurve_3D::calcSplineCoefficient(const EMatXf& A, const EVecXf& b) const
 {
 	if ( (int)control_points_.size() < 2 ) return EVecXf();
@@ -137,7 +137,7 @@ EVecXf SplineCurve_3D::calcSplineCoefficient(const EMatXf& A, const EVecXf& b) c
 }
 
 
-//Ax = b ‚ÌA‚ğcontrol_points_‚©‚ç¶¬
+//Ax = b ã®Aã‚’control_points_ã‹ã‚‰ç”Ÿæˆ
 EMatXf SplineCurve_3D::makeLeftSideMatrix() const
 {
 	if ( control_points_.size() < 2 ) EMatXf();
@@ -177,14 +177,14 @@ EMatXf SplineCurve_3D::makeLeftSideMatrix() const
 	leftSideMat( 4 * curveN + 2, 4 * curveN + 2 ) = powf(1.0f, 2);
 	leftSideMat( 4 * curveN + 2, 4 * curveN + 3 ) = powf(1.0f, 3);
 
-	//2Ÿ”÷•ª = 0
+	//2æ¬¡å¾®åˆ† = 0
 	leftSideMat( 4 * curveN + 3, 4 * curveN + 2 ) = 2.0f;
 	leftSideMat( 4 * curveN + 3, 4 * curveN + 3 ) = 6.0f;
 
 	return leftSideMat;
 }
 
-// Ax = b ‚Ìb‚ğ1ŸŒ³•ª‚Ì‚İ¶¬Bx: 0  y: 1  z: 2 
+// Ax = b ã®bã‚’1æ¬¡å…ƒåˆ†ã®ã¿ç”Ÿæˆã€‚x: 0  y: 1  z: 2 
 EVecXf SplineCurve_3D::makeRightSideVector(int xyz) const
 {
 	if ( control_points_.size() < 2 ) return EVecXf();

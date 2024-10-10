@@ -38,6 +38,9 @@ public:
   float GetPlanePosXY(){ return m_plane_xy; }
   float GetPlanePosYZ(){ return m_plane_yz; }
   float GetPlanePosZX(){ return m_plane_zx; }
+  void SetPlanePosXY(const float& pos_z, const EVec3f& cuboid) { m_plane_xy = pos_z / cuboid[2]; }
+  void SetPlanePosYZ(const float& pos_x, const EVec3f& cuboid) { m_plane_yz = pos_x / cuboid[0]; }
+  void SetPlanePosZX(const float& pos_y, const EVec3f& cuboid) { m_plane_zx = pos_y / cuboid[1]; }
 
 
 private:

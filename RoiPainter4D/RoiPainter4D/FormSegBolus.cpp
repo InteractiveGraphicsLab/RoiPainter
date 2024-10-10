@@ -132,7 +132,7 @@ void FormSegBolus::SetItemsForCylinderProparty(bool is_active, float radius1, fl
 }
 
 
-//////////////イベントハンドラ/////////////////////
+//////////////繧､繝吶Φ繝医ワ繝ｳ繝峨Λ/////////////////////
 System::Void FormSegBolus::m_btn_thresholding_allframe_Clicked(
     System::Object^  sender, 
     System::EventArgs^  e)

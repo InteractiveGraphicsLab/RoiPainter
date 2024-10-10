@@ -29,13 +29,13 @@ ModeVizNormal::ModeVizNormal() :
 }
 
 
-bool ModeVizNormal::canEndMode()
+bool ModeVizNormal::CanEndMode()
 {
   return true;
 }
 
 
-void ModeVizNormal::startMode()
+void ModeVizNormal::StartMode()
 {
   std::cout << "ModeVizNormal...startMode----------\n";
   m_bL = m_bR = m_bM = false;
@@ -48,7 +48,7 @@ void ModeVizNormal::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
   m_bL = true;
 
-  if (isCtrKeyOn() )
+  if (IsCtrKeyOn() )
   {
     m_stroke.clear();
     m_b_draw_cutstroke = true;
@@ -145,11 +145,11 @@ void ModeVizNormal::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 }
 
 
-void ModeVizNormal::keyDown(int nChar) {}
-void ModeVizNormal::keyUp(int nChar) {}
+void ModeVizNormal::KeyDown(int nChar) {}
+void ModeVizNormal::KeyUp(int nChar) {}
 
 
-void ModeVizNormal::drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+void ModeVizNormal::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
 {
   const EVec3i reso = ImageCore::GetInst()->GetReso();
 
@@ -162,7 +162,7 @@ void ModeVizNormal::drawScene(const EVec3f &cuboid, const EVec3f &camP, const EV
   //cut stroke
   if ( m_b_draw_cutstroke )
   {
-    t_DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
+    DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
   }
 
   if ( formVisParam_bRendVol() )

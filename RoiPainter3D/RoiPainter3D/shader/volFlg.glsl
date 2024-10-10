@@ -31,11 +31,11 @@ vec3  phogShading( const vec3 objPos, const vec3 baseColor, const vec3 N)
   vec3 L = normalize( lightPos - objPos );
   float diffK = abs( dot(N,L) )        ;
     
-  //高速化してみた　vec3 V = normalize( u_eyePos - objPos );
-  //高速化してみた　vec3 R = normalize( 2 * dot( L, N ) * N - L );
-  //高速化してみた　float specK = pow( abs( dot(R,V) ), Shin );
+  //鬮倬溷喧縺励※縺ｿ縺溘vec3 V = normalize( u_eyePos - objPos );
+  //鬮倬溷喧縺励※縺ｿ縺溘vec3 R = normalize( 2 * dot( L, N ) * N - L );
+  //鬮倬溷喧縺励※縺ｿ縺溘float specK = pow( abs( dot(R,V) ), Shin );
 
-  return (diffK + 0.2) * baseColor;// 高速化してみた　+ specK * Ks ; 
+  return (diffK + 0.2) * baseColor;// 鬮倬溷喧縺励※縺ｿ縺溘+ specK * Ks ; 
 }
 
 

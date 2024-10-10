@@ -1,4 +1,4 @@
-﻿#ifndef ROIPAINTER3D_STDAFX_H_
+#ifndef ROIPAINTER3D_STDAFX_H_
 #define ROIPAINTER3D_STDAFX_H_
 
 #pragma unmanaged

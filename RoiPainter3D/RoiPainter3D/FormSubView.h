@@ -17,7 +17,7 @@ namespace RoiPainter3D {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// FormSubView ‚ÌŠT—v
+	/// FormSubView ã®æ¦‚è¦
 	/// </summary>
 	public ref class FormSubView : public System::Windows::Forms::Form
 	{
@@ -28,14 +28,14 @@ private:
     };
     const FORM_SUB_ID m_form_id;
     
-    //ƒCƒ“ƒXƒ^ƒ“ƒX‚Í‚à‚Ä‚È‚¢‚Ì‚Åƒ|ƒCƒ“ƒ^‚Å  
+    //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã‚‚ã¦ãªã„ã®ã§ãƒã‚¤ãƒ³ã‚¿ã§  
     OglCameraParam *m_cam;
     HDC m_dc;
     
     int  m_mouse_x, m_mouse_y;
     bool m_bL, m_bR, m_bM;
 
-    //OŒÂ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ì‚İ‚ğ¶¬
+    //ä¸‰å€‹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ã¿ã‚’ç”Ÿæˆ
     static FormSubView ^m_form_x, ^m_form_y, ^m_form_z;
 
   public:
@@ -64,7 +64,7 @@ private:
 
 	protected:
 		/// <summary>
-		/// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+		/// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
 		/// </summary>
 		~FormSubView()
 		{
@@ -80,14 +80,14 @@ private:
 
 	private:
 		/// <summary>
-		/// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+		/// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-		/// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+		/// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+		/// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
 		/// </summary>
 		void InitializeComponent(void)
 		{

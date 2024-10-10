@@ -58,11 +58,11 @@ void FormSegLocalRGrow::UpdateList()
   const int &activeSeedId = ModeSegLocalRGrow::GetInst()->m_activeseed_idx;
   const std::vector<LRGSeed> &seeds = ModeSegLocalRGrow::GetInst()->m_seeds;
 
-  //‰Šú‰»
+  //åˆæœŸåŒ–
   maskList->Rows->Clear();
   for (int i = 0; i < seeds.size(); ++i) maskList->Rows->Add();
 
-  //‚±‚Ìƒ^ƒCƒ~ƒ“ƒO‚Åhighlight‚ğoff‚É
+  //ã“ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§highlightã‚’offã«
   maskList->CurrentCell = nullptr;
 
   // set all cells
@@ -117,7 +117,7 @@ System::Void FormSegLocalRGrow::maskList_SelectionChanged(
     System::Object^  sender, 
     System::EventArgs^  e) 
 {
-  //maskList->Rows->Clear(); ‚Ìƒ^ƒCƒ~ƒ“ƒO‚ÅŒÄ‚Î‚ê‚Ä‚µ‚Ü‚¤‚Ì‚ÅA‚»‚ÌÛ‚Í‰½‚à‚µ‚È‚¢
+  //maskList->Rows->Clear(); ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§å‘¼ã°ã‚Œã¦ã—ã¾ã†ã®ã§ã€ãã®éš›ã¯ä½•ã‚‚ã—ãªã„
   if (m_bListUpdating) return;
 
   std::cout << "selection changed " 
@@ -261,12 +261,12 @@ System::Void FormSegLocalRGrow::textBox_minV_TextChanged(
   int x;
   if (Int32::TryParse(textBox_minV->Text, x)) 
   {
-    t_crop( trackBar_minV->Minimum, trackBar_minV->Maximum, x);
+    Crop( trackBar_minV->Minimum, trackBar_minV->Maximum, x);
     textBox_minV->Text = (x).ToString();
     
     int minv = trackBar_minV->Minimum;
     int maxv = trackBar_minV->Maximum;
-    trackBar_minV->Value = t_crop( minv, maxv, x);
+    trackBar_minV->Value = Crop( minv, maxv, x);
 
     int  active_id         = ModeSegLocalRGrow::GetInst()->m_activeseed_idx;
     std::vector<LRGSeed> &seeds = ModeSegLocalRGrow::GetInst()->m_seeds;
@@ -288,12 +288,12 @@ System::Void FormSegLocalRGrow::textBox_maxV_TextChanged(
   int x;
   if (Int32::TryParse(textBox_maxV->Text, x)) 
   {
-    t_crop( trackBar_maxV->Minimum, trackBar_maxV->Maximum, x);
+    Crop( trackBar_maxV->Minimum, trackBar_maxV->Maximum, x);
     textBox_maxV->Text = (x).ToString();
  
     int minv = trackBar_maxV->Minimum;
     int maxv = trackBar_maxV->Maximum;
-    trackBar_maxV->Value = t_crop( minv, maxv, x);;
+    trackBar_maxV->Value = Crop( minv, maxv, x);;
 
 
     
@@ -320,7 +320,7 @@ System::Void FormSegLocalRGrow::textBox_radius_TextChanged(
   {
     int x = (int)( x_float * SPIN_VALUE_RATE);
 
-    t_crop( trackBar_radius->Minimum, trackBar_radius->Maximum, x);
+    Crop( trackBar_radius->Minimum, trackBar_radius->Maximum, x);
     textBox_radius->Text = (x_float).ToString();
     trackBar_radius->Value = x;
 

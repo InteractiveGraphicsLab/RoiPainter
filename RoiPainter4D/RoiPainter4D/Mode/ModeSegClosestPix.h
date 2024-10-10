@@ -6,9 +6,9 @@
 #include "GlslShader.h"
 #include <vector>
 
-//“¤•cƒvƒƒWƒFƒNƒg‚©‚çƒRƒs[‚·‚é—\’è
-//‘O‚ÌƒtƒŒ[ƒ€‚ÌÅ‚à‹ß‚¢ID‚ğ‚Â‚¯‚Ä‚¢‚­ƒAƒ‹ƒSƒŠƒYƒ€
-//TODO –¢À‘•
+//è±†è‹—ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‹ã‚‰ã‚³ãƒ”ãƒ¼ã™ã‚‹äºˆå®š
+//å‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®æœ€ã‚‚è¿‘ã„IDã‚’ã¤ã‘ã¦ã„ãã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ 
+//TODO æœªå®Ÿè£…
 
 class ModeSegClosestPix : public ModeInterface
 {
@@ -25,7 +25,7 @@ public:
   static ModeSegClosestPix* GetInst() { static ModeSegClosestPix p; return &p; }
 
   // overload functions ---------------------------------------------
-  MODE_ID getModeID() { return MODE_SEG_CLOSESTPIX; }
+  MODE_ID GetModeID() { return MODE_SEG_CLOSESTPIX; }
 
   void LBtnUp   (const EVec2i &p, OglForCLI *ogl);
   void RBtnUp   (const EVec2i &p, OglForCLI *ogl);
@@ -39,12 +39,12 @@ public:
   void MouseMove(const EVec2i &p, OglForCLI *ogl);
   void MouseWheel(const EVec2i &p, short zDelta, OglForCLI *ogl);
 
-  void keyDown(int nChar);
-  void keyUp(int nChar);
+  void KeyDown(int nChar);
+  void KeyUp(int nChar);
 
-  bool canEndMode();
-  void startMode();
-  void drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+  bool CanEndMode();
+  void StartMode();
+  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
 
   void runSegClosestPix(const int &startI, const int &endI);
 

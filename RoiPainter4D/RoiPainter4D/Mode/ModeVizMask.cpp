@@ -30,13 +30,13 @@ ModeVizMask::~ModeVizMask()
 }
 
 
-bool ModeVizMask::canEndMode()
+bool ModeVizMask::CanEndMode()
 {
   return true;
 }
 
 
-void ModeVizMask::startMode()
+void ModeVizMask::StartMode()
 {
   m_bL = m_bR = m_bM = false;
   
@@ -113,11 +113,11 @@ void ModeVizMask::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 }
 
 
-void ModeVizMask::keyDown(int nChar) {}
-void ModeVizMask::keyUp(int nChar) {}
+void ModeVizMask::KeyDown(int nChar) {}
+void ModeVizMask::KeyUp(int nChar) {}
 
 
-void ModeVizMask::drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
 {
   const EVec3i reso = ImageCore::GetInst()->GetReso();
 
@@ -125,7 +125,7 @@ void ModeVizMask::drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec
 
   BindAllVolumes();
 
-  DrawCrossSections( cuboid, reso, !isSpaceKeyOn(), m_crssecShader);
+  DrawCrossSections( cuboid, reso, !IsSpaceKeyOn(), m_crssecShader);
 
   if ( formVisParam_bRendVol() )
   {
@@ -134,7 +134,7 @@ void ModeVizMask::drawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec
     glEnable(GL_BLEND);
     bool b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
     DrawVolumeSlices( cuboid, reso, camP, camF, 
-                    !isSpaceKeyOn(), b_manip, m_volumeShader);
+                    !IsSpaceKeyOn(), b_manip, m_volumeShader);
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
   }

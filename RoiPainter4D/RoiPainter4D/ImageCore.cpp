@@ -1,4 +1,4 @@
-﻿#pragma unmanaged
+#pragma unmanaged
 #include "ImageCore.h"
 
 #pragma managed
@@ -110,11 +110,11 @@ void ImageCore::load4DCT(
   m_pitch << 1, 1, 1;
   m_reso  << 0, 0, 0;
 
-  if (     type == FT_DCM2D  ) Open4DImg_dcm2Ds (filesInDirs, m_reso, m_pitch, m_img4d);
-  else if (type == FT_DCM3D  ) Open4DImg_dcm3Ds (files, m_reso, m_pitch, m_img4d);
-  else if (type == FT_TRAW3D ) Open4DImg_traw3d (files, m_reso, m_pitch, m_img4d);
-  else if (type == FT_RAW8BIT) Open4DImg_raw8bit(files, m_reso, m_pitch, m_img4d);
-  else if (type == FT_MHA    ) Open4DImg_mha    (files, m_reso, m_pitch, m_img4d);
+  if (     type == FT_DCM2D  ) Open4DImgDcm2Ds (filesInDirs, m_reso, m_pitch, m_img4d);
+  else if (type == FT_DCM3D  ) Open4DImgDcm3Ds (files, m_reso, m_pitch, m_img4d);
+  else if (type == FT_TRAW3D ) Open4DImgTraw3D (files, m_reso, m_pitch, m_img4d);
+  else if (type == FT_RAW8BIT) Open4DImgRaw8bit(files, m_reso, m_pitch, m_img4d);
+  else if (type == FT_MHA    ) Open4DImgMha    (files, m_reso, m_pitch, m_img4d);
 
   std::cout <<  " m_img4d.size() " << m_img4d.size() << "\n";
 
@@ -311,7 +311,7 @@ static void t_ErodeTargetMask(
     flgs[i] = (mask3d[i] == trgtmaskid) ? 255 : 1;
   }
 
-  t_Erode3D( resolution[0], resolution[1], resolution[2], flgs);
+  Erode3D( resolution[0], resolution[1], resolution[2], flgs);
 
 #pragma omp parallel for
   for (int i = 0; i < num_voxels; ++i) if (mask3d[i] == trgtmaskid)
@@ -346,7 +346,7 @@ static void t_DilateTargetMask(
               (mask_locked[mask3d[i]]   ) ? 0   : 1;
   }
 
-  t_Dilate3D(resolution[0], resolution[1], resolution[2], flgs);
+  Dilate3D(resolution[0], resolution[1], resolution[2], flgs);
 
 #pragma omp parallel for
   for (int i = 0; i < num_voxels; ++i) {
@@ -378,7 +378,7 @@ static void t_FillHoleTargetMask(
     flgs[i] =(mask3d[i] == trgtmaskid ) ? 255 : 0;
   }
 
-  t_FillHole3D(resolution[0], resolution[1], resolution[2], flgs);
+  FillHole3D(resolution[0], resolution[1], resolution[2], flgs);
 
 #pragma omp parallel for
   for (int i = 0; i < num_voxels; ++i)
@@ -475,7 +475,7 @@ void ImageCore::SelectedMsk_expObjOne(
   for (int i = 0; i < num_voxels; ++i) v[i] = (m_mask4d[frame_idx][i] == m_active_maskid) ? 255 : 0;
 
   TMesh mesh;
-  marchingcubes::t_MarchingCubes(m_reso, m_pitch, v, 128, 0, 0, mesh);
+  marchingcubes::MarchingCubes(m_reso, m_pitch, v, 128, 0, 0, mesh);
   mesh.Smoothing(2);
   mesh.ExportObjNoTexCd(fname.c_str());
 
@@ -498,7 +498,7 @@ void ImageCore::SelectedMsk_expObjAll(const std::string &fname)
     for (int vi = 0; vi < num_voxels; ++vi) v[vi] = (m_mask4d[fi][vi] == m_active_maskid) ? 255 : 0;
 
     TMesh mesh;
-    marchingcubes::t_MarchingCubes(m_reso, m_pitch, v, 128, 0, 0, mesh);
+    marchingcubes::MarchingCubes(m_reso, m_pitch, v, 128, 0, 0, mesh);
     mesh.Smoothing(2);
 
     std::string nameStr = fname.substr(0, fname.find_last_of("."));
@@ -519,7 +519,9 @@ void ImageCore::SelectedMsk_expObjAll(const std::string &fname)
 
 void ImageCore::SaveMask_Msk4(std::string fname)
 {
-  FILE *fp = fopen(fname.c_str(), "wb");
+  FILE* fp;
+  errno_t err;
+  err = fopen_s(&fp, fname.c_str(), "wb");
 
   //1. version info 
   int version = 0;
@@ -633,7 +635,9 @@ void ImageCore::SaveImg4D_mha(std::string fname)
 
 void ImageCore::LoadMask_Msk4(std::string fname, int timeI)
 {
-  FILE* fp = fopen(fname.c_str(), "rb");
+  FILE* fp;
+  errno_t err;
+  err = fopen_s(&fp, fname.c_str(), "rb");
 
   int version, W, H, D, F;
 

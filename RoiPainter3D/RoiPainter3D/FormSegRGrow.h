@@ -10,7 +10,7 @@ namespace RoiPainter3D {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// FormSegRGrow ‚ÌŠT—v
+	/// FormSegRGrow ã®æ¦‚è¦
 	/// </summary>
 	public ref class FormSegRGrow : public System::Windows::Forms::Form
 	{
@@ -33,7 +33,7 @@ namespace RoiPainter3D {
 
 	protected:
 		/// <summary>
-		/// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
+		/// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
 		/// </summary>
 		~FormSegRGrow()
 		{
@@ -67,14 +67,14 @@ namespace RoiPainter3D {
 
 	private:
 		/// <summary>
-		/// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
+		/// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
-		/// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+		/// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
+		/// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
 		/// </summary>
 		void InitializeComponent(void)
 		{
@@ -106,7 +106,7 @@ namespace RoiPainter3D {
       // label1
       // 
       this->label1->AutoSize = true;
-      this->label1->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->label1->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label1->Location = System::Drawing::Point(15, 9);
       this->label1->Name = L"label1";
@@ -117,7 +117,7 @@ namespace RoiPainter3D {
       // label2
       // 
       this->label2->AutoSize = true;
-      this->label2->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->label2->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label2->Location = System::Drawing::Point(15, 29);
       this->label2->Name = L"label2";
@@ -146,7 +146,7 @@ namespace RoiPainter3D {
       // label3
       // 
       this->label3->AutoSize = true;
-      this->label3->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->label3->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label3->Location = System::Drawing::Point(8, 18);
       this->label3->Name = L"label3";
@@ -157,7 +157,7 @@ namespace RoiPainter3D {
       // label4
       // 
       this->label4->AutoSize = true;
-      this->label4->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+      this->label4->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->label4->Location = System::Drawing::Point(8, 69);
       this->label4->Name = L"label4";
@@ -194,11 +194,11 @@ namespace RoiPainter3D {
       this->groupBox->Size = System::Drawing::Size(245, 124);
       this->groupBox->TabIndex = 7;
       this->groupBox->TabStop = false;
-      this->groupBox->Text = L"Threshold (è‡’l)";
+      this->groupBox->Text = L"Threshold (é–¾å€¤)";
       // 
       // btn_thresholding
       // 
-      this->btn_thresholding->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_thresholding->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_thresholding->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
       this->btn_thresholding->Location = System::Drawing::Point(8, 195);
@@ -212,7 +212,7 @@ namespace RoiPainter3D {
       // 
       // btn_rgrow8
       // 
-      this->btn_rgrow8->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_rgrow8->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_rgrow8->Location = System::Drawing::Point(8, 224);
       this->btn_rgrow8->Name = L"btn_rgrow8";
@@ -225,7 +225,7 @@ namespace RoiPainter3D {
       // 
       // btn_rgrow26
       // 
-      this->btn_rgrow26->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_rgrow26->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_rgrow26->Location = System::Drawing::Point(8, 253);
       this->btn_rgrow26->Name = L"btn_rgrow26";
@@ -238,7 +238,7 @@ namespace RoiPainter3D {
       // 
       // btn_erode
       // 
-      this->btn_erode->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_erode->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_erode->Location = System::Drawing::Point(34, 343);
       this->btn_erode->Name = L"btn_erode";
@@ -250,7 +250,7 @@ namespace RoiPainter3D {
       // 
       // btn_fillhole
       // 
-      this->btn_fillhole->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_fillhole->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_fillhole->Location = System::Drawing::Point(184, 343);
       this->btn_fillhole->Name = L"btn_fillhole";
@@ -262,7 +262,7 @@ namespace RoiPainter3D {
       // 
       // btn_dilate
       // 
-      this->btn_dilate->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_dilate->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_dilate->Location = System::Drawing::Point(109, 343);
       this->btn_dilate->Name = L"btn_dilate";
@@ -274,13 +274,13 @@ namespace RoiPainter3D {
       // 
       // btn_finish
       // 
-      this->btn_finish->Font = (gcnew System::Drawing::Font(L"ƒƒCƒŠƒI", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+      this->btn_finish->Font = (gcnew System::Drawing::Font(L"ãƒ¡ã‚¤ãƒªã‚ª", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
       this->btn_finish->Location = System::Drawing::Point(89, 380);
       this->btn_finish->Name = L"btn_finish";
       this->btn_finish->Size = System::Drawing::Size(162, 28);
       this->btn_finish->TabIndex = 14;
-      this->btn_finish->Text = L"End • Store Region";
+      this->btn_finish->Text = L"End ï¼† Store Region";
       this->btn_finish->UseVisualStyleBackColor = true;
       this->btn_finish->Click += gcnew System::EventHandler(this, &FormSegRGrow::btn_finish_Click);
       // 
