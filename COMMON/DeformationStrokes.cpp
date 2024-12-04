@@ -106,6 +106,17 @@ std::vector<std::vector<EVec3f>> DeformationStrokes::GetStroke() const
 }
 
 
+DeformationStrokes::Stroke* DeformationStrokes::GetStrokeInst(const int _idx)
+{
+  if (_idx < 0 || _idx >= m_strokes.size())
+  {
+    return nullptr;
+  }
+
+  return &m_strokes[_idx];
+}
+
+
 bool DeformationStrokes::AddControlPoint(const EVec3f& _pos)
 {
   if (m_selected_stroke_idx == -1)
@@ -192,6 +203,7 @@ DeformationStrokes::Stroke* DeformationStrokes::ShareSelectedStroke(const int& _
 {
   if (m_selected_stroke_idx == -1) return nullptr;
   Stroke* stroke = &m_strokes[m_selected_stroke_idx];
+  stroke->m_is_shared = true;
   stroke->m_shared_idx = _shared_idx;
   stroke->m_is_locked = true;
   std::cout << "Shared stroke (id = " << _shared_idx << ")\n";
@@ -205,6 +217,7 @@ int DeformationStrokes::UnshareSelectedStroke()
 
   Stroke& stroke = m_strokes[m_selected_stroke_idx];
   const int shared_idx = stroke.m_shared_idx;
+  stroke.m_is_shared = false;
   stroke.m_shared_idx = -1;
   stroke.m_is_locked = true;
   std::cout << "Unshared stroke (id = " << shared_idx << ")\n";
@@ -269,6 +282,7 @@ void DeformationStrokes::UpdateSharedStrokes(const int& _shared_idx, Stroke* _le
     {
       stroke_idx = size;
       m_strokes.push_back((_left != nullptr) ? *_left : *_right);
+      m_strokes[stroke_idx].m_is_shared = true;
       m_strokes[stroke_idx].m_shared_idx = _shared_idx;
       m_strokes[stroke_idx].m_is_locked = false;
     }
@@ -284,6 +298,7 @@ void DeformationStrokes::UpdateSharedStrokes(const int& _shared_idx, Stroke* _le
   {
     if (stroke.m_is_locked == true)
     {
+      stroke.m_is_shared = false;
       stroke.m_shared_idx = -1;
       //std::cout << "[UpdateSharedStrokes] Unlocked." << std::endl; // debug
     }
@@ -430,6 +445,7 @@ DeformationStrokes::Stroke::Stroke()
   m_selected_cp_idx = -1;
   m_common_xyz = -1;
   m_common_coord = -1.0f;
+  m_is_shared = false;
   m_shared_idx = -1;
   m_is_locked = true;
 }
@@ -440,6 +456,7 @@ bool DeformationStrokes::Stroke::operator==(const Stroke& _src) const
   if (this->m_selected_cp_idx != _src.m_selected_cp_idx) return false;
   if (this->m_common_xyz != _src.m_common_xyz) return false;
   if (this->m_common_coord != _src.m_common_coord) return false;
+  if (this->m_is_shared != _src.m_is_shared) return false;
   if (this->m_shared_idx != _src.m_shared_idx) return false;
   if (this->m_is_locked != _src.m_is_locked) return false;
   //if (this->m_stroke != _src.m_stroke) return false;
@@ -480,7 +497,7 @@ void DeformationStrokes::Stroke::SetSelectedControlPointIdx(const int& _idx)
 
 int DeformationStrokes::Stroke::GetCommonXYZ() const
 {
-  if (m_selected_cp_idx == -1) return -1;
+  //if (m_selected_cp_idx == -1) return -1;
 
   return m_common_xyz;
 }
@@ -488,7 +505,7 @@ int DeformationStrokes::Stroke::GetCommonXYZ() const
 
 float DeformationStrokes::Stroke::GetCommonCoord() const
 {
-  if (m_selected_cp_idx == -1) return -1.0f;
+  //if (m_selected_cp_idx == -1) return -1.0f;
 
   return m_common_coord;
 }

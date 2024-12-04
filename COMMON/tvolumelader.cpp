@@ -2,6 +2,7 @@
 
 #include "tvolumelader.h"
 #include "../tdcmtk.h"
+#include <zlib.h>
 
 
 //mha header
@@ -36,6 +37,7 @@ bool ReadMha3d(
   int dim = 0;
   std::string line;
   std::string elementType;
+  bool isCompressed = false;
 
   while (std::getline(ifs, line))
   {
@@ -60,22 +62,38 @@ bool ReadMha3d(
         return false;
       }
     }
-    else if (line == "ElementDataFile = LOCAL") {
+    else if (line.find("ElementDataFile = LOCAL") != std::string::npos) {
       break;
+    }
+    else if (line.find("CompressedData = True") != std::string::npos) {
+      isCompressed = true;
     }
   }
 
   const int WHD = reso[0] * reso[1] * reso[2];
   bool tf = false;
-  if (elementType == "MET_UCHAR")
-  {
+
+  if (isCompressed) {
+    std::cout << "Compressed Mha.\n";
+    std::vector<byte> compressedData;
+    std::copy(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>(), std::back_inserter(compressedData));
+
+    uLongf uncompressedSize = WHD * sizeof(byte);
     volume_b.reset(new byte[WHD]);
-    tf = static_cast<bool>(ifs.read((char*)volume_b.get(), sizeof(byte) * WHD));
+
+    int result = uncompress(volume_b.get(), &uncompressedSize, compressedData.data(), compressedData.size());
+    tf = (result == Z_OK);
   }
-  else if (elementType == "MET_SHORT")
+  else
   {
-    volume_s.reset(new short[WHD]);
-    tf = static_cast<bool>(ifs.read((char*)volume_s.get(), sizeof(short) * WHD));
+    if (elementType == "MET_UCHAR") {
+      volume_b.reset(new byte[WHD]);
+      tf = static_cast<bool>(ifs.read(reinterpret_cast<char*>(volume_b.get()), sizeof(byte) * WHD));
+    }
+    else if (elementType == "MET_SHORT") {
+      volume_s.reset(new short[WHD]);
+      tf = static_cast<bool>(ifs.read(reinterpret_cast<char*>(volume_s.get()), sizeof(short) * WHD));
+    }
   }
   ifs.close();
   return tf;

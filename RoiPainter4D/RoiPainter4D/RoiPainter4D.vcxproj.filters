@@ -186,6 +186,18 @@
     <ClCompile Include="..\..\COMMON\DeformationStrokes.cpp">
       <Filter>COMMON</Filter>
     </ClCompile>
+    <ClCompile Include="FormFixMask.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Mode\ModeFixMask.cpp">
+      <Filter>Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="MaskMeshSequence.cpp">
+      <Filter>COMMON</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\COMMON\LaplacianSurfaceEditing.cpp">
+      <Filter>COMMON</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FormMain.h">
@@ -372,6 +384,18 @@
       <Filter>COMMON</Filter>
     </ClInclude>
     <ClInclude Include="..\..\COMMON\deform_by_stroke.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="FormFixMask.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Mode\ModeFixMask.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="MaskMeshSequence.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\LaplacianSurfaceEditing.h">
       <Filter>COMMON</Filter>
     </ClInclude>
   </ItemGroup>

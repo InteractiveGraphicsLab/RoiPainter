@@ -27,7 +27,8 @@ enum MODE_ID
   MODE_SEG_SWLTMPGEN,  // ModeSegSallowTemGen 
   MODE_SEG_BRONCHI  ,  // ModeSegBronchi   (by Takata) FormSegModeBronchi
 	MODE_SEG_STROKEFFD,  // ModeSegStrokeFfd, FormSegStrokeFfd (by Yuki Kimura, 20220524)
-	MODE_PLC_CPS         // ModePlaceCps    , FormPlaceCPs     tool for landmark placement
+	MODE_PLC_CPS,         // ModePlaceCps    , FormPlaceCPs     tool for landmark placement
+	MODE_FIXMASK,        // ModeFixMask, FormFixMask (by Yuki Kimura, 2024)
 
 	//MODE_SEG_GCUT   ,  // ModeSegGGut           
 	//MODE_SEG_THRESHPNT,// ModeSegTreshPnt      
@@ -162,7 +163,7 @@ inline bool IsCKeyOn  ()   { return GetKeyState(0x43) < 0; }
 //inline bool IsJKeyOn  ()   { return GetKeyState(0x4A) < 0; }
 //inline bool IsKKeyOn  ()   { return GetKeyState(0x4B) < 0; }
 //inline bool IsLKeyOn  ()   { return GetKeyState(0x4C) < 0; }
-//inline bool IsMKeyOn  ()   { return GetKeyState(0x4D) < 0; }
+inline bool IsMKeyOn  ()   { return GetKeyState(0x4D) < 0; }
 //inline bool IsNKeyOn  ()   { return GetKeyState(0x4E) < 0; }
 //inline bool IsOKeyOn  ()   { return GetKeyState(0x4F) < 0; }
 //inline bool IsPKeyOn  ()   { return GetKeyState(0x50) < 0; }

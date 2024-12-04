@@ -18,6 +18,7 @@
 #include "FormSortFiles.h"
 #include "FormSegStrokeFfd.h"
 #include "FormPlaceCPs.h"
+#include "FormFixMask.h"
 
 #pragma unmanaged
 #include "OglForCLI.h"
@@ -38,6 +39,7 @@
 #include "Mode/ModeRefStrokeTrim.h"
 #include "Mode/ModeSegStrokeFfd.h"
 #include "Mode/ModePlaceCPs.h"
+#include "Mode/ModeFixMask.h"
 #include <string>
 #include <vector>
 #pragma managed
@@ -79,6 +81,8 @@ int main()
   ModeSegLocalRGrow::GetInst();
   ModeSegSwallowOrgans::GetInst();
   ModeRefStrokeTrim::GetInst();
+  //ModeSegStrokeFfd::GetInst();
+  ModeFixMask::GetInst();
   FormSegBolus::GetInst();
 
   std::cout << "FormMain::getInst()->ShowDialog() \n";
@@ -152,6 +156,7 @@ void FormMain::InitializeSingletons()
   FormSegBronchi::GetInst()->Show();
   FormSegStrokeFfd::GetInst()->Show();
   FormPlaceCPs::GetInst()->Show();
+  FormFixMask::GetInst()->Show();
 
   ReplaceOtherForms();
 
@@ -170,6 +175,7 @@ void FormMain::InitializeSingletons()
   FormSegBronchi::GetInst()->Hide();
   FormSegStrokeFfd::GetInst()->Hide();
   FormPlaceCPs::GetInst()->Hide();
+  FormFixMask::GetInst()->Hide();
 
 
 
@@ -188,6 +194,7 @@ void FormMain::InitializeSingletons()
   FormSegSwallowOrganTimeline::GetInst()->Owner = this;
   FormSegJointTracker::GetInst()->Owner = this;
   FormSegBronchi::GetInst()->Owner = this;
+  FormFixMask::GetInst()->Owner = this;
 }
 
 
@@ -407,6 +414,7 @@ void FormMain::ReplaceOtherForms()
   FormSegJointTracker ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegBronchi      ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegStrokeFfd    ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormFixMask         ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
 }
 
 
@@ -520,6 +528,12 @@ System::Void FormMain::switch_segStrokeFFD_Click(System::Object^ sender, System:
 System::Void FormMain::switch_placeCPs_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeCore::GetInst()->ModeSwitch(MODE_PLC_CPS);
+  RedrawMainPanel();
+}
+
+System::Void FormMain::switch_fixMask_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeCore::GetInst()->ModeSwitch(MODE_FIXMASK);
   RedrawMainPanel();
 }
 
