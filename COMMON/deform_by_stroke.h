@@ -6,6 +6,8 @@
 #include <vector>
 #include "CagedMeshSequence.h"
 
+#define NUM_P (int)100
+
 
 namespace DeformByStroke
 {
@@ -13,11 +15,8 @@ namespace DeformByStroke
   typedef Eigen::VectorXf EVecXf;
   typedef Eigen::MatrixXf EMatXf;
 
-  static const int NUM_P = 100; // sampling interval of stroke
-
 
   // prototype declaration
-
   inline void Deform(CagedMeshSequence&, const std::vector<std::vector<EVec3f>>&, const int&, const float& _alpha = 1.0f, const float& _beta = 1.0f, const float& _gamma = 5.0f);
   inline void CalcA(CagedMeshSequence&, const std::vector<EVec3f>&, const int&, EMatXf&, EVecXf&, EVecXf&, EVecXf&);
   inline void CalcB(CagedMeshSequence&, const int&, EMatXf&, EVecXf&, EVecXf&, EVecXf&);

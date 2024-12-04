@@ -38,6 +38,7 @@ public:
   void DeleteSelectedStroke();
   void ClearAllStrokes();
   std::vector<std::vector<EVec3f>> GetStroke() const;
+  Stroke* GetStrokeInst(const int _idx);
 
   bool AddControlPoint(const EVec3f& _pos);
   int PickControlPoint(const EVec3f& _ray_pos, const EVec3f& _ray_dir, const float& _cp_radius, const bool& _change_selected_idx = true, const bool& _only_selected = false);
@@ -75,6 +76,7 @@ private:
 
 public:
 
+  bool m_is_shared;
   int m_shared_idx;
   bool m_is_locked;
 

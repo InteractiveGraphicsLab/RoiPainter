@@ -1,5 +1,5 @@
-#ifndef COMMON_KCURVES_H_
-#define COMMON_KCURVES_H_
+#ifndef COMMON_KCURVES_OPEN_H_
+#define COMMON_KCURVES_OPEN_H_
 #pragma unmanaged
 
 #include <Core>
@@ -7,24 +7,24 @@
 #include <vector>
 
 
-namespace KCurves
+namespace KCURVES_OPEN
 {
   typedef Eigen::Vector2f EVec2f;
   typedef Eigen::VectorXf EVecXf;
   typedef Eigen::MatrixXf EMatXf;
 
   static const int NUMBER_ITERATION = 15;
-  static const int BEZIER_SAMPLING_INTERVAL = 50;
+  static const int BEZIER_SAMPLING_INTERVAL = 15;
 
 
   // prototype declaration
 
-  inline float CalcArea(const EVec2f&, const EVec2f&, const EVec2f&);
-  inline float SolveFormula(const float&, const float&, const float&, const float&);
+  inline float calcArea(const EVec2f&, const EVec2f&, const EVec2f&);
+  inline float solveFormula(const float&, const float&, const float&, const float&);
   inline bool IsInsideTriangle(const EVec2f&, const EVec2f&, const EVec2f&, const EVec2f&);
-  inline std::vector<EVec2f> CalcBezierCPs(const std::vector<EVec2f>&);
-  inline std::vector<EVec2f> CalcBezierCurves(const std::vector<EVec2f>&, const std::vector<EVec2f>&);
-  inline std::vector<EVec2f> CalcKCurvesOpen(const std::vector<EVec2f>&);
+  inline std::vector<EVec2f> calcBezierCPs(const std::vector<EVec2f>&);
+  inline std::vector<EVec2f> calcBezierCurves(const std::vector<EVec2f>&, const std::vector<EVec2f>&);
+  inline std::vector<EVec2f> calcKCurvesOpen(const std::vector<EVec2f>&);
   //inline void show_step(const int&);
   //inline void show_vector_EVec2f(const std::string&, const std::vector<EVec2f>&);
   //inline void show_vector_float(const std::string&, const std::vector<float>&);
@@ -34,7 +34,7 @@ namespace KCurves
 
 
   // calculate triangle area
-  inline float CalcArea(const EVec2f& _a, const EVec2f& _b, const EVec2f& _c)
+  inline float calcArea(const EVec2f& _a, const EVec2f& _b, const EVec2f&_c)
   {
     const EVec2f vec_a = _b - _a;
     const EVec2f vec_b = _c - _a;
@@ -48,7 +48,7 @@ namespace KCurves
 
   // solve cubic formula
   // only real solution in the range [0, 1]
-  inline float SolveFormula(const float& _a, const float& _b, const float& _c, const float& _d)
+  inline float solveFormula(const float& _a, const float& _b, const float& _c, const float& _d)
   {
     const float b = _b / _a / 3;
     const float c = _c / _a;
@@ -120,7 +120,7 @@ namespace KCurves
 
 
   // calculate Bezier control points from k-curves control points
-  inline std::vector<EVec2f> CalcBezierCPs(const std::vector<EVec2f>& _kcurves_cps)
+  inline std::vector<EVec2f> calcBezierCPs(const std::vector<EVec2f>& _kcurves_cps)
   {
     const int number_segments = static_cast<int>(_kcurves_cps.size()) - 2;
     std::vector<EVec2f> bezier_cps(2 * number_segments + 1);
@@ -172,8 +172,8 @@ namespace KCurves
       for (int n = 0; n < number_segments - 1; ++n)
       {
         const int i = n + 1;
-        const float a = sqrtf(CalcArea(bezier_cps[2 * i - 2], bezier_cps[2 * i - 1], bezier_cps[2 * i + 1]));
-        const float b = sqrtf(CalcArea(bezier_cps[2 * i - 1], bezier_cps[2 * i + 1], bezier_cps[2 * i + 2]));
+        const float a = sqrtf(calcArea(bezier_cps[2 * i - 2], bezier_cps[2 * i - 1], bezier_cps[2 * i + 1]));
+        const float b = sqrtf(calcArea(bezier_cps[2 * i - 1], bezier_cps[2 * i + 1], bezier_cps[2 * i + 2]));
         lambda[i] = a / (a + b);
       }
 
@@ -195,7 +195,7 @@ namespace KCurves
         const float b = -3 * (bezier_cps[2 * i] - bezier_cps[2 * i - 2]).dot(_kcurves_cps[i] - bezier_cps[2 * i - 2]);
         const float c = (-3 * bezier_cps[2 * i - 2] + 2 * _kcurves_cps[i] + bezier_cps[2 * i]).dot(_kcurves_cps[i] - bezier_cps[2 * i - 2]);
         const float d = -(_kcurves_cps[i] - bezier_cps[2 * i - 2]).squaredNorm();
-        t[i] = SolveFormula(a, b, c, d);
+        t[i] = solveFormula(a, b, c, d);
       }
 
       // debug
@@ -254,7 +254,7 @@ namespace KCurves
 
 
   // calculate Bezier curves from Bezier control points
-  inline std::vector<EVec2f> CalcBezierCurves(const std::vector<EVec2f>& _bezier_cps, const std::vector<EVec2f>& _kcurves_cps)
+  inline std::vector<EVec2f> calcBezierCurves(const std::vector<EVec2f>& _bezier_cps, const std::vector<EVec2f>& _kcurves_cps)
   {
     const int number_segments = static_cast<int>(_bezier_cps.size()) / 2;
     std::vector<EVec2f> curves;
@@ -282,10 +282,10 @@ namespace KCurves
 
 
   // calculate open k-curves from k-curves control points
-  inline std::vector<EVec2f> CalcKCurvesOpen(const std::vector<EVec2f>& _kcurves_cps)
+  inline std::vector<EVec2f> calcKCurvesOpen(const std::vector<EVec2f>& _kcurves_cps)
   {
-    const std::vector<EVec2f> bezier_cps = CalcBezierCPs(_kcurves_cps);
-    const std::vector<EVec2f> curves = CalcBezierCurves(bezier_cps, _kcurves_cps);
+    const std::vector<EVec2f> bezier_cps = calcBezierCPs(_kcurves_cps);
+    const std::vector<EVec2f> curves = calcBezierCurves(bezier_cps, _kcurves_cps);
 
     return curves;
   }
