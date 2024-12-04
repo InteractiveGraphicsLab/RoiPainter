@@ -42,7 +42,9 @@ namespace RoiPainter4D {
 
   private:
     bool m_bListUpdating;
-    static FormVisMask^ m_singleton;
+  private: System::Windows::Forms::Button^ btnThisImpObj;
+  private: System::Windows::Forms::Button^ btnAllImpObj;
+         static FormVisMask^ m_singleton;
     FormVisMask(void)
     {
       InitializeComponent();
@@ -92,7 +94,7 @@ namespace RoiPainter4D {
     void InitializeComponent(void)
     {
       this->components = (gcnew System::ComponentModel::Container());
-      System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle2 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+      System::Windows::Forms::DataGridViewCellStyle^ dataGridViewCellStyle1 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
       this->maskList = (gcnew System::Windows::Forms::DataGridView());
       this->regionIDColumn = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
       this->colorColumn = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
@@ -116,6 +118,8 @@ namespace RoiPainter4D {
       this->btnDelete = (gcnew System::Windows::Forms::Button());
       this->btnMargeTo = (gcnew System::Windows::Forms::Button());
       this->label1 = (gcnew System::Windows::Forms::Label());
+      this->btnThisImpObj = (gcnew System::Windows::Forms::Button());
+      this->btnAllImpObj = (gcnew System::Windows::Forms::Button());
       (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->maskList))->BeginInit();
       (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackbar_alpha))->BeginInit();
       (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->bindingSource1))->BeginInit();
@@ -160,11 +164,11 @@ namespace RoiPainter4D {
       // colorColumn
       // 
       this->colorColumn->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-      dataGridViewCellStyle2->BackColor = System::Drawing::Color::White;
-      dataGridViewCellStyle2->ForeColor = System::Drawing::Color::Black;
-      dataGridViewCellStyle2->SelectionBackColor = System::Drawing::Color::Transparent;
-      dataGridViewCellStyle2->SelectionForeColor = System::Drawing::Color::Black;
-      this->colorColumn->DefaultCellStyle = dataGridViewCellStyle2;
+      dataGridViewCellStyle1->BackColor = System::Drawing::Color::White;
+      dataGridViewCellStyle1->ForeColor = System::Drawing::Color::Black;
+      dataGridViewCellStyle1->SelectionBackColor = System::Drawing::Color::Transparent;
+      dataGridViewCellStyle1->SelectionForeColor = System::Drawing::Color::Black;
+      this->colorColumn->DefaultCellStyle = dataGridViewCellStyle1;
       this->colorColumn->FillWeight = 80;
       this->colorColumn->HeaderText = L"color";
       this->colorColumn->Name = L"colorColumn";
@@ -300,7 +304,7 @@ namespace RoiPainter4D {
       this->groupBox1->Controls->Add(this->btnThisFill);
       this->groupBox1->Location = System::Drawing::Point(138, 145);
       this->groupBox1->Name = L"groupBox1";
-      this->groupBox1->Size = System::Drawing::Size(72, 136);
+      this->groupBox1->Size = System::Drawing::Size(72, 165);
       this->groupBox1->TabIndex = 21;
       this->groupBox1->TabStop = false;
       this->groupBox1->Text = L"this frame";
@@ -313,7 +317,7 @@ namespace RoiPainter4D {
       this->groupBox2->Controls->Add(this->btnAllDilate);
       this->groupBox2->Location = System::Drawing::Point(216, 145);
       this->groupBox2->Name = L"groupBox2";
-      this->groupBox2->Size = System::Drawing::Size(75, 136);
+      this->groupBox2->Size = System::Drawing::Size(75, 165);
       this->groupBox2->TabIndex = 22;
       this->groupBox2->TabStop = false;
       this->groupBox2->Text = L"All frames";
@@ -357,12 +361,34 @@ namespace RoiPainter4D {
       this->label1->TabIndex = 25;
       this->label1->Text = L"Space: Hide Mask";
       // 
+      // btnThisImpObj
+      // 
+      this->btnThisImpObj->Location = System::Drawing::Point(145, 279);
+      this->btnThisImpObj->Name = L"btnThisImpObj";
+      this->btnThisImpObj->Size = System::Drawing::Size(59, 23);
+      this->btnThisImpObj->TabIndex = 5;
+      this->btnThisImpObj->Text = L"Imp Obj";
+      this->btnThisImpObj->UseVisualStyleBackColor = true;
+      this->btnThisImpObj->Click += gcnew System::EventHandler(this, &FormVisMask::btnThisImpObj_Click);
+      // 
+      // btnAllImpObj
+      // 
+      this->btnAllImpObj->Location = System::Drawing::Point(222, 279);
+      this->btnAllImpObj->Name = L"btnAllImpObj";
+      this->btnAllImpObj->Size = System::Drawing::Size(59, 23);
+      this->btnAllImpObj->TabIndex = 5;
+      this->btnAllImpObj->Text = L"Imp Obj";
+      this->btnAllImpObj->UseVisualStyleBackColor = true;
+      this->btnAllImpObj->Click += gcnew System::EventHandler(this, &FormVisMask::btnAllImpObj_Click);
+      // 
       // FormVisMask
       // 
       this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
       this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
       this->BackColor = System::Drawing::SystemColors::Control;
       this->ClientSize = System::Drawing::Size(293, 414);
+      this->Controls->Add(this->btnAllImpObj);
+      this->Controls->Add(this->btnThisImpObj);
       this->Controls->Add(this->label1);
       this->Controls->Add(this->btnMargeTo);
       this->Controls->Add(this->btnDelete);
@@ -401,11 +427,13 @@ namespace RoiPainter4D {
   private: System::Void btnThisErode_Click(System::Object^  sender, System::EventArgs^  e);
   private: System::Void btnThisDilate_Click(System::Object^  sender, System::EventArgs^  e);
   private: System::Void btnThisFill_Click(System::Object^  sender, System::EventArgs^  e);
-  private: System::Void btnThisExpObj_Click(System::Object^  sender, System::EventArgs^  e);
+  private: System::Void btnThisExpObj_Click(System::Object^ sender, System::EventArgs^ e);
+  private: System::Void btnThisImpObj_Click(System::Object^  sender, System::EventArgs^  e);
   private: System::Void btnAllErode_Click(System::Object^  sender, System::EventArgs^  e);
   private: System::Void btnAllDilate_Click(System::Object^  sender, System::EventArgs^  e);
   private: System::Void btnAllFill_Click(System::Object^  sender, System::EventArgs^  e);
   private: System::Void btnAllExpObj_Click(System::Object^  sender, System::EventArgs^  e);
+  private: System::Void btnAllImpObj_Click(System::Object^ sender, System::EventArgs^ e);
   private: System::Void maskList_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
   }
   };

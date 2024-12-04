@@ -169,6 +169,26 @@ System::Void FormVisMask::btnThisExpObj_Click(System::Object^  sender, System::E
 }
 
 
+System::Void FormVisMask::btnThisImpObj_Click(System::Object^ sender, System::EventArgs^ e) {
+
+  std::string fname;
+
+  OpenFileDialog^ dlg = gcnew OpenFileDialog();
+  dlg->Title = "select mesh (メッシュモデルを選択してください)";
+  dlg->Filter = "mesh obj (*.obj;)|*.obj;";
+  dlg->Multiselect = false;
+  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
+  IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
+  fname = static_cast<const char*>(mptr.ToPointer());
+
+  const int frame_idx = formVisParam_getframeI();
+  ImageCore::GetInst()->importObjOne(fname, frame_idx);
+  updateImageCoreVisVolumes();
+  formVisMask_updateList();
+  formMain_RedrawMainPanel();
+}
+
+
 System::Void FormVisMask::btnAllErode_Click(System::Object^  sender, System::EventArgs^  e) {
   ImageCore::GetInst()->SelectedMsk_erodeAll();
 
@@ -203,4 +223,31 @@ System::Void FormVisMask::btnAllExpObj_Click(System::Object^  sender, System::Ev
   std::string fname = static_cast<const char*>(mptr.ToPointer());
 
   ImageCore::GetInst()->SelectedMsk_expObjAll(fname);
+}
+
+
+System::Void FormVisMask::btnAllImpObj_Click(System::Object^ sender, System::EventArgs^ e) {
+  std::vector<std::string> fNames;
+
+  OpenFileDialog^ dlg = gcnew OpenFileDialog();
+  dlg->Title = "select mesh (メッシュモデルを選択してください)";
+  dlg->Filter = "mesh obj (*.obj;)|*.obj;";
+  dlg->Multiselect = true;
+
+  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel)
+    return;
+
+  for each (auto it in  dlg->FileNames)
+  {
+    std::string fName;
+    IntPtr mptr = Marshal::StringToHGlobalAnsi(it);
+    fName = static_cast<const char*>(mptr.ToPointer());
+    fNames.push_back(fName);
+    std::cout << fName.c_str() << "\n";
+  }
+
+  ImageCore::GetInst()->importObjAll(fNames);
+  updateImageCoreVisVolumes();
+  formVisMask_updateList();
+  formMain_RedrawMainPanel();
 }

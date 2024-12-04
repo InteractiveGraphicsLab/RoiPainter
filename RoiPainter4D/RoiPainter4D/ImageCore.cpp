@@ -515,9 +515,119 @@ void ImageCore::SelectedMsk_expObjAll(const std::string &fname)
 };
 
 
+void ImageCore::importObjOne(const std::string& fname, const int frameI)
+{
+  // load mesh from file
+  TMesh mesh;
+  if (!mesh.Initialize(fname.c_str())) {
+    const char* MESSAGE_FAILLOADING =
+      "objファイル読み込みに失敗しました. fails to load Obj file";
+    ShowMsgDlg_OK(MESSAGE_FAILLOADING, "message");
+    return;
+  }
+
+  const int num_voxel = ImageCore::GetInst()->GetNumVoxels();
+  const int num_frame = ImageCore::GetInst()->GetNumFrames();
+
+  // init flg4d
+  for (int frame = 0; frame < num_frame; ++frame)
+  {
+    for (int i = 0; i < num_voxel; ++i)
+    {
+      m_flg4d[frame][i] = 0;
+    }
+  }
+
+  // get locked mask
+  const std::vector<MaskData>& mask_data = ImageCore::GetInst()->GetMaskData();
+  byte mask_locked[256] = {};
+  for (int i = 0; i < (int)mask_data.size(); ++i)
+  {
+    mask_locked[i] = mask_data[i].lock ? 1 : 0;
+  }
+
+  // convert mesh to mask
+  std::unique_ptr<byte[]> img = std::make_unique<byte[]>(num_voxel);
+  GenBinaryVolumeFromMeshY(m_reso, m_pitch, mesh, img.get());
+  byte* flg3d = m_flg4d[frameI];
+  for (int i = 0; i < num_voxel; ++i)
+  {
+    if (img[i] && !mask_locked[flg3d[i]])
+    {
+      flg3d[i] = 255;
+    }
+    else
+    {
+      flg3d[i] = 0;
+    }
+  }
+  img.reset();
+
+  // store mask
+  ImageCore::GetInst()->mask_storeCurrentForeGround();
+}
 
 
-void ImageCore::SaveMask_Msk4(std::string fname)
+void ImageCore::importObjAll(const std::vector<std::string>& fnames)
+{
+  const int num_voxel = ImageCore::GetInst()->GetNumVoxels();
+  const int num_frame = ImageCore::GetInst()->GetNumFrames();
+
+  // init flg4d
+  for (int frame = 0; frame < num_frame; ++frame)
+  {
+    for (int i = 0; i < num_voxel; ++i)
+    {
+      m_flg4d[frame][i] = 0;
+    }
+  }
+
+  // get locked mask
+  const std::vector<MaskData>& mask_data = ImageCore::GetInst()->GetMaskData();
+  byte mask_locked[256] = {};
+  for (int i = 0; i < (int)mask_data.size(); ++i)
+  {
+    mask_locked[i] = mask_data[i].lock ? 1 : 0;
+  }
+
+  const int num_files = fnames.size();
+  for (int frame = 0; frame < num_files; ++frame)
+  {
+    if (frame >= num_frame) break;
+
+    // load mesh from file
+    TMesh mesh;
+    if (!mesh.Initialize(fnames[frame].c_str())) {
+      const char* MESSAGE_FAILLOADING =
+        "objファイル読み込みに失敗しました. fails to load Obj file";
+      ShowMsgDlg_OK(MESSAGE_FAILLOADING, "message");
+      return;
+    }
+    byte* flg3d = m_flg4d[frame];
+
+    // convert mesh to mask
+    std::unique_ptr<byte[]> img = std::make_unique<byte[]>(num_voxel);
+    GenBinaryVolumeFromMeshY(m_reso, m_pitch, mesh, img.get());
+    for (int i = 0; i < num_voxel; ++i)
+    {
+      if (img[i] && !mask_locked[flg3d[i]])
+      {
+        flg3d[i] = 255;
+      }
+      else
+      {
+        flg3d[i] = 0;
+      }
+    }
+    img.reset();
+  }
+
+  // store mask
+  ImageCore::GetInst()->mask_storeCurrentForeGround();
+}
+
+
+void ImageCore::ImageCore::SaveMask_Msk4(std::string fname)
 {
   FILE* fp;
   errno_t err;

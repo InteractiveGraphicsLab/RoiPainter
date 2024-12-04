@@ -86,6 +86,9 @@
     <LinkIncremental>false</LinkIncremental>
     <ManagedAssembly>true</ManagedAssembly>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>false</VcpkgEnableManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -121,7 +124,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../../3rdParty/glew/include;../../3rdParty/dcmtk/include;../../3rdParty/Eigen;../../COMMON</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../../3rdParty/glew/include;../../3rdParty/dcmtk/include;../../3rdParty/zlib/include;../../3rdParty/Eigen;../../COMMON</AdditionalIncludeDirectories>
       <OpenMPSupport>true</OpenMPSupport>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <LanguageStandard>stdcpp14</LanguageStandard>
@@ -138,8 +141,8 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glew32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../3rdParty/glew/lib/Release/x64;../../3rdParty/dcmtk/staticlibMD;../packages\opencvcontrib.3.1.0/build/native/lib/x64/v140/Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;zlib.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../3rdParty/glew/lib/Release/x64;../../3rdParty/dcmtk/staticlibMD;../../3rdParty/zlib/lib;../packages\opencvcontrib.3.1.0/build/native/lib/x64/v140/Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -155,6 +158,7 @@
     <ClCompile Include="..\..\3rdParty\dcmtk\tdcmtk.cpp" />
     <ClCompile Include="..\..\COMMON\DeformationStrokes.cpp" />
     <ClCompile Include="..\..\COMMON\HarmCoord3D.cpp" />
+    <ClCompile Include="..\..\COMMON\LaplacianSurfaceEditing.cpp" />
     <ClCompile Include="..\..\COMMON\OglImage.cpp" />
     <ClCompile Include="..\..\COMMON\tmarchingcubes.cpp" />
     <ClCompile Include="..\..\COMMON\tmesh.cpp" />
@@ -162,6 +166,7 @@
     <ClCompile Include="..\..\COMMON\tvolumelader.cpp" />
     <ClCompile Include="CagedMeshSequence.cpp" />
     <ClCompile Include="CrsSecCore.cpp" />
+    <ClCompile Include="FormFixMask.cpp" />
     <ClCompile Include="FormLoadFrameIdx.cpp" />
     <ClCompile Include="FormMain.cpp" />
     <ClCompile Include="FormPlaceCPs.cpp" />
@@ -185,9 +190,11 @@
     <ClCompile Include="FormVisParam.cpp" />
     <ClCompile Include="GeneralizedCylinder.cpp" />
     <ClCompile Include="ImageCore.cpp" />
+    <ClCompile Include="MaskMeshSequence.cpp" />
     <ClCompile Include="ModeCore.cpp" />
     <ClCompile Include="Mode\GlslShader.cpp" />
     <ClCompile Include="Mode\ModeCommonTools.cpp" />
+    <ClCompile Include="Mode\ModeFixMask.cpp" />
     <ClCompile Include="Mode\ModeInterface.cpp" />
     <ClCompile Include="Mode\ModePlaceCPs.cpp" />
     <ClCompile Include="Mode\ModeRefStrokeTrim.cpp" />
@@ -213,6 +220,7 @@
     <ClInclude Include="..\..\COMMON\deform_by_stroke.h" />
     <ClInclude Include="..\..\COMMON\HarmCoord3D.h" />
     <ClInclude Include="..\..\COMMON\kcurves.h" />
+    <ClInclude Include="..\..\COMMON\LaplacianSurfaceEditing.h" />
     <ClInclude Include="..\..\COMMON\OglForCLI.h" />
     <ClInclude Include="..\..\COMMON\OglImage.h" />
     <ClInclude Include="..\..\COMMON\thandle3d.h" />
@@ -226,6 +234,9 @@
     <ClInclude Include="CagedMeshSequence.h" />
     <ClInclude Include="CliMessageBox.h" />
     <ClInclude Include="CrsSecCore.h" />
+    <ClInclude Include="FormFixMask.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="FormLoadFrameIdx.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -291,9 +302,11 @@
     </ClInclude>
     <ClInclude Include="GeneralizedCylinder.h" />
     <ClInclude Include="ImageCore.h" />
+    <ClInclude Include="MaskMeshSequence.h" />
     <ClInclude Include="ModeCore.h" />
     <ClInclude Include="Mode\GlslShader.h" />
     <ClInclude Include="Mode\ModeCommonTools.h" />
+    <ClInclude Include="Mode\ModeFixMask.h" />
     <ClInclude Include="Mode\ModeInterface.h" />
     <ClInclude Include="Mode\ModePlaceCPs.h" />
     <ClInclude Include="Mode\ModeRefStrokeTrim.h" />
@@ -314,6 +327,9 @@
     <ClInclude Include="ViewIndiCore.h" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="FormFixMask.resx">
+      <DependentUpon>FormFixMask.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormLoadFrameIdx.resx">
       <DependentUpon>FormLoadFrameIdx.h</DependentUpon>
     </EmbeddedResource>

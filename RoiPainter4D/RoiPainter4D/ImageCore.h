@@ -126,6 +126,9 @@ public:
   void SelectedMsk_SetAlpha ( const float  alpha ); 
   void SetSelectMaskId      ( const int    idx   );
 
+  void importObjOne(const std::string& fname, const int frameI);
+  void importObjAll(const std::vector<std::string>& fnames);
+
   const std::vector<MaskData> &GetMaskData(){ return m_mask_data; }
   int   GetSelectMaskIdx(){ return m_active_maskid; }
 
