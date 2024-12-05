@@ -87,6 +87,7 @@ public:
   void DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF);
   // -----------------------------------------------------------------
   void Deform();
+  void Deform(const int);
 
    void Do();
    void Undo();
@@ -112,7 +113,7 @@ public:
 
 
 private:
-  void FindClosestPointFromStroke(std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
+  void FindClosestPointFromStroke(const int, std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
 
   //Add?
 

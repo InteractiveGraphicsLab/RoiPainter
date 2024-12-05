@@ -30,10 +30,7 @@ void LaplacianDeformer::Deform(
 
   m_times = 1;
 
-  if (!m_is_set_solver || m_fixed_verts_idxs != _fixed_verts_idxs)
-  {
-    SetSolver(_fixed_verts_idxs);
-  }
+  SetSolver(_fixed_verts_idxs);
   Solve(_fixed_positions);
 
   std::cout << "deformed...\n";

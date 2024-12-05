@@ -79,6 +79,18 @@ System::Void FormFixMask::m_btn_sharestroke_Click(System::Object^ sender, System
 
 System::Void FormFixMask::m_btn_loadstate_Click(System::Object^ sender, System::EventArgs^ e)
 {
+  LoadState();
+}
+
+
+System::Void FormFixMask::m_btn_savestate_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  SaveState();
+}
+
+
+void FormFixMask::LoadState()
+{
   std::string fpath;
 
   OpenFileDialog^ dlg = gcnew OpenFileDialog();
@@ -99,7 +111,7 @@ System::Void FormFixMask::m_btn_loadstate_Click(System::Object^ sender, System::
 }
 
 
-System::Void FormFixMask::m_btn_savestate_Click(System::Object^ sender, System::EventArgs^ e)
+void FormFixMask::SaveState()
 {
   std::string fpath;
 

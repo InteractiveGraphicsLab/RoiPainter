@@ -79,6 +79,7 @@ void ModeFixMask::StartMode()
   FormFixMask_InitAllItems();
   FormFixMask_Show();
   std::cout << "ModeFixMask...startMode DONE-----\n";
+  std::cout << "Debug mode is available (Shift+Ctrl+F12).\n";
 }
 
 
@@ -311,42 +312,30 @@ void ModeFixMask::KeyDown(int nChar)
 
   if (nChar == VK_F1)
   {
-    // load state
-    if (IsShiftKeyOn() && IsCtrKeyOn())
-    {
-      std::string fpath = "state.statelog";
-      std::set<int> set_frame_idx;
-      const int num_frames = ImageCore::GetInst()->GetNumFrames();
-      for (int i = 0; i < num_frames; ++i)
-      {
-        set_frame_idx.insert(i);
-      }
-
-      LoadState(fpath, set_frame_idx);
-    }
+    // show stroke matching
+    const int frame_idx = formVisParam_getframeI();
+    std::vector<int> fixed_verts_idxs;
+    m_matched_pos = std::vector<Eigen::Vector3f>();
+    std::vector<EVec3f> target_pos = std::vector<Eigen::Vector3f>();
+    FindClosestPointFromStroke(frame_idx, fixed_verts_idxs, target_pos, m_matched_pos);
   }
   else if (nChar == VK_F2)
   {
-    // save state
-    if (IsShiftKeyOn() && IsCtrKeyOn())
+    // deform all frame
+    const int num_frames = ImageCore::GetInst()->GetNumFrames();
+    for (int i = 0; i < num_frames; ++i)
     {
-      std::string fpath = "state.statelog";
-      std::set<int> set_frame_idx;
-      const int num_frames = ImageCore::GetInst()->GetNumFrames();
-      for (int i = 0; i < num_frames; ++i)
-      {
-        set_frame_idx.insert(i);
-      }
-      SaveState(fpath, set_frame_idx);
+      Deform(i);
     }
   }
   else if (nChar == VK_F3)
   {
-    // show stroke matching
-    std::vector<int> fixed_verts_idxs;
-    m_matched_pos = std::vector<Eigen::Vector3f>();
-    std::vector<EVec3f> target_pos = std::vector<Eigen::Vector3f>();
-    FindClosestPointFromStroke(fixed_verts_idxs, target_pos, m_matched_pos);
+    // deform all frame
+    const int num_frames = ImageCore::GetInst()->GetNumFrames();
+    for (int i = 0; i < num_frames; ++i)
+    {
+      ReloadMesh(i);
+    }
   }
   else if (nChar == VK_F4)
   {
@@ -392,9 +381,9 @@ void ModeFixMask::KeyDown(int nChar)
       std::cout << "debug mode: " << (debug ? "ON" : "OFF") << "\n";
       if (debug)
       {
-        std::cout << "[F1]  Load state (Shift+Ctrl+F1)" << "\n";
-        std::cout << "[F2]  Save state (Shift+Ctrl+F2)" << "\n";
-        std::cout << "[F3]  Show matching between strokes and mesh" << "\n";
+        std::cout << "[F1]  Show matching between strokes and mesh" << "\n";
+        std::cout << "[F2]  Deform mesh all frame" << "\n";
+        std::cout << "[F3]  Reload mesh all frame" << "\n";
         std::cout << "[F4]  Share selected stroke" << "\n";
         std::cout << "[F5]  Unshare selected stroke" << "\n";
         std::cout << "[F6]  Lock selected stroke" << "\n";
@@ -466,7 +455,6 @@ void ModeFixMask::DrawScene(
   {
     m_strokes[frame_idx].DrawStrokes(m_show_only_selected_stroke);
 
-#ifdef DEBUG_MODE_FIXMASK
     for (int i = 0; i < m_matched_pos.size(); ++i)
     {
       static const float COLOR_W[4] = { 1.0f, 1.0f, 1.0f, 0.5f };
@@ -482,7 +470,6 @@ void ModeFixMask::DrawScene(
       TMesh::DrawSphere(m_matched_pos[i], 0.3f);
       glDisable(GL_LIGHTING);
     }
-#endif
   }
 
   // draw control points
@@ -497,16 +484,21 @@ void ModeFixMask::DrawScene(
 void ModeFixMask::Deform()
 {
   const int frame_idx = formVisParam_getframeI();
+  Deform(frame_idx);
+}
 
+
+void ModeFixMask::Deform(const int _frame_idx)
+{
   if (!m_exist_mesh || !m_mask_mesh.is_initialized) return;
 
-  m_mask_mesh.GetMesh(frame_idx).Set(m_tmeshes[frame_idx]);
+  m_mask_mesh.GetMesh(_frame_idx).Set(m_tmeshes[_frame_idx]);
 
   std::vector<int> fixed_verts_idxs;
   std::vector<EVec3f> fixed_positions;
   std::vector<EVec3f> src_positions;
 
-  FindClosestPointFromStroke(fixed_verts_idxs, fixed_positions, src_positions);
+  FindClosestPointFromStroke(_frame_idx, fixed_verts_idxs, fixed_positions, src_positions);
   
   // Sort by index
   std::vector<std::pair<int, EVec3f>> indexPointPairs;
@@ -528,7 +520,7 @@ void ModeFixMask::Deform()
   if (fixed_verts_idxs.size() == 0) return;
 
   // Deform
-  m_laplacian_deformer[frame_idx].Deform(fixed_verts_idxs, fixed_positions);
+  m_laplacian_deformer[_frame_idx].Deform(fixed_verts_idxs, fixed_positions);
 
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
@@ -647,7 +639,6 @@ void ModeFixMask::ConvertMeshToMask()
 void ModeFixMask::ReloadMesh()
 {
   const int frame_idx = formVisParam_getframeI();
-
   ReloadMesh(frame_idx);
 }
 
@@ -700,22 +691,20 @@ void ModeFixMask::SetShowOnlySelectedStroke()
 
 
 
-void ModeFixMask::FindClosestPointFromStroke(std::vector<int>& _idxs, std::vector<EVec3f>& _target_pos, std::vector<EVec3f>& _src_pos)
+void ModeFixMask::FindClosestPointFromStroke(const int _frame_idx, std::vector<int>& _idxs, std::vector<EVec3f>& _target_pos, std::vector<EVec3f>& _src_pos)
 {
-  const int frame_idx = formVisParam_getframeI();
-
   if (!m_mask_mesh.is_initialized) return;
 
-  TMesh& mesh = m_mask_mesh.GetMesh(frame_idx);
+  TMesh& mesh = m_mask_mesh.GetMesh(_frame_idx);
 
-  auto& strokes = m_strokes[frame_idx].GetStroke();
+  auto& strokes = m_strokes[_frame_idx].GetStroke();
   const int num_stroke = strokes.size();
 
   // for stroke
   for (int i = 0; i < num_stroke; ++i) {
     const auto stroke = strokes[i];
     const int num_p = stroke.size();
-    const int commonXYZ = m_strokes[frame_idx].GetStrokeInst(i)->GetCommonXYZ();
+    const int commonXYZ = m_strokes[_frame_idx].GetStrokeInst(i)->GetCommonXYZ();
     const EVec3f vec0 = EVec3f(
       commonXYZ == 0 ? 1.0f : 0.0f,
       commonXYZ == 1 ? 1.0f : 0.0f,

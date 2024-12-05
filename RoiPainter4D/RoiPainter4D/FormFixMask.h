@@ -361,6 +361,8 @@ namespace RoiPainter4D {
 		System::Void m_btn_savestate_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_checkbox_showonlyselectedstroke_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
 	public:
+		void LoadState();
+		void SaveState();
 		int GetCPSize();
 		bool GetShowOnlySelectedStroke();
 		int GetMCScale();
@@ -369,6 +371,8 @@ namespace RoiPainter4D {
 	inline void FormFixMask_Show() { FormFixMask::GetInst()->Show(); }
   inline void FormFixMask_Hide() { FormFixMask::GetInst()->Hide(); }
   inline void FormFixMask_InitAllItems() { FormFixMask::GetInst()->InitAllItems(); }
+	inline void FormFixMask_LoadState() { FormFixMask::GetInst()->LoadState(); }
+	inline void FormFixMask_SaveState() { FormFixMask::GetInst()->SaveState(); }
 	inline int FormFixMask_GetCPSize() { return FormFixMask::GetInst()->GetCPSize(); }
 	inline bool FormFixMask_GetShowOnlySelectedStroke() { return FormFixMask::GetInst()->GetShowOnlySelectedStroke(); }
 	inline int FormFixMask_GetMCScale() { return FormFixMask::GetInst()->GetMCScale(); }
