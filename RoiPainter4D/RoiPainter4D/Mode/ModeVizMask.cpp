@@ -138,5 +138,6 @@ void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
   }
+  
 }
 

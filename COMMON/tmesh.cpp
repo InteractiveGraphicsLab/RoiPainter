@@ -441,6 +441,23 @@ void TMesh::GetBoundBox(EVec3f &BBmin, EVec3f &BBmax) const
 }
 
 
+BoundingBox TMesh::GetBoundingBox() const
+{
+  return BoundingBox(m_vSize, m_vVerts);
+}
+
+BoundingBox TMesh::GetBoundingBox_OnePoly(const int pid) const
+{
+  const TPoly  &p = m_pPolys[pid];
+  const EVec3f& x0 = m_vVerts[p.idx[0]];
+  const EVec3f& x1 = m_vVerts[p.idx[1]];
+  const EVec3f& x2 = m_vVerts[p.idx[2]];
+  return BoundingBox(x0, x1, x0);
+}
+
+
+
+
 
 //rendering 
 
@@ -910,25 +927,22 @@ void GenBinaryVolumeFromMeshY
   const int    W = reso[0];
   const int    H = reso[1];
   const int    D = reso[2];
-  const double px = pitch[0];
-  const double py = pitch[1];
-  const double pz = pitch[2];
+  const int   WH = W * H;
+  const int  WHD = W * H * D;
+  const float px = pitch[0];
+  const float py = pitch[1];
+  const float pz = pitch[2];
+  const EVec3f cuboid(W * px, H * py, D * pz);
+
   const int     vSize = mesh.m_vSize;
   const int     pSize = mesh.m_pSize;
   const EVec3f* verts = mesh.m_vVerts;
   const EVec3f* vNorm = mesh.m_vNorms;
-  const TPoly* polys = mesh.m_pPolys;
+  const TPoly*  polys = mesh.m_pPolys;
   const EVec3f* pNorm = mesh.m_pNorms;
 
-  //clock_t t0 = clock();
-  const int WH = W * H, WHD = W * H * D;
-  const EVec3f cuboid((float)(W * px), (float)(H * py), (float)(D * pz));
-
-  EVec3f BBmin, BBmax;
-  CalcBoundingBox(vSize, verts, BBmin, BBmax);
 
   memset(binVol, 0, sizeof(byte) * WHD);
-
 
   // insert triangles in BINs -- divide yz space into (BIN_SIZE x BIN_SIZE)	
   const int BIN_SIZE = 20;
@@ -936,51 +950,57 @@ void GenBinaryVolumeFromMeshY
 
   for (int p = 0; p < pSize; ++p)
   {
-    EVec3f bbMin, bbMax;
-    CalcBoundingBox(verts[polys[p].idx[0]],
-      verts[polys[p].idx[1]],
-      verts[polys[p].idx[2]], bbMin, bbMax);
-
-    int xS = Crop(0, BIN_SIZE - 1, (int)(bbMin[0] / cuboid[0] * BIN_SIZE));
-    int zS = Crop(0, BIN_SIZE - 1, (int)(bbMin[2] / cuboid[2] * BIN_SIZE));
-    int xE = Crop(0, BIN_SIZE - 1, (int)(bbMax[0] / cuboid[0] * BIN_SIZE));
-    int zE = Crop(0, BIN_SIZE - 1, (int)(bbMax[2] / cuboid[2] * BIN_SIZE));
+    BoundingBox bb_poly = mesh.GetBoundingBox_OnePoly(p);
+    int xS = Crop(0, BIN_SIZE - 1, (int)(bb_poly.minx / cuboid[0] * BIN_SIZE));
+    int zS = Crop(0, BIN_SIZE - 1, (int)(bb_poly.minz / cuboid[2] * BIN_SIZE));
+    int xE = Crop(0, BIN_SIZE - 1, (int)(bb_poly.maxx / cuboid[0] * BIN_SIZE));
+    int zE = Crop(0, BIN_SIZE - 1, (int)(bb_poly.maxz / cuboid[2] * BIN_SIZE));
     for (int z = zS; z <= zE; ++z)
       for (int x = xS; x <= xE; ++x)
         polyID_Bins[z * BIN_SIZE + x].push_back(p);
   }
 
-  //clock_t t1 = clock();
+
+  BoundingBox bb(vSize, verts);
 
   // ray casting along x axis to fill inside the mesh 
 #pragma omp parallel for
-  for (int zI = 0; zI < D; ++zI) if (BBmin[2] <= (0.5 + zI) * pz && (0.5 + zI) * pz <= BBmax[2])
-    for (int xI = 0; xI < W; ++xI) if (BBmin[0] <= (0.5 + xI) * px && (0.5 + xI) * px <= BBmax[0])
+  for (int zI = 0; zI < D; ++zI) 
+  {
+    const float z = (0.5f + zI) * pz;
+    if (z < bb.minz && bb.maxz < z) continue;
+
+    for (int xI = 0; xI < W; ++xI) 
     {
-      double x = (0.5 + xI) * px;
-      double z = (0.5 + zI) * pz;
-      int bin_xi = std::min((int)(x / cuboid[0] * BIN_SIZE), BIN_SIZE - 1);
-      int bin_zi = std::min((int)(z / cuboid[2] * BIN_SIZE), BIN_SIZE - 1);
+      const float x = (0.5f + xI) * px;
+      if (x < bb.minx && bb.maxx < x) continue;
+      
+      int bin_xi = (int)(x / cuboid[0] * BIN_SIZE); 
+      int bin_zi = (int)(z / cuboid[2] * BIN_SIZE); 
       std::vector<int>& trgtBin = polyID_Bins[bin_zi * BIN_SIZE + bin_xi];
 
-      std::multimap<double, double> blist;// (xPos, normInXdir);
+      std::multimap<float, float> blist;// (yPos, norm in ydir);
 
       for (const auto pi : trgtBin) if (pNorm[pi][1] != 0)
       {
-        const EVec3f& V0 = verts[polys[pi].idx[0]];
-        const EVec3f& V1 = verts[polys[pi].idx[1]];
-        const EVec3f& V2 = verts[polys[pi].idx[2]];
-        double y;
-        if (IntersectRayYToTriangle(V0, V1, V2, x, z, y))
-          blist.insert(std::make_pair(y, pNorm[pi][1])); //(y 座標, normal)
+        const EVec3f& v0 = verts[polys[pi].idx[0]];
+        const EVec3f& v1 = verts[polys[pi].idx[1]];
+        const EVec3f& v2 = verts[polys[pi].idx[2]];
+        float y;
+        if (IntersectRayYToTriangle(v0, v1, v2, x, z, y))
+          blist.insert(std::make_pair(y, pNorm[pi][1])); 
       }
 
       if (blist.size() == 0) continue;
 
-      //clean blist (edge上で起こった交差重複を削除)
+      //clean up blist (edge上で起こった交差重複を削除)
       while (blist.size() != 0)
       {
-        if (blist.size() == 1) { blist.clear(); break; }
+        if (blist.size() == 1) 
+        { 
+          blist.clear(); 
+          break; 
+        }
 
         bool found = false;
         auto it0 = blist.begin();
@@ -998,18 +1018,18 @@ void GenBinaryVolumeFromMeshY
       bool flag = false;
       int yI = 0;
 
-      //int pivIdx = xI ;
       for (auto it = blist.begin(); it != blist.end(); ++it)
       {
-        int pivYi = (int)(it->first / py);
-        for (; yI <= pivYi && yI < H; ++yI) binVol[xI + yI * W + zI * WH] = flag;
+        float piv_yi = flag ? (it->first / py - 0.500000f) : // fore to piv_y (y=1.5ならyi=1)
+                              (it->first / py - 0.500001f);  // back to piv_y (y=1.5ならyi=0)
+        //it->first / py = 0.5のときに、int castすると0になるのでfloatのまま利用
+
+        for (; yI <= piv_yi && yI < H; ++yI) binVol[xI + yI * W + zI * WH] = flag;
         flag = !flag;
       }
       if (flag == true) std::cout << "error double check here!";
     }
-
-  //clock_t t2 = clock();
-  //std::cout << "compute time : " << (t1-t0)/ (double) CLOCKS_PER_SEC << " " << (t2-t1)/ (double) CLOCKS_PER_SEC) << "\n";
+  }
 }
 
 
