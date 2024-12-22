@@ -387,9 +387,9 @@ inline bool IntersectRayYToTriangle(
   const EVec3f& v0,
   const EVec3f& v1,
   const EVec3f& v2,
-  const double x,
-  const double z,
-  double& y //output 
+  const float  x,
+  const float  z,
+        float& y //output 
 )
 {
   //pre-check
@@ -398,9 +398,10 @@ inline bool IntersectRayYToTriangle(
   if ((z < v0[2] && z < v1[2] && z < v2[2]) ||
       (z > v0[2] && z > v1[2] && z > v2[2])) return false;
 
-  double s, t;
-  if (!SolveLinearEq2d(v1[0] - v0[0], v2[0] - v0[0],
-    v1[2] - v0[2], v2[2] - v0[2], x - v0[0], z - v0[2], s, t)) return false;
+  float s, t;
+  if (!SolveLinearEq2f(v1[0] - v0[0], v2[0] - v0[0],
+                       v1[2] - v0[2], v2[2] - v0[2], 
+                       x - v0[0], z - v0[2], s, t)) return false;
   if (s < 0 || t < 0 || s + t > 1) return false;
 
   y = (1 - s - t) * v0[1] + s * v1[1] + t * v2[1];
@@ -611,58 +612,78 @@ inline void VertsGetNearestPoint(
 }
 
 
-
-inline void CalcBoundingBox(
-  const EVec3f& v0,
-  const EVec3f& v1,
-  const EVec3f& v2,
-  EVec3f& bbMin,
-  EVec3f& bbMax)
+class BoundingBox
 {
-  bbMin << min3(v0[0], v1[0], v2[0]),
-    min3(v0[1], v1[1], v2[1]),
-    min3(v0[2], v1[2], v2[2]);
-  bbMax << max3(v0[0], v1[0], v2[0]),
-    max3(v0[1], v1[1], v2[1]),
-    max3(v0[2], v1[2], v2[2]);
-}
+public: 
+  float minx, miny, minz;
+  float maxx, maxy, maxz;
+  BoundingBox() {
+    minx = miny = minz = 0;
+    maxx = maxy = maxz = 0;
+  }
+
+  BoundingBox(const int N, const EVec3f* verts)
+  {
+    minx = miny = minz =  FLT_MAX;
+    maxx = maxy = maxz = -FLT_MAX;
+    for (int i = 0; i < N; ++i)
+    {
+      minx = std::min(minx, verts[i][0]);
+      miny = std::min(miny, verts[i][1]);
+      minz = std::min(minz, verts[i][2]);
+      maxx = std::max(maxx, verts[i][0]);
+      maxy = std::max(maxy, verts[i][1]);
+      maxz = std::max(maxz, verts[i][2]);
+    }
+  }
+
+  BoundingBox(const EVec3f& v0, const EVec3f& v1, const EVec3f& v2)
+  {
+    minx = min3(v0[0], v1[0], v2[0]);
+    miny = min3(v0[1], v1[1], v2[1]);
+    minz = min3(v0[2], v1[2], v2[2]);
+    maxx = max3(v0[0], v1[0], v2[0]);
+    maxy = max3(v0[1], v1[1], v2[1]);
+    maxz = max3(v0[2], v1[2], v2[2]);
+  }
+
+  BoundingBox(const BoundingBox &src) {
+    Set(src);
+  }
+  BoundingBox& operator=(const BoundingBox& src)
+  {
+    Set(src);
+    return *this;
+  }
+  void Set(const BoundingBox& src) {
+    minx = src.minx;
+    miny = src.miny;
+    minz = src.minz;
+    maxx = src.maxx;
+    maxy = src.maxy;
+    maxz = src.maxz;
+  }
+};
+
 
 
 inline void CalcBoundingBox(
   const int N,
   const EVec3f* verts,
-  EVec3f& BBmin,
-  EVec3f& BBmax)
+  EVec3f& bb_min,
+  EVec3f& bb_max)
 {
-  BBmin << FLT_MAX, FLT_MAX, FLT_MAX;
-  BBmax << -FLT_MAX, -FLT_MAX, -FLT_MAX;
+  bb_min <<  FLT_MAX,  FLT_MAX,  FLT_MAX;
+  bb_max << -FLT_MAX, -FLT_MAX, -FLT_MAX;
 
   for (int i = 0; i < N; ++i)
   {
-    BBmin[0] = std::min(BBmin[0], (float)verts[i][0]);
-    BBmin[1] = std::min(BBmin[1], (float)verts[i][1]);
-    BBmin[2] = std::min(BBmin[2], (float)verts[i][2]);
-    BBmax[0] = std::max(BBmax[0], (float)verts[i][0]);
-    BBmax[1] = std::max(BBmax[1], (float)verts[i][1]);
-    BBmax[2] = std::max(BBmax[2], (float)verts[i][2]);
-  }
-}
-
-
-inline void CalcBoundingBox(
-  const std::vector<EVec2i>& verts,
-  EVec2i& BBmin,
-  EVec2i& BBmax)
-{
-  BBmin << INT_MAX, INT_MAX;
-  BBmax << INT_MIN, INT_MIN;
-
-  for (int i = 0; i < (int)verts.size(); ++i)
-  {
-    BBmin[0] = std::min(BBmin[0], verts[i][0]);
-    BBmin[1] = std::min(BBmin[1], verts[i][1]);
-    BBmax[0] = std::max(BBmax[0], verts[i][0]);
-    BBmax[1] = std::max(BBmax[1], verts[i][1]);
+    bb_min[0] = std::min(bb_min[0], verts[i][0]);
+    bb_min[1] = std::min(bb_min[1], verts[i][1]);
+    bb_min[2] = std::min(bb_min[2], verts[i][2]);
+    bb_max[0] = std::max(bb_max[0], verts[i][0]);
+    bb_max[1] = std::max(bb_max[1], verts[i][1]);
+    bb_max[2] = std::max(bb_max[2], verts[i][2]);
   }
 }
 
@@ -670,22 +691,42 @@ inline void CalcBoundingBox(
 inline void CalcBoundingBox
 (
   const std::vector<EVec3f>& verts,
-  EVec3f& BBmin,
-  EVec3f& BBmax
+  EVec3f& bb_min,
+  EVec3f& bb_max
 )
 {
-  BBmin << FLT_MAX, FLT_MAX, FLT_MAX;
-  BBmax << -FLT_MAX, -FLT_MAX, -FLT_MAX;
+  bb_min <<  FLT_MAX,  FLT_MAX,  FLT_MAX;
+  bb_max << -FLT_MAX, -FLT_MAX, -FLT_MAX;
 
   for (const auto& v : verts) {
-    BBmin[0] = std::min(BBmin[0], v[0]);
-    BBmin[1] = std::min(BBmin[1], v[1]);
-    BBmin[2] = std::min(BBmin[2], v[2]);
-    BBmax[0] = std::max(BBmax[0], v[0]);
-    BBmax[1] = std::max(BBmax[1], v[1]);
-    BBmax[2] = std::max(BBmax[2], v[2]);
+    bb_min[0] = std::min(bb_min[0], v[0]);
+    bb_min[1] = std::min(bb_min[1], v[1]);
+    bb_min[2] = std::min(bb_min[2], v[2]);
+    bb_max[0] = std::max(bb_max[0], v[0]);
+    bb_max[1] = std::max(bb_max[1], v[1]);
+    bb_max[2] = std::max(bb_max[2], v[2]);
   }
 }
+
+
+inline void CalcBoundingBox(
+  const std::vector<EVec2i>& verts,
+  EVec2i& bb_min,
+  EVec2i& bb_max)
+{
+  bb_min << INT_MAX, INT_MAX;
+  bb_max << INT_MIN, INT_MIN;
+
+  for (int i = 0; i < (int)verts.size(); ++i)
+  {
+    bb_min[0] = std::min(bb_min[0], verts[i][0]);
+    bb_min[1] = std::min(bb_min[1], verts[i][1]);
+    bb_max[0] = std::max(bb_max[0], verts[i][0]);
+    bb_max[1] = std::max(bb_max[1], verts[i][1]);
+  }
+}
+
+
 
 
 //calculate the angle of two 3D vectors

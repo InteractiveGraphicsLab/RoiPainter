@@ -80,7 +80,9 @@ public:
   //ger info
   EVec3f GetGravityCenter() const;
   void GetBoundBox(EVec3f& BBmin, EVec3f& BBmax) const;
-
+  
+  BoundingBox GetBoundingBox() const;
+  BoundingBox GetBoundingBox_OnePoly(const int pid) const;
 
   //rendering
   void Draw() const;

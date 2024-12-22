@@ -476,9 +476,9 @@ void ImageCore::SelectedMsk_expObjOne(
 
   TMesh mesh;
   marchingcubes::MarchingCubes(m_reso, m_pitch, v, 128, 0, 0, mesh);
-  mesh.Smoothing(2);
+  //mesh.Smoothing(2);
   mesh.ExportObjNoTexCd(fname.c_str());
-
+  
   delete[] v;
 };
 
@@ -499,7 +499,7 @@ void ImageCore::SelectedMsk_expObjAll(const std::string &fname)
 
     TMesh mesh;
     marchingcubes::MarchingCubes(m_reso, m_pitch, v, 128, 0, 0, mesh);
-    mesh.Smoothing(2);
+    //mesh.Smoothing(2);
 
     std::string nameStr = fname.substr(0, fname.find_last_of("."));
 
@@ -526,8 +526,8 @@ void ImageCore::importObjOne(const std::string& fname, const int frameI)
     return;
   }
 
-  const int num_voxel = ImageCore::GetInst()->GetNumVoxels();
-  const int num_frame = ImageCore::GetInst()->GetNumFrames();
+  const int num_voxel = GetNumVoxels();
+  const int num_frame = GetNumFrames();
 
   // init flg4d
   for (int frame = 0; frame < num_frame; ++frame)

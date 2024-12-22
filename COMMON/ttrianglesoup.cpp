@@ -309,9 +309,9 @@ void GenBinaryVolumeFromMeshY
   const int    W  = reso[0];
   const int    H  = reso[1];
   const int    D  = reso[2];
-  const double px = pitch[0];
-  const double py = pitch[1];
-  const double pz = pitch[2];
+  const float px = pitch[0];
+  const float py = pitch[1];
+  const float pz = pitch[2];
   const int num_tris = mesh.m_num_triangles;
   const TTriangle *tris  = mesh.m_triangles;
   const EVec3f    *norms = mesh.m_normals;
@@ -326,7 +326,6 @@ void GenBinaryVolumeFromMeshY
 
   memset(binVol, 0, sizeof(byte) * WHD);
 
-
   // insert triangles in BINs -- divide yz space into (BIN_SIZE x BIN_SIZE)	
   const int BIN_SIZE = 100;
   std::vector< std::vector<int> > polyID_Bins(BIN_SIZE * BIN_SIZE, std::vector<int>());
@@ -335,14 +334,14 @@ void GenBinaryVolumeFromMeshY
   {
     const TTriangle &t = tris[p];
 
-    EVec3f bbMin, bbMax;
-    CalcBoundingBox( t.m_verts[0], t.m_verts[1], t.m_verts[2], bbMin, bbMax);
-    int xS = Crop<int>(0, BIN_SIZE - 1, (int)(bbMin[0] / cuboid[0] * BIN_SIZE));
-    int zS = Crop<int>(0, BIN_SIZE - 1, (int)(bbMin[2] / cuboid[2] * BIN_SIZE));
-    int xE = Crop<int>(0, BIN_SIZE - 1, (int)(bbMax[0] / cuboid[0] * BIN_SIZE));
-    int zE = Crop<int>(0, BIN_SIZE - 1, (int)(bbMax[2] / cuboid[2] * BIN_SIZE));
-
-    for (int z = zS; z <= zE; ++z) for (int x = xS; x <= xE; ++x) polyID_Bins[z*BIN_SIZE + x].push_back(p);
+    BoundingBox bb_poly(t.m_verts[0], t.m_verts[1], t.m_verts[2]);
+    int xS = Crop(0, BIN_SIZE - 1, (int)(bb_poly.minx / cuboid[0] * BIN_SIZE));
+    int zS = Crop(0, BIN_SIZE - 1, (int)(bb_poly.minz / cuboid[2] * BIN_SIZE));
+    int xE = Crop(0, BIN_SIZE - 1, (int)(bb_poly.maxx / cuboid[0] * BIN_SIZE));
+    int zE = Crop(0, BIN_SIZE - 1, (int)(bb_poly.maxz / cuboid[2] * BIN_SIZE));
+    for (int z = zS; z <= zE; ++z) 
+      for (int x = xS; x <= xE; ++x) 
+        polyID_Bins[z * BIN_SIZE + x].push_back(p);
   }
 
   // ray casting along x axis to fill inside the mesh 
@@ -351,18 +350,19 @@ void GenBinaryVolumeFromMeshY
   {
     for (int xI = 0; xI < W; ++xI) if (BBmin[0] <= (0.5 + xI) * px && (0.5 + xI) * px <= BBmax[0])
     {
-      double x = (0.5 + xI) * px;
-      double z = (0.5 + zI) * pz;
+      const float x = (0.5f + xI) * px;
+      const float z = (0.5f + zI) * pz;
+
       int bin_xi = Crop<int>( 0, BIN_SIZE-1, (int)(x / cuboid[0] * BIN_SIZE) );
       int bin_zi = Crop<int>( 0, BIN_SIZE-1, (int)(z / cuboid[2] * BIN_SIZE) );
       std::vector<int> &trgtBin = polyID_Bins[bin_zi * BIN_SIZE + bin_xi];
 
-      std::multimap<double, double> blist;// (xPos, normInXdir);
+      std::multimap<float, float> blist;// (xPos, normInXdir);
 
       for (const auto pi : trgtBin) if ( norms[pi][1] != 0)
       {
         const TTriangle &t = tris[pi];
-        double y;
+        float y;
         if (IntersectRayYToTriangle(t.m_verts[0], t.m_verts[1], t.m_verts[2], x, z, y))
           blist.insert( std::make_pair(y, norms[pi][1] )); //(y 座標, normal)
       }
@@ -390,11 +390,11 @@ void GenBinaryVolumeFromMeshY
       bool flag = false;
       int yI = 0;
 
-      //int pivIdx = xI ;
       for (auto it = blist.begin(); it != blist.end(); ++it)
       {
-        int pivYi = (int)(it->first / py);
-        for (; yI <= pivYi && yI < H; ++yI) binVol[xI + yI * W + zI*WH] = flag;
+        float piv_yi = flag ? (it->first / py - 0.500000f) : // fore to piv_y (y=1.5ならyi=1)
+                              (it->first / py - 0.500001f);  // back to piv_y (y=1.5ならyi=0)
+        for (; yI <= piv_yi && yI < H; ++yI) binVol[xI + yI * W + zI*WH] = flag;
         flag = !flag;
       }
       if (flag == true) std::cout << "error double check here!";
