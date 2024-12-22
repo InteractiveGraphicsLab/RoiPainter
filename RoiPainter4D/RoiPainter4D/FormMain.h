@@ -33,7 +33,7 @@ namespace RoiPainter4D {
     System::Windows::Forms::ToolStripMenuItem^ switch_segStrokeFFD;
     System::Windows::Forms::ToolStripMenuItem^ switch_segLocalRrow;
     System::Windows::Forms::ToolStripMenuItem^ switch_placeCPs;
-    System::Windows::Forms::ToolStripMenuItem^ switch_fixMask;
+    System::Windows::Forms::ToolStripMenuItem^ switch_RefCurveDeform;
 
     System::Windows::Forms::ToolStripMenuItem^ file_dcm3d;
     System::Windows::Forms::ToolStripMenuItem^ file_dcm2D;
@@ -151,7 +151,7 @@ namespace RoiPainter4D {
       this->switch_segClosestPix = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->switch_segJointTracker = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->switch_placeCPs = (gcnew System::Windows::Forms::ToolStripMenuItem());
-      this->switch_fixMask = (gcnew System::Windows::Forms::ToolStripMenuItem());
+      this->switch_RefCurveDeform = (gcnew System::Windows::Forms::ToolStripMenuItem());
       this->m_progressbar = (gcnew System::Windows::Forms::ProgressBar());
       this->mainmenu->SuspendLayout();
       this->SuspendLayout();
@@ -308,7 +308,7 @@ namespace RoiPainter4D {
           this->switch_visMask, this->toolStripSeparator1, this->switch_segPaint, this->switch_visRegionGrow, this->switch_segRigidICP,
           this->switch_segLocalRrow, this->switch_segBolus, this->toolStripSeparator2, this->switch_refStrokeTrim, this->toolStripSeparator3,
           this->switch_segStrokeFFD, this->switch_segBronchi, this->switch_segSwallowOrgans, this->switch_segSwallowTempGen, this->switch_segClosestPix,
-          this->switch_segJointTracker, this->switch_placeCPs, this->switch_fixMask
+          this->switch_segJointTracker, this->switch_placeCPs, this->switch_RefCurveDeform
       });
       this->modeSwitchToolStripMenuItem->Name = L"modeSwitchToolStripMenuItem";
       this->modeSwitchToolStripMenuItem->Size = System::Drawing::Size(86, 20);
@@ -436,12 +436,12 @@ namespace RoiPainter4D {
       this->switch_placeCPs->Text = L"Place Points";
       this->switch_placeCPs->Click += gcnew System::EventHandler(this, &FormMain::switch_placeCPs_Click);
       // 
-      // switch_fixMask
+      // switch_RefCurveDeform
       // 
-      this->switch_fixMask->Name = L"switch_fixMask";
-      this->switch_fixMask->Size = System::Drawing::Size(304, 22);
-      this->switch_fixMask->Text = L"Fix Mask";
-      this->switch_fixMask->Click += gcnew System::EventHandler(this, &FormMain::switch_fixMask_Click);
+      this->switch_RefCurveDeform->Name = L"switch_RefCurveDeform";
+      this->switch_RefCurveDeform->Size = System::Drawing::Size(304, 22);
+      this->switch_RefCurveDeform->Text = L"Ref Curve Deform";
+      this->switch_RefCurveDeform->Click += gcnew System::EventHandler(this, &FormMain::switch_RefCurveDeform_Click);
       // 
       // m_progressbar
       // 
@@ -520,7 +520,7 @@ namespace RoiPainter4D {
     System::Void switch_segBronchi_Click(System::Object^ sender, System::EventArgs^ e);
     System::Void switch_segStrokeFFD_Click(System::Object^ sender, System::EventArgs^ e);
     System::Void switch_placeCPs_Click(System::Object^ sender, System::EventArgs^ e);
-    System::Void switch_fixMask_Click(System::Object^ sender, System::EventArgs^ e);
+    System::Void switch_RefCurveDeform_Click(System::Object^ sender, System::EventArgs^ e);
 
   //edit shionozaki
 		System::Void switch_SegBolus_Click(System::Object^  sender, System::EventArgs^  e) ;

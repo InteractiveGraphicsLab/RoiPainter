@@ -45,28 +45,35 @@ bool MaskMeshSequence::LoadMask(const int _scale = 1)
   std::cout << "m_num_voxels: " << m_num_voxels << "\n";
   std::cout << "m_reso: " << m_reso << "\n";
 
-  m_meshes.clear();
+  m_meshes = std::vector<TMesh>(m_num_frames);
+  #pragma omp parallel for
   for (int frame_idx = 0; frame_idx < m_num_frames; ++frame_idx)
   {
     std::unique_ptr<short[]> v = std::make_unique<short[]>(m_num_voxels / scale_num);
     for (int z = 0; z < d; ++z) {
       for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
-          const int idx = (z * _scale * m_reso[1] * m_reso[0]) + (y * _scale * m_reso[0]) + (x * _scale);
-          v[z * h * w + y * w + x] = (ImageCore::GetInst()->m_mask4d[frame_idx][idx] == active_maskid) ? 255 : 0;
+          float ave = 0;
+          for (int c = 0; c < _scale; ++c) {
+            for (int b = 0; b < _scale; ++b) {
+              for (int a = 0; a < _scale; ++a) {
+                const int idx = ((z * _scale + c) * m_reso[1] * m_reso[0]) + ((y * _scale + b) * m_reso[0]) + (x * _scale + a);
+                ave += (ImageCore::GetInst()->m_mask4d[frame_idx][idx] == active_maskid) ? 1.0f : 0.0f;
+              }
+            }
+          }
+          ave /= powf(static_cast<float>(_scale), 3.0f);
+          v[z * h * w + y * w + x] = ave >= 0.49f ? 255 : 0;
+
         }
       }
     }
-    //for (int i = 0; i < m_num_voxels / scale_num; ++i)
-    //{
-    //  v[i] = (ImageCore::GetInst()->m_mask4d[frame_idx][i] == active_maskid) ? 255 : 0;
-    //}
 
     TMesh mesh;
     marchingcubes::MarchingCubes(m_reso / _scale, m_pitch, v.get(), 128, 0, 0, mesh);
-    mesh.Scale(_scale);
+    mesh.Scale(static_cast<float>(_scale));
     mesh.Smoothing(3);
-    m_meshes.push_back(mesh);
+    m_meshes[frame_idx] = mesh;
     v.reset();
   }
 
@@ -75,11 +82,10 @@ bool MaskMeshSequence::LoadMask(const int _scale = 1)
 }
 
 
-void MaskMeshSequence::UpdateMask(const int frame_idx)
+void MaskMeshSequence::UpdateMask(const int _current_frame_idx)
 {
   const int active_maskid = ImageCore::GetInst()->GetSelectMaskIdx();
   const std::vector<MaskData>& mask_data = ImageCore::GetInst()->GetMaskData();
-  byte* mask = ImageCore::GetInst()->m_mask4d[frame_idx];
 
   byte mask_locked[256] = {};
   for (int i = 0; i < (int)mask_data.size(); ++i)
@@ -88,25 +94,35 @@ void MaskMeshSequence::UpdateMask(const int frame_idx)
   }
   mask_locked[active_maskid] = 0;
 
-  std::unique_ptr<byte[]> img = std::make_unique<byte[]>(m_num_voxels);
-  GenBinaryVolumeFromMeshY(m_reso, m_pitch, m_meshes[frame_idx], img.get());
-  for (int i = 0; i < m_num_voxels; ++i)
+  #pragma omp parallel for
+  for (int frame_idx = 0; frame_idx < m_num_frames; ++frame_idx)
   {
-    if (!mask_locked[mask[i]])
+    byte* mask = ImageCore::GetInst()->m_mask4d[frame_idx];
+    std::unique_ptr<byte[]> img = std::make_unique<byte[]>(m_num_voxels);
+
+    GenBinaryVolumeFromMeshY(m_reso, m_pitch, m_meshes[frame_idx], img.get());
+
+    for (int i = 0; i < m_num_voxels; ++i)
     {
-      if (img[i])
+      if (!mask_locked[mask[i]])
       {
-        mask[i] = active_maskid;
-      }
-      else
-      {
-        mask[i] = 0;
+        if (img[i])
+        {
+          mask[i] = active_maskid;
+        }
+        else
+        {
+          if (mask[i] == active_maskid)
+          {
+            mask[i] = 0;
+          }
+        }
       }
     }
+    img.reset();
   }
-  img.reset();
 
-  ImageCore::GetInst()->m_vol_mask.SetValue(mask);
+  ImageCore::GetInst()->m_vol_mask.SetValue(ImageCore::GetInst()->m_mask4d[_current_frame_idx]);
 }
 
 

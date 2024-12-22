@@ -590,7 +590,7 @@ void ImageCore::importObjAll(const std::vector<std::string>& fnames)
     mask_locked[i] = mask_data[i].lock ? 1 : 0;
   }
 
-  const int num_files = fnames.size();
+  const int num_files = static_cast<int>(fnames.size());
   for (int frame = 0; frame < num_files; ++frame)
   {
     if (frame >= num_frame) break;
