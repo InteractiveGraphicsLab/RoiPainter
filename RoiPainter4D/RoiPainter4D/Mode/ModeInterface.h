@@ -28,7 +28,7 @@ enum MODE_ID
   MODE_SEG_BRONCHI  ,  // ModeSegBronchi   (by Takata) FormSegModeBronchi
 	MODE_SEG_STROKEFFD,  // ModeSegStrokeFfd, FormSegStrokeFfd (by Yuki Kimura, 20220524)
 	MODE_PLC_CPS,         // ModePlaceCps    , FormPlaceCPs     tool for landmark placement
-	MODE_FIXMASK,        // ModeFixMask, FormFixMask (by Yuki Kimura, 2024)
+	MODE_REF_CURVEDEFORM,        // ModeRefCurveDeform, FormRefCurveDeform (by Yuki Kimura, 2024)
 
 	//MODE_SEG_GCUT   ,  // ModeSegGGut           
 	//MODE_SEG_THRESHPNT,// ModeSegTreshPnt      

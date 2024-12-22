@@ -81,7 +81,7 @@ bool ReadMha3d(
     uLongf uncompressedSize = WHD * sizeof(byte);
     volume_b.reset(new byte[WHD]);
 
-    int result = uncompress(volume_b.get(), &uncompressedSize, compressedData.data(), compressedData.size());
+    int result = uncompress(volume_b.get(), &uncompressedSize, compressedData.data(), static_cast<uLong>(compressedData.size()));
     tf = (result == Z_OK);
   }
   else

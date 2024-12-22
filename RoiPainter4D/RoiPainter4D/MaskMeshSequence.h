@@ -35,11 +35,9 @@ public:
 
   bool LoadMask(const int);
   void UpdateMask(const int);
-  //bool SaveMask();
-  //bool LoadState();
-  //bool SaveState();
 
   TMesh& GetMesh(const int);
 
   bool DrawMesh(const int);
+
 };

@@ -166,7 +166,7 @@
     <ClCompile Include="..\..\COMMON\tvolumelader.cpp" />
     <ClCompile Include="CagedMeshSequence.cpp" />
     <ClCompile Include="CrsSecCore.cpp" />
-    <ClCompile Include="FormFixMask.cpp" />
+    <ClCompile Include="FormRefCurveDeform.cpp" />
     <ClCompile Include="FormLoadFrameIdx.cpp" />
     <ClCompile Include="FormMain.cpp" />
     <ClCompile Include="FormPlaceCPs.cpp" />
@@ -194,7 +194,7 @@
     <ClCompile Include="ModeCore.cpp" />
     <ClCompile Include="Mode\GlslShader.cpp" />
     <ClCompile Include="Mode\ModeCommonTools.cpp" />
-    <ClCompile Include="Mode\ModeFixMask.cpp" />
+    <ClCompile Include="Mode\ModeRefCurveDeform.cpp" />
     <ClCompile Include="Mode\ModeInterface.cpp" />
     <ClCompile Include="Mode\ModePlaceCPs.cpp" />
     <ClCompile Include="Mode\ModeRefStrokeTrim.cpp" />
@@ -234,7 +234,7 @@
     <ClInclude Include="CagedMeshSequence.h" />
     <ClInclude Include="CliMessageBox.h" />
     <ClInclude Include="CrsSecCore.h" />
-    <ClInclude Include="FormFixMask.h">
+    <ClInclude Include="FormRefCurveDeform.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="FormLoadFrameIdx.h">
@@ -306,7 +306,7 @@
     <ClInclude Include="ModeCore.h" />
     <ClInclude Include="Mode\GlslShader.h" />
     <ClInclude Include="Mode\ModeCommonTools.h" />
-    <ClInclude Include="Mode\ModeFixMask.h" />
+    <ClInclude Include="Mode\ModeRefCurveDeform.h" />
     <ClInclude Include="Mode\ModeInterface.h" />
     <ClInclude Include="Mode\ModePlaceCPs.h" />
     <ClInclude Include="Mode\ModeRefStrokeTrim.h" />
@@ -327,8 +327,8 @@
     <ClInclude Include="ViewIndiCore.h" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="FormFixMask.resx">
-      <DependentUpon>FormFixMask.h</DependentUpon>
+    <EmbeddedResource Include="FormRefCurveDeform.resx">
+      <DependentUpon>FormRefCurveDeform.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormLoadFrameIdx.resx">
       <DependentUpon>FormLoadFrameIdx.h</DependentUpon>

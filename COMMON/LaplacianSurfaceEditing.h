@@ -20,7 +20,6 @@ private:
   int m_num_verts;
   int m_num_fixed_verts;
   int m_num_free_verts;
-  int m_times;
   bool m_is_set_solver;
 
   std::vector<int> m_fixed_verts_idxs;
