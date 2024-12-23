@@ -142,6 +142,19 @@ void FormRefCurveDeform::SaveState()
   ModeRefCurveDeform::GetInst()->SaveState(fpath, set_frame_idx);
 }
 
+void FormRefCurveDeform::ExportObj()
+{
+  SaveFileDialog^ dlg = gcnew SaveFileDialog();
+  dlg->Filter = "surface data (*.obj)|*.obj||";
+
+  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
+
+  IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
+  std::string fname = static_cast<const char*>(mptr.ToPointer());
+
+  ModeRefCurveDeform::GetInst()->ExportMeshAll(fname);
+}
+
 
 int FormRefCurveDeform::GetCPSize()
 {

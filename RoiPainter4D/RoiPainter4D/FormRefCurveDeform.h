@@ -366,6 +366,7 @@ namespace RoiPainter4D {
 		int GetCPSize();
 		bool GetShowOnlySelectedStroke();
 		int GetMCScale();
+		void ExportObj();
 };
 
 	inline void FormRefCurveDeform_Show() { FormRefCurveDeform::GetInst()->Show(); }
@@ -373,6 +374,7 @@ namespace RoiPainter4D {
   inline void FormRefCurveDeform_InitAllItems() { FormRefCurveDeform::GetInst()->InitAllItems(); }
 	inline void FormRefCurveDeform_LoadState() { FormRefCurveDeform::GetInst()->LoadState(); }
 	inline void FormRefCurveDeform_SaveState() { FormRefCurveDeform::GetInst()->SaveState(); }
+	inline void FormRefCurveDeform_ExportObj() { FormRefCurveDeform::GetInst()->ExportObj(); }
 	inline int FormRefCurveDeform_GetCPSize() { return FormRefCurveDeform::GetInst()->GetCPSize(); }
 	inline bool FormRefCurveDeform_GetShowOnlySelectedStroke() { return FormRefCurveDeform::GetInst()->GetShowOnlySelectedStroke(); }
 	inline int FormRefCurveDeform_GetMCScale() { return FormRefCurveDeform::GetInst()->GetMCScale(); }

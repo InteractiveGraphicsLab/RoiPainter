@@ -10,6 +10,7 @@
 #include "LaplacianSurfaceEditing.h"
 #include <fstream>
 #include <queue>
+#include <iomanip>
 
 #pragma managed
 #include "CliMessageBox.h"
@@ -355,7 +356,7 @@ void ModeRefCurveDeform::KeyDown(int nChar)
   }
   else if (nChar == VK_F8)
   {
-
+    FormRefCurveDeform_ExportObj();
   }
   else if (nChar == VK_F9)
   {
@@ -384,6 +385,7 @@ void ModeRefCurveDeform::KeyDown(int nChar)
         std::cout << "[F5]  Unshare selected stroke" << "\n";
         std::cout << "[F6]  Lock selected stroke" << "\n";
         std::cout << "[F7]  Unlock selected stroke" << "\n";
+        std::cout << "[F8]  Export obj all frame" << "\n";
         std::cout << "[F12] Switch debug mode (Shift+Ctrl+F12)" << "\n";
       }
     }
@@ -1003,6 +1005,25 @@ void ModeRefCurveDeform::LoadState(const std::string& _fpath, const std::set<int
   UpdateSharedStroke();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
+}
+
+
+void ModeRefCurveDeform::ExportMeshAll(const std::string& _fname)
+{
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+  const int num_voxels = ImageCore::GetInst()->GetNumVoxels();
+
+  for (int fi = 0; fi < num_frames; fi++)
+  {
+    std::string nameStr = _fname.substr(0, _fname.find_last_of("."));
+
+    std::ostringstream ss;  //3桁になるよう0を付加 edit by kikuchi
+#ifndef _DEBUG
+    ss << std::setw(3) << std::setfill('0') << std::to_string(fi);
+    nameStr += ss.str() + ".obj";
+    m_mask_mesh.GetMesh(fi).ExportObjNoTexCd(nameStr.c_str());
+#endif
+  }
 }
 
 

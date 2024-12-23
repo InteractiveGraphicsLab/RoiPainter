@@ -106,6 +106,8 @@ public:
    void SaveState(const std::string&, const std::set<int>&);
    void LoadState(const std::string&, const std::set<int>&);
 
+   void ExportMeshAll(const std::string&);
+
    void ShareSelectedStroke();
    void UnshareSelectedStroke();
    void LockSelectedStroke();
