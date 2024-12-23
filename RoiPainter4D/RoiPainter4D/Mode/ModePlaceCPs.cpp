@@ -95,7 +95,7 @@ void ModePlaceCPs::FinishSegmentation()
     TMesh mesh = m_template;
     mesh.Rotate(m_template_rottrans[f].first);
     mesh.Translate(m_template_rottrans[f].second);
-    GenBinaryVolumeFromMeshY(reso, pitch, mesh, flgInOut);
+    mesh.GenBinaryVolume(reso, pitch, flgInOut);
 
     byte* flg3d = flg4d[f];
 #pragma omp parallel for

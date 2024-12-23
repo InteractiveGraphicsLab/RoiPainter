@@ -225,9 +225,8 @@ void ModeSegSwallowOrgans::FillInMesh()
   {
     TMesh& m = m_meshseq.GetMesh(f);
 
-
     std::cout << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    GenBinaryVolumeFromMeshY(resolution, pitch, m, flgInOut);
+    m.GenBinaryVolume(resolution, pitch, flgInOut);
     std::cout << "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 
     byte* flg3d = flg4d[f];

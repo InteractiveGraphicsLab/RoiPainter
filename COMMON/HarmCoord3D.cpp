@@ -37,8 +37,8 @@ void HarmCoord3D::InitMap()
   // cast ray in Y axis ( divide ZX plane )  
   TMesh cage = m_cage;
   cage.Translate( -m_map_pos );
-  EVec3f pitch(m_map_pitch, m_map_pitch,m_map_pitch);
-  GenBinaryVolumeFromMeshY(m_map_reso, pitch, cage, m_map_flag);
+  EVec3f pitch(m_map_pitch, m_map_pitch, m_map_pitch);
+  cage.GenBinaryVolume(m_map_reso, pitch, m_map_flag);
 
   const int W = m_map_reso[0];
   const int H = m_map_reso[1];

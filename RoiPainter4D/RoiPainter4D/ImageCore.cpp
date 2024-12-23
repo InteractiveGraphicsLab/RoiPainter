@@ -548,7 +548,7 @@ void ImageCore::importObjOne(const std::string& fname, const int frameI)
 
   // convert mesh to mask
   std::unique_ptr<byte[]> img = std::make_unique<byte[]>(num_voxel);
-  GenBinaryVolumeFromMeshY(m_reso, m_pitch, mesh, img.get());
+  mesh.GenBinaryVolume(m_reso, m_pitch, img.get());
   byte* flg3d = m_flg4d[frameI];
   for (int i = 0; i < num_voxel; ++i)
   {
@@ -607,7 +607,7 @@ void ImageCore::importObjAll(const std::vector<std::string>& fnames)
 
     // convert mesh to mask
     std::unique_ptr<byte[]> img = std::make_unique<byte[]>(num_voxel);
-    GenBinaryVolumeFromMeshY(m_reso, m_pitch, mesh, img.get());
+    mesh.GenBinaryVolume(m_reso, m_pitch, img.get());
     for (int i = 0; i < num_voxel; ++i)
     {
       if (img[i] && !mask_locked[flg3d[i]])

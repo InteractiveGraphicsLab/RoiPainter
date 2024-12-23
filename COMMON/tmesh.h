@@ -124,6 +124,16 @@ public:
                        EVec3f& pos_onsurf, 
                        double& dist) const;
 
+  // Convert Mesh to voxel by filling its inside
+  // reso & pitch : resolution and pitch of volume
+  // binVol       : allocated[WxHxD], 0:out, 1:in
+  void GenBinaryVolume( const EVec3i& reso, 
+                        const EVec3f& pitch, 
+                                byte* bin_vol) const; 
+  
+
+
+
   static void DrawIcosaHedron(
     const float r,
     const float* diff,
@@ -170,16 +180,6 @@ public:
 
 
 
-///////////////////////////////////////////////////////////////////////////////
-// Convert Mesh to voxel by filling its inside ////////////////////////////////
-void GenBinaryVolumeFromMeshY
-(
-  const EVec3i& reso,
-  const EVec3f& pitch,
-  const TMesh& mesh,
-
-  byte* binVol //allocated[WxHxD], 0:out, 1:in
-);
 
 
 #endif
