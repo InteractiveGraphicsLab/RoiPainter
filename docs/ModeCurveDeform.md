@@ -13,7 +13,7 @@
 ## 使い方
 
 <!-- ref_curve_deform_demo.mp4 -->
-
+https://github.com/user-attachments/assets/ac83da3b-0555-48ea-95de-bb3ac88154b1
 
 1. 「Convert mask -> mesh」ボタンを押し，マスクをメッシュに変換します．
 2. 関心領域の正しい境界に曲線制約を配置します．曲線制約は制御点により配置でき，制御点はSHIFT+左クリックで配置できます．
