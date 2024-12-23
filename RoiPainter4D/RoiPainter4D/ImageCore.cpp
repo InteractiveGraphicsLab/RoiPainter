@@ -476,7 +476,7 @@ void ImageCore::SelectedMsk_expObjOne(
 
   TMesh mesh;
   marchingcubes::MarchingCubes(m_reso, m_pitch, v, 128, 0, 0, mesh);
-  //mesh.Smoothing(2);
+  mesh.Smoothing(10);
   mesh.ExportObjNoTexCd(fname.c_str());
   
   delete[] v;

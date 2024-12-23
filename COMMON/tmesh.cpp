@@ -452,7 +452,7 @@ BoundingBox TMesh::GetBoundingBox_OnePoly(const int pid) const
   const EVec3f& x0 = m_vVerts[p.idx[0]];
   const EVec3f& x1 = m_vVerts[p.idx[1]];
   const EVec3f& x2 = m_vVerts[p.idx[2]];
-  return BoundingBox(x0, x1, x0);
+  return BoundingBox(x0, x1, x2);
 }
 
 

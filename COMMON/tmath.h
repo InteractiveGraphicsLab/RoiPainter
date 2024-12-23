@@ -402,7 +402,10 @@ inline bool IntersectRayYToTriangle(
   if (!SolveLinearEq2f(v1[0] - v0[0], v2[0] - v0[0],
                        v1[2] - v0[2], v2[2] - v0[2], 
                        x - v0[0], z - v0[2], s, t)) return false;
-  if (s < 0 || t < 0 || s + t > 1) return false;
+  
+  const float error = 0.000001f;
+
+  if (s < -error || t < -error || s + t > 1 + error) return false;
 
   y = (1 - s - t) * v0[1] + s * v1[1] + t * v2[1];
   return true;
