@@ -125,7 +125,7 @@ bool t_LoadMeshAndCage(
   if (cagename.length() == 0 || !cage.Initialize(cagename.c_str()))
   {
     EVec3f bbmin, bbmax;
-    mesh.GetBoundBox(bbmin, bbmax);
+    mesh.GetBoundingBox(bbmin, bbmax);
     float sx = bbmin[0], sy = bbmin[1], sz = bbmin[2];
     float ex = bbmax[0], ey = bbmax[1], ez = bbmax[2];
     //gen cube 
@@ -142,7 +142,7 @@ bool t_LoadMeshAndCage(
 
   //calc scale / trans
   EVec3f bbmin, bbmax;
-  cage.GetBoundBox(bbmin, bbmax);
+  cage.GetBoundingBox(bbmin, bbmax);
   int idx = max3id(bbmax[0] - bbmin[0], bbmax[1] - bbmin[1], bbmax[2] - bbmin[2]);
   cage.Scale(0.5f * cuboid[idx] / (bbmax[idx] - bbmin[idx]));
   mesh.Scale(0.5f * cuboid[idx] / (bbmax[idx] - bbmin[idx]));

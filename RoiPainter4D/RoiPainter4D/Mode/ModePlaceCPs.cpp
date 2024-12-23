@@ -663,7 +663,7 @@ void ModePlaceCPs::LoadTemplateMesh(std::string fname)
   m_template.Initialize(fname.c_str());
   
   EVec3f minbb, maxbb;
-  m_template.GetBoundBox(minbb, maxbb);
+  m_template.GetBoundingBox(minbb, maxbb);
   m_template.Translate(EVec3f(-maxbb[0]*1.2f,0,0));
 }
 

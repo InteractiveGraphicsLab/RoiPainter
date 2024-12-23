@@ -79,8 +79,8 @@ public:
 
   //ger info
   EVec3f GetGravityCenter() const;
-  void GetBoundBox(EVec3f& BBmin, EVec3f& BBmax) const;
-  
+
+  void GetBoundingBox(EVec3f& bb_min, EVec3f& bb_max) const;  
   BoundingBox GetBoundingBox() const;
   BoundingBox GetBoundingBox_OnePoly(const int pid) const;
 

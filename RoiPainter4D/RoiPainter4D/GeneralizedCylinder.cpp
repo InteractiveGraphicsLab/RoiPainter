@@ -401,7 +401,7 @@ void GeneralizedCylinder::ParameterModified(bool do_update_axis, bool do_update_
     m_mesh.Initialize( verts, polys );
   }
 
-  m_mesh.GetBoundBox(m_bbmin, m_bbmax);
+  m_mesh.GetBoundingBox(m_bbmin, m_bbmax);
 	UpdateOrientedBoundinbBox();
 }
 

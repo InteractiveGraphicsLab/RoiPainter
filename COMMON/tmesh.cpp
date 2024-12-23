@@ -418,7 +418,7 @@ void TMesh::MultMat(const EMat4f M)
 void TMesh::NormalizeByUniformScaling()
 {
   EVec3f minV, maxV;
-  GetBoundBox(minV, maxV);
+  GetBoundingBox(minV, maxV);
   EVec3f a = maxV - minV;
   float  s = std::max(a[0], std::max(a[1], a[2]));
 
@@ -435,7 +435,7 @@ EVec3f TMesh::GetGravityCenter() const
   return p / (float)m_vSize;
 }
 
-void TMesh::GetBoundBox(EVec3f &BBmin, EVec3f &BBmax) const
+void TMesh::GetBoundingBox(EVec3f &BBmin, EVec3f &BBmax) const
 {
   CalcBoundingBox(m_vSize, m_vVerts, BBmin, BBmax);
 }

@@ -2,6 +2,126 @@
 #include "./HarmCoord3D.h"
 
 
+
+
+
+/////////////////
+//Mesh filling //
+void GenBinaryVolume
+(
+  const TMesh & m,
+  const EVec3i& reso,
+  const EVec3f& pitch,
+  byte* binVol
+) 
+{
+  const int    W = reso[0];
+  const int    H = reso[1];
+  const int    D = reso[2];
+  const int   WH = W * H;
+  const int  WHD = W * H * D;
+  const float px = pitch[0];
+  const float py = pitch[1];
+  const float pz = pitch[2];
+  const EVec3f cuboid(W * px, H * py, D * pz);
+
+  memset(binVol, 0, sizeof(byte) * WHD);
+
+  // insert triangles in BINs -- divide yz space into (BIN_SIZE x BIN_SIZE)	
+  const int BIN_SIZE = 20;
+  std::vector< std::vector<int> > polyID_Bins(BIN_SIZE * BIN_SIZE, std::vector<int>());
+
+  for (int p = 0; p < m.m_pSize; ++p)
+  {
+    BoundingBox bb_poly = m.GetBoundingBox_OnePoly(p);
+    int xS = Crop(0, BIN_SIZE - 1, (int)(bb_poly.minx / cuboid[0] * BIN_SIZE));
+    int zS = Crop(0, BIN_SIZE - 1, (int)(bb_poly.minz / cuboid[2] * BIN_SIZE));
+    int xE = Crop(0, BIN_SIZE - 1, (int)(bb_poly.maxx / cuboid[0] * BIN_SIZE));
+    int zE = Crop(0, BIN_SIZE - 1, (int)(bb_poly.maxz / cuboid[2] * BIN_SIZE));
+    for (int z = zS; z <= zE; ++z)
+      for (int x = xS; x <= xE; ++x)
+        polyID_Bins[z * BIN_SIZE + x].push_back(p);
+  }
+
+  BoundingBox bb(m.m_vSize, m.m_vVerts);
+
+  // ray casting along x axis to fill inside the mesh 
+#pragma omp parallel for
+  for (int zI = 0; zI < D; ++zI)
+  {
+    const float z = (0.5f + zI) * pz;
+    if (z < bb.minz && bb.maxz < z) continue;
+
+    for (int xI = 0; xI < W; ++xI)
+    {
+      const float x = (0.5f + xI) * px;
+      if (x < bb.minx && bb.maxx < x) continue;
+
+      int bin_xi = (int)(x / cuboid[0] * BIN_SIZE);
+      int bin_zi = (int)(z / cuboid[2] * BIN_SIZE);
+      std::vector<int>& trgtBin = polyID_Bins[bin_zi * BIN_SIZE + bin_xi];
+
+      std::multimap<float, float> blist;// (yPos, norm in ydir);
+
+      for (const auto pi : trgtBin) if (m.m_pNorms[pi][1] != 0)
+      {
+        const EVec3f& v0 = m.m_vVerts[m.m_pPolys[pi].idx[0]];
+        const EVec3f& v1 = m.m_vVerts[m.m_pPolys[pi].idx[1]];
+        const EVec3f& v2 = m.m_vVerts[m.m_pPolys[pi].idx[2]];
+        float y;
+        if (IntersectRayYToTriangle(v0, v1, v2, x, z, y))
+          blist.insert(std::make_pair(y, m.m_pNorms[pi][1]));
+      }
+
+      if (blist.size() == 0) continue;
+
+      //clean up blist (edge上で起こった交差重複を削除)
+      while (blist.size() != 0)
+      {
+        if (blist.size() == 1)
+        {
+          blist.clear();
+          break;
+        }
+
+        bool found = false;
+        auto it0 = blist.begin();
+        auto it1 = blist.begin(); it1++;
+
+        for (; it1 != blist.end(); ++it0, ++it1) if (it0->second * it1->second > 0)
+        {
+          blist.erase(it1);
+          found = true;
+          break;
+        }
+        if (!found) break;
+      }
+
+      bool flag = false;
+      int yI = 0;
+
+      for (auto it = blist.begin(); it != blist.end(); ++it)
+      {
+        float piv_yi = flag ? (it->first / py - 0.500000f) : // fore to piv_y (y=1.5ならyi=1)
+          (it->first / py - 0.500001f);  // back to piv_y (y=1.5ならyi=0)
+//it->first / py = 0.5のときに、int castすると0になるのでfloatのまま利用
+
+        for (; yI <= piv_yi && yI < H; ++yI) binVol[xI + yI * W + zI * WH] = flag;
+        flag = !flag;
+      }
+      if (flag == true) std::cout << "error double check here!";
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
 //note : map[i,j,k] corresponds to [ m_map_pos + m_map_pitch * (i+0.5,j+0.5,k+0.5) ]
 //note : (x,y,z) in 3d space corresponds to map[i,j,k] 
 //       (i.j,k) = (int)( ((x,y,z) - m_map_pos) / m_map_pitch ); 
@@ -11,7 +131,7 @@ void HarmCoord3D::InitMap()
 {
   //calc map configuration
   EVec3f bbmin, bbmax;
-  m_cage.GetBoundBox(bbmin, bbmax);
+  m_cage.GetBoundingBox(bbmin, bbmax);
   EVec3f bbsize = bbmax - bbmin;
 
   int MAX_RESO = m_LATTICE_RESOLUTION;
@@ -38,7 +158,7 @@ void HarmCoord3D::InitMap()
   TMesh cage = m_cage;
   cage.Translate( -m_map_pos );
   EVec3f pitch(m_map_pitch, m_map_pitch, m_map_pitch);
-  cage.GenBinaryVolume(m_map_reso, pitch, m_map_flag);
+  GenBinaryVolume(cage, m_map_reso, pitch, m_map_flag);
 
   const int W = m_map_reso[0];
   const int H = m_map_reso[1];
@@ -555,7 +675,7 @@ void HarmCoord3D::RefineHarmonicCoordinate(const int vsize, const EVec3f *verts)
   //　二次計画法の有効制約法を利用
   // Active Set Method
   //
-  //ただし誤差により Σ hc_i < 1.0 となる点について，単純に蒸気を計算すると，
+  //ただし誤差により Σ hc_i < 1.0 となる点について，単純に上記を計算すると，
   //全体に少しずつ値が付き，すべての頂点に少しずつ依存する座標系ができる．これは望ましくないので
   //最大となる hc_*iに対して，hc_*i += 1 - Σ hc_i とする
 
@@ -637,11 +757,11 @@ HarmCoord3D::HarmCoord3D(
   CalcHarmonicCoordinateMap();
 
   m_verts_hc.clear();
-  for ( int i=0; i < num_verts; ++i)
+  for ( int i = 0; i < num_verts; ++i)
     m_verts_hc.push_back( GetHarmonicCoordinate(verts[i]) );
  
   std::cout << "System refine Hamonic Coordinate\n";
-  RefineHarmonicCoordinate(num_verts, verts);
+  //RefineHarmonicCoordinate(num_verts, verts);
 
   Debug_showDebugInfo(num_verts, verts);
 }
