@@ -100,7 +100,7 @@ void MaskMeshSequence::UpdateMask(const int _current_frame_idx)
     byte* mask = ImageCore::GetInst()->m_mask4d[frame_idx];
     std::unique_ptr<byte[]> img = std::make_unique<byte[]>(m_num_voxels);
 
-    GenBinaryVolumeFromMeshY(m_reso, m_pitch, m_meshes[frame_idx], img.get());
+    m_meshes[frame_idx].GenBinaryVolume(m_reso, m_pitch, img.get());
 
     for (int i = 0; i < m_num_voxels; ++i)
     {

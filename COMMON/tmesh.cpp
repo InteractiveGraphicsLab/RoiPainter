@@ -418,7 +418,7 @@ void TMesh::MultMat(const EMat4f M)
 void TMesh::NormalizeByUniformScaling()
 {
   EVec3f minV, maxV;
-  GetBoundBox(minV, maxV);
+  GetBoundingBox(minV, maxV);
   EVec3f a = maxV - minV;
   float  s = std::max(a[0], std::max(a[1], a[2]));
 
@@ -435,7 +435,7 @@ EVec3f TMesh::GetGravityCenter() const
   return p / (float)m_vSize;
 }
 
-void TMesh::GetBoundBox(EVec3f &BBmin, EVec3f &BBmax) const
+void TMesh::GetBoundingBox(EVec3f &BBmin, EVec3f &BBmax) const
 {
   CalcBoundingBox(m_vSize, m_vVerts, BBmin, BBmax);
 }
@@ -912,17 +912,14 @@ void TMesh::DrawIcosaHedron(
 
 
 
-///////////////////////////////////////////////////////////////////////////////
-//Mesh filling ////////////////////////////////////////////////////////////////
-
-void GenBinaryVolumeFromMeshY
+/////////////////
+//Mesh filling //
+void TMesh::GenBinaryVolume
 (
   const EVec3i& reso,
   const EVec3f& pitch,
-  const TMesh& mesh,
-
-  byte* binVol //allocated[WxHxD], 0:out, 1:in
-)
+  byte* binVol 
+) const
 {
   const int    W = reso[0];
   const int    H = reso[1];
@@ -934,23 +931,15 @@ void GenBinaryVolumeFromMeshY
   const float pz = pitch[2];
   const EVec3f cuboid(W * px, H * py, D * pz);
 
-  const int     vSize = mesh.m_vSize;
-  const int     pSize = mesh.m_pSize;
-  const EVec3f* verts = mesh.m_vVerts;
-  const EVec3f* vNorm = mesh.m_vNorms;
-  const TPoly*  polys = mesh.m_pPolys;
-  const EVec3f* pNorm = mesh.m_pNorms;
-
-
   memset(binVol, 0, sizeof(byte) * WHD);
 
   // insert triangles in BINs -- divide yz space into (BIN_SIZE x BIN_SIZE)	
   const int BIN_SIZE = 20;
   std::vector< std::vector<int> > polyID_Bins(BIN_SIZE * BIN_SIZE, std::vector<int>());
 
-  for (int p = 0; p < pSize; ++p)
+  for (int p = 0; p < m_pSize; ++p)
   {
-    BoundingBox bb_poly = mesh.GetBoundingBox_OnePoly(p);
+    BoundingBox bb_poly = GetBoundingBox_OnePoly(p);
     int xS = Crop(0, BIN_SIZE - 1, (int)(bb_poly.minx / cuboid[0] * BIN_SIZE));
     int zS = Crop(0, BIN_SIZE - 1, (int)(bb_poly.minz / cuboid[2] * BIN_SIZE));
     int xE = Crop(0, BIN_SIZE - 1, (int)(bb_poly.maxx / cuboid[0] * BIN_SIZE));
@@ -960,8 +949,7 @@ void GenBinaryVolumeFromMeshY
         polyID_Bins[z * BIN_SIZE + x].push_back(p);
   }
 
-
-  BoundingBox bb(vSize, verts);
+  BoundingBox bb(m_vSize, m_vVerts);
 
   // ray casting along x axis to fill inside the mesh 
 #pragma omp parallel for
@@ -981,14 +969,14 @@ void GenBinaryVolumeFromMeshY
 
       std::multimap<float, float> blist;// (yPos, norm in ydir);
 
-      for (const auto pi : trgtBin) if (pNorm[pi][1] != 0)
+      for (const auto pi : trgtBin) if (m_pNorms[pi][1] != 0)
       {
-        const EVec3f& v0 = verts[polys[pi].idx[0]];
-        const EVec3f& v1 = verts[polys[pi].idx[1]];
-        const EVec3f& v2 = verts[polys[pi].idx[2]];
+        const EVec3f& v0 = m_vVerts[m_pPolys[pi].idx[0]];
+        const EVec3f& v1 = m_vVerts[m_pPolys[pi].idx[1]];
+        const EVec3f& v2 = m_vVerts[m_pPolys[pi].idx[2]];
         float y;
         if (IntersectRayYToTriangle(v0, v1, v2, x, z, y))
-          blist.insert(std::make_pair(y, pNorm[pi][1])); 
+          blist.insert(std::make_pair(y, m_pNorms[pi][1]));
       }
 
       if (blist.size() == 0) continue;

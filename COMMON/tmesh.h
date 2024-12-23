@@ -79,8 +79,8 @@ public:
 
   //ger info
   EVec3f GetGravityCenter() const;
-  void GetBoundBox(EVec3f& BBmin, EVec3f& BBmax) const;
-  
+
+  void GetBoundingBox(EVec3f& bb_min, EVec3f& bb_max) const;  
   BoundingBox GetBoundingBox() const;
   BoundingBox GetBoundingBox_OnePoly(const int pid) const;
 
@@ -123,6 +123,16 @@ public:
                        const int nearest_vid,
                        EVec3f& pos_onsurf, 
                        double& dist) const;
+
+  // Convert Mesh to voxel by filling its inside
+  // reso & pitch : resolution and pitch of volume
+  // binVol       : allocated[WxHxD], 0:out, 1:in
+  void GenBinaryVolume( const EVec3i& reso, 
+                        const EVec3f& pitch, 
+                                byte* bin_vol) const; 
+  
+
+
 
   static void DrawIcosaHedron(
     const float r,
@@ -170,16 +180,6 @@ public:
 
 
 
-///////////////////////////////////////////////////////////////////////////////
-// Convert Mesh to voxel by filling its inside ////////////////////////////////
-void GenBinaryVolumeFromMeshY
-(
-  const EVec3i& reso,
-  const EVec3f& pitch,
-  const TMesh& mesh,
-
-  byte* binVol //allocated[WxHxD], 0:out, 1:in
-);
 
 
 #endif

@@ -95,7 +95,7 @@ void ModePlaceCPs::FinishSegmentation()
     TMesh mesh = m_template;
     mesh.Rotate(m_template_rottrans[f].first);
     mesh.Translate(m_template_rottrans[f].second);
-    GenBinaryVolumeFromMeshY(reso, pitch, mesh, flgInOut);
+    mesh.GenBinaryVolume(reso, pitch, flgInOut);
 
     byte* flg3d = flg4d[f];
 #pragma omp parallel for
@@ -663,7 +663,7 @@ void ModePlaceCPs::LoadTemplateMesh(std::string fname)
   m_template.Initialize(fname.c_str());
   
   EVec3f minbb, maxbb;
-  m_template.GetBoundBox(minbb, maxbb);
+  m_template.GetBoundingBox(minbb, maxbb);
   m_template.Translate(EVec3f(-maxbb[0]*1.2f,0,0));
 }
 
