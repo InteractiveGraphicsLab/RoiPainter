@@ -3,7 +3,7 @@
 # RoiPainter
 
 <!-- teaser.png -->
-![teaser](https://github.com/user-attachments/assets/811020af-27b4-4d13-b9a0-720769c906da)
+![teaser](https://github.com/user-attachments/assets/192d0330-7498-45b4-a484-5511ec20487f)
 
 
 ## 導入方法
