@@ -3,7 +3,7 @@
 # RoiPainter
 
 <!-- teaser.png -->
-![teaser](https://github.com/user-attachments/assets/811020af-27b4-4d13-b9a0-720769c906da)
+![teaser](https://github.com/user-attachments/assets/14804596-16b9-45cd-b00e-5c729de9c944)
 
 ## Installation
 You can download the latest version of RoiPainter 4D from [here](https://github.com/InteractiveGraphicsLab/RoiPainter/releases).
