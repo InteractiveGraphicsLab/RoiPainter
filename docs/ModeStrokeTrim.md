@@ -4,8 +4,8 @@
 
 ## 使い方
 
-<!-- ref_stroke_trim.mp4 -->
-https://github.com/user-attachments/assets/3894077c-5c6c-4578-ae76-572fc3831003
+<!-- ref_stroketrim.mp4 -->
+https://github.com/user-attachments/assets/67bc8b09-6c8a-4e78-bed4-3987c5cc66d6
 
 SHIFTキーを押しながら左ドラッグで，曲線を描く  
 マウス左を離すと，曲線の内側の領域が削除される
@@ -13,7 +13,7 @@ SHIFTキーを押しながら左ドラッグで，曲線を描く
 ## ダイアログ
 
 <!-- dialog_stroketrim.png -->
-![dialog_stroketrim](https://github.com/user-attachments/assets/137127be-e637-45b2-8eef-789781c7757d)
+![dialog_stroketrim](https://github.com/user-attachments/assets/1e792af4-382b-4069-9f44-a482ec9c552a)
 
 | 操作 | 説明 |
 | --- | --- |
