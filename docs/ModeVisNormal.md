@@ -11,7 +11,7 @@
 4. しばらくすると，読み込みが完了します．
 
 <!-- load_4dct.mp4 -->
-https://github.com/user-attachments/assets/16bcfe2c-a6be-43f1-846b-eef2e37b8720
+https://github.com/user-attachments/assets/47884331-e0bb-47e1-a75e-43cf0e63fb50
 
 ## 操作方法
 4DCT画像を読み込んだ後は，様々な操作を行うことができます．
@@ -22,19 +22,19 @@ https://github.com/user-attachments/assets/16bcfe2c-a6be-43f1-846b-eef2e37b8720
 ズーム：マウスホイールを押したまま上下でズームイン/ズームアウト
 
 <!-- move_viewpoint.mp4 -->
-https://github.com/user-attachments/assets/c603aa7b-64d0-46e4-84af-5e2b946fac67
+https://github.com/user-attachments/assets/dd32bb60-9242-41bc-9ee0-28ca09f91fe6
 
 ### 断面操作
 断面にカーソルを合わせてマウスホイールを転がすと可視化する断面を変更できます．  
 また，右上のダイアログでどの断面を可視化するか選択できます．
 
 <!-- move_slice.mp4 -->
-https://github.com/user-attachments/assets/fe778f30-7380-442c-a2ad-6aa4a6181dc1
+https://github.com/user-attachments/assets/0572d184-1a4f-4dbd-b83f-d4d8e1420ba5
 
 ## その他の操作
 
 <!-- dialog_param.png -->
-![dialog_param](https://github.com/user-attachments/assets/5935a8c7-8b78-45c4-9be3-4a6450198f38)
+![dialog_param](https://github.com/user-attachments/assets/0891b9c1-df11-44f8-b4d2-a7444a2c8abc)
 
 ### 1. 全体設定（赤枠）
 
@@ -61,5 +61,5 @@ https://github.com/user-attachments/assets/fe778f30-7380-442c-a2ad-6aa4a6181dc1
 ## 関連ページ
 
 * マスク画像を読み込みたい → [マスク画像の読込・表示](ModeVisMask.md)
-* 輝度の差により関心領域を分割したい → [領域成長法による領域分割](ModeRGrow.md)
-* テンプレート形状に基づいて組織形状を作成したい → [曲線制約によるテンプレート変形](ModeStrokeFfd.md)
+* 不透明度の差から領域分割したい → [閾値と領域成長法による領域分割](ModeThreshold.md)
+* 関心領域の不要な部分を削除したい → [曲線による領域削除](ModeStrokeTrim.md)
