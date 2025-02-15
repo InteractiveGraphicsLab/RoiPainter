@@ -15,12 +15,12 @@
 4. しばらくすると，読み込みが完了します．
 
 <!-- load_mask.mp4 -->
-https://github.com/user-attachments/assets/6b62e3ce-066b-4600-831f-f1a7ff8aa3ba
+https://github.com/user-attachments/assets/c3a25626-7648-4a00-aba5-ed6be988611d
 
 ## マスク操作
 
 <!-- dialog_mask.png -->
-![dialog_mask](https://github.com/user-attachments/assets/1cb90ed9-0e8d-4ba4-b674-d2dd81f1cd95)
+![dialog_mask](https://github.com/user-attachments/assets/fae3fcef-6449-4b18-99cd-45e822addfd9)
 
 ### 1. マスク選択（赤枠）
 管理・編集の対象とするマスクをクリックして選択します．
@@ -49,4 +49,4 @@ https://github.com/user-attachments/assets/6b62e3ce-066b-4600-831f-f1a7ff8aa3ba
 
 ## 関連ページ
 
-* 読み込んだマスク画像を編集したい → [曲線制約によるマスク編集](ModeCurveDeform.md)・[マスク画像から特定の領域を削除](ModeStrokeTrim.md)
+* 読み込んだマスク画像を編集したい → [曲線制約によるマスク編集](ModeCurveDeform.md)・[曲線による領域削除](ModeStrokeTrim.md)
