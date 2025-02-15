@@ -24,7 +24,7 @@ https://github.com/user-attachments/assets/ac83da3b-0555-48ea-95de-bb3ac88154b1
 ## 曲線の操作
 
 <!-- ref_curve_deform_curveediting.mp4 -->
-https://github.com/user-attachments/assets/54396bb6-9bc1-4910-a760-74ab059b6c08
+https://github.com/user-attachments/assets/1ece9fd3-1a54-413f-a9a0-7bd2cfc2f854
 
 ### 制御点の操作
 
@@ -45,7 +45,7 @@ https://github.com/user-attachments/assets/54396bb6-9bc1-4910-a760-74ab059b6c08
 ## ダイアログ
 
 <!-- dialog_curvedeform.png -->
-![dialog_curvedeform](https://github.com/user-attachments/assets/a00f3ccf-d8a1-4342-85ec-794c191fbe9e)
+![dialog_curvedeform](https://github.com/user-attachments/assets/3a96967c-47c4-4122-a954-3d4b78831463)
 
 ### メッシュとマスクの操作
 | 操作 | 説明 |
