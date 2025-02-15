@@ -5,17 +5,17 @@
 ## 閾値による分割
 
 <!-- seg_threshold.mp4 -->
-https://github.com/user-attachments/assets/1127e853-fe7f-44d9-9877-9d72718861fd
+https://github.com/user-attachments/assets/b33239ae-5eb3-402b-9991-46465c18e6e3
 
 ## 領域成長法による分割
 
 <!-- seg_regiongrow.mp4 -->
-https://github.com/user-attachments/assets/98db8845-6782-45a6-9532-a2cbb73d2bf3
+https://github.com/user-attachments/assets/ad05cb05-0181-4a32-aba2-6a23aa99986c
 
 ## ダイアログ
 
 <!-- dialog_threthold.png -->
-![dialog_threthold](https://github.com/user-attachments/assets/46f9f60c-8d0f-4ec2-a6fd-08b5a149232d)
+![dialog_threthold](https://github.com/user-attachments/assets/c4823a13-7ef6-47a2-a535-c999c862ebaf)
 
 ### 1. 閾値の設定（赤枠）
 | 操作 | 説明 |
