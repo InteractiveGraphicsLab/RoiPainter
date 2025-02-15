@@ -627,7 +627,193 @@ void ImageCore::importObjAll(const std::vector<std::string>& fnames)
 }
 
 
-void ImageCore::ImageCore::SaveMask_Msk4(std::string fname)
+void ImageCore::ExportMaskCentroid(const std::string& fname)
+{
+  if (m_active_maskid < 0 || m_mask_data.size() <= m_active_maskid) return;
+
+  const int num_frames = GetNumFrames();
+  const int num_voxels = GetNumVoxels();
+  const EVec3i reso = GetReso();
+  const EVec3f pitch = GetPitch();
+
+  const int w = reso[0];
+  const int h = reso[1];
+  const int d = reso[2];
+
+  // get centroid
+  std::vector<EVec3f> centroids(num_frames);
+
+  for (int frame_idx = 0; frame_idx < num_frames; ++frame_idx)
+  {
+    int num_active_voxels = 0;
+    EVec3f centroid = EVec3f(0.0f, 0.0f, 0.0f);
+
+    for (int z = 0; z < d; ++z) {
+      for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+          const int idx = (z * h * w) + (y * w) + x;
+          if (m_mask4d[frame_idx][idx] == m_active_maskid)
+          {
+            ++num_active_voxels;
+            centroid += EVec3f(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z));
+          }
+        }
+      }
+    }
+
+    if (num_active_voxels <= 0)
+    {
+      centroids[frame_idx] = EVec3f(0.0f, 0.0f, 0.0f);
+      continue;
+    }
+    else
+    {
+      centroid /= num_active_voxels;
+      centroid = EVec3f(centroid[0] * pitch[0], centroid[1] * pitch[1], centroid[2] * pitch[2]);
+
+      centroids[frame_idx] = centroid;
+    }
+  }
+
+  // save as csv
+  std::ofstream file(fname);
+  if (!file)
+  {
+    std::cout << "Failed to save centroid.\n";
+    return;
+  }
+
+  file << "\"centroid [x]\","
+    << "\"centroid [y]\","
+    << "\"centroid [z]\""
+    << "\n";
+
+  for (int frame_idx = 0; frame_idx < num_frames; ++frame_idx)
+  {
+    file << centroids[frame_idx][0];
+    for (int i = 1; i < 3; ++i)
+    {
+      file << "," << centroids[frame_idx][i];
+    }
+    file << "\n";
+  }
+  file.close();
+
+  std::cout << "Saved as \"" + fname + "\"\n";
+}
+
+
+void ImageCore::ExportMaskEigenvalue(const std::string& fname)
+{
+
+  if (m_active_maskid < 0 || m_mask_data.size() <= m_active_maskid) return;
+
+  const int num_frames = GetNumFrames();
+  const int num_voxels = GetNumVoxels();
+  const EVec3i reso = GetReso();
+  const EVec3f pitch = GetPitch();
+
+  const int w = reso[0];
+  const int h = reso[1];
+  const int d = reso[2];
+
+  // get eigenvalue
+  std::vector<EVec3f> eigenvalues(num_frames);
+  std::vector<Eigen::Matrix3f> eigenvectors(num_frames);
+
+  for (int frame_idx = 0; frame_idx < num_frames; ++frame_idx)
+  {
+    std::vector<EVec3f> positions;
+
+    for (int z = 0; z < d; ++z) {
+      for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+          const int idx = (z * h * w) + (y * w) + x;
+          if (m_mask4d[frame_idx][idx] == m_active_maskid)
+          {
+            positions.push_back(EVec3f(static_cast<float>(x) * pitch[0], static_cast<float>(y) * pitch[1], static_cast<float>(z) * pitch[2]));
+          }
+        }
+      }
+    }
+
+    if (positions.size() <= 0)
+    {
+      eigenvalues[frame_idx] = EVec3f(-1.0f, -1.0f, -1.0f);
+      continue;
+    }
+    else
+    {
+      Eigen::MatrixXf points(positions.size(), 3);
+      for (int i = 0; i < positions.size(); ++i)
+      {
+        points.row(i) = positions[i].transpose();
+      }
+
+      // calc covariance
+      EVec3f mean = points.colwise().mean();
+      Eigen::MatrixXf centered = points.rowwise() - mean.transpose();
+      Eigen::MatrixXf covariance = (centered.transpose() * centered) / (centered.rows() - 1);
+
+      // get eigenvalue
+      Eigen::SelfAdjointEigenSolver<Eigen::MatrixXf> solver(covariance);
+      if (solver.info() != 0)
+      {
+        std::cout << "Failed to calc eigenvalue.\n";
+        eigenvalues[frame_idx] = EVec3f(-1.0f, -1.0f, -1.0f);
+        continue;
+      }
+
+      eigenvalues[frame_idx] = solver.eigenvalues();
+      eigenvectors[frame_idx] = solver.eigenvectors();
+    }
+  }
+
+  // save as csv
+  std::ofstream file(fname);
+  if (!file)
+  {
+    std::cout << "Failed to save eigenvalue.\n";
+    return;
+  }
+
+  file << "\"eigenvalue [x]\","
+    << "\"eigenvalue [y]\","
+    << "\"eigenvalue [z]\","
+    << "\"first eigenvector [x]\","
+    << "\"first eigenvector [y]\","
+    << "\"first eigenvector [z]\","
+    << "\"second eigenvector [x]\","
+    << "\"second eigenvector [y]\","
+    << "\"second eigenvector [z]\","
+    << "\"third eigenvector [x]\","
+    << "\"third eigenvector [y]\","
+    << "\"third eigenvector [z]\""
+    << "\n";
+
+  for (int frame_idx = 0; frame_idx < num_frames; ++frame_idx)
+  {
+    file << eigenvalues[frame_idx][0];
+    for (int i = 1; i < 3; ++i)
+    {
+      file << "," << eigenvalues[frame_idx][i];
+    }
+    for (int i = 0; i < 3; ++i)
+    {
+      for (int j = 0; j < 3; ++j)
+      {
+        file << "," << eigenvectors[frame_idx](i, j);
+      }
+    }
+    file << "\n";
+  }
+  file.close();
+
+  std::cout << "Saved as \"" + fname + "\"\n";
+}
+
+
+void ImageCore::SaveMask_Msk4(std::string fname)
 {
   FILE* fp;
   errno_t err;

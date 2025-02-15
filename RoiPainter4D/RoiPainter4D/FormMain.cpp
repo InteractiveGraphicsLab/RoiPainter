@@ -19,6 +19,7 @@
 #include "FormSegStrokeFfd.h"
 #include "FormPlaceCPs.h"
 #include "FormRefCurveDeform.h"
+#include "FormSelectMskId.h"
 
 #pragma unmanaged
 #include "OglForCLI.h"
@@ -862,6 +863,7 @@ System::Void FormMain::file_export4dcttraw_Click(
   ImageCore::GetInst()->SaveImg4D_traw3dss(fname);
 }
 
+
 System::Void FormMain::file_export4dct_mha_Click(
   System::Object^ sender,
   System::EventArgs^ e)
@@ -874,19 +876,54 @@ System::Void FormMain::file_export4dct_mha_Click(
 }
 
 
+System::Void FormMain::exportMaskCentroidcsvToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  // select mask
+  FormSelectMskId^ modal = gcnew FormSelectMskId();
+  if (modal->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
+
+  int trgtId = modal->getTrgtID();
+  modal->Close();
+
+  ImageCore::GetInst()->SetSelectMaskId(trgtId);
+
+  // save csv
+  std::string fpath;
+
+  SaveFileDialog^ dlg = gcnew SaveFileDialog();
+  dlg->Title = "save centroid";
+  dlg->Filter = "csv (*.csv;)|*.csv;";
+  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
+  IntPtr mptr = System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(dlg->FileName);
+  fpath = static_cast<const char*>(mptr.ToPointer());
+
+  ImageCore::GetInst()->ExportMaskCentroid(fpath);
+}
 
 
+System::Void FormMain::exportMaskEigenvaluecsvToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  // select mask
+  FormSelectMskId^ modal = gcnew FormSelectMskId();
+  if (modal->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
 
+  int trgtId = modal->getTrgtID();
+  modal->Close();
 
+  ImageCore::GetInst()->SetSelectMaskId(trgtId);
 
+  // save csv
+  std::string fpath;
 
+  SaveFileDialog^ dlg = gcnew SaveFileDialog();
+  dlg->Title = "save centroid";
+  dlg->Filter = "csv (*.csv;)|*.csv;";
+  if (dlg->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
+  IntPtr mptr = System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(dlg->FileName);
+  fpath = static_cast<const char*>(mptr.ToPointer());
 
-
-
-
-
-
-
+  ImageCore::GetInst()->ExportMaskEigenvalue(fpath);
+}
 
 
 System::Void FormMain::FormMain_Resize(System::Object^  sender, System::EventArgs^  e)
