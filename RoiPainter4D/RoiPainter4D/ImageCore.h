@@ -129,6 +129,9 @@ public:
   void importObjOne(const std::string& fname, const int frameI);
   void importObjAll(const std::vector<std::string>& fnames);
 
+  void ExportMaskCentroid(const std::string& fname);
+  void ExportMaskEigenvalue(const std::string& fname);
+
   const std::vector<MaskData> &GetMaskData(){ return m_mask_data; }
   int   GetSelectMaskIdx(){ return m_active_maskid; }
 
