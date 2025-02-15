@@ -15,12 +15,12 @@
 4. しばらくすると，読み込みが完了します．
 
 <!-- load_mask.mp4 -->
-https://github.com/user-attachments/assets/6b62e3ce-066b-4600-831f-f1a7ff8aa3ba
+https://github.com/user-attachments/assets/7b73386a-4684-4e8c-af7f-63fa7d7acc38
 
 ## マスク操作
 
 <!-- dialog_mask.png -->
-![dialog_mask](https://github.com/user-attachments/assets/1cb90ed9-0e8d-4ba4-b674-d2dd81f1cd95)
+![dialog_mask](https://github.com/user-attachments/assets/f8acde62-d451-4acb-9590-a300ef8fe0e9)
 
 ### 1. マスク選択（赤枠）
 管理・編集の対象とするマスクをクリックして選択します．

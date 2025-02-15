@@ -2,6 +2,10 @@
 
 # RoiPainter
 
+<!-- teaser.png -->
+![teaser](https://github.com/user-attachments/assets/811020af-27b4-4d13-b9a0-720769c906da)
+
+
 ## 導入方法
 [こちら](https://github.com/InteractiveGraphicsLab/RoiPainter/releases)より，最新のRoiPainter4Dをダウンロードできます．
 1. [ダウンロードページ](https://github.com/InteractiveGraphicsLab/RoiPainter/releases)のAssets → `RoiPainter4D.zip`をダウンロードし，解凍します．
@@ -19,9 +23,5 @@
 ### 領域の編集
 
 * 読み込んだマスク画像を編集したい → [曲線制約によるマスク編集](ModeCurveDeform.md)
-
-※他の機能の説明は後日追加予定
-
-<!-- * 輝度の差により関心領域を分割したい → [領域成長法による領域分割](ModeRGrow.md)
-* テンプレート形状に基づいて組織形状を作成したい → [曲線制約によるテンプレート変形](ModeStrokeFfd.md)
-* 読み込んだマスク画像を編集したい → [曲線制約によるマスク編集](ModeCurveDeform.md)・[マスク画像から特定の領域を削除](ModeStrokeTrim.md) -->
+* 不透明度の差から領域分割したい → [閾値と領域成長法による領域分割](ModeThreshold.md)
+* 関心領域の不要な部分を削除したい → [曲線による領域削除](ModeStrokeTrim.md)

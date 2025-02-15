@@ -11,7 +11,7 @@
 4. しばらくすると，読み込みが完了します．
 
 <!-- load_4dct.mp4 -->
-https://github.com/user-attachments/assets/56f91993-9653-4ff7-8520-21586ac0674f
+https://github.com/user-attachments/assets/16bcfe2c-a6be-43f1-846b-eef2e37b8720
 
 ## 操作方法
 4DCT画像を読み込んだ後は，様々な操作を行うことができます．
@@ -22,19 +22,19 @@ https://github.com/user-attachments/assets/56f91993-9653-4ff7-8520-21586ac0674f
 ズーム：マウスホイールを押したまま上下でズームイン/ズームアウト
 
 <!-- move_viewpoint.mp4 -->
-https://github.com/user-attachments/assets/383bd147-4309-473f-a88d-71893f192565
+https://github.com/user-attachments/assets/c603aa7b-64d0-46e4-84af-5e2b946fac67
 
 ### 断面操作
 断面にカーソルを合わせてマウスホイールを転がすと可視化する断面を変更できます．  
 また，右上のダイアログでどの断面を可視化するか選択できます．
 
 <!-- move_slice.mp4 -->
-https://github.com/user-attachments/assets/08278b4f-ce9b-4670-bdb6-c1c857fcea40
+https://github.com/user-attachments/assets/fe778f30-7380-442c-a2ad-6aa4a6181dc1
 
 ## その他の操作
 
 <!-- dialog_param.png -->
-![dialog_param](https://github.com/user-attachments/assets/f597ac35-7bff-455f-9403-c3cd724c3c2e)
+![dialog_param](https://github.com/user-attachments/assets/5935a8c7-8b78-45c4-9be3-4a6450198f38)
 
 ### 1. 全体設定（赤枠）
 
