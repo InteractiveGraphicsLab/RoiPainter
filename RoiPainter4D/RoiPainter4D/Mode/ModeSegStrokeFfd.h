@@ -99,6 +99,7 @@ public:
 
   void DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF);
   // -----------------------------------------------------------------
+
   void Deform();
 
   void LoadMeshAndCage(const std::string&, const std::string&);
@@ -125,7 +126,6 @@ public:
   void ClearSelectedStrokes();
 
 private:
-  //Add?
 
 
 };

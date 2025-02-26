@@ -11,10 +11,10 @@
 // shift + L drag  : move control point
 // shift + R click : remove control point
 //
-// (*) vol_flg
-// 0 対象外
-// 1   : 背景
-// 255 : 緑色ハイライト
+// (*) vol_flg[i]
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
 //-----------------------------------------------
 
 class ModeSegRGrow : public ModeInterface

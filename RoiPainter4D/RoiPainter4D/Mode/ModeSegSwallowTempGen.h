@@ -8,7 +8,9 @@
 #include "tmesh.h"
 #include "CagedMeshSequence.h"
 
-enum SWALLOW_ORGAN_TYPE {
+
+enum SWALLOW_ORGAN_TYPE 
+{
   SOT_ZETSU,
   SOT_NANK ,
   SOT_INTO,

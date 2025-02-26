@@ -7,16 +7,29 @@
 #include "tmesh.h"
 #include <vector>
 
+
+//-----------------------------------------------
+// (*) User Interface 
+// shift + L DoubleClick : Place/Remove Sphere 
+// shift + L drag        : move sphere or modify sphere radius 
+// The position of sphere will be interpolated along the time line
+// 
+// (*) vol_flg[i]
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
+//-----------------------------------------------
+
+
 class LocalSeed
 {
   //vectorでframe数分だけ管理する
   std::vector<float > m_radius  ;
-  std::vector<EVec3f> m_position; // 位置
-  std::vector<EVec2i> m_thresh  ; // 閾値
+  std::vector<EVec3f> m_position; 
+  std::vector<EVec2i> m_thresh  ; 
   std::vector<bool  > m_b_edit  ; // [i] = 1 なら i-th frameにおいて半径・閾値・位置のどれかがユーザにより編集された
 
 public:
-
   LocalSeed(
     const int    num_frames,
     const int    edit_frame_idx,
@@ -46,6 +59,9 @@ public:
     m_b_edit   = bedit   ;
   }
 
+  LocalSeed& operator=(const LocalSeed& src) { Set(src); return *this; }
+  LocalSeed(const LocalSeed& src) { Set(src); }
+
   void Set(const LocalSeed& src)
   {
     m_position  = src.m_position;
@@ -54,16 +70,6 @@ public:
     m_thresh    = src.m_thresh;
   }
 
-  LocalSeed& operator=(const LocalSeed& src)
-  {
-    Set(src);
-    return *this;
-  }
-
-  LocalSeed(const LocalSeed& src)
-  {
-    Set(src);
-  }
 
   //setter
   void SetPosition ( int frame_idx, EVec3f pos   ){ m_position[frame_idx]    = pos;  }
@@ -96,15 +102,14 @@ public:
 	  if ( frame_idx < 0 || frame_idx >= m_b_edit.size() ) return false;
 	  else return m_b_edit[frame_idx];
   }
-
 };
 
 
 
 
 
-//sphere のみのLocal Region Growing
-// curved cylinderを領するのは ModeSegBolus 
+// Local Region Growing with SPHEREs 
+// ModeSegBolus supports Local Region Growing with Curved Cylinder
 
 
 class ModeSegLocalRGrow : public ModeInterface
@@ -120,11 +125,9 @@ class ModeSegLocalRGrow : public ModeInterface
   int   m_active_seed_id; //半径や閾値を変更する対象のシードid
   bool  m_is_drag_activeseed;
   bool  m_is_resize_activeseed;
-
   bool  m_is_modified;
 
   ModeSegLocalRGrow();
-
 public:
   ~ModeSegLocalRGrow();
   static ModeSegLocalRGrow* GetInst() {
@@ -132,6 +135,7 @@ public:
     return &p;
   }
 
+  // overload functions ---------------------------------------------
   MODE_ID GetModeID() { return MODE_SEG_LCLRGROW; }
   void LBtnUp    (const EVec2i &p, OglForCLI *ogl);
   void RBtnUp    (const EVec2i &p, OglForCLI *ogl);
@@ -147,14 +151,12 @@ public:
 
   void KeyDown( int nChar );
   void KeyUp  ( int nChar );
-
   //this function is called before switch the mode (if return false, the mode will not be switched)
   bool CanEndMode();
-
   //this function is called just after switch the mode
   void StartMode();
   void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
-
+  //-----------------------------------------------------------------
 
   void FinishSegmentation();
   void CancelSegmentation();

@@ -5,25 +5,21 @@
 #include "ModeInterface.h"
 #include "GlslShader.h"
 
-//UI 
-// ここにUIの概要を書く
+
+//-----------------------------------------------
+// (*) User Interface 
 // shift + L drag : paint voxel / drawa lasso for foreground
 // shift + R drag : paint voxel / drawa lasso for background
 //
-//
+// (*) vol_flg[i]
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
+//-----------------------------------------------
 
-//vol_flg
-//0   : 対象外
-//1   : 背景
-//255 : 緑色ハイライト
-
-
-//TODO
-//used for refinement
 
 class ModeSegPixPaint : public ModeInterface
 {
-
   GlslShaderVolume    m_volume_shader;
   GlslShaderCrsSec    m_crssec_shader;
 
@@ -38,7 +34,6 @@ class ModeSegPixPaint : public ModeInterface
 
   //others
   bool m_b_modified;
-
 
   ModeSegPixPaint();
 public:

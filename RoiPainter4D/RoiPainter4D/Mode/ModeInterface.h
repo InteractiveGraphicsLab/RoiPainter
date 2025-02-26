@@ -35,6 +35,32 @@ enum MODE_ID
 };
 
 
+
+/*
+refactoring Check UI and flg4d useage
+	MODE_VIS_NORMAL    , YET 
+	MODE_VIS_MASK      , YET
+
+	MODE_SEG_PIXPAINT  , DONE 
+	MODE_SEG_REGGROW   , DONE 
+	MODE_SEG_RIGIDICP  , YET
+	MODE_SEG_CLOSESTPIX, 
+	MODE_SEG_LCLRGROW ,  DONE 
+	MODE_SEG_BOLUS    ,  YET
+	MODE_SEG_JTRACKER ,  YET
+	MODE_REF_STRKTRIM ,  YET
+	MODE_SEG_SWALLOW  ,  YET
+	MODE_SEG_SWLTMPGEN,  YET
+	MODE_SEG_BRONCHI  ,  YET
+	MODE_SEG_STROKEFFD,  YET
+	MODE_PLC_CPS,        YET
+	MODE_REF_CURVEDEFORM,YET
+*/
+
+
+
+
+
 //red green blue
 static float COLOR_R [4] = {1.0f, 0.0f, 0.0f, 0.5f};
 static float COLOR_RH[4] = {0.5f, 0.0f, 0.0f, 0.5f};

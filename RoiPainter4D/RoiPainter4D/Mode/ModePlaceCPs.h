@@ -74,10 +74,8 @@ public:
   void ExportControlPoints(std::string fname);
   void ImportControlPoints(std::string fname);
 
-
   void LoadTemplateMesh(std::string fname);
   void FitTemplateUsingCPs(bool modify_scale);
-
 
 private:
   bool PickPlanesIsosurf(const EVec3f &ray_pos, const EVec3f &ray_dir, EVec3f &pos);

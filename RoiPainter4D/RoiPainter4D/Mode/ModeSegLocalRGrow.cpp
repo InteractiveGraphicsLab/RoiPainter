@@ -183,7 +183,7 @@ void ModeSegLocalRGrow::LoadSeedInfo(std::string fname)
       bedit[f] = flg_01?true:false;
     }
 
-    m_seeds.push_back( LocalSeed( num_frames, radius, position, thresh, bedit ));
+    m_seeds.push_back( LocalSeed( num_frames, radius, position, thresh, bedit  ));
   }
 
   m_active_seed_id = (int)m_seeds.size() - 1;
@@ -433,7 +433,7 @@ void ModeSegLocalRGrow::StartMode()
   m_is_resize_activeseed = false;
 
   m_seeds.clear();
-  m_cp_radius = 2.0f*ImageCore::GetInst()->GetPitch().x();
+  m_cp_radius = 2.0f * ImageCore::GetInst()->GetPitch().x();
 
   m_unitsphere.InitializeAsSphere( 1.0, 20, 20);
 
@@ -442,7 +442,7 @@ void ModeSegLocalRGrow::StartMode()
 
   //show dialog
   EVec2i minmax = ImageCore::GetInst()->GetVolumeMinMax();
-  EVec3f cube  = ImageCore::GetInst()->GetCuboidF();
+  EVec3f cube   = ImageCore::GetInst()->GetCuboidF();
   float max_radius = max3(cube[0], cube[1], cube[2]);
 
   FormSegLocalRGrow_Show();
@@ -809,21 +809,10 @@ void ModeSegLocalRGrow::RunLocalRegionGrow_OnlyTrgtFrame(int trgt_frame_idx)
       m_seeds[si].GetThreshold(trgt_frame_idx), 
       W,H,D,pitch, img3d, tmp_flg3d);
 
-    //int cnt_0 = 0, cnt_1 = 0, cnt_255 = 0;
-
     for (int vi = 0; vi < WHD; ++vi) {
       if (tmp_flg3d[vi] == 255)
         flg3d[vi] = 255;
-
-      //if (flg3d[vi] == 0) cnt_0++;
-      //if (flg3d[vi] == 1) cnt_1++;
-      //if (flg3d[vi] == 255) cnt_255++;
-
     }
-    //cout << "  0 " << cnt_0 << "\n";//0のみ
-    //cout << "  1 " << cnt_1 << "\n";
-    //cout << "255 " << cnt_255 << "\n";
-
   }
   delete[] tmp_flg3d ;
   delete[] init_inout;
@@ -854,7 +843,6 @@ void ModeSegLocalRGrow::RunLocalRegionGrow_OnlyCurrentFrame()
   UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
 }
-
 
 
 #pragma managed

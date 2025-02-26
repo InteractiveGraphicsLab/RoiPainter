@@ -553,19 +553,17 @@ void ImageCore::importObjOne(const std::string& fname, const int frameI)
   for (int i = 0; i < num_voxel; ++i)
   {
     if (img[i] && !mask_locked[flg3d[i]])
-    {
       flg3d[i] = 255;
-    }
     else
-    {
       flg3d[i] = 0;
-    }
   }
   img.reset();
 
   // store mask
   ImageCore::GetInst()->mask_storeCurrentForeGround();
 }
+
+
 
 
 void ImageCore::importObjAll(const std::vector<std::string>& fnames)
@@ -611,13 +609,9 @@ void ImageCore::importObjAll(const std::vector<std::string>& fnames)
     for (int i = 0; i < num_voxel; ++i)
     {
       if (img[i] && !mask_locked[flg3d[i]])
-      {
         flg3d[i] = 255;
-      }
       else
-      {
         flg3d[i] = 0;
-      }
     }
     img.reset();
   }
@@ -668,7 +662,7 @@ void ImageCore::ExportMaskCentroid(const std::string& fname)
     }
     else
     {
-      centroid /= num_active_voxels;
+      centroid /= (float) num_active_voxels;
       centroid = EVec3f(centroid[0] * pitch[0], centroid[1] * pitch[1], centroid[2] * pitch[2]);
 
       centroids[frame_idx] = centroid;
@@ -753,7 +747,7 @@ void ImageCore::ExportMaskEigenvalue(const std::string& fname)
       // calc covariance
       EVec3f mean = points.colwise().mean();
       Eigen::MatrixXf centered = points.rowwise() - mean.transpose();
-      Eigen::MatrixXf covariance = (centered.transpose() * centered) / (centered.rows() - 1);
+      Eigen::MatrixXf covariance = (centered.transpose() * centered) / ((float)centered.rows() - 1);
 
       // get eigenvalue
       Eigen::SelfAdjointEigenSolver<Eigen::MatrixXf> solver(covariance);
