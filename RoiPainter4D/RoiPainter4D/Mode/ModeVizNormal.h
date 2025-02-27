@@ -5,6 +5,14 @@
 #include "GlslShader.h"
 #include <vector>
 
+//-----------------------------------------------
+// (*) User Interface 
+// + Standard Camera Rot/Trans/Zoom
+// 
+// (*) vol_flg[i]
+// not used
+//-----------------------------------------------
+
 class ModeVizNormal : public ModeInterface
 {
   GlslShaderVolume m_volume_shader;

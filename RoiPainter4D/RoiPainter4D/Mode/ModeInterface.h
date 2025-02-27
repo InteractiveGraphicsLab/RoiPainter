@@ -17,7 +17,6 @@ enum MODE_ID
 	MODE_SEG_PIXPAINT  , // ModeSegPixPaint
 	MODE_SEG_REGGROW   , // ModeSegRegGrow     
 	MODE_SEG_RIGIDICP  , // ModeSegRigidICP    (SJTrackerより)
-	MODE_SEG_CLOSESTPIX, // ModeSegClosestPix  (SproutViewerより TODO Tomofumi Narita)
 	//MODE_SEG_PARACONT ,// ModeSegParaConts(Parallel Contours by Chika Tomiyama, Removed 20220517)
 	MODE_SEG_LCLRGROW ,  // ModeSegLocalRGrow (Local Region Growing by Hikaru Shionozaki)
 	MODE_SEG_BOLUS    ,  // ModeSegBolus      (by shionzaki )
@@ -38,14 +37,13 @@ enum MODE_ID
 
 /*
 refactoring Check UI and flg4d useage
-	MODE_VIS_NORMAL    , YET 
-	MODE_VIS_MASK      , YET
-
-	MODE_SEG_PIXPAINT  , DONE 
-	MODE_SEG_REGGROW   , DONE 
-	MODE_SEG_RIGIDICP  , YET
-	MODE_SEG_CLOSESTPIX, 
-	MODE_SEG_LCLRGROW ,  DONE 
+	MODE_VIS_NORMAL    , DONE  volFlg     crssecFlg
+	MODE_VIS_MASK      , DONE  volFlg_Msk crssecFlg_Msk
+	MODE_SEG_PIXPAINT  , DONE  volFlg_Seg crssecFlg_Seg //highlight 255 pixel
+	MODE_SEG_REGGROW   , DONE  volFlg_Seg crssecFlg_Seg
+	MODE_SEG_RIGIDICP  , YET   volFlg_Seg crssecFlg_Seg
+	MODE_SEG_CLOSESTPIX, DONE  削除
+	MODE_SEG_LCLRGROW ,  DONE  volFlg_Seg crssecFlg_Seg
 	MODE_SEG_BOLUS    ,  YET
 	MODE_SEG_JTRACKER ,  YET
 	MODE_REF_STRKTRIM ,  YET

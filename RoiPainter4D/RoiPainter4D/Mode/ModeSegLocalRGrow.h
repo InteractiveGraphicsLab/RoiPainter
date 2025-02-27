@@ -148,13 +148,10 @@ public:
   void MBtnDclk  (const EVec2i &p, OglForCLI *ogl);
   void MouseMove (const EVec2i &p, OglForCLI *ogl);
   void MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl);
-
   void KeyDown( int nChar );
   void KeyUp  ( int nChar );
-  //this function is called before switch the mode (if return false, the mode will not be switched)
-  bool CanEndMode();
-  //this function is called just after switch the mode
   void StartMode();
+  bool CanEndMode();
   void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
   //-----------------------------------------------------------------
 
@@ -177,7 +174,6 @@ public:
 
   const std::vector<LocalSeed>& getSeedList() { return m_seeds; }
   
-  //todo 
   void RunSeedInterpolation(int trgt_seed_id);
   
   void RunLocalRegionGrow_Allframe();

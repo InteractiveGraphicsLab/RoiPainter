@@ -19,7 +19,7 @@ ModeVizNormal::~ModeVizNormal()
 
 
 ModeVizNormal::ModeVizNormal() :
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg.glsl"),
+  m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg.glsl"   ),
   m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
 {
   std::cout << "ModeVizNormal...\n";
@@ -105,7 +105,7 @@ void ModeVizNormal::MBtnUp(const EVec2i &p, OglForCLI *ogl)
 }
 
 
-void ModeVizNormal::LBtnDclk(const EVec2i &p, OglForCLI *ogl){}
+void ModeVizNormal::LBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeVizNormal::RBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeVizNormal::MBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 

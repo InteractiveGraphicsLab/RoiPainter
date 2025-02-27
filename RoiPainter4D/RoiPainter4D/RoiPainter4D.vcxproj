@@ -173,7 +173,6 @@
     <ClCompile Include="FormRefStrokeTrim.cpp" />
     <ClCompile Include="FormSegBolus.cpp" />
     <ClCompile Include="FormSegBronchi.cpp" />
-    <ClCompile Include="FormSegClosestPix.cpp" />
     <ClCompile Include="FormSegJointTracker.cpp" />
     <ClCompile Include="FormSegLocalRGrow.cpp" />
     <ClCompile Include="FormSegPixPaint.cpp" />
@@ -200,7 +199,6 @@
     <ClCompile Include="Mode\ModeRefStrokeTrim.cpp" />
     <ClCompile Include="Mode\ModeSegBolus.cpp" />
     <ClCompile Include="Mode\ModeSegBronchi.cpp" />
-    <ClCompile Include="Mode\ModeSegClosestPix.cpp" />
     <ClCompile Include="Mode\ModeSegJointTracker.cpp" />
     <ClCompile Include="Mode\ModeSegLocalRGrow.cpp" />
     <ClCompile Include="Mode\ModeSegPixPaint.cpp" />
@@ -253,9 +251,6 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="FormSegBronchi.h">
-      <FileType>CppForm</FileType>
-    </ClInclude>
-    <ClInclude Include="FormSegClosestPix.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="FormSegJointTracker.h">
@@ -312,7 +307,6 @@
     <ClInclude Include="Mode\ModeRefStrokeTrim.h" />
     <ClInclude Include="Mode\ModeSegBolus.h" />
     <ClInclude Include="Mode\ModeSegBronchi.h" />
-    <ClInclude Include="Mode\ModeSegClosestPix.h" />
     <ClInclude Include="Mode\ModeSegJointTracker.h" />
     <ClInclude Include="Mode\ModeSegLocalRGrow.h" />
     <ClInclude Include="Mode\ModeSegPixPaint.h" />
@@ -348,9 +342,6 @@
     <EmbeddedResource Include="FormSegBronchi.resx">
       <DependentUpon>FormSegBronchi.h</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormSegClosestPix.resx">
-      <DependentUpon>FormSegClosestPix.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormSegJointTracker.resx">
       <DependentUpon>FormSegJointTracker.h</DependentUpon>

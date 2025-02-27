@@ -8,6 +8,18 @@
 #include <vector>
 #include <set>
 
+//-----------------------------------------------
+// (*) User Interface 
+// shift + L click : 
+// shift + L drag  : translate/rotate src_surface or rot_pivot  
+// shift + R click :  
+//
+// (*) vol_flg[i]
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
+//-----------------------------------------------
+
 
 class ModeSegRigidICP : public ModeInterface
 {
@@ -15,27 +27,26 @@ class ModeSegRigidICP : public ModeInterface
   GlslShaderVolume m_volume_shader;
   GlslShaderCrsSec m_crssec_shader;
 
-  //等値面情報
-  int                        m_isovalue;
+  //iso surfaces 等値面
+  int m_isovalue;
   std::vector<TTriangleSoup> m_isosurfaces;
 
-  //各フレームにフィッテイングするsurface
+  //surface for fitting (各frameにfittingする面と行列)
   TTriangleSoup       m_source_surface;
   std::vector<EMat4d> m_icpmats;
-  EVec3f m_handle_pivot;
-  //
-  bool m_b_show_source_and_iso_surface;
 
   //Cut Stroke
   bool m_b_draw_stroke;
   std::vector<EVec3f> m_stroke;
 
   //source surface の移動
+  EVec3f m_handle_pivot;
   EVec2i m_pre_mouse_point;
-  bool   m_b_trans_pivot      ;
+  bool   m_b_trans_pivot  ;
   bool   m_b_trans_srcsurf;
-  bool   m_b_rot_srcsurf;
-  EMat3f m_rotate_handle_r;
+  bool   m_b_rot_srcsurf  ;
+
+  bool   m_b_show_source_and_iso_surface;
   bool   m_b_modified;
 
   ModeSegRigidICP();
@@ -64,14 +75,14 @@ public:
   void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
   // ---------------------------------------------------------------
 
-  void LoadSourceSurfaceObj      (const std::string file_name);
-  void IsosurfaceGenerateOneFrame(const int    isovalue, const int frame_index);
-  void IsosurfaceGenerateAllFrame(const int    isovalue);
-  void PerformTracking           (const float icpRejectionScale, 
-                                  const int   icpNumLevels, 
-                                  const int   start_index, 
-                                  const int   end_index, 
-                                  const bool  b_parallelTracking);
+  void GenIsoSurface_OneFrm(const int isovalue, const int frame_index);
+  void GenIsoSurface_AllFrn(const int isovalue);
+  void LoadSrcSurface ( const std::string file_name);
+  void PerformTracking( const float icpRejectionScale,
+                        const int   icpNumLevels, 
+                        const int   start_index, 
+                        const int   end_index, 
+                        const bool  b_parallelTracking);
   void FinishSegmentation(const bool b_storeallframes);
   void CancelSegmentation();
   void ExportMatrixSequence(std::string fname); 

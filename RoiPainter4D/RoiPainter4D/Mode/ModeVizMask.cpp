@@ -15,15 +15,14 @@ using namespace RoiPainter4D;
 
 
 ModeVizMask::ModeVizMask() :
-  m_volumeShader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl"),
+  m_volumeShader("shader/volVtx.glsl"   , "shader/volFlg_Msk.glsl"   ),
   m_crssecShader("shader/crssecVtx.glsl", "shader/crssecFlg_Msk.glsl")
 {
   std::cout << "ModeVizMask const...----------------------\n";
-
   m_bL = m_bR = m_bM = false;
- 
   std::cout << "ModeVizMask DONE -------------------------\n";
 }
+
 
 ModeVizMask::~ModeVizMask()
 {
@@ -93,6 +92,9 @@ void ModeVizMask::MBtnUp(const EVec2i &p, OglForCLI *ogl)
 void ModeVizMask::LBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeVizMask::RBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeVizMask::MBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
+void ModeVizMask::KeyDown(int nChar) {}
+void ModeVizMask::KeyUp(int nChar) {}
+
 
 void ModeVizMask::MouseMove(const EVec2i &p, OglForCLI *ogl)
 {
@@ -103,18 +105,14 @@ void ModeVizMask::MouseMove(const EVec2i &p, OglForCLI *ogl)
 }
 
 
-
 void ModeVizMask::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 {
-  if(!WheelingCrssec(p, z_delta, ogl) ) {
+  if(!WheelingCrssec(p, z_delta, ogl) ) 
+  {
     ogl->ZoomCamera(z_delta * 0.1f);
   }
   formMain_RedrawMainPanel();
 }
-
-
-void ModeVizMask::KeyDown(int nChar) {}
-void ModeVizMask::KeyUp(int nChar) {}
 
 
 void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)

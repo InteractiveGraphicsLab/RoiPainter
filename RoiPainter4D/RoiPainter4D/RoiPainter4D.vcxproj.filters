@@ -66,14 +66,8 @@
     <ClCompile Include="FormVisMask.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Mode\ModeSegClosestPix.cpp">
-      <Filter>Mode</Filter>
-    </ClCompile>
     <ClCompile Include="Mode\ModeSegRigidICP.cpp">
       <Filter>Mode</Filter>
-    </ClCompile>
-    <ClCompile Include="FormSegClosestPix.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="FormSegRigidICP.cpp">
       <Filter>ソース ファイル</Filter>
@@ -245,14 +239,8 @@
     <ClInclude Include="FormVisMask.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Mode\ModeSegClosestPix.h">
-      <Filter>Mode</Filter>
-    </ClInclude>
     <ClInclude Include="Mode\ModeSegRigidICP.h">
       <Filter>Mode</Filter>
-    </ClInclude>
-    <ClInclude Include="FormSegClosestPix.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="FormSegRigidICP.h">
       <Filter>ヘッダー ファイル</Filter>

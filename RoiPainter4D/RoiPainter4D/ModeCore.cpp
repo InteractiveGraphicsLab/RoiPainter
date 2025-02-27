@@ -6,7 +6,6 @@
 #include "Mode/ModeSegRGrow.h"
 #include "Mode/ModeSegPixPaint.h"
 #include "Mode/ModeSegRigidICP.h"
-#include "Mode/ModeSegClosestPix.h"
 #include "Mode/ModeSegLocalRGrow.h"
 #include "Mode/ModeSegBolus.h"
 #include "Mode/ModeSegSwallowOrgans.h"
@@ -24,7 +23,6 @@
 #include "FormSegPixPaint.h"
 #include "FormSegRGrow.h"
 #include "FormSegRigidICP.h"
-#include "FormSegClosestPix.h"
 #include "FormSegLocalRGrow.h"
 #include "FormSegJointTracker.h"
 #include "FormSegBolus.h"
@@ -68,7 +66,6 @@ void ModeCore::ModeSwitch(MODE_ID m)
   else if (m == MODE_SEG_REGGROW)   m_mode = ModeSegRGrow::GetInst();
   else if (m == MODE_SEG_PIXPAINT)  m_mode = ModeSegPixPaint::GetInst();
   else if (m == MODE_SEG_RIGIDICP)  m_mode = ModeSegRigidICP::GetInst();
-  else if (m == MODE_SEG_CLOSESTPIX)m_mode = ModeSegClosestPix::GetInst();
   //else if (m == MODE_SEG_PARACONT) 
   //  m_mode = ModeSegParaConts::getInst();
   else if (m == MODE_SEG_LCLRGROW)  m_mode = ModeSegLocalRGrow::GetInst();
@@ -90,7 +87,6 @@ void ModeCore::ModeSwitch(MODE_ID m)
   formSegPixPaint_Hide();
   formSegRGrow_Hide();
   FormSegRigidICPHide();
-  formSegClosestPix_Hide();
   FormSegLocalRGrow_Hide();
   FormSegSwallowOrgans_Hide();
   formRefStrokeTrim_Hide();

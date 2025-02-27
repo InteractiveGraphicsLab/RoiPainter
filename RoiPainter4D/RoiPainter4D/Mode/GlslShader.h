@@ -143,9 +143,7 @@ bool t_InitializeShader
   const char* frgFname,
   GLuint &_gl2Program
 );
-
-int t_ReadShaderSource(GLuint shader, const char *file);
-
+int  t_ReadShaderSource(GLuint shader, const char *file);
 void t_PrintShaderInfoLog(GLuint shader);
 
 #endif

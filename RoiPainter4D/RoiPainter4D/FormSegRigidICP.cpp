@@ -55,7 +55,7 @@ System::Void FormSegRigidICP::BtnGenIsoSurfClick(System::Object^  sender, System
     button_runicp_allPara_->Enabled = true;
   }
 
-	ModeSegRigidICP::GetInst()->IsosurfaceGenerateAllFrame(trackbar_setisoValue_->Value);
+	ModeSegRigidICP::GetInst()->GenIsoSurface_AllFrn(trackbar_setisoValue_->Value);
 	formMain_RedrawMainPanel();
 }
 
@@ -86,7 +86,7 @@ System::Void FormSegRigidICP::BtnLoadSurfaceClick(System::Object^  sender, Syste
 
 	IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
 	std::string fname = static_cast<const char*>(mptr.ToPointer());
-	ModeSegRigidICP::GetInst()->LoadSourceSurfaceObj(fname);
+	ModeSegRigidICP::GetInst()->LoadSrcSurface(fname);
 
 	formMain_RedrawMainPanel();
 }
@@ -255,7 +255,7 @@ System::Void FormSegRigidICP::btnGenTest_Click(System::Object^  sender, System::
   button_runicp_current_->Enabled = false;
   button_runicp_allPara_->Enabled = false;
 
-  ModeSegRigidICP::GetInst()->IsosurfaceGenerateOneFrame(trackbar_setisoValue_->Value, formVisParam_getframeI());
+  ModeSegRigidICP::GetInst()->GenIsoSurface_OneFrm(trackbar_setisoValue_->Value, formVisParam_getframeI());
   formMain_RedrawMainPanel();
 }
 

@@ -44,7 +44,7 @@ ModeSegRigidICP::~ModeSegRigidICP()
 
 
 ModeSegRigidICP::ModeSegRigidICP() :
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl"),
+  m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg_Seg.glsl"),
   m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
 {
   std::cout << "ModeSegRigidICP...\n";
@@ -187,8 +187,6 @@ void ModeSegRigidICP::StartMode()
   m_icpmats.clear();
   m_icpmats.resize(num_frame, EMat4d::Identity());
 
-  m_rotate_handle_r = EMat3f::Identity();
-
   //4D volume (cpu) --> vis volume (gpu)
   UpdateImageCoreVisVolumes();
   std::cout << "finitsh start mode!!!!\n";
@@ -237,8 +235,6 @@ void ModeSegRigidICP::LBtnUp(const EVec2i &p, OglForCLI *ogl)
   m_b_trans_srcsurf = false;
   m_b_trans_pivot   = false;
   m_b_rot_srcsurf   = false;
-
-  m_rotate_handle_r = EMat3f::Identity();
 
   ogl->BtnUp();
   formMain_RedrawMainPanel();
@@ -467,7 +463,7 @@ void ModeSegRigidICP::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const 
 
 
 
-void ModeSegRigidICP::IsosurfaceGenerateOneFrame(const int isovalue, const int frame_idx)
+void ModeSegRigidICP::GenIsoSurface_OneFrm(const int isovalue, const int frame_idx)
 {
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
   m_isosurfaces.clear();
@@ -484,7 +480,7 @@ void ModeSegRigidICP::IsosurfaceGenerateOneFrame(const int isovalue, const int f
 
 
 
-void ModeSegRigidICP::IsosurfaceGenerateAllFrame(const int isovalue)
+void ModeSegRigidICP::GenIsoSurface_AllFrn(const int isovalue)
 {
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
   m_isosurfaces.clear();
@@ -678,7 +674,7 @@ void ModeSegRigidICP::PerformTracking(
 
 
 
-void ModeSegRigidICP::LoadSourceSurfaceObj(const std::string file_name)
+void ModeSegRigidICP::LoadSrcSurface(const std::string file_name)
 {
   //obj or stl
   m_source_surface.Clear();

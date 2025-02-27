@@ -8,7 +8,7 @@
 //-----------------------------------------------
 // (*) User Interface 
 // shift + L click : place control point
-// shift + L drag  : move control point
+// shift + L drag  : move  control point
 // shift + R click : remove control point
 //
 // (*) vol_flg[i]

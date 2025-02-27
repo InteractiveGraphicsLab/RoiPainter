@@ -21,12 +21,12 @@ ModeSegRGrow::ModeSegRGrow() :
   m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl"),
   m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
 {
-  std::cout << "ModeSegThreshPnt...\n";
+  std::cout << "ModeSegRGrow...\n";
 
   m_bL = m_bR = m_bM = false;
   m_b_draw_cutstroke = m_b_modified = false;
 
-  std::cout << "ModeSegThreshPnt DONE\n";
+  std::cout << "ModeSegRGrow DONE\n";
 }
 
 
