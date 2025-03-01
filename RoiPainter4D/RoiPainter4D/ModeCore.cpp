@@ -12,7 +12,6 @@
 #include "Mode/ModeRefStrokeTrim.h"
 #include "Mode/ModeSegJointTracker.h"
 #include "Mode/ModeSegBronchi.h"
-#include "Mode/ModeSegSwallowTempGen.h"
 #include "Mode/ModeSegStrokeFfd.h"
 #include "Mode/ModePlaceCPs.h"
 #include "Mode/ModeRefCurveDeform.h"
@@ -29,7 +28,6 @@
 #include "FormSegSwallowOrgans.h"
 #include "FormSegSwallowOrganTimeline.h"
 #include "FormSegBronchi.h"
-#include "FormSegSwallowTempGen.h"
 #include "FormRefStrokeTrim.h"
 #include "FormSegStrokeFfd.h"
 #include "FormPlaceCPs.h"
@@ -71,7 +69,6 @@ void ModeCore::ModeSwitch(MODE_ID m)
   else if (m == MODE_SEG_LCLRGROW)  m_mode = ModeSegLocalRGrow::GetInst();
   else if (m == MODE_SEG_BOLUS)     m_mode = ModeSegBolus::getInst();
   else if (m == MODE_SEG_SWALLOW)   m_mode = ModeSegSwallowOrgans::GetInst();
-  else if (m == MODE_SEG_SWLTMPGEN) m_mode = ModeSegSwallowTempGen::getInst();
   else if (m == MODE_REF_STRKTRIM)  m_mode = ModeRefStrokeTrim::GetInst();
   else if (m == MODE_SEG_JTRACKER)  m_mode = ModeSegJointTracker::GetInst();
   else if (m == MODE_SEG_STROKEFFD) m_mode = ModeSegStrokeFfd::GetInst();
@@ -94,7 +91,6 @@ void ModeCore::ModeSwitch(MODE_ID m)
   FormSegJointTracker_Hide();
   FormSegSwallowTimeline_Hide();
   formSegBronchi_Hide();
-  FormSegSwallowTempGen_Hide();
   FormSegStrokeFfd_Hide();
   FormPlaceCPs_Hide();
   FormRefCurveDeform_Hide();

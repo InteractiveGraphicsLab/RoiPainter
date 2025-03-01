@@ -24,7 +24,6 @@ using namespace marchingcubes;
 
 ModePlaceCPs::~ModePlaceCPs() 
 {
-
 }
 
 
@@ -35,7 +34,6 @@ ModePlaceCPs::ModePlaceCPs():
   std::cout << "ModePlaceCPs...\n";
   m_bL = m_bR = m_bM = false;
   m_b_draw_stroke = false;
-
   std::cout << "ModePlaceCPs done\n";
 }
 

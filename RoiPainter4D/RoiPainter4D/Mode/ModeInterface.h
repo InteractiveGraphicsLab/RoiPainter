@@ -23,7 +23,6 @@ enum MODE_ID
   MODE_SEG_JTRACKER ,  // ModeJontTracker   (For Hokkaidou Univ)
 	MODE_REF_STRKTRIM ,  // ModeRefStrkTrim     
   MODE_SEG_SWALLOW  ,  // ModeSegSwallowOrgans
-  MODE_SEG_SWLTMPGEN,  // ModeSegSallowTemGen 
   MODE_SEG_BRONCHI  ,  // ModeSegBronchi   (by Takata) FormSegModeBronchi
 	MODE_SEG_STROKEFFD,  // ModeSegStrokeFfd, FormSegStrokeFfd (by Yuki Kimura, 20220524)
 	MODE_PLC_CPS,         // ModePlaceCps    , FormPlaceCPs     tool for landmark placement
@@ -41,18 +40,32 @@ refactoring Check UI and flg4d useage
 	MODE_VIS_MASK      , DONE  volFlg_Msk crssecFlg_Msk
 	MODE_SEG_PIXPAINT  , DONE  volFlg_Seg crssecFlg_Seg //highlight 255 pixel
 	MODE_SEG_REGGROW   , DONE  volFlg_Seg crssecFlg_Seg
-	MODE_SEG_RIGIDICP  , YET   volFlg_Seg crssecFlg_Seg
+	MODE_SEG_RIGIDICP  , DONE  volFlg_Seg crssecFlg_Seg
 	MODE_SEG_CLOSESTPIX, DONE  削除
 	MODE_SEG_LCLRGROW ,  DONE  volFlg_Seg crssecFlg_Seg
-	MODE_SEG_BOLUS    ,  YET
-	MODE_SEG_JTRACKER ,  YET
-	MODE_REF_STRKTRIM ,  YET
-	MODE_SEG_SWALLOW  ,  YET
-	MODE_SEG_SWLTMPGEN,  YET
-	MODE_SEG_BRONCHI  ,  YET
-	MODE_SEG_STROKEFFD,  YET
-	MODE_PLC_CPS,        YET
+	MODE_SEG_BOLUS    ,  DONE  volFlg  volFlg_Seg crssecFlg_Seg //２つを切り替えてる
+	MODE_SEG_JTRACKER ,  DONE  volFlg_Seg  crssecFlg_Seg
+	MODE_SEG_SWALLOW  ,  DONE  volFlg_Msk  crssecFlg
+	MODE_SEG_SWLTMPGEN,  DONE   削除volFlg crssecFlg //cage meshの時間方向をアジャストする手法．削除でいいかな (杉本さん）
+	MODE_SEG_BRONCHI  ,  DONE  volFlg_Seg  crssecFlg_Seg
+	MODE_SEG_STROKEFFD,  DONE  volFlg_Msk  crssecFlg //UIの詳細は不明
+	MODE_PLC_CPS,        DONE  volFlg      crssecFlg 内側を塗るときにflg4d利用
+	MODE_REF_STRKTRIM ,  YET   
 	MODE_REF_CURVEDEFORM,YET
+
+ refactor 1 move shader to shader manager
+ refactor 2 move this function 
+	bool b_fore_exist = false;
+	for (int fi = 0; fi < num_frames && !b_fore_exist; ++fi)
+	{
+		for (int i = 0; i < num_voxels && !b_fore_exist; ++i)
+		{
+			if (flg4d[fi][i] == 255) b_fore_exist = true;
+		}
+	}
+  to image core
+
+
 */
 
 

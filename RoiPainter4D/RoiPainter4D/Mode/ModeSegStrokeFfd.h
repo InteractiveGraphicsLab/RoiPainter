@@ -11,9 +11,19 @@
 
 #include "DeformationStrokes.h" // 曲線制約によるモデル変形
 
+//-----------------------------------------------
+// By YUKI KIMURA published in PLoS ONE 
+// 
+// (*) User Interface 
+// TODO 木村くんのコードを読んで確認
+//
+// (*) vol_flg[i]
+// not used
+//-----------------------------------------------
 
-class ModeSegStrokeFfd :
-  public ModeInterface
+
+
+class ModeSegStrokeFfd : public ModeInterface
 {
   GlslShaderVolume m_volume_shader;
   GlslShaderCrsSec m_crssec_shader;
@@ -27,11 +37,11 @@ class ModeSegStrokeFfd :
   };
   E_Mode m_mode_deform;
 
-  int m_mode_transform;
-  int m_cp_size;
+  int   m_mode_transform;
+  int   m_cp_size;
   float m_cp_rate;
-  int m_prev_frame_idx;
-  bool m_draw_surf_trans;
+  int   m_prev_frame_idx;
+  bool  m_draw_surf_trans;
 
   // Stroke Mode
   std::vector<DeformationStrokes> m_strokes;
@@ -79,24 +89,22 @@ public:
 
   // overload functions ---------------------------------------------
   MODE_ID GetModeID() { return MODE_VIS_NORMAL; }
-  void LBtnUp(const EVec2i& p, OglForCLI* ogl);
-  void RBtnUp(const EVec2i& p, OglForCLI* ogl);
-  void MBtnUp(const EVec2i& p, OglForCLI* ogl);
-  void LBtnDown(const EVec2i& p, OglForCLI* ogl);
-  void RBtnDown(const EVec2i& p, OglForCLI* ogl);
-  void MBtnDown(const EVec2i& p, OglForCLI* ogl);
-  void LBtnDclk(const EVec2i& p, OglForCLI* ogl);
-  void RBtnDclk(const EVec2i& p, OglForCLI* ogl);
-  void MBtnDclk(const EVec2i& p, OglForCLI* ogl);
+  void LBtnUp   (const EVec2i& p, OglForCLI* ogl);
+  void RBtnUp   (const EVec2i& p, OglForCLI* ogl);
+  void MBtnUp   (const EVec2i& p, OglForCLI* ogl);
+  void LBtnDown (const EVec2i& p, OglForCLI* ogl);
+  void RBtnDown (const EVec2i& p, OglForCLI* ogl);
+  void MBtnDown (const EVec2i& p, OglForCLI* ogl);
+  void LBtnDclk (const EVec2i& p, OglForCLI* ogl);
+  void RBtnDclk (const EVec2i& p, OglForCLI* ogl);
+  void MBtnDclk (const EVec2i& p, OglForCLI* ogl);
   void MouseMove(const EVec2i& p, OglForCLI* ogl);
   void MouseWheel(const EVec2i& p, short zDelta, OglForCLI* ogl);
 
   void KeyDown(int nChar);
   void KeyUp(int nChar);
-
   bool CanEndMode();
   void StartMode();
-
   void DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF);
   // -----------------------------------------------------------------
 

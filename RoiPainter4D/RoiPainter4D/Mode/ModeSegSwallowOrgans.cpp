@@ -28,25 +28,6 @@
 //7 メッシュの読み込みと表示
 
 
-// User interface --> 4 modes
-//
-// Selection 
-// + Shift + R drag  --> 頂点の矩形選択
-// + Shift + R click --> 頂点のクリック選択
-// + s key + L drag  --> 頂点の矩形選択
-// + s key + L click --> 頂点のクリック選択
-//
-//
-// Modification 
-// + Shift + L - drag : まとめて回転・平行移動・拡大 
-//   (modeはダイアログより切り替え可能)
-//
-// Others
-// + meshとcageはダイアログよりロード可能
-// + 他の領域を表すmeshもダイアログよりロード可能
-
-
-
 //DONE Visualization 
 //制御点のシェーディング   
 //ハンドルのシェーディング 
@@ -83,7 +64,6 @@ GLuint  ModeSegSwallowOrgans::m_gl2Program = -1;
 //////////////////////////////////////////////////////////////////////////
 
 ModeSegSwallowOrgans::ModeSegSwallowOrgans() :
-  //m_volume_shader("shader/volVtx.glsl", "shader/volFlg.glsl"),   // normal volume vis
   m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl"), // mask volume vis
   m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
 {
@@ -233,8 +213,8 @@ void ModeSegSwallowOrgans::FillInMesh()
 #pragma omp parallel for
     for (int i = 0; i < num_voxels; ++i)
     {
-      flg3d[i] = (flg3d[i] == 0) ? 0 :
-        (flgInOut[i] == 1) ? 255 : 1;
+      flg3d[i] = (flg3d[i]    == 0) ? 0 :
+                 (flgInOut[i] == 1) ? 255 : 1;
     }
 
     formMain_SetProgressValue(f / (float)num_frames);

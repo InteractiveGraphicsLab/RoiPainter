@@ -28,13 +28,6 @@ using namespace RoiPainter4D;
 
 
 
-//memo rigid transform matrix Matrix4f 
-// todo 0501 
-// rigid trackingの内容を再確認 OK
-// ライトの位置を調整 
-// shiftを押していないとドラッグできないように OK
-// eval meshにもハンドル表示を  OK 
-
 ModeSegJointTracker::ModeSegJointTracker() : 
   m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl"),
   m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")

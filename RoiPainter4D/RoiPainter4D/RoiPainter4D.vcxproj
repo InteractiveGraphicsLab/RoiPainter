@@ -181,7 +181,6 @@
     <ClCompile Include="FormSegStrokeFfd.cpp" />
     <ClCompile Include="FormSegSwallowOrgans.cpp" />
     <ClCompile Include="FormSegSwallowOrganTimeline.cpp" />
-    <ClCompile Include="FormSegSwallowTempGen.cpp" />
     <ClCompile Include="FormSelectMskId.cpp" />
     <ClCompile Include="FormSortFiles.cpp" />
     <ClCompile Include="FormVisMask.cpp" />
@@ -206,7 +205,6 @@
     <ClCompile Include="Mode\ModeSegRigidICP.cpp" />
     <ClCompile Include="Mode\ModeSegStrokeFfd.cpp" />
     <ClCompile Include="Mode\ModeSegSwallowOrgans.cpp" />
-    <ClCompile Include="Mode\ModeSegSwallowTempGen.cpp" />
     <ClCompile Include="Mode\ModeVizMask.cpp" />
     <ClCompile Include="Mode\ModeVizNormal.cpp" />
     <ClCompile Include="SplineCurve_3D.cpp" />
@@ -277,9 +275,6 @@
     <ClInclude Include="FormSegSwallowOrganTimeline.h">
       <FileType>CppForm</FileType>
     </ClInclude>
-    <ClInclude Include="FormSegSwallowTempGen.h">
-      <FileType>CppForm</FileType>
-    </ClInclude>
     <ClInclude Include="FormSelectMskId.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -314,7 +309,6 @@
     <ClInclude Include="Mode\ModeSegRigidICP.h" />
     <ClInclude Include="Mode\ModeSegStrokeFfd.h" />
     <ClInclude Include="Mode\ModeSegSwallowOrgans.h" />
-    <ClInclude Include="Mode\ModeSegSwallowTempGen.h" />
     <ClInclude Include="Mode\ModeVizMask.h" />
     <ClInclude Include="Mode\ModeVizNormal.h" />
     <ClInclude Include="SplineCurve_3D.h" />
@@ -368,9 +362,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormSegSwallowOrganTimeline.resx">
       <DependentUpon>FormSegSwallowOrganTimeline.h</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormSegSwallowTempGen.resx">
-      <DependentUpon>FormSegSwallowTempGen.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormSelectMskId.resx">
       <DependentUpon>FormSelectMskId.h</DependentUpon>

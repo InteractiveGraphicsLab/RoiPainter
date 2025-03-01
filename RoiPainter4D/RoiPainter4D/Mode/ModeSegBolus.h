@@ -6,11 +6,13 @@
 #include "GlslShader.h"
 #include "GeneralizedCylinder.h"
 
+// Curved Cylinderを利用した Local Region Growing
 // 3次元空間内に cylinderとシードが複数配置される
 //  - cylinderの中心軸は領域拡張のシードになる
 //  - それ以外にも明示的に領域拡張のシードを配置できる
 
-//user interface
+//-----------------------------------------------
+// (*) User Interface 
 // -- Cylinder mode -- 
 // shift + L dblclick --> 選択状態なら cp追加
 // shift + L dblclick --> 選択無しなら cylinder追加
@@ -23,6 +25,14 @@
 // shift + L drag  --> seedを移動 or active cylinderのcpを移動
 //
 // ctl + L drag --> cylinderを平行移動
+//
+// (*) vol_flg[i]
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
+//-----------------------------------------------
+
+
 
 
 class ModeSegBolus : public ModeInterface
@@ -113,7 +123,7 @@ public:
   void LoadCylinderInfoFromFile( std::string filePath, bool isFitting = true);
 
 private:
-	EVec2i PickCPs    (const EVec3f &ray_pos, const EVec3f &ray_dir, const float max_depth);
+	EVec2i PickCPs(const EVec3f &ray_pos, const EVec3f &ray_dir, const float max_depth);
 	
 };
 

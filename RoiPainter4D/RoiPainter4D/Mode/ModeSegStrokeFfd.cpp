@@ -20,7 +20,6 @@ using namespace RoiPainter4D;
 
 
 ModeSegStrokeFfd::ModeSegStrokeFfd() :
-  //m_volume_shader("shader/volVtx.glsl", "shader/volFlg.glsl"),   // normal volume vis
   m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl"), // mask volume vis
   m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
 {
@@ -74,8 +73,6 @@ void ModeSegStrokeFfd::StartMode()
   m_meshseq.SetHandleLength(c[0] * 0.03f * 3);
   m_meshseq.SetControlPointRadius(m_cp_rate * m_cp_size);
 
-  //initialize vFlg
-  //ImageCore::GetInst()->InitializeFlg4dByMask(formMain_SetProgressValue);
 
   FormSegStrokeFfd_InitAllItems();
   FormSegStrokeFfd_Show();

@@ -11,8 +11,30 @@
 
 #define NUM_POINT_GROUPS 10
 
-//複数の軟組織テンプレートを制御点移動により変形し領域分割するモード
-//変形にはケージベースの手法 (harmonic coordinate)を採用
+
+//-----------------------------------------------
+// (*) User Interface 
+// 複数の軟組織テンプレートを制御点移動により変形し領域分割するモード
+// 変形にはケージベースの手法 (harmonic coordinate)を採用
+// Selection 
+// + Shift + R drag  --> 頂点の矩形選択
+// + Shift + R click --> 頂点のクリック選択
+// + s key + L drag  --> 頂点の矩形選択
+// + s key + L click --> 頂点のクリック選択
+// Modification 
+// + Shift + L - drag : まとめて回転・平行移動・拡大 
+//   (modeはダイアログより切り替え可能)
+// Others
+// + meshとcageはダイアログよりロード可能
+// + 他の領域を表すmeshもダイアログよりロード可能
+// 
+// (*) vol_flg[i]
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
+//-----------------------------------------------
+
+
 
 
 class CagePointGroup

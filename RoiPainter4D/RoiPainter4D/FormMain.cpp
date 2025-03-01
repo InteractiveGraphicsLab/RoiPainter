@@ -508,7 +508,6 @@ System::Void FormMain::switch_segBronchi_Click(System::Object^ sender, System::E
 
 System::Void FormMain::switch_segSwallowTempGen_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeCore::GetInst()->ModeSwitch(MODE_SEG_SWLTMPGEN);
   RedrawMainPanel();
 }
 

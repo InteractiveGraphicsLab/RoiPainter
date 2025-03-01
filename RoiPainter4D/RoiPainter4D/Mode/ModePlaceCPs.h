@@ -10,6 +10,17 @@
 #include <vector>
 #include <set>
 
+//-----------------------------------------------
+// (*) User Interface 
+// shift + L click : place control point
+// shift + L drag  : move  control point
+// shift + R click : remove control point
+//
+// (*) vol_flg[i]
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
+//-----------------------------------------------
 
 
 class ModePlaceCPs : public ModeInterface

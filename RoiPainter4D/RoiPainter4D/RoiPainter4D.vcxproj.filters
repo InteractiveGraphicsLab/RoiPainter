@@ -135,12 +135,6 @@
     <ClCompile Include="FormSegBronchi.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="FormSegSwallowTempGen.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Mode\ModeSegSwallowTempGen.cpp">
-      <Filter>Mode</Filter>
-    </ClCompile>
     <ClCompile Include="Mode\ModeCommonTools.cpp">
       <Filter>Mode</Filter>
     </ClCompile>
@@ -307,12 +301,6 @@
     </ClInclude>
     <ClInclude Include="FormSegBronchi.h">
       <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="FormSegSwallowTempGen.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Mode\ModeSegSwallowTempGen.h">
-      <Filter>Mode</Filter>
     </ClInclude>
     <ClInclude Include="Mode\ModeCommonTools.h">
       <Filter>Mode</Filter>
