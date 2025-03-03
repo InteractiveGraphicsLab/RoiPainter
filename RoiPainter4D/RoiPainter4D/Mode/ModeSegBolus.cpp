@@ -533,7 +533,7 @@ void ModeSegBolus::LoadCylinderInfoFromFile(std::string filePath, bool to_perfor
 //m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
 
 
-void ModeSegBolus::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF) 
+void ModeSegBolus::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt) 
 {
   BindAllVolumes();
   DrawCrossSectionsVisFore(!IsSpaceKeyOn());
@@ -547,12 +547,10 @@ void ModeSegBolus::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVe
   //draw volume 
 	if ( formVisParam_bRendVol() )
 	{
-    const bool  b_manip   = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-
     if( formSegBolus_IsNormalVolRend() ) 
-      DrawVolumeNormal(b_manip, camP, camF);
+      DrawVolumeNormal(cam_pos, cam_cnt);
     else
-      DrawVolumeVisFore(b_manip, !IsSpaceKeyOn(), camP, camF);
+      DrawVolumeVisFore(!IsSpaceKeyOn(), cam_pos, cam_cnt);
 	}
 
   //draw OBB of active cylinder 
@@ -564,7 +562,7 @@ void ModeSegBolus::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVe
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT7);
   float lightwhite[4] = { 1, 1, 1, 1 };
-	float lightpos[4]   = { camP[0], camP[1], camP[2], 1.0f };
+	float lightpos[4]   = { cam_pos[0], cam_pos[1], cam_pos[2], 1.0f };
 	glLightfv(GL_LIGHT7, GL_DIFFUSE , lightwhite);
 	glLightfv(GL_LIGHT7, GL_SPECULAR, lightwhite);
 	glLightfv(GL_LIGHT7, GL_AMBIENT , lightwhite);

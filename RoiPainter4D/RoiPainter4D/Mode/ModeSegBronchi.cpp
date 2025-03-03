@@ -140,7 +140,7 @@ void ModeSegBronchi::FinishSegmentation()
 
 
 
-void ModeSegBronchi::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF)
+void ModeSegBronchi::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt)
 {
   BindAllVolumes();
 
@@ -162,8 +162,6 @@ void ModeSegBronchi::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const E
   const static float shin_root[1] = { 56.0f };
 
   const int frame_idx = formVisParam_getframeI();
-
-
 
   if (m_roots[frame_idx] != nullptr)
   {
@@ -223,8 +221,7 @@ void ModeSegBronchi::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const E
 
   if (formVisParam_bRendVol())
   {
-    const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeVisFore(b_onmanip, !IsSpaceKeyOn(), camP, camF);
+    DrawVolumeVisFore(!IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
   if (DEBUG_DRAWSCENE) std::cout << ".........end drawScene\n";

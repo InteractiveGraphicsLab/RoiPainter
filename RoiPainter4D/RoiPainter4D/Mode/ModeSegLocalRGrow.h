@@ -148,7 +148,7 @@ public:
   void KeyUp  ( int nChar );
   void StartMode();
   bool CanEndMode();
-  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+  void DrawScene(const EVec3f &camP, const EVec3f &camF);
   //-----------------------------------------------------------------
 
   void FinishSegmentation();

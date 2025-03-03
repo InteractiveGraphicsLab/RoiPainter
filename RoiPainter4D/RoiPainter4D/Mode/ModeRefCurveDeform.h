@@ -86,7 +86,7 @@ public:
   void KeyUp(int nChar);
   bool CanEndMode();
   void StartMode();
-  void DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF);
+  void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt);
   // -----------------------------------------------------------------
 
   void Deform();

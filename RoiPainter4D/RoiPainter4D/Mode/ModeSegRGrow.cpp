@@ -264,10 +264,8 @@ int ModeSegRGrow::PickControlPoints(const EVec3f &ray_pos, const EVec3f &ray_dir
 
 
 
-void ModeSegRGrow::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_cnt)
+void ModeSegRGrow::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
-  const EVec3i reso = ImageCore::GetReso();
-
   BindAllVolumes();
   DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
@@ -278,8 +276,7 @@ void ModeSegRGrow::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const 
 
   if ( formVisParam_bRendVol() )
   {
-    const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeVisFore(b_onmanip, !IsSpaceKeyOn(), cam_pos, cam_cnt);
+    DrawVolumeVisFore(!IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
   //control points

@@ -377,10 +377,11 @@ void ModeSegRigidICP::KeyUp(int nChar) {}
 
 
 
-void ModeSegRigidICP::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_cnt)
+void ModeSegRigidICP::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
   const int    frame_idx = formVisParam_getframeI();
-  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
+  const EVec3f pitch = ImageCore::GetPitch();
+  const EVec3f cuboid = ImageCore::GetCuboid();
 
   //bind volumes
   BindAllVolumes();
@@ -442,12 +443,7 @@ void ModeSegRigidICP::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, con
 
   if (formVisParam_bRendVol())
   {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeVisFore(b_onmanip, !IsSpaceKeyOn(), cam_pos, cam_cnt);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeVisFore(!IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
 }

@@ -110,31 +110,37 @@ static void DrawVolumeSlices(
 
 
 void ModeInterface::DrawVolumeNormal(
-  bool is_manip,
   const EVec3f& cam_pos,
-  const EVec3f& cam_cnt)
+  const EVec3f& cam_cnt, 
+  bool do_coarse_rend_onmanip)
 {
   static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg.glsl");
+  bool is_manip = (formVisParam_bOnManip() || m_bL || m_bR || m_bM) 
+                && do_coarse_rend_onmanip;
   DrawVolumeSlices(is_manip, false, cam_pos, cam_cnt, shader);
 }
 
 void ModeInterface::DrawVolumeVisMask(
-  bool is_manip, 
   bool do_hilight,
   const EVec3f& cam_pos,
-  const EVec3f& cam_cnt)
+  const EVec3f& cam_cnt,
+  bool do_coarse_rend_onmanip)
 {
   static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl");
+  bool is_manip = (formVisParam_bOnManip() || m_bL || m_bR || m_bM)
+                && do_coarse_rend_onmanip;
   DrawVolumeSlices(is_manip, do_hilight, cam_pos, cam_cnt, shader);
 }
 
 void ModeInterface::DrawVolumeVisFore(
-  bool is_manip,
   bool do_hilight,
   const EVec3f& cam_pos,
-  const EVec3f& cam_cnt)
+  const EVec3f& cam_cnt, 
+  bool do_coarse_rend_onmanip)
 {
   static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl");
+  bool is_manip = (formVisParam_bOnManip() || m_bL || m_bR || m_bM)
+                && do_coarse_rend_onmanip;
   DrawVolumeSlices(is_manip, do_hilight, cam_pos, cam_cnt, shader);
 }
 

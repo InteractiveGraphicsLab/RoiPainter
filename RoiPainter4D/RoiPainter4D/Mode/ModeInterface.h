@@ -124,7 +124,7 @@ public:
   //this function is called just after switch the mode
 	virtual void StartMode() = 0;
 
-	virtual void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF) = 0;
+	virtual void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center) = 0;
 
 protected:
 	void BindAllVolumes();
@@ -142,17 +142,17 @@ protected:
 	void DrawCrossSectionsVisFore(bool do_hilight);
 
 	//Render Volumes
-	void DrawVolumeNormal (bool b_onmanip, 
+	void DrawVolumeNormal (const EVec3f& cam_pos, 
+												 const EVec3f& cam_cnt,
+												 bool do_coarse_rend_onmanip = true);
+	void DrawVolumeVisMask(bool do_hilight, //mask可視化 on/off
 												 const EVec3f& cam_pos, 
-												 const EVec3f& cam_cnt);
-	void DrawVolumeVisMask(bool b_onmanip,
-												 bool do_hilight, //mask可視化 on/off
+												 const EVec3f& cam_cnt, 
+												 bool do_coarse_rend_onmanip = true);
+	void DrawVolumeVisFore(bool is_hilight, //fore可視化 on/off
 												 const EVec3f& cam_pos, 
-												 const EVec3f& cam_cnt);
-	void DrawVolumeVisFore(bool b_onmanip, 
-                         bool is_hilight, //fore可視化 on/off
-												 const EVec3f& cam_pos, 
-												 const EVec3f& cam_cnt);
+												 const EVec3f& cam_cnt, 
+												 bool do_coarse_rend_onmanip = true);
 
 
 private:

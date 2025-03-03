@@ -158,7 +158,7 @@ public:
 	virtual void StartMode();
 	virtual bool CanEndMode();
 	virtual void FinishSegmentation();
-	virtual void DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF);
+	virtual void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt);
 
 	virtual void LBtnDown   (const EVec2i& p, OglForCLI* ogl);
 	virtual void LBtnUp     (const EVec2i& p, OglForCLI* ogl);

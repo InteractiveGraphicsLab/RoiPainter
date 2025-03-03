@@ -113,7 +113,7 @@ void ModeVizMask::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 }
 
 
-void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_cnt)
+void ModeVizMask::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
   ImageCore::GetInst()->UpdateImgMaskColor();
 
@@ -122,8 +122,7 @@ void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const E
 
   if ( formVisParam_bRendVol() )
   {
-    bool b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeVisMask(b_manip, !IsShiftKeyOn(), cam_pos, cam_cnt);
+    DrawVolumeVisMask(!IsShiftKeyOn(), cam_pos, cam_cnt);
   }
   
 }

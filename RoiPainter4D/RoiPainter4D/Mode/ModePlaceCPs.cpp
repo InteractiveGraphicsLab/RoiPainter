@@ -427,11 +427,9 @@ static float DIFF2[4] = { 0.8f,0.2f,0.8f,0.3f };
 static float AMBI2[4] = { 0.8f,0.2f,0.8f,0.3f };
 
 
-void ModePlaceCPs::DrawScene(const EVec3f& cuboid, const EVec3f& cam_pos, const EVec3f& cam_cnt) 
+void ModePlaceCPs::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt) 
 {
-  const int    frame_idx = formVisParam_getframeI();
-  const EVec3i reso      = ImageCore::GetInst()->GetReso();
-  const EVec3f pitch     = ImageCore::GetInst()->GetPitch();
+  const int frame_idx = formVisParam_getframeI();
 
   if (frame_idx < 0 || m_isosurfaces.size() <= frame_idx) 
   {
@@ -487,8 +485,7 @@ void ModePlaceCPs::DrawScene(const EVec3f& cuboid, const EVec3f& cam_pos, const 
 
   if (formVisParam_bRendVol())
   {
-    const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeNormal(b_onmanip, cam_pos, cam_cnt);
+    DrawVolumeNormal(cam_pos, cam_cnt);
   }
   
 }

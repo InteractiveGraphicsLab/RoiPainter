@@ -257,10 +257,8 @@ void ModeRefStrokeTrim::KeyUp(int nChar)
 
 
 
-void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_cnt)
+void ModeRefStrokeTrim::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {	
-	const EVec3i reso     = ImageCore::GetInst()->GetReso();
-
   //bind volumes ---------------------------------------
   BindAllVolumes();
 
@@ -279,9 +277,7 @@ void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, c
     DrawPolyLine( EVec3f(1,0,1), 4, m_CutStroke, true);
   }
 
-	const bool b_onmanip  = (formVisParam_bOnManip() || m_bL || m_bR || m_bM) 
-                         && FormRefStrokeTrim_bUseRoughRend();
-	DrawVolumeVisFore(b_onmanip, true, cam_pos, cam_cnt);
+	DrawVolumeVisFore(true, cam_pos, cam_cnt, FormRefStrokeTrim_bUseRoughRend());
 }
 
 

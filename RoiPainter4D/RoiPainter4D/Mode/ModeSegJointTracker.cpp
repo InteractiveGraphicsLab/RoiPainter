@@ -423,9 +423,8 @@ void ModeSegJointTracker::DrawCpTrajectory(int frameidx, int cpidx)
 
 
 void ModeSegJointTracker::DrawScene(
-    const EVec3f &cuboid, 
-    const EVec3f &camP, 
-    const EVec3f &camF)
+    const EVec3f &cam_pos, 
+    const EVec3f &cam_cnt)
 {
   GLfloat ambi0[3] = {0.5f,0.5f,0.5f};
   GLfloat ambi1[3] = {0,0,0};
@@ -448,9 +447,8 @@ void ModeSegJointTracker::DrawScene(
   glLightfv(GL_LIGHT2, GL_DIFFUSE , diff);
   glLightfv(GL_LIGHT2, GL_SPECULAR, spec);
 
-  const EVec3i reso      = ImageCore::GetInst()->GetReso();
-  const int    frame_idx = formVisParam_getframeI();
-
+  const int frame_idx = formVisParam_getframeI();
+  const EVec3f cuboid = ImageCore::GetCuboid();
   BindAllVolumes();
   DrawCrossSectionsVisFore(!IsSpaceKeyOn());
    
@@ -489,8 +487,7 @@ void ModeSegJointTracker::DrawScene(
 
   if (formVisParam_bRendVol())
   {
-    const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeVisFore(b_onmanip, !IsSpaceKeyOn(), camP, camF);
+    DrawVolumeVisFore(!IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
 }

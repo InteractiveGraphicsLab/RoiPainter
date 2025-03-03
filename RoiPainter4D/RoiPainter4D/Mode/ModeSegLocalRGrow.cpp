@@ -455,20 +455,15 @@ void ModeSegLocalRGrow::StartMode()
 
 
 void ModeSegLocalRGrow::DrawScene(
-    const EVec3f &cuboid, 
     const EVec3f &cam_pos, 
     const EVec3f &cam_cnt)
 {
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
-
-  //bind volumes ---------------------------------------
   BindAllVolumes();
   DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
   if ( formVisParam_bRendVol() )
   {
-    const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeVisFore(b_onmanip, !IsSpaceKeyOn(), cam_pos, cam_cnt);
+    DrawVolumeVisFore(!IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
   const int num_seeds  = (int) m_seeds.size();

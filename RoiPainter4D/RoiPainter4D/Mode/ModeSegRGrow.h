@@ -54,7 +54,7 @@ public:
   void KeyUp (int nChar);
   bool CanEndMode();
   void StartMode();
-  void DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center);
+  void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center);
   //-----------------------------------------------------------------
 
   void RunThresholding(const short minv, const short maxv);

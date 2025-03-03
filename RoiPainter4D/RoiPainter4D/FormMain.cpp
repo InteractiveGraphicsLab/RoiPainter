@@ -297,7 +297,7 @@ void FormMain::RedrawMainPanel()
 
   InitializeLights();
   if (FormVisParam::GetInst()->bRendFrame()) t_DrawFrame(cuboid);
-  ModeCore::GetInst()->DrawScene(cuboid, cam_pos, cam_cnt);
+  ModeCore::GetInst()->DrawScene(cam_pos, cam_cnt);
   if (FormVisParam::GetInst()->bRendIndi())
   {
     ViewIndiCore::getInst()->DrawIndicator(pw, ph, cam_pos, cam_cnt, cam_up);

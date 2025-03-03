@@ -493,17 +493,14 @@ void ModeSegPixPaint::KeyUp(int nChar) {}
 
 
 
-void ModeSegPixPaint::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_cnt)
+void ModeSegPixPaint::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
-
   BindAllVolumes();
   DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
   if (formVisParam_bRendVol())
   {
-    const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeVisFore(b_onmanip, !IsSpaceKeyOn(), cam_pos, cam_cnt);
+    DrawVolumeVisFore(!IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
   const EVec3f pitch = ImageCore::GetInst()->GetPitch();

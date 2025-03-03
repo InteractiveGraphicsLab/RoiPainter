@@ -392,14 +392,9 @@ void ModeRefCurveDeform::KeyUp(int nChar) {}
 
 
 void ModeRefCurveDeform::DrawScene(
-    const EVec3f& cuboid,
     const EVec3f& cam_pos,
     const EVec3f& cam_cnt)
 {
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
-  const EVec3f cube = ImageCore::GetInst()->GetCuboid();
-  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
-
   const int frame_idx = formVisParam_getframeI();
 
   //ImageCore::GetInst()->UpdateImgMaskColor();
@@ -409,8 +404,7 @@ void ModeRefCurveDeform::DrawScene(
 
   if (IsMKeyOn() && formVisParam_bRendVol())
   {
-    const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeVisMask(b_onmanip, !IsShiftKeyOn(), cam_pos, cam_cnt);
+    DrawVolumeVisMask(!IsShiftKeyOn(), cam_pos, cam_cnt);
   }
 
   glDepthMask(true);

@@ -148,11 +148,8 @@ void ModeVizNormal::KeyUp(int nChar) {}
 
 
 
-void ModeVizNormal::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_cnt)
+void ModeVizNormal::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
-
-  //bind volumes 
   BindAllVolumes();
   DrawCrossSectionsNormal();
 
@@ -163,8 +160,7 @@ void ModeVizNormal::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const
 
   if ( formVisParam_bRendVol() )
   {
-    const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeNormal(b_onmanip, cam_pos, cam_cnt);
+    DrawVolumeNormal(cam_pos, cam_cnt);
   }
 }
 
