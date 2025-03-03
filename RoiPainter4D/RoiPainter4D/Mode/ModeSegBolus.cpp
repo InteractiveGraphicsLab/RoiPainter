@@ -33,10 +33,7 @@ using namespace RoiPainter4D;
 // 0 : never change
 // 1 : background
 //255: foreground
-ModeSegBolus::ModeSegBolus() :
-	m_volume_shader_norm("shader/volVtx.glsl", "shader/volFlg.glsl"     ),
-	m_volume_shader_segm("shader/volVtx.glsl", "shader/volFlg_Seg.glsl" ),
-	m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegBolus::ModeSegBolus()
 {
   m_vol_cyl = 0;
 }
@@ -531,12 +528,15 @@ void ModeSegBolus::LoadCylinderInfoFromFile(std::string filePath, bool to_perfor
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////draw scene//////////////////////////////////////
 
+//m_volume_shader_norm("shader/volVtx.glsl", "shader/volFlg.glsl"),
+//m_volume_shader_segm("shader/volVtx.glsl", "shader/volFlg_Seg.glsl"),
+//m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+
+
 void ModeSegBolus::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF) 
 {
-	const EVec3i reso = ImageCore::GetInst()->GetReso();
-
   BindAllVolumes();
-  DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader);
+  DrawCrossSectionsVisFore(!IsSpaceKeyOn());
   
   //cut stroke
   if ( m_b_draw_cutstroke )
@@ -549,13 +549,10 @@ void ModeSegBolus::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVe
 	{
     const bool  b_manip   = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
 
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-    GlslShaderVolume &s = formSegBolus_IsNormalVolRend() ? m_volume_shader_norm:
-                                                           m_volume_shader_segm ;
-    DrawVolumeSlices(cuboid, reso, camP, camF, !IsSpaceKeyOn(), b_manip, s); 
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
+    if( formSegBolus_IsNormalVolRend() ) 
+      DrawVolumeNormal(b_manip, camP, camF);
+    else
+      DrawVolumeVisFore(b_manip, !IsSpaceKeyOn(), camP, camF);
 	}
 
   //draw OBB of active cylinder 

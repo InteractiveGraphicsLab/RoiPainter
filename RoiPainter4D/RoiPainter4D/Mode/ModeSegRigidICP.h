@@ -3,7 +3,6 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "ttrianglesoup.h"
 #include <vector>
 #include <set>
@@ -23,10 +22,6 @@
 
 class ModeSegRigidICP : public ModeInterface
 {
-  //shaders
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   //iso surfaces 等値面
   int m_isovalue;
   std::vector<TTriangleSoup> m_isosurfaces;

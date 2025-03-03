@@ -4,7 +4,6 @@
 
 #include "ModeInterface.h"
 #include "CagedMeshSequence.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 
 #include <tuple>
@@ -97,10 +96,6 @@ public:
 
 class ModeSegSwallowOrgans : public ModeInterface
 {
-  //shaders
-  GlslShaderVolume  m_volume_shader;
-  GlslShaderCrsSec  m_crssec_shader;
-
   std::string m_fpath_cage;
   std::string m_fpath_mesh;
 

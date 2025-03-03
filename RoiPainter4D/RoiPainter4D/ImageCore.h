@@ -151,8 +151,8 @@ public:
     if (m_volume_minmax[0] < -2500) m_volume_minmax[0] = -2500; 
     return m_volume_minmax; 
   }
-  EVec3i GetReso()      { return m_reso; }
-  EVec3f GetPitch()     { return m_pitch; }
+  static EVec3i GetReso() { return GetInst()->m_reso; }
+  static EVec3f GetPitch(){ return GetInst()->m_pitch; }
   int    GetNumVoxels() { return m_reso[0] * m_reso[1] * m_reso[2]; }
   int    GetNumFrames() { return (int)m_img4d.size(); }
 

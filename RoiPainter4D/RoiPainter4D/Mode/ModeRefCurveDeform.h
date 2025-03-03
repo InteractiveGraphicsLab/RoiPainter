@@ -4,7 +4,6 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "MaskMeshSequence.h"
 #include <vector>
 #include <stack>
@@ -24,9 +23,6 @@
 class ModeRefCurveDeform :
   public ModeInterface
 {
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   MaskMeshSequence m_mask_mesh;
 
   int   m_cp_size;

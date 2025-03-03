@@ -24,9 +24,7 @@
 using namespace RoiPainter4D;
 
 
-ModeRefCurveDeform::ModeRefCurveDeform() :
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl"), // mask volume vis
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
+ModeRefCurveDeform::ModeRefCurveDeform()
 {
   std::cout << "ModeRefCurveDeform...\n";
   m_bL = m_bR = m_bM = false;
@@ -392,10 +390,11 @@ void ModeRefCurveDeform::KeyDown(int nChar)
 void ModeRefCurveDeform::KeyUp(int nChar) {}
 
 
+
 void ModeRefCurveDeform::DrawScene(
-  const EVec3f& cuboid,
-  const EVec3f& camP,
-  const EVec3f& camF)
+    const EVec3f& cuboid,
+    const EVec3f& cam_pos,
+    const EVec3f& cam_cnt)
 {
   const EVec3i reso = ImageCore::GetInst()->GetReso();
   const EVec3f cube = ImageCore::GetInst()->GetCuboid();
@@ -405,34 +404,14 @@ void ModeRefCurveDeform::DrawScene(
 
   //ImageCore::GetInst()->UpdateImgMaskColor();
 
-  // bind volumes 
   BindAllVolumes();
-
-  // draw cross section
-  DrawCrossSections(cuboid, reso, false, m_crssec_shader);
+  DrawCrossSectionsNormal();
 
   if (IsMKeyOn() && formVisParam_bRendVol())
   {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
     const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices(cuboid, reso, camP, camF, false, b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeVisMask(b_onmanip, !IsShiftKeyOn(), cam_pos, cam_cnt);
   }
-
-  // draw mesh 
-
-  glDisable(GL_CULL_FACE);
-  glDepthMask(false);
-  glEnable(GL_BLEND);
-
-  const bool b_xy = formVisParam_bPlaneXY();
-  const bool b_yz = formVisParam_bPlaneYZ();
-  const bool b_zx = formVisParam_bPlaneZX();
-  float planexy = b_xy ? CrssecCore::GetInst()->GetPlanePosXY() : -1;
-  float planeyz = b_yz ? CrssecCore::GetInst()->GetPlanePosYZ() : -1;
-  float planezx = b_zx ? CrssecCore::GetInst()->GetPlanePosZX() : -1;
 
   glDepthMask(true);
   glDisable(GL_BLEND);

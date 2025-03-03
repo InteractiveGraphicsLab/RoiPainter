@@ -17,9 +17,7 @@
 using namespace RoiPainter4D;
 
 
-ModeRefStrokeTrim::ModeRefStrokeTrim():
-	m_volumeShader("shader/volVtx.glsl"   , "shader/volFlg_Seg.glsl"   ),
-	m_crssecShader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeRefStrokeTrim::ModeRefStrokeTrim()
 {
 	std::cout << "ModeSegThreshPnt...\n";
 	m_bL = m_bR = m_bM = m_b_draw_trimstroke = false;  
@@ -259,7 +257,7 @@ void ModeRefStrokeTrim::KeyUp(int nChar)
 
 
 
-void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {	
 	const EVec3i reso     = ImageCore::GetInst()->GetReso();
 
@@ -268,7 +266,7 @@ void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &camP, cons
 
 	if (m_bDrawCrssec)
   {
-    DrawCrossSections(cuboid, reso, !IsSKeyOn(), m_crssecShader);
+    DrawCrossSectionsVisFore(!IsSKeyOn());
   }
 
   if (m_b_draw_cutstroke)
@@ -283,12 +281,7 @@ void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &camP, cons
 
 	const bool b_onmanip  = (formVisParam_bOnManip() || m_bL || m_bR || m_bM) 
                          && FormRefStrokeTrim_bUseRoughRend();
-
-	glDisable( GL_DEPTH_TEST);
-	glEnable ( GL_BLEND);
-  DrawVolumeSlices(cuboid, reso, camP, camF, true, b_onmanip, m_volumeShader);
-	glDisable( GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
+	DrawVolumeVisFore(b_onmanip, true, cam_pos, cam_cnt);
 }
 
 

@@ -2,7 +2,6 @@
 #define MODE_MODEVISMASK_H_
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 
 //-----------------------------------------------
 // (*) User Interface 
@@ -14,9 +13,6 @@
 
 class ModeVizMask : public ModeInterface
 {
-  GlslShaderVolume m_volumeShader;
-  GlslShaderCrsSec m_crssecShader;
-
   ModeVizMask();
 public:
   ~ModeVizMask();

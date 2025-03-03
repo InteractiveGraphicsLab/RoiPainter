@@ -2,7 +2,6 @@
 #define MODE_MODEVISNORM_H_
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include <vector>
 
 //-----------------------------------------------
@@ -15,9 +14,6 @@
 
 class ModeVizNormal : public ModeInterface
 {
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   bool m_b_draw_cutstroke;
   std::vector<EVec3f> m_stroke;
 

@@ -19,9 +19,7 @@
 using namespace RoiPainter4D;
 
 
-ModeSegStrokeFfd::ModeSegStrokeFfd() :
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl"), // mask volume vis
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
+ModeSegStrokeFfd::ModeSegStrokeFfd()
 {
   std::cout << "ModeSegStrokeFfd...\n";
   m_bL = m_bR = m_bM = false;
@@ -572,8 +570,8 @@ void ModeSegStrokeFfd::KeyUp(int nChar) {}
 
 void ModeSegStrokeFfd::DrawScene(
   const EVec3f& cuboid,
-  const EVec3f& camP,
-  const EVec3f& camF)
+  const EVec3f& cam_pos,
+  const EVec3f& cam_cnt)
 {
   const EVec3i reso = ImageCore::GetInst()->GetReso();
   const EVec3f cube = ImageCore::GetInst()->GetCuboid();
@@ -583,18 +581,12 @@ void ModeSegStrokeFfd::DrawScene(
 
   // bind volumes 
   BindAllVolumes();
-
-  // draw cross section
-  DrawCrossSections(cuboid, reso, false, m_crssec_shader);
+  DrawCrossSectionsNormal();
 
   if (formVisParam_bRendVol())
   {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices(cuboid, reso, camP, camF, false, b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
+    DrawVolumeVisMask(b_onmanip, !IsShiftKeyOn(), cam_pos, cam_cnt);
   }
 
   // draw cage & mesh 

@@ -3,7 +3,6 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 #include <vector>
 #include <set>
@@ -125,9 +124,6 @@ public:
 class ModeSegBronchi : public ModeInterface 
 {
 private:
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   bool                m_b_draw_cutstroke;
   std::vector<EVec3f> m_stroke;
 

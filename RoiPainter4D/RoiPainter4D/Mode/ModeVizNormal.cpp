@@ -18,9 +18,7 @@ ModeVizNormal::~ModeVizNormal()
 }
 
 
-ModeVizNormal::ModeVizNormal() :
-  m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg.glsl"   ),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
+ModeVizNormal::ModeVizNormal()
 {
   std::cout << "ModeVizNormal...\n";
   m_bL = m_bR = m_bM = false;
@@ -149,17 +147,15 @@ void ModeVizNormal::KeyDown(int nChar) {}
 void ModeVizNormal::KeyUp(int nChar) {}
 
 
-void ModeVizNormal::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+
+void ModeVizNormal::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
   const EVec3i reso = ImageCore::GetInst()->GetReso();
 
   //bind volumes 
   BindAllVolumes();
+  DrawCrossSectionsNormal();
 
-  //draw cross section
-  DrawCrossSections(cuboid, reso, false, m_crssec_shader);
-
-  //cut stroke
   if ( m_b_draw_cutstroke )
   {
     DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
@@ -167,13 +163,8 @@ void ModeVizNormal::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EV
 
   if ( formVisParam_bRendVol() )
   {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
     const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices(cuboid, reso, camP, camF, 
-                     false, b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeNormal(b_onmanip, cam_pos, cam_cnt);
   }
 }
 

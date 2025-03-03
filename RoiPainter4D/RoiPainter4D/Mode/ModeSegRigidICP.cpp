@@ -43,9 +43,7 @@ ModeSegRigidICP::~ModeSegRigidICP()
 
 
 
-ModeSegRigidICP::ModeSegRigidICP() :
-  m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg_Seg.glsl"),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegRigidICP::ModeSegRigidICP() 
 {
   std::cout << "ModeSegRigidICP...\n";
 
@@ -379,18 +377,14 @@ void ModeSegRigidICP::KeyUp(int nChar) {}
 
 
 
-
-
-
-void ModeSegRigidICP::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+void ModeSegRigidICP::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
   const int    frame_idx = formVisParam_getframeI();
-  const EVec3i reso      = ImageCore::GetInst()->GetReso();
-  const EVec3f pitch     = ImageCore::GetInst()->GetPitch();
+  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
 
   //bind volumes
   BindAllVolumes();
-  DrawCrossSections( cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader );
+  DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
   if (m_b_draw_stroke)
   {
@@ -451,8 +445,7 @@ void ModeSegRigidICP::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices( cuboid, reso, camP, camF, 
-                     !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
+    DrawVolumeVisFore(b_onmanip, !IsSpaceKeyOn(), cam_pos, cam_cnt);
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
   }

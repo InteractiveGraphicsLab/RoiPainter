@@ -3,7 +3,6 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 
 #include <vector>
@@ -70,10 +69,6 @@ public:
 
 class ModeSegJointTracker : public ModeInterface
 {
-  //shaders
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-  
   //iso surfaces (by step1)
   int                m_isovalue    ;
   std::vector<TMesh> m_isosurfaces ;

@@ -3,7 +3,6 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 
 
 //-----------------------------------------------
@@ -20,9 +19,6 @@
 
 class ModeSegPixPaint : public ModeInterface
 {
-  GlslShaderVolume    m_volume_shader;
-  GlslShaderCrsSec    m_crssec_shader;
-
   //lasso
   CRSSEC_ID  m_trgt_crssecid;
   bool m_b_drawlasso;

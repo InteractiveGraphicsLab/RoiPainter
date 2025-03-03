@@ -5,7 +5,6 @@
 
 #include "ModeInterface.h"
 #include "CagedMeshSequence.h"
-#include "GlslShader.h"
 #include <vector>
 #include <stack>
 
@@ -25,9 +24,6 @@
 
 class ModeSegStrokeFfd : public ModeInterface
 {
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   CagedMeshSequence m_meshseq;
 
   enum class E_Mode

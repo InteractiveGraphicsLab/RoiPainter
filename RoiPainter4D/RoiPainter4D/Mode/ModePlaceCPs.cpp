@@ -27,9 +27,7 @@ ModePlaceCPs::~ModePlaceCPs()
 }
 
 
-ModePlaceCPs::ModePlaceCPs():
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg.glsl"),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
+ModePlaceCPs::ModePlaceCPs()
 {
   std::cout << "ModePlaceCPs...\n";
   m_bL = m_bR = m_bM = false;
@@ -429,7 +427,7 @@ static float DIFF2[4] = { 0.8f,0.2f,0.8f,0.3f };
 static float AMBI2[4] = { 0.8f,0.2f,0.8f,0.3f };
 
 
-void ModePlaceCPs::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF) 
+void ModePlaceCPs::DrawScene(const EVec3f& cuboid, const EVec3f& cam_pos, const EVec3f& cam_cnt) 
 {
   const int    frame_idx = formVisParam_getframeI();
   const EVec3i reso      = ImageCore::GetInst()->GetReso();
@@ -447,7 +445,7 @@ void ModePlaceCPs::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVe
   }
 
   BindAllVolumes();
-  DrawCrossSections(cuboid, reso, false, m_crssec_shader);
+  DrawCrossSectionsNormal();
   
   if (m_b_draw_stroke)
   {
@@ -485,19 +483,12 @@ void ModePlaceCPs::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVe
       DrawColoredCPs(m_cp_mesh, m_template_cps);
       glPopMatrix();
     }
-    
   }
-
 
   if (formVisParam_bRendVol())
   {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
     const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices(cuboid, reso, camP, camF,
-      !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeNormal(b_onmanip, cam_pos, cam_cnt);
   }
   
 }

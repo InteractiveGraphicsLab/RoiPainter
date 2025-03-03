@@ -19,9 +19,7 @@ using namespace RoiPainter4D;
 
 
 
-ModeSegPixPaint::ModeSegPixPaint() :
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl"),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegPixPaint::ModeSegPixPaint()
 {
   std::cout << "ModeSegPixPaint...\n";
 
@@ -494,22 +492,18 @@ void ModeSegPixPaint::KeyDown(int nChar) {}
 void ModeSegPixPaint::KeyUp(int nChar) {}
 
 
-void ModeSegPixPaint::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+
+void ModeSegPixPaint::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
   const EVec3i reso = ImageCore::GetInst()->GetReso();
 
   BindAllVolumes();
-  DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader);
+  DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
   if (formVisParam_bRendVol())
   {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices( cuboid, reso, camP, camF, 
-                     !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
+    DrawVolumeVisFore(b_onmanip, !IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
   const EVec3f pitch = ImageCore::GetInst()->GetPitch();
@@ -517,7 +511,7 @@ void ModeSegPixPaint::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const 
 
   if (m_b_drawlasso) 
   {
-    EVec3f ofset = (camP - camF).normalized() * 0.5;
+    EVec3f ofset = (cam_pos - cam_cnt).normalized() * 0.5;
     glLineWidth(2);
     glColor3d(0.2, 0.4, 1.0);
 

@@ -6,26 +6,8 @@
 // include only from CPP
 
 #include "OglForCLI.h"
-#include "GlslShader.h"
 
 
-void BindAllVolumes();
-
-void DrawCrossSections(
-  const EVec3f& cuboid,
-  const EVec3i& reso,
-  const bool& do_hilight,
-  GlslShaderCrsSec& shader);
-
-void DrawVolumeSlices(
-  const EVec3f& cuboid,
-  const EVec3i& reso,
-  const EVec3f& cam_pos,
-  const EVec3f& cam_focus,
-  const bool& do_hilight,
-  const bool& is_manipulation,
-  GlslShaderVolume& shader
-);
 
 
 CRSSEC_ID PickCrssec(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos);
@@ -35,7 +17,6 @@ CRSSEC_ID PickCrssec(const CRSSEC_ID trgt_id,
 //pick and move cross section by wheeling
 bool WheelingCrssec(const EVec2i& p, short z_delta, OglForCLI* ogl);
 void UpdateImageCoreVisVolumes();
-int  GetNumVolumeRenderSlice(bool b_during_manipulation);
 
 
 inline EMat3f CalcObjectRotationMatrixByMouseDragF(

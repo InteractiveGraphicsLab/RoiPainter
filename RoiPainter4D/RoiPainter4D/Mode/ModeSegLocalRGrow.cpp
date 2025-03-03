@@ -20,9 +20,7 @@
 using namespace RoiPainter4D;
 
 
-ModeSegLocalRGrow::ModeSegLocalRGrow() :
-    m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl"),
-    m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegLocalRGrow::ModeSegLocalRGrow()
 {
   std::cout << "ModeSegThreshPnt...\n";
   m_bL = m_bR = m_bM = false;
@@ -465,17 +463,12 @@ void ModeSegLocalRGrow::DrawScene(
 
   //bind volumes ---------------------------------------
   BindAllVolumes();
-  DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader);
+  DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
   if ( formVisParam_bRendVol() )
   {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
     const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices( cuboid, reso, cam_pos, cam_cnt, 
-                     !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeVisFore(b_onmanip, !IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
   const int num_seeds  = (int) m_seeds.size();

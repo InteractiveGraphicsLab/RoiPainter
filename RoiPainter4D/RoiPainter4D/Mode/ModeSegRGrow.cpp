@@ -17,15 +17,11 @@
 
 using namespace RoiPainter4D;
 
-ModeSegRGrow::ModeSegRGrow() :
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl"),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegRGrow::ModeSegRGrow() 
 {
   std::cout << "ModeSegRGrow...\n";
-
   m_bL = m_bR = m_bM = false;
   m_b_draw_cutstroke = m_b_modified = false;
-
   std::cout << "ModeSegRGrow DONE\n";
 }
 
@@ -268,29 +264,22 @@ int ModeSegRGrow::PickControlPoints(const EVec3f &ray_pos, const EVec3f &ray_dir
 
 
 
-void ModeSegRGrow::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center)
+void ModeSegRGrow::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
+  const EVec3i reso = ImageCore::GetReso();
 
   BindAllVolumes();
-  DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader);
+  DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
   if (m_b_draw_cutstroke)
   {
     DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
   }
 
-  //volume
   if ( formVisParam_bRendVol() )
   {
     const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    DrawVolumeSlices( cuboid, reso, cam_pos, cam_center, 
-                    !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeVisFore(b_onmanip, !IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
   //control points

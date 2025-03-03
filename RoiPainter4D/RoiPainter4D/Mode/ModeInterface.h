@@ -25,8 +25,8 @@ enum MODE_ID
   MODE_SEG_SWALLOW  ,  // ModeSegSwallowOrgans
   MODE_SEG_BRONCHI  ,  // ModeSegBronchi   (by Takata) FormSegModeBronchi
 	MODE_SEG_STROKEFFD,  // ModeSegStrokeFfd, FormSegStrokeFfd (by Yuki Kimura, 20220524)
-	MODE_PLC_CPS,         // ModePlaceCps    , FormPlaceCPs     tool for landmark placement
-	MODE_REF_CURVEDEFORM,        // ModeRefCurveDeform, FormRefCurveDeform (by Yuki Kimura, 2024)
+	MODE_PLC_CPS,        // ModePlaceCps    , FormPlaceCPs     tool for landmark placement
+	MODE_REF_CURVEDEFORM,// ModeRefCurveDeform, FormRefCurveDeform (by Yuki Kimura, 2024)
 
 	//MODE_SEG_GCUT   ,  // ModeSegGGut           
 	//MODE_SEG_THRESHPNT,// ModeSegTreshPnt      
@@ -125,6 +125,38 @@ public:
 	virtual void StartMode() = 0;
 
 	virtual void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF) = 0;
+
+protected:
+	void BindAllVolumes();
+
+	enum REND_MODE 
+	{
+		RM_NORMAL , 
+		RM_HILIGHT, 
+		RM_MASK
+	};
+
+	//Render Cross sections (should be called acter BindAllVolumes)
+	void DrawCrossSectionsNormal (); 
+	void DrawCrossSectionsVisMask(bool do_hilight); 
+	void DrawCrossSectionsVisFore(bool do_hilight);
+
+	//Render Volumes
+	void DrawVolumeNormal (bool b_onmanip, 
+												 const EVec3f& cam_pos, 
+												 const EVec3f& cam_cnt);
+	void DrawVolumeVisMask(bool b_onmanip,
+												 bool do_hilight, //mask可視化 on/off
+												 const EVec3f& cam_pos, 
+												 const EVec3f& cam_cnt);
+	void DrawVolumeVisFore(bool b_onmanip, 
+                         bool is_hilight, //fore可視化 on/off
+												 const EVec3f& cam_pos, 
+												 const EVec3f& cam_cnt);
+
+
+private:
+
 };
 
 

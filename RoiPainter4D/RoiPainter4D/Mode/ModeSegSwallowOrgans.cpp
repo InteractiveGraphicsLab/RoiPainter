@@ -13,6 +13,7 @@
 #include "FormSegSwallowOrganTimeline.h"
 #pragma unmanaged
 
+#include "GlslShader.h"
 #include <fstream>
 #include <iomanip> //setw用(obj出力時のファイル名）
 
@@ -63,9 +64,7 @@ GLuint  ModeSegSwallowOrgans::m_gl2Program = -1;
 /////////ModeSegSwallowOrgans////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-ModeSegSwallowOrgans::ModeSegSwallowOrgans() :
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl"), // mask volume vis
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
+ModeSegSwallowOrgans::ModeSegSwallowOrgans()
 {
   std::cout << "ModeSegSwallowOrgans...\n";
 
@@ -650,6 +649,7 @@ static float shin[1] = { 54.0f };
 
 
 
+
 void ModeSegSwallowOrgans::DrawScene(
   const EVec3f& cuboid,
   const EVec3f& cam_pos,
@@ -662,9 +662,9 @@ void ModeSegSwallowOrgans::DrawScene(
   glEnable(GL_LIGHT1);
   glEnable(GL_LIGHT2);
 
-  //bind volumes ---------------------------------------
+  //bind volumes 
   BindAllVolumes();
-  DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader);
+  DrawCrossSectionsNormal();
 
   //draw cut stroke
   if (m_b_draw_cutstroke)
@@ -784,18 +784,11 @@ void ModeSegSwallowOrgans::DrawScene(
     }
   }
 
-
-
   //draw volume 
   if (formVisParam_bRendVol())
   {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
     const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices(cuboid, reso, cam_pos, cam_center,
-      !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeVisMask(b_onmanip, !IsShiftKeyOn(), cam_pos, cam_center);
   }
 }
 

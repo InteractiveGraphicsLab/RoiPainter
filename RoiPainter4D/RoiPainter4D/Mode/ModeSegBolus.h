@@ -3,7 +3,6 @@
 
 #pragma unmanaged
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "GeneralizedCylinder.h"
 
 // Curved Cylinderを利用した Local Region Growing
@@ -38,10 +37,6 @@
 class ModeSegBolus : public ModeInterface
 {
 private:
-	GlslShaderVolume m_volume_shader_segm;
-	GlslShaderVolume m_volume_shader_norm;
-	GlslShaderCrsSec m_crssec_shader;
-  
   //support cut stroke 
   bool m_b_draw_cutstroke;
   std::vector<EVec3f> m_stroke;

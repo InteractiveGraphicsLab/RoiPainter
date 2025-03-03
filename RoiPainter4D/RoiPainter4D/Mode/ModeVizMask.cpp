@@ -14,9 +14,7 @@
 using namespace RoiPainter4D;
 
 
-ModeVizMask::ModeVizMask() :
-  m_volumeShader("shader/volVtx.glsl"   , "shader/volFlg_Msk.glsl"   ),
-  m_crssecShader("shader/crssecVtx.glsl", "shader/crssecFlg_Msk.glsl")
+ModeVizMask::ModeVizMask()
 {
   std::cout << "ModeVizMask const...----------------------\n";
   m_bL = m_bR = m_bM = false;
@@ -115,26 +113,17 @@ void ModeVizMask::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 }
 
 
-void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
-
   ImageCore::GetInst()->UpdateImgMaskColor();
 
   BindAllVolumes();
-
-  DrawCrossSections( cuboid, reso, !IsSpaceKeyOn(), m_crssecShader);
+  DrawCrossSectionsVisMask(!IsShiftKeyOn());
 
   if ( formVisParam_bRendVol() )
   {
-    
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
     bool b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices( cuboid, reso, camP, camF, 
-                    !IsSpaceKeyOn(), b_manip, m_volumeShader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeVisMask(b_manip, !IsShiftKeyOn(), cam_pos, cam_cnt);
   }
   
 }

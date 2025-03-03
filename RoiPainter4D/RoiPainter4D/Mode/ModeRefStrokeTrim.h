@@ -3,7 +3,6 @@
 #pragma unmanaged 
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 
 //-----------------------------------------------
 // (*) User Interface 
@@ -18,9 +17,6 @@
 
 class ModeRefStrokeTrim: public ModeInterface
 {
-	GlslShaderVolume    m_volumeShader;	
-	GlslShaderCrsSec    m_crssecShader;
-
 	//strokes 
 	bool m_b_draw_cutstroke;
 	bool m_b_draw_trimstroke;

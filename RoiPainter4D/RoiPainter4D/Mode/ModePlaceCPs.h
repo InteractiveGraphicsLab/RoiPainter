@@ -4,7 +4,6 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 #include "ttrianglesoup.h"
 #include <vector>
@@ -25,10 +24,6 @@
 
 class ModePlaceCPs : public ModeInterface
 {
-  //shaders
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   //等値面情報
   int                        m_isovalue;
   std::vector<TTriangleSoup> m_isosurfaces;

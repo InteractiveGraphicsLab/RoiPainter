@@ -28,9 +28,7 @@ using namespace RoiPainter4D;
 
 
 
-ModeSegJointTracker::ModeSegJointTracker() : 
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl"),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegJointTracker::ModeSegJointTracker() 
 {
 }
 
@@ -424,9 +422,6 @@ void ModeSegJointTracker::DrawCpTrajectory(int frameidx, int cpidx)
 
 
 
-
-
-
 void ModeSegJointTracker::DrawScene(
     const EVec3f &cuboid, 
     const EVec3f &camP, 
@@ -457,7 +452,7 @@ void ModeSegJointTracker::DrawScene(
   const int    frame_idx = formVisParam_getframeI();
 
   BindAllVolumes();
-  DrawCrossSections( cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader );
+  DrawCrossSectionsVisFore(!IsSpaceKeyOn());
    
   //draw iso surfaces
   if ( FormJTrack_bVisIsoSurface() ) IsoSurf_Draw( frame_idx );
@@ -495,13 +490,7 @@ void ModeSegJointTracker::DrawScene(
   if (formVisParam_bRendVol())
   {
     const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    DrawVolumeSlices( cuboid, reso, camP, camF, 
-                      !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeVisFore(b_onmanip, !IsSpaceKeyOn(), camP, camF);
   }
 
 }

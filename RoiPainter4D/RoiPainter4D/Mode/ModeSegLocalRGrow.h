@@ -3,7 +3,6 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 #include <vector>
 
@@ -114,9 +113,6 @@ public:
 
 class ModeSegLocalRGrow : public ModeInterface
 {
-  GlslShaderVolume  m_volume_shader;
-  GlslShaderCrsSec  m_crssec_shader;
-
   std::vector<LocalSeed> m_seeds;
   
   TMesh m_unitsphere;
