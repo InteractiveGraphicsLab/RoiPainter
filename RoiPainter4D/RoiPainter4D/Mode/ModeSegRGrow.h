@@ -22,7 +22,7 @@ class ModeSegRGrow : public ModeInterface
   GlslShaderVolume  m_volume_shader;
   GlslShaderCrsSec  m_crssec_shader;
 
-  //control points
+  //control points 
   float m_cp_radius;
   int  m_drag_cpid; //-1 when false
   std::vector<CtrlPt4D>  m_cps;

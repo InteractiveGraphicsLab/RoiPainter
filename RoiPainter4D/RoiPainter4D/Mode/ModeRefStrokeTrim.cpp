@@ -22,7 +22,7 @@ ModeRefStrokeTrim::ModeRefStrokeTrim():
 	m_crssecShader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
 {
 	std::cout << "ModeSegThreshPnt...\n";
-	m_bL = m_bR = m_bM = m_bDrawTrimStr = false;  
+	m_bL = m_bR = m_bM = m_b_draw_trimstroke = false;  
   m_b_draw_cutstroke = false;
 	m_bModified    = false;
 	m_msk3D_pre    = 0;
@@ -126,7 +126,7 @@ void ModeRefStrokeTrim::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 	else if ( IsShiftKeyOn() )
 	{
 		m_CutStroke.clear();
-		m_bDrawTrimStr = true;
+		m_b_draw_trimstroke = true;
 	}
 	else
 	{
@@ -143,14 +143,14 @@ void ModeRefStrokeTrim::LBtnUp(const EVec2i &p, OglForCLI *ogl)
     CrssecCore::CreateCurvedCrssec(cube, ogl->GetCamPos(), m_stroke);
   }
 
-	if(m_bDrawTrimStr)
+	if(m_b_draw_trimstroke)
 	{
 		updateVolFlgByStroke(*ogl);
 	}
   
   m_b_draw_cutstroke = false;
 	m_TrimStroke.clear();
-	m_bDrawTrimStr = false;
+	m_b_draw_trimstroke = false;
 	m_bL       = false;
 	ogl->BtnUp();
 	
@@ -160,10 +160,10 @@ void ModeRefStrokeTrim::LBtnUp(const EVec2i &p, OglForCLI *ogl)
 
 void ModeRefStrokeTrim::RBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
-	if (m_bL && m_bDrawTrimStr)
+	if (m_bL && m_b_draw_trimstroke)
 	{
-		m_bL           = false;
-		m_bDrawTrimStr = false;
+		m_bL = false;
+		m_b_draw_trimstroke = false;
 		m_CutStroke.clear();
 		m_TrimStroke.clear();
 	}
@@ -206,11 +206,10 @@ void ModeRefStrokeTrim::MouseMove(const EVec2i &p, OglForCLI *ogl)
   {
     m_stroke.push_back(rayP + 0.1f * rayD);
   }
-	else if (m_bDrawTrimStr)
+	else if (m_b_draw_trimstroke)
 	{
 		m_CutStroke.push_back( rayP + 0.1f * rayD );
 		m_TrimStroke.push_back(p);
-
 	}
 	else 
 	{
@@ -277,7 +276,7 @@ void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &camP, cons
     DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
   }
 
-	if (m_bDrawTrimStr)
+	if (m_b_draw_trimstroke)
   {
     DrawPolyLine( EVec3f(1,0,1), 4, m_CutStroke, true);
   }
@@ -290,7 +289,6 @@ void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &camP, cons
   DrawVolumeSlices(cuboid, reso, camP, camF, true, b_onmanip, m_volumeShader);
 	glDisable( GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
-  
 }
 
 

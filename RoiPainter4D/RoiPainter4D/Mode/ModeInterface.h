@@ -33,7 +33,6 @@ enum MODE_ID
 };
 
 
-
 /*
 refactoring Check UI and flg4d useage
 	MODE_VIS_NORMAL    , DONE  volFlg     crssecFlg
@@ -46,12 +45,12 @@ refactoring Check UI and flg4d useage
 	MODE_SEG_BOLUS    ,  DONE  volFlg  volFlg_Seg crssecFlg_Seg //２つを切り替えてる
 	MODE_SEG_JTRACKER ,  DONE  volFlg_Seg  crssecFlg_Seg
 	MODE_SEG_SWALLOW  ,  DONE  volFlg_Msk  crssecFlg
-	MODE_SEG_SWLTMPGEN,  DONE   削除volFlg crssecFlg //cage meshの時間方向をアジャストする手法．削除でいいかな (杉本さん）
+	MODE_SEG_SWLTMPGEN,  DONE  削除volFlg crssecFlg //cage meshの時間方向をアジャストする手法．削除でいいかな (杉本さん）
 	MODE_SEG_BRONCHI  ,  DONE  volFlg_Seg  crssecFlg_Seg
 	MODE_SEG_STROKEFFD,  DONE  volFlg_Msk  crssecFlg //UIの詳細は不明
 	MODE_PLC_CPS,        DONE  volFlg      crssecFlg 内側を塗るときにflg4d利用
-	MODE_REF_STRKTRIM ,  YET   
-	MODE_REF_CURVEDEFORM,YET
+	MODE_REF_STRKTRIM ,  DONE  volFlg_Seg  crssecFlg_Seg
+	MODE_REF_CURVEDEFORM,DONE  volFlg_Msk  crssecFlg
 
  refactor 1 move shader to shader manager
  refactor 2 move this function 

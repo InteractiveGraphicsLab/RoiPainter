@@ -25,7 +25,6 @@ using namespace RoiPainter4D;
 
 
 ModeRefCurveDeform::ModeRefCurveDeform() :
-  //m_volume_shader("shader/volVtx.glsl", "shader/volFlg.glsl"),   // normal volume vis
   m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl"), // mask volume vis
   m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
 {
@@ -43,10 +42,9 @@ ModeRefCurveDeform::~ModeRefCurveDeform()
 
 bool ModeRefCurveDeform::CanEndMode()
 {
-  //今処理を終わっていいですか? 
   if (m_is_not_saved_state)
   {
-    return ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Leaving?");
+    return ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Do you want to leave without saving curves?");
   }
   return true;
 }
