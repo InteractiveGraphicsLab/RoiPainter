@@ -495,7 +495,7 @@ void ModeSegPixPaint::KeyUp(int nChar) {}
 
 void ModeSegPixPaint::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
   if (formVisParam_bRendVol())

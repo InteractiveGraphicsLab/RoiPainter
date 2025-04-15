@@ -16,25 +16,6 @@ using namespace RoiPainter4D;
 
 
 
-void ModeInterface::BindAllVolumes()
-{
-  glActiveTextureARB(GL_TEXTURE0);
-  ImageCore::GetInst()->m_vol.BindOgl();
-  //glActiveTextureARB(GL_TEXTURE1);
-  //ImageCore::getInst()->m_volGmag.bindOgl();
-  glActiveTextureARB(GL_TEXTURE2);
-  ImageCore::GetInst()->m_vol_flg.BindOgl(false);
-  glActiveTextureARB(GL_TEXTURE3);
-  ImageCore::GetInst()->m_vol_mask.BindOgl(false);
-  glActiveTextureARB(GL_TEXTURE4);
-  formVisParam_bindTfImg();
-  glActiveTextureARB(GL_TEXTURE5);
-  formVisParam_bindPsuImg();
-  glActiveTextureARB(GL_TEXTURE6);
-  ImageCore::GetInst()->m_img_maskcolor.BindOgl(false);
-}
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //Draw Cross Sections//////////////////////////////////////////////////////////

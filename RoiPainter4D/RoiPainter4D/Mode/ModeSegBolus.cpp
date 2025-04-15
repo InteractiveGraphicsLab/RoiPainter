@@ -535,7 +535,7 @@ void ModeSegBolus::LoadCylinderInfoFromFile(std::string filePath, bool to_perfor
 
 void ModeSegBolus::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt) 
 {
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsVisFore(!IsSpaceKeyOn());
   
   //cut stroke

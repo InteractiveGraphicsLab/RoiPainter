@@ -117,7 +117,7 @@ void ModeVizMask::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
   ImageCore::GetInst()->UpdateImgMaskColor();
 
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsVisMask(!IsShiftKeyOn());
 
   if ( formVisParam_bRendVol() )

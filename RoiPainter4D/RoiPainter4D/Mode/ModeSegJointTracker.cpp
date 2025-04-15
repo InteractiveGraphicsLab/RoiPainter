@@ -449,7 +449,7 @@ void ModeSegJointTracker::DrawScene(
 
   const int frame_idx = formVisParam_getframeI();
   const EVec3f cuboid = ImageCore::GetCuboid();
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsVisFore(!IsSpaceKeyOn());
    
   //draw iso surfaces

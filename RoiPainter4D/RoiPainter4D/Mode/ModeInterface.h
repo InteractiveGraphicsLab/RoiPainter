@@ -127,7 +127,6 @@ public:
 	virtual void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center) = 0;
 
 protected:
-	void BindAllVolumes();
 
 	enum REND_MODE 
 	{

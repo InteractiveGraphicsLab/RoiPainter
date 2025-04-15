@@ -384,7 +384,7 @@ void ModeSegRigidICP::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
   const EVec3f cuboid = ImageCore::GetCuboid();
 
   //bind volumes
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
   if (m_b_draw_stroke)
@@ -690,11 +690,11 @@ void ModeSegRigidICP::FillInMesh(
     return;
   }
 
-  const int     num_voxels = ImageCore::GetInst()->GetNumVoxels();
-  const int     num_frames = ImageCore::GetInst()->GetNumFrames();
-  const EVec3i  resolution = ImageCore::GetInst()->GetReso();
-  const EVec3f  pitch      = ImageCore::GetInst()->GetPitch();
-  std::vector<byte*> &flg4d     = ImageCore::GetInst()->m_flg4d;
+  const int     num_voxels  = ImageCore::GetInst()->GetNumVoxels();
+  const int     num_frames  = ImageCore::GetInst()->GetNumFrames();
+  const EVec3i  resolution  = ImageCore::GetInst()->GetReso();
+  const EVec3f  pitch       = ImageCore::GetInst()->GetPitch();
+  std::vector<byte*> &flg4d = ImageCore::GetInst()->m_flg4d;
 
   if( start_idx > end_idx ) std::swap( start_idx, end_idx );
 

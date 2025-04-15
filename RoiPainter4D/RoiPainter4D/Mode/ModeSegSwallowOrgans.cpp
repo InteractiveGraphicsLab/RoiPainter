@@ -654,7 +654,6 @@ void ModeSegSwallowOrgans::DrawScene(
   const EVec3f& cam_pos,
   const EVec3f& cam_center)
 {
-  const EVec3i reso   = ImageCore::GetReso();
   const EVec3f cuboid = ImageCore::GetCuboid();
 
   const int frame_idx = formVisParam_getframeI();
@@ -664,7 +663,7 @@ void ModeSegSwallowOrgans::DrawScene(
   glEnable(GL_LIGHT2);
 
   //bind volumes 
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsNormal();
 
   //draw cut stroke

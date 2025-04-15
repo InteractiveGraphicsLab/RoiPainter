@@ -399,7 +399,7 @@ void ModeRefCurveDeform::DrawScene(
 
   //ImageCore::GetInst()->UpdateImgMaskColor();
 
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsNormal();
 
   if (IsMKeyOn() && formVisParam_bRendVol())
@@ -574,9 +574,8 @@ void ModeRefCurveDeform::ConvertMaskToMesh()
 
 void ModeRefCurveDeform::ConvertMeshToMask()
 {
-  const int frame_idx = formVisParam_getframeI();
-  m_mask_mesh.UpdateMask(frame_idx);
-
+  m_mask_mesh.UpdateMask();
+  UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
   m_is_not_saved_state = false;

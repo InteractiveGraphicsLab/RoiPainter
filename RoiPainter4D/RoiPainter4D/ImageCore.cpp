@@ -4,6 +4,7 @@
 #pragma managed
 #include "CliMessageBox.h"
 #include "FormMain.h"
+#include "FormVisParam.h"
 #pragma unmanaged
 
 
@@ -1178,6 +1179,42 @@ void ImageCore::InitializeFlg4dByMask( void (*progressfunc)(float) )
   }
 
   if( progressfunc != 0) progressfunc(0);
+}
+
+
+
+void ImageCore::BindAllVolumes()
+{
+  glActiveTextureARB(GL_TEXTURE0);
+  m_vol.BindOgl();
+  //glActiveTextureARB(GL_TEXTURE1);
+  //ImageCore::getInst()->m_volGmag.bindOgl();
+  glActiveTextureARB(GL_TEXTURE2);
+  m_vol_flg.BindOgl(false);
+  glActiveTextureARB(GL_TEXTURE3);
+  m_vol_mask.BindOgl(false);
+  glActiveTextureARB(GL_TEXTURE4);
+  formVisParam_bindTfImg();
+  glActiveTextureARB(GL_TEXTURE5);
+  formVisParam_bindPsuImg();
+  glActiveTextureARB(GL_TEXTURE6);
+  m_img_maskcolor.BindOgl(false);
+}
+
+
+
+std::vector<float> ImageCore::Calc8bitHistogram_visvol()
+{
+  const int N = m_vol.GetW() * m_vol.GetH() * m_vol.GetD();
+
+  std::vector<float> hist(256, 0);
+
+  for (int i = 0; i < N; ++i)  hist[m_vol[i]] += 1;
+
+  float maxV = 0;
+  for (int i = 5; i < 256 - 5; ++i) maxV = std::max(maxV, hist[i]);
+  for (int i = 0; i < 256; ++i) hist[i] /= maxV;
+  return hist;
 }
 
 

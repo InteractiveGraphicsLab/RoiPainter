@@ -266,7 +266,7 @@ int ModeSegRGrow::PickControlPoints(const EVec3f &ray_pos, const EVec3f &ray_dir
 
 void ModeSegRGrow::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
   if (m_b_draw_cutstroke)

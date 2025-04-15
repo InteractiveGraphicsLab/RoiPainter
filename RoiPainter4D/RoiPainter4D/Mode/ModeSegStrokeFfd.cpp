@@ -577,7 +577,7 @@ void ModeSegStrokeFfd::DrawScene(
   const int frame_idx = formVisParam_getframeI();
 
   // bind volumes 
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsNormal();
 
   if (formVisParam_bRendVol())

@@ -82,7 +82,7 @@ bool MaskMeshSequence::LoadMask(const int _scale = 1)
 }
 
 
-void MaskMeshSequence::UpdateMask(const int _current_frame_idx)
+void MaskMeshSequence::UpdateMask()
 {
   const int active_maskid = ImageCore::GetInst()->GetSelectMaskIdx();
   const std::vector<MaskData>& mask_data = ImageCore::GetInst()->GetMaskData();
@@ -121,8 +121,6 @@ void MaskMeshSequence::UpdateMask(const int _current_frame_idx)
     }
     img.reset();
   }
-
-  ImageCore::GetInst()->m_vol_mask.SetValue(ImageCore::GetInst()->m_mask4d[_current_frame_idx]);
 }
 
 

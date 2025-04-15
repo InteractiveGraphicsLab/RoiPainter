@@ -260,7 +260,7 @@ void ModeRefStrokeTrim::KeyUp(int nChar)
 void ModeRefStrokeTrim::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {	
   //bind volumes ---------------------------------------
-  BindAllVolumes();
+	ImageCore::GetInst()->BindAllVolumes();
 
 	if (m_bDrawCrssec)
   {

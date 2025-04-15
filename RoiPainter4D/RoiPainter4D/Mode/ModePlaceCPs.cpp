@@ -442,7 +442,7 @@ void ModePlaceCPs::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt)
     return;
   }
 
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsNormal();
   
   if (m_b_draw_stroke)

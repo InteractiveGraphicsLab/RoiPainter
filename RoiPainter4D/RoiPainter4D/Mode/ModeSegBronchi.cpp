@@ -142,7 +142,7 @@ void ModeSegBronchi::FinishSegmentation()
 
 void ModeSegBronchi::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt)
 {
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
 
   if (m_b_draw_cutstroke)
   {

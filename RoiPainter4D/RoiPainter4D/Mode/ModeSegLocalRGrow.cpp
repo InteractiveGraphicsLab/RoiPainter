@@ -418,9 +418,6 @@ void ModeSegLocalRGrow::KeyUp(int nChar) {}
 
 
 
-
-
-
 void ModeSegLocalRGrow::StartMode()
 {
   //initialize field 
@@ -458,7 +455,7 @@ void ModeSegLocalRGrow::DrawScene(
     const EVec3f &cam_pos, 
     const EVec3f &cam_cnt)
 {
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
   if ( formVisParam_bRendVol() )

@@ -86,17 +86,18 @@ private:
   int                    m_active_maskid; // selected mask id ( -1:none, 0...:mask_id)
   std::vector<MaskData>  m_mask_data    ;
 
+  //3D volume to send GPU
+  OglImage3D  m_vol;
+  OglImage3D  m_vol_flg;
+  OglImage3D  m_vol_mask;
+  OglImage1D<CH_RGBA> m_img_maskcolor; // func: maskID  --> color
+
 public:
   //4D volumes (CPUに保持)
-  std::vector< short* > m_img4d ; //orig volume
-  std::vector< byte*  > m_flg4d ; //flag volume (典型例 0:locked, 1:背景,  255前景)
+  std::vector< byte*  > m_flg4d; //flag volume (典型例 0:locked, 1:背景,  255前景)
   std::vector< byte*  > m_mask4d; //mask volume (mask id)
+  std::vector< short* > m_img4d; //orig volume
 
-  //3D volume to send GPU (privateにしたい)
-  OglImage3D  m_vol     ;
-  OglImage3D  m_vol_flg ;
-  OglImage3D  m_vol_mask;
-  OglImage1D<CH_RGBA>  m_img_maskcolor; // func: maskID    --> color
 
 private:
   ImageCore();
@@ -210,7 +211,9 @@ public:
 
   // m_flg4d[i]==255 --> m_mask4d[i] = new_mask_id
   void mask_storeCurrentForeGround();
-    
+
+  void BindAllVolumes();
+  std::vector<float> Calc8bitHistogram_visvol();
  };
 
 
