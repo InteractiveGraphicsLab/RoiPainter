@@ -100,6 +100,19 @@ inline EVec3f CalcObjectTransVectorByMouseDragF(
 }
 
 
+//ImageCore::m_flg4D に対する処理
+void RunErosion3D_AllFrame_flg4();
+void RunFillHole3D_AllFrame_flg4();
+void RunDilation3D_AllFrame_flg4();
+
+bool bForeVoxelExist_flg4();
+
+
+
+
+
+
+
 static const char* MESSAGE_NO_FOREGROUND =
 "前景領域がありません\n No foreground voxel exist\n";
 

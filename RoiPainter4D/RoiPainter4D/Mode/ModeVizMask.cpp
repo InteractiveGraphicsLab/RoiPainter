@@ -1,6 +1,5 @@
 #pragma unmanaged 
 #include "ModeVizMask.h"
-#include "OglForCLI.h"
 #include "ImageCore.h"
 #include "ModeCommonTools.h"
 

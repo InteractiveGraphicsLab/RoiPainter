@@ -3,6 +3,7 @@
 
 #pragma managed
 #include "../FormVisParam.h"
+#include "../FormMain.h"
 #pragma unmanaged
 
 #include "ModeInterface.h"
@@ -10,17 +11,7 @@
 #include "CrsSecCore.h"
 #include "ImageCore.h"
 
-
-
-
 using namespace RoiPainter4D;
-
-
-
-
-
-
-
 
 
 
@@ -83,5 +74,97 @@ void UpdateImageCoreVisVolumes()
 
 
 
+//Compute erosion for ImageCore::m_flg4
+//m_flg4: 0:background (neverchange), 
+//        1:background, 
+//      255:foreground
+void RunErosion3D_AllFrame_flg4()
+{
+  std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;
+  const EVec3i reso = ImageCore::GetInst()->GetReso();
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+
+  std::cout << "Run Erosion 3D...\n";
+#pragma omp parallel for 
+  for (int fi = 0; fi < num_frames; ++fi)
+    Erode3D(reso[0], reso[1], reso[2], flg4d[fi]);
+  std::cout << "Run Erosion 3D...DONE\n";
+}
 
 
+//Compute Dilation for ImageCore::m_flg4
+//m_flg4: 0:background (neverchange), 
+//        1:background, 
+//      255:foreground
+void RunDilation3D_AllFrame_flg4()
+{
+  std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;
+  const EVec3i reso = ImageCore::GetInst()->GetReso();
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+
+  std::cout << "Run Dilation 3D...\n";
+#pragma omp parallel for 
+  for (int fi = 0; fi < num_frames; ++fi)
+    Dilate3D(reso[0], reso[1], reso[2], flg4d[fi]);
+  std::cout << "Run Dilation 3D...DONE\n";
+}
+
+
+
+//Compute FillHole for ImageCore::m_flg4
+//m_flg4: 0:background (neverchange), 
+//        1:background, 
+//      255:foreground
+void RunFillHole3D_AllFrame_flg4()
+{
+  const EVec3i    reso = ImageCore::GetInst()->GetReso();
+  const int  num_frames = ImageCore::GetInst()->GetNumFrames();
+  const int  num_voxels = ImageCore::GetInst()->GetNumVoxels();
+
+
+  std::cout << "RunFillHole3D_EachFrame...\n";
+
+  byte* flgs = new byte[num_voxels];
+
+  for (int fi = 0; fi < num_frames; fi++)
+  {
+    byte* flg3d = ImageCore::GetInst()->m_flg4d[fi];
+
+#pragma omp parallel for 
+    for (int vi = 0; vi < num_voxels; ++vi)
+      flgs[vi] = (flg3d[vi] == 255) ? 255 : 0;
+
+    FillHole3D(reso[0], reso[1], reso[2], flgs);
+
+#pragma omp parallel for 
+    for (int i = 0; i < num_voxels; ++i)
+      if (flg3d[i] == 1)
+        flg3d[i] = (flgs[i] == 255) ? 255 : 1;
+
+    formMain_SetProgressValue(fi / float(num_frames));
+  }
+  formMain_SetProgressValue(0);
+
+  delete[] flgs;
+
+  std::cout << "...DONE...\n";
+}
+
+
+bool bForeVoxelExist_flg4()
+{
+  const std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;
+  const int  num_frame = ImageCore::GetInst()->GetNumFrames();
+  const int  num_voxel = ImageCore::GetInst()->GetNumVoxels();
+
+  bool b_foreexist = false;
+
+  for (int fi = 0; fi < num_frame && !b_foreexist; ++fi)
+  {
+    for (int i = 0; i < num_voxel && !b_foreexist; ++i)
+    {
+      if (flg4d[fi][i] == 255) b_foreexist = true;
+    }
+  }
+  return b_foreexist;
+}

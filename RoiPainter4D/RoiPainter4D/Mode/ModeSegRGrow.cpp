@@ -17,6 +17,7 @@
 
 using namespace RoiPainter4D;
 
+
 ModeSegRGrow::ModeSegRGrow() 
 {
   std::cout << "ModeSegRGrow...\n";
@@ -26,9 +27,11 @@ ModeSegRGrow::ModeSegRGrow()
 }
 
 
+
 ModeSegRGrow::~ModeSegRGrow()
 {
 }
+
 
 
 bool ModeSegRGrow::CanEndMode()
@@ -41,21 +44,7 @@ bool ModeSegRGrow::CanEndMode()
 
 void ModeSegRGrow::FinishSegmentation()
 {
-  const std::vector<byte*> &flg4d = ImageCore::GetInst()->m_flg4d;
-  const int  num_frame = ImageCore::GetInst()->GetNumFrames();
-  const int  num_voxel = ImageCore::GetInst()->GetNumVoxels();
-
-  bool b_foreexist = false;
-
-  for (int fi = 0; fi < num_frame && !b_foreexist; ++fi)
-  {
-    for (int i = 0; i < num_voxel && !b_foreexist; ++i )
-    {
-      if (flg4d[fi][i] == 255) b_foreexist = true;
-    }
-  }
-  
-  if (!b_foreexist)
+  if (!bForeVoxelExist_flg4())
   {
     ShowMsgDlg_OK(MESSAGE_NO_FOREGROUND, "no foreground");
     return;
@@ -68,6 +57,7 @@ void ModeSegRGrow::FinishSegmentation()
   ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   formMain_RedrawMainPanel();
 }
+
 
 
 void ModeSegRGrow::cancelSegmentation()
@@ -136,6 +126,7 @@ void ModeSegRGrow::LBtnDown(const EVec2i &p, OglForCLI *ogl)
   {
     ogl->BtnDown_Trans(p);
   }
+  formMain_RedrawMainPanel();
 
 }
 
@@ -177,6 +168,7 @@ void ModeSegRGrow::RBtnDown(const EVec2i &p, OglForCLI *ogl)
   {
     ogl->BtnDown_Rot(p);
   }
+  formMain_RedrawMainPanel();
 }
 
 
@@ -234,7 +226,8 @@ void ModeSegRGrow::MouseMove(const EVec2i &p, OglForCLI *ogl)
 
 void ModeSegRGrow::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 {
-  if(!WheelingCrssec(p, z_delta, ogl) ) {
+  if(!WheelingCrssec(p, z_delta, ogl) ) 
+  {
     ogl->ZoomCamera(z_delta * 0.1f);
   }
   formMain_RedrawMainPanel();
@@ -307,10 +300,10 @@ static bool IsInRange(const T &val, const T &minv, const T &maxv) {
 
 ///////////////////////////////////////////////////////////////////////////
 //Segmentation/////////////////////////////////////////////////////////////
-void ModeSegRGrow::RunThresholding(const short minv, const short maxv)
+void ModeSegRGrow::RunThresholding_AllFrame(const short minv, const short maxv)
 {
-  const int    num_frames = ImageCore::GetInst()->GetNumFrames();
-  const int    num_voxels = ImageCore::GetInst()->GetNumVoxels();
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+  const int num_voxels = ImageCore::GetInst()->GetNumVoxels();
 
 #pragma omp parallel for
   for (int f = 0; f < num_frames; ++f)
@@ -356,7 +349,7 @@ void ModeSegRGrow::RunThresholding_OneFrame(const short minv, const short maxv, 
 
 
 
-void ModeSegRGrow::RunRegionGrow8(const short minv, const short maxv)
+void ModeSegRGrow::RunRegionGrow4D(const short minv, const short maxv)
 {
   std::cout << "runRegionGrow8...\n";
 
@@ -428,10 +421,9 @@ void ModeSegRGrow::RunRegionGrow8(const short minv, const short maxv)
 
 
 
-void ModeSegRGrow::RunRegionGrow6_OneFrame(const short minv, const short maxv, const int frameI)
+void ModeSegRGrow::RunRegionGrow3D_OneFrame(const short minv, const short maxv, const int frameI)
 {
   std::cout << "runRegionGrow6...\n";
-
 
   int W, H, D, WH, WHD;
   std::tie(W,H,D,WH,WHD) = ImageCore::GetInst()->GetResolution5();
@@ -439,7 +431,6 @@ void ModeSegRGrow::RunRegionGrow6_OneFrame(const short minv, const short maxv, c
   const int num_voxels   = ImageCore::GetInst()->GetNumVoxels();
   const short *img3d = ImageCore::GetInst()->m_img4d[frameI];
   byte        *flg3d = ImageCore::GetInst()->m_flg4d[frameI];
-
 
   if (frameI < 0 || num_frames <= frameI)
   {
@@ -488,7 +479,6 @@ void ModeSegRGrow::RunRegionGrow6_OneFrame(const short minv, const short maxv, c
     K = I + WH; if (z < D-1 && flg3d[K] == 1 && IsInRange(img3d[K], minv, maxv)) { flg3d[K] = 255; Q.push_back(PixIdx4D(K, f)); }
   }
 
-
   UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
   m_b_modified = true;
@@ -496,78 +486,26 @@ void ModeSegRGrow::RunRegionGrow6_OneFrame(const short minv, const short maxv, c
 }
 
 
-
-void ModeSegRGrow::RunErosion3D_EachFrame()
+void ModeSegRGrow::RunErosion3D_AllFrame()
 {
-  std::vector<byte*> &flg4d    = ImageCore::GetInst()->m_flg4d;
-  const EVec3i reso       = ImageCore::GetInst()->GetReso();
-  const int    num_frames = ImageCore::GetInst()->GetNumFrames();
-
-  std::cout << "Run Erosion 3D...\n";
-
-#pragma omp parallel for 
-  for (int fi = 0; fi < num_frames; ++fi)
-    Erode3D(reso[0], reso[1], reso[2], flg4d[fi]);
-
-  std::cout << "Run Erosion 3D...DONE\n";
-
+  RunErosion3D_AllFrame_flg4();
   UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
 }
 
 
-
-void ModeSegRGrow::RunDilation3D_EachFrame()
+void ModeSegRGrow::RunDilation3D_AllFrame()
 {
-  std::vector<byte*> &flg4d    = ImageCore::GetInst()->m_flg4d;
-  const EVec3i reso       = ImageCore::GetInst()->GetReso();
-  const int    num_frames = ImageCore::GetInst()->GetNumFrames();
-
-  std::cout << "Run Dilation 3D...\n";
-#pragma omp parallel for 
-  for (int fi = 0; fi < num_frames; ++fi)
-    Dilate3D(reso[0], reso[1], reso[2], flg4d[fi]);
-
-  std::cout << "Run Dilation 3D...DONE\n";
-
+  RunDilation3D_AllFrame_flg4();
   UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
 }
 
 
-void ModeSegRGrow::RunFillHole3D_EachFrame()
+void ModeSegRGrow::RunFillHole3D_AllFrame()
 {
-  const EVec3i    reso  = ImageCore::GetInst()->GetReso();
-  const int  num_frames = ImageCore::GetInst()->GetNumFrames();
-  const int  num_voxels = ImageCore::GetInst()->GetNumVoxels();
-
-
-  std::cout << "RunFillHole3D_EachFrame...\n";
-
-  byte* flgs = new byte[num_voxels];
-
-  for (int fi = 0; fi < num_frames; fi++)
-  {
-    byte* flg3d = ImageCore::GetInst()->m_flg4d[fi];
-
-#pragma omp parallel for 
-    for (int vi = 0; vi < num_voxels; ++vi)
-      flgs[vi] = (flg3d[vi] == 255) ? 255 : 0;
-
-    FillHole3D(reso[0], reso[1], reso[2], flgs);
-
-#pragma omp parallel for 
-    for (int i = 0; i < num_voxels; ++i) 
-      if (flg3d[i] == 1)
-        flg3d[i] = (flgs[i] == 255) ? 255 : 1;
-
-    formMain_SetProgressValue( fi/float(num_frames));
-  }
-  formMain_SetProgressValue(0);
-
-  delete[] flgs;
-
-  std::cout << "...DONE...\n";
+  RunFillHole3D_AllFrame_flg4();
   UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
 }
+

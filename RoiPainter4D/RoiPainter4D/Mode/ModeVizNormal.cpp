@@ -1,7 +1,7 @@
 #pragma unmanaged
+
 #include "ModeVizNormal.h"
 #include "ModeCommonTools.h"
-#include "OglForCLI.h"
 #include "ImageCore.h"
 #include "CrsSecCore.h"
 
@@ -136,7 +136,8 @@ void ModeVizNormal::MouseMove(const EVec2i &p, OglForCLI *ogl)
 
 void ModeVizNormal::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 {
-  if(!WheelingCrssec(p, z_delta, ogl) ) {
+  if(!WheelingCrssec(p, z_delta, ogl) ) 
+  {
     ogl->ZoomCamera(z_delta * 0.1f);
   }
   formMain_RedrawMainPanel();

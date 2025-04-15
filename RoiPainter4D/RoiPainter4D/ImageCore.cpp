@@ -1093,8 +1093,6 @@ void ImageCore::LoadMask_Trawub(
 
 
 
-
-
 void ImageCore::UpdateVisVolume(int winlv_min, int winlv_max, int frame_idx)
 {
   if (frame_idx < 0 || m_img4d.size() - 1 < frame_idx) return;
@@ -1102,6 +1100,8 @@ void ImageCore::UpdateVisVolume(int winlv_min, int winlv_max, int frame_idx)
   m_vol_flg .SetValue( m_flg4d[frame_idx] );
   m_vol_mask.SetValue( m_mask4d[frame_idx]);
 }
+
+
 
 void ImageCore::UpdateImgMaskColor()
 {
@@ -1117,8 +1117,6 @@ void ImageCore::UpdateImgMaskColor()
   }
   m_img_maskcolor.SetUpdated();
 }
-
-
 
 
 

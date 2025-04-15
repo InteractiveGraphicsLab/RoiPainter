@@ -94,9 +94,9 @@ private:
 
 public:
   //4D volumes (CPUに保持)
-  std::vector< byte*  > m_flg4d; //flag volume (典型例 0:locked, 1:背景,  255前景)
+  std::vector< byte*  > m_flg4d ; //flag volume (典型例 0:locked, 1:背景,  255前景)
   std::vector< byte*  > m_mask4d; //mask volume (mask id)
-  std::vector< short* > m_img4d; //orig volume
+  std::vector< short* > m_img4d ; //orig volume
 
 
 private:
@@ -197,11 +197,8 @@ public:
     return m_img4d[frameI][GetVoxelIndex(position)];
   }
 
-
-
   void UpdateVisVolume(int winlv_min, int winlv_max, int frame_idx);
   void UpdateImgMaskColor();
-
 
   // m_flg4d Operation ----------------------
  

@@ -14,59 +14,32 @@ enum MODE_ID
 	MODE_VIS_NORMAL    , // ModeVizNormal       
 	MODE_VIS_MASK      , // ModeVizMask         
 
+	MODE_REF_STRKTRIM,  // ModeRefStrkTrim     
+	MODE_REF_CURVEDEFORM,// ModeRefCurveDeform, FormRefCurveDeform (by Yuki Kimura, 2024)
+
 	MODE_SEG_PIXPAINT  , // ModeSegPixPaint
 	MODE_SEG_REGGROW   , // ModeSegRegGrow     
 	MODE_SEG_RIGIDICP  , // ModeSegRigidICP    (SJTrackerより)
-	//MODE_SEG_PARACONT ,// ModeSegParaConts(Parallel Contours by Chika Tomiyama, Removed 20220517)
 	MODE_SEG_LCLRGROW ,  // ModeSegLocalRGrow (Local Region Growing by Hikaru Shionozaki)
 	MODE_SEG_BOLUS    ,  // ModeSegBolus      (by shionzaki )
   MODE_SEG_JTRACKER ,  // ModeJontTracker   (For Hokkaidou Univ)
-	MODE_REF_STRKTRIM ,  // ModeRefStrkTrim     
   MODE_SEG_SWALLOW  ,  // ModeSegSwallowOrgans
   MODE_SEG_BRONCHI  ,  // ModeSegBronchi   (by Takata) FormSegModeBronchi
 	MODE_SEG_STROKEFFD,  // ModeSegStrokeFfd, FormSegStrokeFfd (by Yuki Kimura, 20220524)
-	MODE_PLC_CPS,        // ModePlaceCps    , FormPlaceCPs     tool for landmark placement
-	MODE_REF_CURVEDEFORM,// ModeRefCurveDeform, FormRefCurveDeform (by Yuki Kimura, 2024)
 
+	MODE_PLC_CPS,        // ModePlaceCps    , FormPlaceCPs     tool for landmark placement
+
+	//MODE_SEG_PARACONT ,// ModeSegParaConts(Parallel Contours by Chika Tomiyama, Removed 20220517)
 	//MODE_SEG_GCUT   ,  // ModeSegGGut           
 	//MODE_SEG_THRESHPNT,// ModeSegTreshPnt      
 };
 
 
-/*
-refactoring Check UI and flg4d useage
-	MODE_VIS_NORMAL    , DONE  volFlg     crssecFlg
-	MODE_VIS_MASK      , DONE  volFlg_Msk crssecFlg_Msk
-	MODE_SEG_PIXPAINT  , DONE  volFlg_Seg crssecFlg_Seg //highlight 255 pixel
-	MODE_SEG_REGGROW   , DONE  volFlg_Seg crssecFlg_Seg
-	MODE_SEG_RIGIDICP  , DONE  volFlg_Seg crssecFlg_Seg
-	MODE_SEG_CLOSESTPIX, DONE  削除
-	MODE_SEG_LCLRGROW ,  DONE  volFlg_Seg crssecFlg_Seg
-	MODE_SEG_BOLUS    ,  DONE  volFlg  volFlg_Seg crssecFlg_Seg //２つを切り替えてる
-	MODE_SEG_JTRACKER ,  DONE  volFlg_Seg  crssecFlg_Seg
-	MODE_SEG_SWALLOW  ,  DONE  volFlg_Msk  crssecFlg
-	MODE_SEG_SWLTMPGEN,  DONE  削除volFlg crssecFlg //cage meshの時間方向をアジャストする手法．削除でいいかな (杉本さん）
-	MODE_SEG_BRONCHI  ,  DONE  volFlg_Seg  crssecFlg_Seg
-	MODE_SEG_STROKEFFD,  DONE  volFlg_Msk  crssecFlg //UIの詳細は不明
-	MODE_PLC_CPS,        DONE  volFlg      crssecFlg 内側を塗るときにflg4d利用
-	MODE_REF_STRKTRIM ,  DONE  volFlg_Seg  crssecFlg_Seg
-	MODE_REF_CURVEDEFORM,DONE  volFlg_Msk  crssecFlg
 
- refactor 1 move shader to shader manager
- refactor 2 move this function 
-	bool b_fore_exist = false;
-	for (int fi = 0; fi < num_frames && !b_fore_exist; ++fi)
-	{
-		for (int i = 0; i < num_voxels && !b_fore_exist; ++i)
-		{
-			if (flg4d[fi][i] == 255) b_fore_exist = true;
-		}
-	}
-  to image core
-
-
-*/
-
+//refactoring 4/15 
+//ModeVisNormal
+//ModeVisMask
+//ModeSegRGrow
 
 
 
@@ -141,17 +114,22 @@ protected:
 	void DrawCrossSectionsVisFore(bool do_hilight);
 
 	//Render Volumes
-	void DrawVolumeNormal (const EVec3f& cam_pos, 
-												 const EVec3f& cam_cnt,
-												 bool do_coarse_rend_onmanip = true);
-	void DrawVolumeVisMask(bool do_hilight, //mask可視化 on/off
-												 const EVec3f& cam_pos, 
-												 const EVec3f& cam_cnt, 
-												 bool do_coarse_rend_onmanip = true);
-	void DrawVolumeVisFore(bool is_hilight, //fore可視化 on/off
-												 const EVec3f& cam_pos, 
-												 const EVec3f& cam_cnt, 
-												 bool do_coarse_rend_onmanip = true);
+	void DrawVolumeNormal (
+		const EVec3f& cam_pos, 
+		const EVec3f& cam_cnt,
+		bool do_coarse_rend_onmanip = true);
+
+	void DrawVolumeVisMask(
+		bool do_hilight, //mask可視化 on/off
+		const EVec3f& cam_pos, 
+		const EVec3f& cam_cnt, 
+		bool do_coarse_rend_onmanip = true);
+
+	void DrawVolumeVisFore(
+		bool is_hilight, //fore可視化 on/off
+		const EVec3f& cam_pos, 
+		const EVec3f& cam_cnt, 
+		bool do_coarse_rend_onmanip = true);
 
 
 private:

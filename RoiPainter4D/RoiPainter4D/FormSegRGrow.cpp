@@ -34,14 +34,14 @@ System::Void FormSegRGrow::btn_runThresholding_Click(System::Object^  sender, Sy
 {
   short minV = minThresholdBar->Value;
   short maxV = maxThresholdBar->Value;
-  ModeSegRGrow::GetInst()->RunThresholding(minV, maxV);
+  ModeSegRGrow::GetInst()->RunThresholding_AllFrame(minV, maxV);
 }
 
 System::Void FormSegRGrow::btn_runRegionGrow_Click(System::Object^  sender, System::EventArgs^  e)
 {
   short minV = minThresholdBar->Value;
   short maxV = maxThresholdBar->Value;
-  ModeSegRGrow::GetInst()->RunRegionGrow8(minV, maxV);
+  ModeSegRGrow::GetInst()->RunRegionGrow4D(minV, maxV);
 }
 
 System::Void FormSegRGrow::btn_runThresholding_1frame_Click(System::Object^  sender, System::EventArgs^  e)
@@ -57,23 +57,23 @@ System::Void FormSegRGrow::btn_runRegionGrow_1frame_Click(System::Object^  sende
   int   frameI = FormVisParam::GetInst()->GetframeI();
   short minV = minThresholdBar->Value;
   short maxV = maxThresholdBar->Value;
-  ModeSegRGrow::GetInst()->RunRegionGrow6_OneFrame(minV, maxV, frameI);
+  ModeSegRGrow::GetInst()->RunRegionGrow3D_OneFrame(minV, maxV, frameI);
 }
 
 
 System::Void FormSegRGrow::btn_erode_Click(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeSegRGrow::GetInst()->RunErosion3D_EachFrame();
+  ModeSegRGrow::GetInst()->RunErosion3D_AllFrame();
 }
 
 System::Void FormSegRGrow::btn_dilate_Click(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeSegRGrow::GetInst()->RunDilation3D_EachFrame();
+  ModeSegRGrow::GetInst()->RunDilation3D_AllFrame();
 }
 
 System::Void FormSegRGrow::btn_fillHole_Click(System::Object^  sender, System::EventArgs^  e)
 {
-  ModeSegRGrow::GetInst()->RunFillHole3D_EachFrame();
+  ModeSegRGrow::GetInst()->RunFillHole3D_AllFrame();
 }
 
 System::Void FormSegRGrow::btn_ok_Click(System::Object^  sender, System::EventArgs^  e)
