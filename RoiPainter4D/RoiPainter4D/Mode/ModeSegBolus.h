@@ -41,7 +41,7 @@ private:
   bool m_b_draw_cutstroke;
   std::vector<EVec3f> m_stroke;
 
-  HANDLE m_sub_thread;
+  //HANDLE m_sub_thread;
 
 	float m_cp_radius;
 	std::vector< GeneralizedCylinder > m_cylinders;
@@ -90,7 +90,7 @@ public:
 	void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt);
 
 	void FinishSegmentation();
-	void cancelSegmentation();
+	void CancelSegmentation();
 	
 	// ---------------------------------------------------------------
 	void SetRadius1   ( float axis  );
@@ -114,8 +114,8 @@ public:
   void RunDilationAllFrame();
 
   //cylinder IO
-	void ExportCylinderInfoByText( std::string filePath );
-  void LoadCylinderInfoFromFile( std::string filePath, bool isFitting = true);
+	void SaveCylinderInfoAsTextFile( std::string filePath );
+  void LoadCylinderInfoFromTextFile( std::string filePath, bool isFitting = true);
 
 private:
 	EVec2i PickCPs(const EVec3f &ray_pos, const EVec3f &ray_dir, const float max_depth);

@@ -78,11 +78,22 @@ void UpdateImageCoreVisVolumes()
 //m_flg4: 0:background (neverchange), 
 //        1:background, 
 //      255:foreground
+void RunErosion3D_OneFrame_flg4(int frame_idx)
+{
+  std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;
+  const EVec3i reso         = ImageCore::GetInst()->GetReso();
+  const int num_frames      = ImageCore::GetInst()->GetNumFrames();
+
+  std::cout << "Run Erosion 3D...\n";
+  Erode3D(reso[0], reso[1], reso[2], flg4d[frame_idx]);
+  std::cout << "Run Erosion 3D...DONE\n";
+}
+
 void RunErosion3D_AllFrame_flg4()
 {
   std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+  const EVec3i reso         = ImageCore::GetInst()->GetReso();
+  const int num_frames      = ImageCore::GetInst()->GetNumFrames();
 
   std::cout << "Run Erosion 3D...\n";
 #pragma omp parallel for 
@@ -96,6 +107,17 @@ void RunErosion3D_AllFrame_flg4()
 //m_flg4: 0:background (neverchange), 
 //        1:background, 
 //      255:foreground
+void RunDilation3D_OneFrame_flg4(int frame_idx)
+{
+  std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;
+  const EVec3i reso = ImageCore::GetInst()->GetReso();
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+
+  std::cout << "Run Dilation 3D...\n";
+  Dilate3D(reso[0], reso[1], reso[2], flg4d[frame_idx]);
+  std::cout << "Run Dilation 3D...DONE\n";
+}
+
 void RunDilation3D_AllFrame_flg4()
 {
   std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;

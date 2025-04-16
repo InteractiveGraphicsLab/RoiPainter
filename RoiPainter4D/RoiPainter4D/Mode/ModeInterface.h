@@ -40,6 +40,9 @@ enum MODE_ID
 //ModeVisNormal
 //ModeVisMask
 //ModeSegRGrow
+//ModeSegLocalRegionGrow
+//ModeSegBolus (Local Region Grow cylinder)
+//ModeSegPixelPaint
 
 
 

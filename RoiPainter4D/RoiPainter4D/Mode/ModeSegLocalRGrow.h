@@ -19,8 +19,7 @@
 // 255 : foreground (highlighted in Green)
 //-----------------------------------------------
 
-
-class LocalSeed
+class SphereSeed4D
 {
   //vectorでframe数分だけ管理する
   std::vector<float > m_radius  ;
@@ -29,7 +28,7 @@ class LocalSeed
   std::vector<bool  > m_b_edit  ; // [i] = 1 なら i-th frameにおいて半径・閾値・位置のどれかがユーザにより編集された
 
 public:
-  LocalSeed(
+  SphereSeed4D(
     const int    num_frames,
     const int    edit_frame_idx,
     const EVec3f posision,
@@ -45,8 +44,7 @@ public:
     }
   }
 
-  LocalSeed( 
-    int   num_frames, 
+  SphereSeed4D( 
     std::vector<float > radius, 
     std::vector<EVec3f> position, 
     std::vector<EVec2i> thresh  , 
@@ -58,10 +56,10 @@ public:
     m_b_edit   = bedit   ;
   }
 
-  LocalSeed& operator=(const LocalSeed& src) { Set(src); return *this; }
-  LocalSeed(const LocalSeed& src) { Set(src); }
+  SphereSeed4D& operator=(const SphereSeed4D& src) { Set(src); return *this; }
+  SphereSeed4D(const SphereSeed4D& src) { Set(src); }
 
-  void Set(const LocalSeed& src)
+  void Set(const SphereSeed4D& src)
   {
     m_position  = src.m_position;
     m_radius    = src.m_radius;
@@ -105,22 +103,21 @@ public:
 
 
 
-
-
 // Local Region Growing with SPHEREs 
 // ModeSegBolus supports Local Region Growing with Curved Cylinder
 
-
 class ModeSegLocalRGrow : public ModeInterface
 {
-  std::vector<LocalSeed> m_seeds;
+  std::vector<SphereSeed4D> m_seeds;
   
   TMesh m_unitsphere;
   float m_cp_radius;
 
-  int   m_active_seed_id; //半径や閾値を変更する対象のシードid
+  //半径や閾値を変更する対象のシードid
+  int   m_active_seed_id;
   bool  m_is_drag_activeseed;
   bool  m_is_resize_activeseed;
+
   bool  m_is_modified;
 
   ModeSegLocalRGrow();
@@ -168,7 +165,7 @@ public:
   void SelectSeed_SetThreshMin(int minv);
   void SelectSeed_RunInterpolation();
 
-  const std::vector<LocalSeed>& getSeedList() { return m_seeds; }
+  const std::vector<SphereSeed4D>& getSeedList() { return m_seeds; }
   
   void RunSeedInterpolation(int trgt_seed_id);
   

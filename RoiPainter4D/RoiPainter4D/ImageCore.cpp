@@ -25,7 +25,6 @@ static const EVec3i ColPallet[ColPalletN] = {
   EVec3i(  0,128,128), EVec3i(128,0,128), EVec3i(128,128, 0),
   EVec3i(255,128,  0), EVec3i(0,255,128), EVec3i(128,0,255),
   EVec3i(128,255,  0), EVec3i(0,128,255), EVec3i(255, 0, 128) ,
-
 };
 
 

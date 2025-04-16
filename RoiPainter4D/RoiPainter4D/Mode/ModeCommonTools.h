@@ -101,6 +101,10 @@ inline EVec3f CalcObjectTransVectorByMouseDragF(
 
 
 //ImageCore::m_flg4D に対する処理
+void RunErosion3D_OneFrame_flg4(int frame_idx);
+void RunFillHole3D_OneFrame_flg4(int frame_idx);
+void RunDilation3D_OneFrame_flg4(int frame_idx);
+
 void RunErosion3D_AllFrame_flg4();
 void RunFillHole3D_AllFrame_flg4();
 void RunDilation3D_AllFrame_flg4();

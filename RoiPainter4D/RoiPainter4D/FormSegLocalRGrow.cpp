@@ -57,7 +57,7 @@ void FormSegLocalRGrow::UpdateSeedInfoItems( )
   std::cout << "UpdateSeedInfoItems\n";
   m_item_updating = true;
 
-  const std::vector<LocalSeed> &seeds = ModeSegLocalRGrow::GetInst()->getSeedList();
+  const std::vector<SphereSeed4D> &seeds = ModeSegLocalRGrow::GetInst()->getSeedList();
   const int select_idx = ModeSegLocalRGrow::GetInst()->GetSelectedSeedId();
 
   if (select_idx < 0 || static_cast<int>(seeds.size()) <= select_idx ) return;
@@ -83,7 +83,7 @@ void FormSegLocalRGrow::UpdateSeedList()
   std::cout << "UpdateSeedList\n";
   m_item_updating = true;
 
-  const std::vector<LocalSeed> &seeds = ModeSegLocalRGrow::GetInst()->getSeedList();
+  const std::vector<SphereSeed4D> &seeds = ModeSegLocalRGrow::GetInst()->getSeedList();
   const int select_idx = ModeSegLocalRGrow::GetInst()->GetSelectedSeedId();
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
   const int frame_idx  = formVisParam_getframeI();
