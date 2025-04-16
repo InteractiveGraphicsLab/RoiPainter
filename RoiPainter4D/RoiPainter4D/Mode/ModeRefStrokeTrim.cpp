@@ -20,11 +20,7 @@ using namespace RoiPainter4D;
 ModeRefStrokeTrim::ModeRefStrokeTrim()
 {
 	std::cout << "ModeSegThreshPnt...\n";
-	m_bL = m_bR = m_bM = m_b_draw_trimstroke = false;  
-  m_b_draw_cutstroke = false;
-	m_bModified    = false;
-	m_msk3D_pre    = 0;
-	m_msk3D_pre_fi = 0;
+	m_bL = m_bR = m_bM = false;
 	std::cout << "ModeSegThreshPnt DONE\n";
 }
 
@@ -37,7 +33,7 @@ ModeRefStrokeTrim::~ModeRefStrokeTrim()
 
 bool ModeRefStrokeTrim::CanEndMode() 
 {
-	if (!m_bModified) return true;
+	if (!m_b_modified) return true;
 	
 	else return ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Leaving?");
 	return true;
@@ -48,10 +44,12 @@ bool ModeRefStrokeTrim::CanEndMode()
 void ModeRefStrokeTrim::StartMode ()
 {
 	m_bL = m_bR = m_bM = false;
-	m_bModified = false;
+	m_b_draw_trimstroke = false;
+	m_b_draw_cutstroke = false;
+	m_b_modified = false;
 
+	//get target mask id
 	int maskID = formSelectMasdskID_showModalDialog();
-
 	if (maskID == -1 )
 	{
 		ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
@@ -70,9 +68,11 @@ void ModeRefStrokeTrim::StartMode ()
 	{
 		ShowMsgDlg_OK("Lockのかかったmask IDを変更しようとしています", "caution");
 	}
-
+	
+	
 	formRefStrokeTrim_Show();
 
+	//update flg 4d
 	const int num_frames = ImageCore::GetInst()->GetNumFrames();
 	const int num_voxels = ImageCore::GetInst()->GetNumVoxels();
 	const std::vector<byte*> &flg4d  = ImageCore::GetInst()->m_flg4d;
@@ -99,31 +99,28 @@ void ModeRefStrokeTrim::StartMode ()
 	memcpy(m_msk3D_pre, &flg4d[fi][0], sizeof(byte)*num_voxels);
 	m_msk3D_pre_fi = fi;
   
-  m_bDrawCrssec = true;
+  m_b_draw_crssec = true;
 
 	std::cout << "finish start mode!!!!\n";
 }
 
 
 
-
 ////////////////////////////////////////////////////////////////////////////
 //MouseListener/////////////////////////////////////////////////////////////
-
 void ModeRefStrokeTrim::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
 	m_bL = true;
 
-	m_TrimStroke.clear();
-  
+	m_stroke2d.clear();
+	m_stroke3d.clear();
+
   if (IsCtrKeyOn())
   {
-    m_stroke.clear();
     m_b_draw_cutstroke = true;
   }
 	else if ( IsShiftKeyOn() )
 	{
-		m_CutStroke.clear();
 		m_b_draw_trimstroke = true;
 	}
 	else
@@ -138,18 +135,19 @@ void ModeRefStrokeTrim::LBtnUp(const EVec2i &p, OglForCLI *ogl)
   if (m_b_draw_cutstroke)
   {
     EVec3f cube = ImageCore::GetInst()->GetCuboidF();
-    CrssecCore::CreateCurvedCrssec(cube, ogl->GetCamPos(), m_stroke);
+    CrssecCore::CreateCurvedCrssec(cube, ogl->GetCamPos(), m_stroke3d);
   }
 
 	if(m_b_draw_trimstroke)
 	{
-		updateVolFlgByStroke(*ogl);
+		UpdateVolFlgByStroke(*ogl);
 	}
   
-  m_b_draw_cutstroke = false;
-	m_TrimStroke.clear();
+	m_bL = false;
+	m_b_draw_cutstroke = false;
 	m_b_draw_trimstroke = false;
-	m_bL       = false;
+	m_stroke2d.clear();
+	m_stroke3d.clear();
 	ogl->BtnUp();
 	
 	formMain_RedrawMainPanel();
@@ -162,8 +160,9 @@ void ModeRefStrokeTrim::RBtnDown(const EVec2i &p, OglForCLI *ogl)
 	{
 		m_bL = false;
 		m_b_draw_trimstroke = false;
-		m_CutStroke.clear();
-		m_TrimStroke.clear();
+		m_b_draw_cutstroke = false;
+		m_stroke3d.clear();
+		m_stroke2d.clear();
 	}
 	m_bR = true;
 	ogl->BtnDown_Rot(p);
@@ -197,17 +196,12 @@ void ModeRefStrokeTrim::MouseMove(const EVec2i &p, OglForCLI *ogl)
 {
 	if (!m_bL && !m_bR && !m_bM) return;
 
-	EVec3f rayP, rayD, pos;
-	ogl->GetCursorRay( p, rayP, rayD);
-
-  if (m_b_draw_cutstroke)
-  {
-    m_stroke.push_back(rayP + 0.1f * rayD);
-  }
-	else if (m_b_draw_trimstroke)
+  if (m_b_draw_cutstroke || m_b_draw_trimstroke)
 	{
-		m_CutStroke.push_back( rayP + 0.1f * rayD );
-		m_TrimStroke.push_back(p);
+		EVec3f rayP, rayD, pos;
+		ogl->GetCursorRay(p, rayP, rayD);
+		m_stroke3d.push_back( rayP + 0.1f * rayD );
+		m_stroke2d.push_back(p);
 	}
 	else 
 	{
@@ -236,19 +230,23 @@ void ModeRefStrokeTrim::KeyDown(int nChar)
 
 	if (nChar == 'Z' && IsCtrKeyOn())
 	{
-	  const int      fi = formVisParam_getframeI();
+	  const int fi = formVisParam_getframeI();
 
 		if ( fi == m_msk3D_pre_fi || ShowMsgDlgYesNo("現在のフレームではないフレームを変更しようとしています．\nよろしいですか？", "caution") )
 		{
 			std::cout << "undo!!";
 	    const int      num_voxels = ImageCore::GetInst()->GetNumVoxels();
-			std::vector<byte*> &flg4d      = ImageCore::GetInst()->m_flg4d;
+			std::vector<byte*> &flg4d = ImageCore::GetInst()->m_flg4d;
       memcpy(&flg4d[m_msk3D_pre_fi][0], m_msk3D_pre, sizeof(byte) * num_voxels);
       UpdateImageCoreVisVolumes();
+
+			//TODO チェック、変更前にctrl Z でクラッシュしない？
 		}
 	}
-  else if (nChar == VK_TAB)
-    m_bDrawCrssec = !m_bDrawCrssec;
+	else if (nChar == VK_TAB)
+	{
+		m_b_draw_crssec = !m_b_draw_crssec;
+	}
 }
 
 void ModeRefStrokeTrim::KeyUp(int nChar) 
@@ -259,23 +257,16 @@ void ModeRefStrokeTrim::KeyUp(int nChar)
 
 void ModeRefStrokeTrim::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {	
-  //bind volumes ---------------------------------------
 	ImageCore::GetInst()->BindAllVolumes();
 
-	if (m_bDrawCrssec)
-  {
+	if (m_b_draw_crssec)
     DrawCrossSectionsVisFore(!IsSKeyOn());
-  }
 
   if (m_b_draw_cutstroke)
-  {
-    DrawPolyLine( EVec3f(1,1,0), 3, m_stroke, false);
-  }
+    DrawPolyLine( EVec3f(1,1,0), 3, m_stroke3d, false);
 
 	if (m_b_draw_trimstroke)
-  {
-    DrawPolyLine( EVec3f(1,0,1), 4, m_CutStroke, true);
-  }
+    DrawPolyLine( EVec3f(1,0,1), 4, m_stroke3d, true);
 
 	DrawVolumeVisFore(true, cam_pos, cam_cnt, FormRefStrokeTrim_bUseRoughRend());
 }
@@ -335,12 +326,11 @@ void t_calcBoundBox(const std::vector<EVec2i> &vs, EVec2i &minBB, EVec2i &maxBB)
 }
 
 
-void ModeRefStrokeTrim::updateVolFlgByStroke(OglForCLI &ogl)
+void ModeRefStrokeTrim::UpdateVolFlgByStroke(OglForCLI &ogl)
 {
-	if (m_TrimStroke.size() < 3) return;
+	if (m_stroke2d.size() < 3) return;
 
 	if (!ogl.IsDrawing()) ogl.oglMakeCurrent();
-
 
 	std::vector<byte*> &img4D_flg = ImageCore::GetInst()->m_flg4d;
 	const EVec3i  reso  = ImageCore::GetInst()->GetReso();
@@ -359,15 +349,15 @@ void ModeRefStrokeTrim::updateVolFlgByStroke(OglForCLI &ogl)
 	const int &vpW = vpMat[2];
 	const int &vpH = vpMat[3];
 
-	std::cout << "-------------gen in out image "<< m_TrimStroke.size() << "---------\n";
+	std::cout << "-------------gen in out image "<< m_stroke2d.size() << "---------\n";
 
 	byte *insideFlgs = new byte[vpW * vpH];
 	memset(insideFlgs, 0, sizeof(byte) * vpW * vpH);
 
-	for (auto &p : m_TrimStroke) p.y() = vpH - p.y();
+	for (auto &p : m_stroke2d) p.y() = vpH - p.y();
 
 	EVec2i minBB, maxBB;
-	t_calcBoundBox(m_TrimStroke, minBB, maxBB);
+	t_calcBoundBox(m_stroke2d, minBB, maxBB);
 	minBB[0] = std::max(0, minBB[0] - 1);
 	minBB[1] = std::max(0, minBB[1] - 1);
 	maxBB[0] = std::min(vpW - 1, maxBB[0] + 1);
@@ -378,7 +368,7 @@ void ModeRefStrokeTrim::updateVolFlgByStroke(OglForCLI &ogl)
 	for (int y = minBB[1]; y < maxBB[1]; ++y)
 	for (int x = minBB[0]; x < maxBB[0]; ++x)
 	{
-		insideFlgs[x + y * vpW] = isInClosedStroke(x, y, m_TrimStroke) ? 255 : 0;
+		insideFlgs[x + y * vpW] = isInClosedStroke(x, y, m_stroke2d) ? 255 : 0;
 	}
 	
 	std::cout << "project all pixels\n";
@@ -402,15 +392,15 @@ void ModeRefStrokeTrim::updateVolFlgByStroke(OglForCLI &ogl)
 		}
 	}
 		
-
 	std::cout << "DONE\n";
 
 	if (!ogl.IsDrawing()) wglMakeCurrent(NULL, NULL);
 
   UpdateImageCoreVisVolumes();	
-	m_bModified = true;
+	m_b_modified = true;
 	delete[] insideFlgs;
 }
+
 
 
 void ModeRefStrokeTrim::finishTrim()
@@ -419,14 +409,14 @@ void ModeRefStrokeTrim::finishTrim()
 	const int  num_voxels = ImageCore::GetInst()->GetNumVoxels();
 	std::vector<byte*> &flg4d = ImageCore::GetInst()->m_flg4d;
 
-	if (!m_bModified)
+	if (!m_b_modified)
 	{
 		ShowMsgDlg_OK("トリムされた領域が存在しません．\n No trimmed voxel exist", "no trimmed.");
 		return;
 	}
 
 	//このタイミングでfalseにしないとcanEndModeでダイアログが表示される
-	m_bModified = false;
+	m_b_modified = false;
 
 	for (int fi = 0; fi < num_frames; ++fi)
   {
@@ -447,11 +437,12 @@ void ModeRefStrokeTrim::finishTrim()
 }
 
 
+
 void ModeRefStrokeTrim::cancelBtnClick()
 {
 	if (ShowMsgDlgYesNo("現在のトリム結果を破棄してよいですか\nDo you want to cancel current Trimming?", "cancel?"))
 	{
-		m_bModified = false;
+		m_b_modified = false;
 		ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
 		formMain_RedrawMainPanel();
 	}

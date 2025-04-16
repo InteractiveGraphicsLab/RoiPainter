@@ -14,12 +14,12 @@ enum MODE_ID
 	MODE_VIS_NORMAL    , // ModeVizNormal       
 	MODE_VIS_MASK      , // ModeVizMask         
 
-	MODE_REF_STRKTRIM,  // ModeRefStrkTrim     
+	MODE_REF_STRKTRIM ,  // ModeRefStrkTrim     
 	MODE_REF_CURVEDEFORM,// ModeRefCurveDeform, FormRefCurveDeform (by Yuki Kimura, 2024)
 
-	MODE_SEG_PIXPAINT  , // ModeSegPixPaint
-	MODE_SEG_REGGROW   , // ModeSegRegGrow     
-	MODE_SEG_RIGIDICP  , // ModeSegRigidICP    (SJTrackerより)
+	MODE_SEG_PIXPAINT ,  // ModeSegPixPaint
+	MODE_SEG_REGGROW  ,  // ModeSegRegGrow     
+	MODE_SEG_RIGIDICP ,  // ModeSegRigidICP    (SJTrackerより)
 	MODE_SEG_LCLRGROW ,  // ModeSegLocalRGrow (Local Region Growing by Hikaru Shionozaki)
 	MODE_SEG_BOLUS    ,  // ModeSegBolus      (by shionzaki )
   MODE_SEG_JTRACKER ,  // ModeJontTracker   (For Hokkaidou Univ)
@@ -43,6 +43,7 @@ enum MODE_ID
 //ModeSegLocalRegionGrow
 //ModeSegBolus (Local Region Grow cylinder)
 //ModeSegPixelPaint
+//ModeSegICP
 
 
 
@@ -67,8 +68,6 @@ static float COLOR_W   [4] = {1.0f, 1.0f, 1.0f, 0.5f};
 static float COLOR_GRAY[4] = {0.5f, 0.5f, 0.5f, 0.5f};
 
 static float COLOR_SHIN64[1] = {64};
-
-
 
 class ModeInterface
 {

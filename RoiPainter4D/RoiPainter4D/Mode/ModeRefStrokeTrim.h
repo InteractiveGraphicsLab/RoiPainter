@@ -20,12 +20,11 @@ class ModeRefStrokeTrim: public ModeInterface
 	//strokes 
 	bool m_b_draw_cutstroke;
 	bool m_b_draw_trimstroke;
-	std::vector<EVec3f> m_CutStroke;
-	std::vector<EVec2i> m_TrimStroke;
+	std::vector<EVec2i> m_stroke2d;
+	std::vector<EVec3f> m_stroke3d;
 
-	bool m_bModified;
-	bool m_bDrawCrssec;
-	std::vector<EVec3f> m_stroke;
+	bool m_b_modified;
+	bool m_b_draw_crssec;
 
 	byte *m_msk3D_pre;
 	int   m_msk3D_pre_fi;
@@ -58,7 +57,7 @@ public:
 	//-----------------------------------------------------------------
 
 private:
-	void updateVolFlgByStroke(OglForCLI &ogl);
+	void UpdateVolFlgByStroke(OglForCLI &ogl);
 };
 
 #endif

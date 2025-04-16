@@ -70,8 +70,7 @@ public:
   void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt);
   // ---------------------------------------------------------------
 
-  void GenIsoSurface_OneFrm(const int isovalue, const int frame_index);
-  void GenIsoSurface_AllFrn(const int isovalue);
+  void GenIsoSurface(const int isovalue, const bool do_all_frame, const int frame_index = -1);
   void LoadSrcSurface ( const std::string file_name);
   void PerformTracking( const float icpRejectionScale,
                         const int   icpNumLevels, 
@@ -82,6 +81,7 @@ public:
   void CancelSegmentation();
   void ExportMatrixSequence(std::string fname); 
   void ImportMatrixSequence(std::string fname);
+
 private:
   void FillInMesh( int start_frame, int end_frame);
 };

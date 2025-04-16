@@ -34,13 +34,13 @@ void FormSegRigidICP::InitializeParameters()
 }
 
 
+
 void FormSegRigidICP::ReusePrevIsoSurface( const int isovalue )
 {
   trackbar_setisoValue_->Value = isovalue;
   textbox_setisovalue_->Text = trackbar_setisoValue_->Value.ToString();
   b_generated_all_isosurfaces_ = true;
 }
-
 
 
 
@@ -55,7 +55,7 @@ System::Void FormSegRigidICP::BtnGenIsoSurfClick(System::Object^  sender, System
     button_runicp_allPara_->Enabled = true;
   }
 
-	ModeSegRigidICP::GetInst()->GenIsoSurface_AllFrn(trackbar_setisoValue_->Value);
+	ModeSegRigidICP::GetInst()->GenIsoSurface(trackbar_setisoValue_->Value, true);
 	formMain_RedrawMainPanel();
 }
 
@@ -255,7 +255,7 @@ System::Void FormSegRigidICP::btnGenTest_Click(System::Object^  sender, System::
   button_runicp_current_->Enabled = false;
   button_runicp_allPara_->Enabled = false;
 
-  ModeSegRigidICP::GetInst()->GenIsoSurface_OneFrm(trackbar_setisoValue_->Value, formVisParam_getframeI());
+  ModeSegRigidICP::GetInst()->GenIsoSurface(trackbar_setisoValue_->Value, false, formVisParam_getframeI());
   formMain_RedrawMainPanel();
 }
 

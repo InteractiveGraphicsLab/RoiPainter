@@ -82,11 +82,7 @@ void RunErosion3D_OneFrame_flg4(int frame_idx)
 {
   std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;
   const EVec3i reso         = ImageCore::GetInst()->GetReso();
-  const int num_frames      = ImageCore::GetInst()->GetNumFrames();
-
-  std::cout << "Run Erosion 3D...\n";
   Erode3D(reso[0], reso[1], reso[2], flg4d[frame_idx]);
-  std::cout << "Run Erosion 3D...DONE\n";
 }
 
 void RunErosion3D_AllFrame_flg4()
@@ -94,12 +90,9 @@ void RunErosion3D_AllFrame_flg4()
   std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;
   const EVec3i reso         = ImageCore::GetInst()->GetReso();
   const int num_frames      = ImageCore::GetInst()->GetNumFrames();
-
-  std::cout << "Run Erosion 3D...\n";
 #pragma omp parallel for 
   for (int fi = 0; fi < num_frames; ++fi)
     Erode3D(reso[0], reso[1], reso[2], flg4d[fi]);
-  std::cout << "Run Erosion 3D...DONE\n";
 }
 
 
@@ -111,11 +104,7 @@ void RunDilation3D_OneFrame_flg4(int frame_idx)
 {
   std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;
   const EVec3i reso = ImageCore::GetInst()->GetReso();
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-
-  std::cout << "Run Dilation 3D...\n";
   Dilate3D(reso[0], reso[1], reso[2], flg4d[frame_idx]);
-  std::cout << "Run Dilation 3D...DONE\n";
 }
 
 void RunDilation3D_AllFrame_flg4()
@@ -123,12 +112,9 @@ void RunDilation3D_AllFrame_flg4()
   std::vector<byte*>& flg4d = ImageCore::GetInst()->m_flg4d;
   const EVec3i reso = ImageCore::GetInst()->GetReso();
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
-
-  std::cout << "Run Dilation 3D...\n";
 #pragma omp parallel for 
   for (int fi = 0; fi < num_frames; ++fi)
     Dilate3D(reso[0], reso[1], reso[2], flg4d[fi]);
-  std::cout << "Run Dilation 3D...DONE\n";
 }
 
 
@@ -142,7 +128,6 @@ void RunFillHole3D_AllFrame_flg4()
   const EVec3i    reso = ImageCore::GetInst()->GetReso();
   const int  num_frames = ImageCore::GetInst()->GetNumFrames();
   const int  num_voxels = ImageCore::GetInst()->GetNumVoxels();
-
 
   std::cout << "RunFillHole3D_EachFrame...\n";
 

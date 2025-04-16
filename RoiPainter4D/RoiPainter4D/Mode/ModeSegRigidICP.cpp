@@ -18,7 +18,6 @@
 #include "thandle3d.h"
 #include "tmarchingcubes.h"
 #include <chrono>
-#include <fstream>
 
 //openCV
 #include "opencv/cv.h"
@@ -32,10 +31,6 @@
 using namespace RoiPainter4D;
 using namespace marchingcubes;
 
-// 1. rotate defout volume  OK
-// 2. save icp matrix value OK
-// 3. load icp matrix value OK
-// 4. rot pivot translation OK
 
 ModeSegRigidICP::~ModeSegRigidICP()
 {
@@ -55,6 +50,7 @@ ModeSegRigidICP::ModeSegRigidICP()
 }
 
 
+
 bool ModeSegRigidICP::CanEndMode()
 {
   if (!m_b_modified) return true;
@@ -67,6 +63,7 @@ void ModeSegRigidICP::FinishSegmentation(const bool b_storeallframes)
 {
   const int num_frame = ImageCore::GetInst()->GetNumFrames();
   const int num_voxel = ImageCore::GetInst()->GetNumVoxels();
+  const int frame_idx = formVisParam_getframeI();
 
   if(b_storeallframes)
   {
@@ -74,9 +71,6 @@ void ModeSegRigidICP::FinishSegmentation(const bool b_storeallframes)
   }
   else
   {
-    const int frame_idx = formVisParam_getframeI();
-
-#pragma omp parallel for
     for (int fi = 0; fi < num_frame; ++fi)
     {
       if ( fi != frame_idx) 
@@ -85,18 +79,7 @@ void ModeSegRigidICP::FinishSegmentation(const bool b_storeallframes)
     FillInMesh(frame_idx, frame_idx);
   }
 
-  bool b_fore_exist = false;
-
-  for (int fi = 0; fi < num_frame && !b_fore_exist; ++fi)
-  {
-    byte* flg3d = ImageCore::GetInst()->m_flg4d[fi];
-    for (int i = 0; i < num_voxel && !b_fore_exist; ++i)
-    {
-      if (flg3d[i] == 255) b_fore_exist = true;
-    }
-  }
-
-  if ( !b_fore_exist )
+  if ( !bForeVoxelExist_flg4() )
   {
     ShowMsgDlg_OK(MESSAGE_NO_FOREGROUND, "no foreground");
     return;
@@ -139,7 +122,9 @@ void ModeSegRigidICP::CancelSegmentation()
 
 
 
-// flg4d[f][i] : 0背景（変化させてはダメ）, 1背景(変化可能)，255前景 
+// flg4d[f][i] : 0  : 背景（never change）, 
+//               1  : 背景 (変化可能)，
+//               255: 前景 
 void ModeSegRigidICP::StartMode()
 {
   //init ui flags
@@ -192,7 +177,6 @@ void ModeSegRigidICP::StartMode()
 
 
 
-
 void ModeSegRigidICP::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
   m_bL = true;
@@ -202,14 +186,12 @@ void ModeSegRigidICP::LBtnDown(const EVec2i &p, OglForCLI *ogl)
     m_stroke.clear();
     m_b_draw_stroke = true;
   }
-  else if (IsShiftKeyOn())
+  else if ( IsShiftKeyOn() )
   {
     m_b_trans_srcsurf = FormSegRigidICPBTrans();
     m_b_trans_pivot   = FormSegRigidICPBTransPiv();
     m_b_rot_srcsurf   = FormSegRigidICPBRot();
-
     m_pre_mouse_point = p;
-
     m_icpmats.clear();
   }
   else
@@ -246,8 +228,6 @@ void ModeSegRigidICP::RBtnDown(const EVec2i &p, OglForCLI *ogl)
   ogl->BtnDown_Rot(p);
 }
 
-
-
 void ModeSegRigidICP::RBtnUp(const EVec2i &p, OglForCLI *ogl)
 {
   m_bR = false;
@@ -263,7 +243,6 @@ void ModeSegRigidICP::MBtnDown(const EVec2i &p, OglForCLI *ogl)
   ogl->BtnDown_Zoom(p);
 }
 
-
 void ModeSegRigidICP::MBtnUp(const EVec2i &p, OglForCLI *ogl)
 {
   m_bM = false;
@@ -271,21 +250,16 @@ void ModeSegRigidICP::MBtnUp(const EVec2i &p, OglForCLI *ogl)
   formMain_RedrawMainPanel();
 }
 
-
 void ModeSegRigidICP::LBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeSegRigidICP::RBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeSegRigidICP::MBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 
 
-static void SetMat(const EMat3d &rotate_matrix, const EVec3d &translate_matrix, EMat4d &matrix)
+static void SetMat(const EMat3d &rot, const EVec3d &trans, EMat4d &mat)
 {
-  matrix(0, 0) = rotate_matrix(0, 0);  matrix(0, 1) = rotate_matrix(0, 1); matrix(0, 2) = rotate_matrix(0, 2); matrix(0, 3) = translate_matrix[0];
-  matrix(1, 0) = rotate_matrix(1, 0);  matrix(1, 1) = rotate_matrix(1, 1); matrix(1, 2) = rotate_matrix(1, 2); matrix(1, 3) = translate_matrix[1];
-  matrix(2, 0) = rotate_matrix(2, 0);  matrix(2, 1) = rotate_matrix(2, 1); matrix(2, 2) = rotate_matrix(2, 2); matrix(2, 3) = translate_matrix[2];
-  matrix(3, 0) = 0;
-  matrix(3, 1) = 0;
-  matrix(3, 2) = 0;
-  matrix(3, 3) = 1;
+  mat.setIdentity(); // 下の行をゼロ埋めして mat(3,3)=1 にする
+  mat.block<3, 3>(0, 0) = rot;
+  mat.block<3, 1>(0, 3) = trans;
 }
 
 
@@ -295,6 +269,9 @@ void ModeSegRigidICP::MouseMove(const EVec2i &p, OglForCLI *ogl)
 
   EVec3f ray_pos, ray_dir, pos;
   ogl->GetCursorRay(p, ray_pos, ray_dir);
+  const int frameI = formVisParam_getframeI();
+  const int dx = p.x() - m_pre_mouse_point.x();
+  const int dy = p.y() - m_pre_mouse_point.y();
 
   if ( m_b_draw_stroke )
   {
@@ -302,47 +279,32 @@ void ModeSegRigidICP::MouseMove(const EVec2i &p, OglForCLI *ogl)
   }
   else if (m_b_rot_srcsurf )
   {
-    int dx = p.x() - m_pre_mouse_point.x();
-    int dy = p.y() - m_pre_mouse_point.y();
-    EMat3d dR = CalcObjectRotationMatrixByMouseDrag(ogl, dx,dy,0.007);
-
     //pivot (= icpmat[i] * pivot_vec ) を中心に回転する
     // pos  = R x + t
     // pos' = dR (R x + t - piv) + piv = dR R x + dR t - dR piv + piv
-    const int frameI = formVisParam_getframeI();
-    EVec3f piv = Mult( m_icpmats[frameI], m_handle_pivot);
-    
-    EMat3d R;
-    R(0, 0) = m_icpmats[frameI](0, 0);  R(0, 1) = m_icpmats[frameI](0, 1);  R(0, 2) = m_icpmats[frameI](0, 2);
-    R(1, 0) = m_icpmats[frameI](1, 0);  R(1, 1) = m_icpmats[frameI](1, 1);  R(1, 2) = m_icpmats[frameI](1, 2);
-    R(2, 0) = m_icpmats[frameI](2, 0);  R(2, 1) = m_icpmats[frameI](2, 1);  R(2, 2) = m_icpmats[frameI](2, 2);
-    
-    EVec3d tmp(m_icpmats[frameI](0, 3), m_icpmats[frameI](1, 3), m_icpmats[frameI](2, 3) );
-    EVec3d t = piv.cast<double>() + dR * ( tmp - piv.cast<double>());
-    SetMat(dR * R, t, m_icpmats[frameI]);
+    EMat4d& mat = m_icpmats[frameI];
+
+    EMat3d dR   = CalcObjectRotationMatrixByMouseDrag(ogl, dx, dy, 0.007);
+    EVec3d piv  = Mult( mat, m_handle_pivot).cast<double>();    
+    EMat3d R    = mat.block<3, 3>(0, 0);
+    EVec3d t    = mat.block<3, 1>(0, 3);
+    SetMat(dR * R, piv + dR * (t - piv), mat);
     
     m_b_modified = true;
   }
   else if (m_b_trans_srcsurf)
   {
-    int dx = p.x() - m_pre_mouse_point.x();
-    int dy = p.y() - m_pre_mouse_point.y();
     EVec3d t = CalcObjectTransVectorByMouseDrag(ogl, dx, dy, 0.1); 
-    const int frameI = formVisParam_getframeI();
-    m_icpmats[frameI](0, 3) += t[0];
-    m_icpmats[frameI](1, 3) += t[1];
-    m_icpmats[frameI](2, 3) += t[2];
+    m_icpmats[frameI].block<3, 1>(0, 3) += t;
     m_b_modified = true;
   }
   else if (m_b_trans_pivot)
   {
-    int dx = p.x() - m_pre_mouse_point.x();
-    int dy = p.y() - m_pre_mouse_point.y();
-    EVec3d t = CalcObjectTransVectorByMouseDrag(ogl, dx, dy, 0.1); 
-    EMat4d Minv = m_icpmats[formVisParam_getframeI()].inverse();
     // piv  = R * handle_piv + t (Rとtは ICPMatの回転・移動成分)   
     // piv' = R * handle_piv + t + dt 
     //      = R * (handle_piv + Rinv dt ) * t -->Rinv * dt だけ handle_piv を移動 
+    EVec3d t = CalcObjectTransVectorByMouseDrag(ogl, dx, dy, 0.1); 
+    EMat4d Minv = m_icpmats[frameI].inverse();
     m_handle_pivot += MultOnlyRot( Minv, t.cast<float>());
     m_b_modified = true;
   }
@@ -365,6 +327,8 @@ void ModeSegRigidICP::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 }
 
 
+void ModeSegRigidICP::KeyUp(int nChar) {}
+
 void ModeSegRigidICP::KeyDown(int nChar)
 {
   if (nChar == VK_TAB)
@@ -372,16 +336,17 @@ void ModeSegRigidICP::KeyDown(int nChar)
 
   formMain_RedrawMainPanel();
 }
-void ModeSegRigidICP::KeyUp(int nChar) {}
 
 
 
+static float COLOR_LG[4] = { 0.2f,0.8f,0.2f,0.3f };
+static float COLOR_PB[4] = { 0.4f,0.1f,0.8f,1.0f };
 
 void ModeSegRigidICP::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
   const int    frame_idx = formVisParam_getframeI();
-  const EVec3f pitch = ImageCore::GetPitch();
-  const EVec3f cuboid = ImageCore::GetCuboid();
+  const EVec3f pitch     = ImageCore::GetPitch();
+  const EVec3f cuboid    = ImageCore::GetCuboid();
 
   //bind volumes
   ImageCore::GetInst()->BindAllVolumes();
@@ -398,44 +363,28 @@ void ModeSegRigidICP::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
     EVec3f pivot = Mult( m_icpmats[frame_idx], m_handle_pivot );
 
     TMesh::DrawSphere( pivot, pitch[0] * 3);
+    float len = cuboid.norm();
     if (FormSegRigidICPBTrans()) 
-    {
-      DrawHandleOrthoArrows(
-          pivot, cuboid.norm() * 0.2, cuboid.norm() * 0.01,
-          COLOR_R, COLOR_G, COLOR_B );
-    }
+      DrawHandleOrthoArrows( pivot, len*0.2, len*0.01, COLOR_R, COLOR_G, COLOR_B);
     if (FormSegRigidICPBTransPiv()) 
-    {
-      DrawHandleOrthoArrows(
-        pivot, cuboid.norm() * 0.2, cuboid.norm() * 0.005, 
-        COLOR_R, COLOR_R, COLOR_R );
-    }
+      DrawHandleOrthoArrows( pivot, len*0.2, len*0.005,COLOR_R, COLOR_R, COLOR_R);
     if (FormSegRigidICPBRot()  )
-    {
-      DrawHandleOrthoCircles(pivot, cuboid.norm() * 0.15);
-    }
+      DrawHandleOrthoCircles(pivot, len*0.15);
   }
 
   //draw source and iso surfaces
-  static float diff1[4] = {0.2f,0.8f,0.2f,0.3f};
-  static float ambi1[4] = {0.2f,0.8f,0.2f,0.3f};
-  static float diff2[4] = {0.4f,0.1f,0.8f,1.0f};
-  static float ambi2[4] = {0.4f,0.1f,0.8f,1.0f};
-  static float spec[4]  = {0.9f,0.9f,0.9f,0.3f};
-  static float shin[1]  = {54.0f};
-
   glEnable(GL_LIGHTING);
 
   glPushMatrix();
   glMultMatrixd(m_icpmats[frame_idx].data());
   if (m_b_show_source_and_iso_surface)
-    m_source_surface.Draw(diff2, ambi2, spec, shin);
+    m_source_surface.Draw(COLOR_PB, COLOR_PB, COLOR_W, COLOR_SHIN64);
   glPopMatrix();
 
   glDepthMask( false );
   glEnable( GL_BLEND );
   if (m_b_show_source_and_iso_surface) 
-    m_isosurfaces[frame_idx].Draw(diff1, ambi1, spec, shin);
+    m_isosurfaces[frame_idx].Draw(COLOR_LG, COLOR_LG, COLOR_W, COLOR_SHIN64);
   glDisable( GL_BLEND );
   glDisable(GL_LIGHTING);
   glDepthMask( true );
@@ -445,50 +394,38 @@ void ModeSegRigidICP::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
   {
     DrawVolumeVisFore(!IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
-
 }
 
 
 
-
-
-void ModeSegRigidICP::GenIsoSurface_OneFrm(const int isovalue, const int frame_idx)
+void ModeSegRigidICP::GenIsoSurface(
+    const int isovalue,
+    const bool do_all_frame, 
+    const int frame_idx)
 {
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
   m_isosurfaces.clear();
   m_isosurfaces.resize(num_frames);
   m_isovalue = isovalue;
 
-  const EVec3i reso       = ImageCore::GetInst()->GetReso();
-  const EVec3f pitch      = ImageCore::GetInst()->GetPitch();
-  const short* volume     = ImageCore::GetInst()->m_img4d[frame_idx];
-  MarchingCubesPolygonSoup( reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[frame_idx]);
-
-  std::cout <<"isoSurfGen1Frame " << frame_idx << " / "  <<  num_frames << "\n";
-}
-
-
-
-void ModeSegRigidICP::GenIsoSurface_AllFrn(const int isovalue)
-{
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  m_isosurfaces.clear();
-  m_isosurfaces.resize(num_frames);
-  m_isovalue = isovalue;
-
-  const EVec3i reso  = ImageCore::GetInst()->GetReso();
-  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
-
-  for (int i = 0; i < num_frames; ++i)
+  const EVec3i reso   = ImageCore::GetInst()->GetReso();
+  const EVec3f pitch  = ImageCore::GetInst()->GetPitch();
+  const std::vector<short*> &vols = ImageCore::GetInst()->m_img4d;
+  if (do_all_frame) //all
   {
-    short* volume = ImageCore::GetInst()->m_img4d[i];
-    MarchingCubesPolygonSoup( reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[i] );
-    std::cout << "isoSurfGen " << i << "/" << num_frames << "\n";
+    for (int i = 0; i < num_frames; ++i)
+    {
+      MarchingCubesPolygonSoup(reso, pitch, vols[i], isovalue, 0, 0, m_isosurfaces[i]);
+      std::cout << "isoSurfGen " << i << "/" << num_frames << "\n";
+    }
   }
-
+  else //only frame[frame_idx] 
+  {
+    int fi = frame_idx;
+    MarchingCubesPolygonSoup(reso, pitch, vols[fi], isovalue, 0, 0, m_isosurfaces[fi]);
+    std::cout << "isoSurfGen1Frame " << frame_idx << " / " << num_frames << "\n";
+  }
 }
-
-
 
 
 
@@ -503,23 +440,15 @@ static EMat4d t_calcRigidTransformation(
 )
 {
   std::cout << "\n -t_calcRigidTransformation-- \n";
-  std::cout <<"rejScale: "<< icp_rejectionScale << " numLv: " << icp_numLevels << "\n";
+  std::cout <<"rejScale: " << icp_rejectionScale << " numLv: " << icp_numLevels << "\n";
+  std::cout << "srcPC  : " << source_points.rows << "x" << source_points.cols << "\n";
+  std::cout << "trgtPC : " << target_points.rows << "x" << target_points.cols << "\n";
 
   init_Matrix.transposeInPlace();
 
-  cv::ppf_match_3d::Pose3DPtr M1 = new cv::ppf_match_3d::Pose3D();
-  M1->updatePose(init_Matrix.data());
-  std::vector<cv::ppf_match_3d::Pose3DPtr> poses;
-  poses.push_back(M1);
-
-  //cout << "initM \n";
-  //Trace(initM);
-  //for (int i = 0; i < 16; ++i) {
-  //	if (i % 4 == 0) cout << "\n";
-  //	cout << "poses[0]->pose[" << i << "] = " <<  poses[0]->pose[i] << "\n";
-  //} 
-  std::cout << "srcPC  : row:" << source_points.rows <<  " col:" <<  source_points.cols << "\n";
-  std::cout << "trgtPC : row:" << target_points.rows <<  " col:" <<  target_points.cols << "\n";
+  auto pose = cv::makePtr<cv::ppf_match_3d::Pose3D>();
+  pose->updatePose(init_Matrix.data());
+  std::vector<cv::ppf_match_3d::Pose3DPtr> poses = {pose};
 
   try
   {
@@ -532,17 +461,16 @@ static EMat4d t_calcRigidTransformation(
     std::cout << "*** surfaceの形状または位置が大きく異なるため追跡に失敗しました ***\n";
   }
 
-  EMat4d resM;
-  resM(0, 0) = poses[0]->pose[0]; resM(1, 0) = poses[0]->pose[4]; resM(2, 0) = poses[0]->pose[8];  resM(3, 0) = poses[0]->pose[12];
-  resM(0, 1) = poses[0]->pose[1]; resM(1, 1) = poses[0]->pose[5]; resM(2, 1) = poses[0]->pose[9];  resM(3, 1) = poses[0]->pose[13];
-  resM(0, 2) = poses[0]->pose[2]; resM(1, 2) = poses[0]->pose[6]; resM(2, 2) = poses[0]->pose[10]; resM(3, 2) = poses[0]->pose[14];
-  resM(0, 3) = poses[0]->pose[3]; resM(1, 3) = poses[0]->pose[7]; resM(2, 3) = poses[0]->pose[11]; resM(3, 3) = poses[0]->pose[15];
+  EMat4d M;
+  const double* p = poses[0]->pose;
+  M(0, 0) = p[0]; M(1, 0) = p[4]; M(2, 0) = p[8];  M(3, 0) = p[12];
+  M(0, 1) = p[1]; M(1, 1) = p[5]; M(2, 1) = p[9];  M(3, 1) = p[13];
+  M(0, 2) = p[2]; M(1, 2) = p[6]; M(2, 2) = p[10]; M(3, 2) = p[14];
+  M(0, 3) = p[3]; M(1, 3) = p[7]; M(2, 3) = p[11]; M(3, 3) = p[15];
 
   std::cout << "fin icp\n";
-  return resM;
+  return M;
 }
-
-
 
 
 
@@ -551,7 +479,6 @@ static void SetOpenCvMatrix(
     cv::Mat &matrix)
 {
   const int num_tri = triangle_soup.m_num_triangles;
-
   matrix = cv::Mat( num_tri, 6, CV_32F);
 
   EVec3f gc; 
@@ -596,7 +523,6 @@ void ModeSegRigidICP::PerformTracking(
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
 
   std::vector<int> trgtFrameList;
-
   if ( start_index < end_index )
     for (int i = start_index; i <= end_index; ++i) trgtFrameList.push_back(i);
   else
@@ -642,15 +568,12 @@ void ModeSegRigidICP::PerformTracking(
                                                          
       m_icpmats[f] = t_calcRigidTransformation( icp_reject_scale, icp_number_level, m_icpmats[prev_fidx],srcM,trgtM );
 
-      std::cout << "frame " << prev_fidx << " mat \n";
-      Trace(m_icpmats[prev_fidx ]);
-      std::cout << "frame " << f         << " mat \n";
-      Trace(m_icpmats[f]);
+      std::cout << "frame " << prev_fidx << " mat \n" << m_icpmats[prev_fidx ] << "\n";
+      std::cout << "frame " << f         << " mat \n" << m_icpmats[f] << "\n";
       std::cout << "done " << f << "\n\n";
       formMain_SetProgressValue( (float) ++count / trgtFrameList.size() );
     }
   }
-
 
   auto end = std::chrono::system_clock::now();
   double timeSec = (double)std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0;
@@ -674,7 +597,6 @@ void ModeSegRigidICP::LoadSrcSurface(const std::string file_name)
   m_icpmats.resize( ImageCore::GetInst()->GetNumFrames() );
   for (auto &m : m_icpmats)
     m = EMat4d::Identity();
-  
 }
 
 
@@ -731,10 +653,6 @@ void ModeSegRigidICP::FillInMesh(
   UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
 }
-
-
-
-
 
 
 
