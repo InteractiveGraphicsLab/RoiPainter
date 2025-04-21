@@ -20,9 +20,9 @@ enum MODE_ID
 	MODE_SEG_PIXPAINT ,  // ModeSegPixPaint
 	MODE_SEG_REGGROW  ,  // ModeSegRegGrow     
 	MODE_SEG_RIGIDICP ,  // ModeSegRigidICP    (SJTrackerより)
-	MODE_SEG_LCLRGROW ,  // ModeSegLocalRGrow (Local Region Growing by Hikaru Shionozaki)
-	MODE_SEG_BOLUS    ,  // ModeSegBolus      (by shionzaki )
-  MODE_SEG_JTRACKER ,  // ModeJontTracker   (For Hokkaidou Univ)
+	MODE_SEG_LCLRGROW ,  // ModeSegLocalRGrow  (Local Region Growing by Hikaru Shionozaki)
+	MODE_SEG_BOLUS    ,  // ModeSegBolus       (by Shionozaki Thesis )
+  MODE_SEG_JTRACKER ,  // ModeJontTracker    (For Hokkaidou Univ)
   MODE_SEG_SWALLOW  ,  // ModeSegSwallowOrgans
   MODE_SEG_BRONCHI  ,  // ModeSegBronchi   (by Takata) FormSegModeBronchi
 	MODE_SEG_STROKEFFD,  // ModeSegStrokeFfd, FormSegStrokeFfd (by Yuki Kimura, 20220524)
@@ -44,6 +44,13 @@ enum MODE_ID
 //ModeSegBolus (Local Region Grow cylinder)
 //ModeSegPixelPaint
 //ModeSegICP
+//ModeRefTrim
+//ModePlaceCPS
+// 
+//MODE_REF_CURVEDEFORM
+//MODE_SEG_SWALLOW     
+//MODE_SEG_BRONCHI      
+//MODE_SEG_STROKEFFD   
 
 
 

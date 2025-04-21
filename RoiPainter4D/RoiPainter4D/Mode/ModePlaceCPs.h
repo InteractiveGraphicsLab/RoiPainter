@@ -39,11 +39,10 @@ class ModePlaceCPs : public ModeInterface
   TMesh m_cp_mesh;
 
   //template mesh
-  std::vector<EVec3f> m_template_cps;
-  int m_drag_tmpcpid; //-1 if nothing 
   TMesh m_template;
-
-  std::vector<std::pair<EMat3f, EVec3f>> m_template_rottrans;//rigid transform
+  int m_drag_tmpcpid; //-1 if nothing 
+  std::vector<EVec3f> m_template_cps;
+  std::vector<EMat4f> m_template_rottrans;//rigid transform
 
 
   ModePlaceCPs();
@@ -72,8 +71,7 @@ public:
   void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center);
   // ---------------------------------------------------------------
 
-  void IsosurfaceGenerateOneFrame(const int    isovalue, const int frame_index);
-  void IsosurfaceGenerateAllFrame(const int    isovalue);
+  void GenIsoSurface(const int isovalue, const bool do_all_frame, const int frame_index = -1);
   void FinishSegmentation();
   void CancelSegmentation();
 

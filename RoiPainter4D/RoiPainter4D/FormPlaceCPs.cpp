@@ -19,7 +19,7 @@ System::Void FormPlaceCPs::trackbar_setisoValue__Scroll(System::Object^ sender, 
 System::Void FormPlaceCPs::button_generateisosurfaces__Click(System::Object^ sender, System::EventArgs^ e)
 {
   int value = trackbar_setisoValue_->Value;
-  ModePlaceCPs::GetInst()->IsosurfaceGenerateAllFrame(value);
+  ModePlaceCPs::GetInst()->GenIsoSurface(value, true);
 }
 
 
@@ -27,7 +27,7 @@ System::Void FormPlaceCPs::button_generate_test__Click(System::Object^ sender, S
 {
   int value = trackbar_setisoValue_->Value;
   int fidx  = FormVisParam::GetInst()->GetframeI();
-  ModePlaceCPs::GetInst()->IsosurfaceGenerateOneFrame(value, fidx);
+  ModePlaceCPs::GetInst()->GenIsoSurface(value, false, fidx);
 }
 
 

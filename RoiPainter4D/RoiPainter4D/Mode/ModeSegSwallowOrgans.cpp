@@ -943,10 +943,6 @@ std::vector<std::vector<EVec3f>> ModeSegSwallowOrgans::SelectedCageVtx_Get1RingS
 
 
 
-
-
-
-
 void ModeSegSwallowOrgans::SelectedCageVtx_Move(
   int frame_idx,
   int dim_xyz,
