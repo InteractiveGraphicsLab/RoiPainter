@@ -67,9 +67,9 @@ void ModeSegStrokeFfd::StartMode()
   m_draw_surf_trans = true;
 
   auto c = ImageCore::GetInst()->GetCuboidF();
-  m_cp_rate = c[0] * 0.0006f;
-  m_meshseq.SetHandleLength(c[0] * 0.03f * 3);
-  m_meshseq.SetControlPointRadius(m_cp_rate * m_cp_size);
+  m_cp_rate    = c[0] * 0.0006f;
+  m_handle_len = c[0] * 0.03f * 3;
+  m_handle_wid = c[0] * 0.03f * 3 * 0.04f;
 
 
   FormSegStrokeFfd_InitAllItems();
@@ -138,7 +138,9 @@ void ModeSegStrokeFfd::LBtnDown(const EVec2i& p, OglForCLI* ogl)
     {
       EVec3f ray_p, ray_d;
       std::tie(ray_p, ray_d) = ogl->GetCursorRay1(p);
-      m_draghandle_id = m_meshseq.PickCageHandle(frame_idx, ray_p, ray_d, m_mode_transform);
+
+      const EVec3f center = m_meshseq.GetSelectedVtxCentroid(frame_idx);
+      m_draghandle_id = PickHandle(center, m_handle_len, m_handle_wid, ray_p, ray_d, m_mode_transform);
     }
     else
     {
@@ -171,7 +173,8 @@ void ModeSegStrokeFfd::LBtnDown(const EVec2i& p, OglForCLI* ogl)
       if (m_meshseq.GetNumSelectedVtx() > 0)
       {
         Do();
-        m_draghandle_id = m_meshseq.PickCageHandle(frame_idx, ray_p, ray_d, m_mode_transform);
+        const EVec3f center = m_meshseq.GetSelectedVtxCentroid(frame_idx);
+        m_draghandle_id = PickHandle(center, m_handle_len, m_handle_wid, ray_p, ray_d, m_mode_transform);
       }
     }
     else
@@ -355,7 +358,7 @@ void ModeSegStrokeFfd::MouseMove(const EVec2i& p, OglForCLI* ogl)
       }
       else if (m_mode_transform == 1)
       {
-        m_meshseq.RotateSelectedVerts(frame_idx, m_prevpt, p, m_draghandle_id, ogl);
+        m_meshseq.RotateSelectedVerts(frame_idx, m_prevpt, p, m_draghandle_id, m_handle_len, ogl);
       }
       else if (m_mode_transform == 2)
       {
@@ -373,7 +376,7 @@ void ModeSegStrokeFfd::MouseMove(const EVec2i& p, OglForCLI* ogl)
       }
       else if (m_mode_transform == 1)
       {
-        m_meshseq.RotateSelectedVerts(frame_idx, m_prevpt, p, m_draghandle_id, ogl);
+        m_meshseq.RotateSelectedVerts(frame_idx, m_prevpt, p, m_draghandle_id, m_handle_len, ogl);
       }
       else if (m_mode_transform == 2)
       {
@@ -608,7 +611,8 @@ void ModeSegStrokeFfd::DrawScene(
   {
     //float opacity = m_draw_surf_trans ? (float)0.4 : (float)0;
     float opacity = IsSKeyOn() ? (float)1 : (float)0.4;
-    m_meshseq.DrawMesh(frame_idx, planeyz, planezx, planexy, opacity, cuboid);
+    const auto &m = m_meshseq.GetMesh(frame_idx);
+    DrawMeshWithCrossecHL(m, planeyz, planezx, planexy, opacity, cuboid);
   }
 
   glDepthMask(true);
@@ -621,7 +625,8 @@ void ModeSegStrokeFfd::DrawScene(
     // draw cage
     if (IsCKeyOn())
     {
-      m_meshseq.DrawCage(frame_idx, true);
+      const auto& c = m_meshseq.GetCage(frame_idx);
+      DrawCageWithCPs(c, true, m_cp_rate * m_cp_size, m_meshseq.GetSelectedCageVtxVec());
     }
 
     // draw stroke
@@ -638,7 +643,8 @@ void ModeSegStrokeFfd::DrawScene(
     else if (IsCtrKeyOn() && m_meshseq.GetNumSelectedVtx() > 0)
     {
       // draw handle
-      m_meshseq.DrawHandle(frame_idx, m_mode_transform);
+      const EVec3f center = m_meshseq.GetSelectedVtxCentroid(frame_idx);
+      DrawHandle(center, m_handle_len, m_handle_wid, m_mode_transform);
     }
   }
   else if (m_mode_deform == E_Mode::Cage)
@@ -646,16 +652,17 @@ void ModeSegStrokeFfd::DrawScene(
 
     if (IsShiftKeyOn())
     {
-      // draw cage
-      m_meshseq.DrawCage(frame_idx, true);
+      const auto& c = m_meshseq.GetCage(frame_idx);
+      DrawCageWithCPs(c, true, m_cp_rate * m_cp_size, m_meshseq.GetSelectedCageVtxVec());
     }
     else if (IsCtrKeyOn() && m_meshseq.GetNumSelectedVtx() > 0)
     {
-      // draw cage
-      m_meshseq.DrawCage(frame_idx, true);
+      const auto& c = m_meshseq.GetCage(frame_idx);
+      DrawCageWithCPs(c, true, m_cp_rate * m_cp_size, m_meshseq.GetSelectedCageVtxVec());
 
       // draw handle
-      m_meshseq.DrawHandle(frame_idx, m_mode_transform);
+      const EVec3f center = m_meshseq.GetSelectedVtxCentroid(frame_idx);
+      DrawHandle(center, m_handle_len, m_handle_wid, m_mode_transform);
     }
 
     // draw selection rect
@@ -1154,7 +1161,6 @@ void ModeSegStrokeFfd::SetCPSize()
   }
 
   m_cp_size = cp_size;
-  m_meshseq.SetControlPointRadius(m_cp_rate * m_cp_size);
 
   std::cout << "Change CP size: " << m_cp_size << std::endl;
   formMain_RedrawMainPanel();

@@ -21,7 +21,6 @@
 //-----------------------------------------------
 
 
-
 class ModeSegStrokeFfd : public ModeInterface
 {
   CagedMeshSequence m_meshseq;
@@ -36,6 +35,9 @@ class ModeSegStrokeFfd : public ModeInterface
   int   m_mode_transform;
   int   m_cp_size;
   float m_cp_rate;
+  float m_handle_len, m_handle_wid;
+
+
   int   m_prev_frame_idx;
   bool  m_draw_surf_trans;
 
@@ -70,7 +72,6 @@ class ModeSegStrokeFfd : public ModeInterface
 
   // canEndMode
   bool m_is_not_saved_state;
-
   bool m_debug;
 
   ModeSegStrokeFfd();

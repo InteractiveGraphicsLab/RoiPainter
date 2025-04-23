@@ -35,7 +35,6 @@
 
 
 
-
 class CagePointGroup
 {
 public:
@@ -106,7 +105,8 @@ class ModeSegSwallowOrgans : public ModeInterface
   std::vector<EVec3f> m_stroke;
 
   //user interface (制御点選択，制御点移動)
-  ORTHO_HANDLE_ID m_draghandle_id;
+  ORTHO_HANDLE_ID     m_draghandle_id;
+  float m_handle_len, m_handle_wid, m_cp_radi;
   std::vector<EVec3f> m_cagevtx_prev;
 
   bool   m_b_draw_selectionrect;
@@ -123,10 +123,7 @@ class ModeSegSwallowOrgans : public ModeInterface
 
   std::vector<TMeshSequence > m_vismeshes;
 
-  static const std::string m_vtxshader_fname;
-  static const std::string m_frgshader_fname;
-  static GLuint  m_gl2Program;
-  bool is_vismesh_transparent;
+  bool m_b_vismesh_transparent;
 
   ModeSegSwallowOrgans();
 public:
@@ -148,10 +145,8 @@ public:
   void MBtnDclk(const EVec2i& p, OglForCLI* ogl);
   void MouseMove(const EVec2i& p, OglForCLI* ogl);
   void MouseWheel(const EVec2i& p, short z_delta, OglForCLI* ogl);
-
   void KeyDown(int nChar);
   void KeyUp(int nChar);
-
   bool CanEndMode();
   void StartMode();
   void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center);
@@ -162,8 +157,7 @@ public:
   void LoadCageSequence(std::string fname);
   void SaveCageMeshSequenceObj(std::string fname, bool b_cage);
   void SaveCageMeshSequenceTxt(std::string fname, bool b_cage);
-
-  void DeformImportedCage(std::string fname_cage, std::string fname_output);
+  void LoadObj_ApplyFfdExportAsTxt(std::string fname_obj, std::string fname_output);
 
 
   // Finish/Cancel Segmentation
@@ -199,6 +193,10 @@ public:
   void ClearVisObjs() {
     m_vismeshes.clear();
   }
+
+  void SetHandleLength(float len ) { m_handle_len = len; m_handle_wid = m_handle_len * 0.04f;}
+  void SetCpRadius    (float radi) { m_cp_radi = radi; }
+
 private:
   void  FillInMesh();
 };

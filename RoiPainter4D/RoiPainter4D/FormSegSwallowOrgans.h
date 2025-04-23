@@ -759,16 +759,13 @@ namespace RoiPainter4D {
   }
 
   //ui flags
-  inline bool FormSegSwallowOrgans_IsModeRotate    () { 
-    return FormSegSwallowOrgans::GetInst()->IsModeRotate   (); 
-  }
-  
-  inline bool FormSegSwallowOrgans_IsModeTranslate () { 
-    return FormSegSwallowOrgans::GetInst()->IsModeTranslate(); 
-  }
-  
-  inline bool FormSegSwallowOrgans_IsModeScale     () { 
-    return FormSegSwallowOrgans::GetInst()->IsModeScale    (); 
+
+  //return 0:rot, 1:trans, 2:scale
+  inline int FormSegSwallowOrgans_ModeTransRotScale()
+  {
+    if (FormSegSwallowOrgans::GetInst()->IsModeTranslate()) return 0;
+    if (FormSegSwallowOrgans::GetInst()->IsModeRotate()) return 1;
+    return 2; //scale
   }
 
   inline bool FormSegSwallowOrgans_bVisSurfTrans() { 
