@@ -25,27 +25,6 @@ class ModeSegStrokeFfd : public ModeInterface
 {
   CagedMeshSequence m_meshseq;
 
-  enum class E_Mode
-  {
-    Stroke,
-    Cage
-  };
-  E_Mode m_mode_deform;
-
-  int   m_mode_transform;
-  int   m_cp_size;
-  float m_cp_rate;
-  float m_handle_len, m_handle_wid;
-
-
-  int   m_prev_frame_idx;
-  bool  m_draw_surf_trans;
-
-  // Stroke Mode
-  std::vector<DeformationStrokes> m_strokes;
-  std::set<int> m_shared_stroke_idxs;
-  int m_prev_selected_stroke_idx;
-
   typedef struct
   {
     DeformationStrokes strokes;
@@ -57,12 +36,21 @@ class ModeSegStrokeFfd : public ModeInterface
     std::stack<Action> undo;
     std::stack<Action> redo;
   } History;
+
   std::vector<History> m_histories;
 
-  bool _show_only_selected_stroke;
+  float m_cp_size;
+  float m_handle_len, m_handle_wid;
+
+  // Stroke Mode
+  std::vector<DeformationStrokes> m_strokes;
+  std::set<int> m_shared_stroke_idxs;
+  int m_prev_selected_stroke_idx;
 
   // Cage Mode
   ORTHO_HANDLE_ID m_draghandle_id;
+
+  int   m_prev_frame_idx;
 
   bool   m_b_draw_selectionrect;
   EVec3f m_selectrect[4];
@@ -86,16 +74,16 @@ public:
 
   // overload functions ---------------------------------------------
   MODE_ID GetModeID() { return MODE_VIS_NORMAL; }
-  void LBtnUp   (const EVec2i& p, OglForCLI* ogl);
-  void RBtnUp   (const EVec2i& p, OglForCLI* ogl);
-  void MBtnUp   (const EVec2i& p, OglForCLI* ogl);
-  void LBtnDown (const EVec2i& p, OglForCLI* ogl);
-  void RBtnDown (const EVec2i& p, OglForCLI* ogl);
-  void MBtnDown (const EVec2i& p, OglForCLI* ogl);
-  void LBtnDclk (const EVec2i& p, OglForCLI* ogl);
-  void RBtnDclk (const EVec2i& p, OglForCLI* ogl);
-  void MBtnDclk (const EVec2i& p, OglForCLI* ogl);
-  void MouseMove(const EVec2i& p, OglForCLI* ogl);
+  void LBtnUp    (const EVec2i& p, OglForCLI* ogl);
+  void RBtnUp    (const EVec2i& p, OglForCLI* ogl);
+  void MBtnUp    (const EVec2i& p, OglForCLI* ogl);
+  void LBtnDown  (const EVec2i& p, OglForCLI* ogl);
+  void RBtnDown  (const EVec2i& p, OglForCLI* ogl);
+  void MBtnDown  (const EVec2i& p, OglForCLI* ogl);
+  void LBtnDclk  (const EVec2i& p, OglForCLI* ogl);
+  void RBtnDclk  (const EVec2i& p, OglForCLI* ogl);
+  void MBtnDclk  (const EVec2i& p, OglForCLI* ogl);
+  void MouseMove (const EVec2i& p, OglForCLI* ogl);
   void MouseWheel(const EVec2i& p, short zDelta, OglForCLI* ogl);
 
   void KeyDown(int nChar);
@@ -109,7 +97,6 @@ public:
 
   void LoadMeshAndCage(const std::string&, const std::string&);
   void SaveMeshAndCage(const std::string&, const std::string&);
-
   void SaveState(const std::string&, const std::set<int>&);
   void LoadState(const std::string&, const std::set<int>&);
 
@@ -124,15 +111,8 @@ public:
   void LockSelectedStroke();
   void UnlockSelectedStroke();
   void UpdateSharedStroke();
-  void SetDeformMode();
-  void SetTransformMode();
-  void SetCPSize();
-  void SetShowOnlySelectedStroke();
+  void SetCPSize(int size);
   void ClearSelectedStrokes();
-
-private:
-
-
 };
 
 

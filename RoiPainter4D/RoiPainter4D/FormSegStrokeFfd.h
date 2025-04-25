@@ -70,21 +70,10 @@ namespace RoiPainter4D {
   private: System::Windows::Forms::GroupBox^ groupBox2;
   private: System::Windows::Forms::NumericUpDown^ m_numbox_cpsize;
 
-
-
+  
   private: System::Windows::Forms::Label^ label4;
   private: System::Windows::Forms::CheckBox^ m_checkbox_showonlyselectedstroke;
   private: System::Windows::Forms::Button^ m_btn_copycagetoallframes;
-
-
-
-
-
-
-
-
-
-
 
 
   protected:
@@ -468,27 +457,31 @@ namespace RoiPainter4D {
     std::string GetBeta();
     std::string GetGamma();
     int GetDeformMode();
-    int GetTransformMode();
-    int GetCPSize();
+    int GetMode_TransRotScale(); //0:trans 1:rotataion 2:scale
+    //int GetCPSize();
     bool GetShowOnlySelectedStroke();
-    void SetDeformMode(const int& _mode);
-    void SetTransformMode(const int& _mode);
+    void SwitchDeformMode();
+    void SwitchUiModeNext();
     void FrameChanged();
 
 
 };
-
+  
+  enum SFFD_MODE{ SFFD_STROKE, SFFD_CAGE };
   inline void FormSegStrokeFfd_Show() { FormSegStrokeFfd::GetInst()->Show(); }
   inline void FormSegStrokeFfd_Hide() { FormSegStrokeFfd::GetInst()->Hide(); }
   inline void FormSegStrokeFfd_InitAllItems() { FormSegStrokeFfd::GetInst()->InitAllItems(); }
   inline std::string FormSegStrokeFfd_GetAlpha() { return FormSegStrokeFfd::GetInst()->GetAlpha(); }
   inline std::string FormSegStrokeFfd_GetBeta() { return FormSegStrokeFfd::GetInst()->GetBeta(); }
   inline std::string FormSegStrokeFfd_GetGamma() { return FormSegStrokeFfd::GetInst()->GetGamma(); }
-  inline int FormSegStrokeFfd_GetDeformMode() { return FormSegStrokeFfd::GetInst()->GetDeformMode(); }
-  inline int FormSegStrokeFfd_GetTransformMode() { return FormSegStrokeFfd::GetInst()->GetTransformMode(); }
-  inline int FormSegStrokeFfd_GetCPSize() { return FormSegStrokeFfd::GetInst()->GetCPSize(); }
+  inline SFFD_MODE FormSegStrokeFfd_GetDeformMode() { 
+    if(FormSegStrokeFfd::GetInst()->GetDeformMode() == 0) return SFFD_STROKE;
+    else return SFFD_CAGE; 
+  }
+  inline int FormSegStrokeFfd_GetModeTransRotScale() { return FormSegStrokeFfd::GetInst()->GetMode_TransRotScale(); }
+  //inline int FormSegStrokeFfd_GetCPSize() { return FormSegStrokeFfd::GetInst()->GetCPSize(); }
   inline bool FormSegStrokeFfd_GetShowOnlySelectedStroke() { return FormSegStrokeFfd::GetInst()->GetShowOnlySelectedStroke(); }
-  inline void FormSegStrokeFfd_SetDeformMode(const int& _mode) { return FormSegStrokeFfd::GetInst()->SetDeformMode(_mode); }
-  inline void FormSegStrokeFfd_SetTransformMode(const int& _mode) { return FormSegStrokeFfd::GetInst()->SetTransformMode(_mode); }
+  inline void FormSegStrokeFfd_SwithDeformMode () { return FormSegStrokeFfd::GetInst()->SwitchDeformMode(); }
+  inline void FormSegStrokeFfd_SwitchUiModeNext() { return FormSegStrokeFfd::GetInst()->SwitchUiModeNext(); }
 
 }
