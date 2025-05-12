@@ -17,41 +17,14 @@
 
 using namespace RoiPainter4D;
 
-float CagedMeshSequence::m_HANDLE_WIDTH  = 1.0;
-float CagedMeshSequence::m_HANDLE_LENGTH = 1.0;
-float CagedMeshSequence::m_CP_RADIUS     = 1.0;
-
-
-const std::string CagedMeshSequence::m_vtxshader_fname = 
-    std::string("shader/cagemeshVtx.glsl");
-const std::string CagedMeshSequence::m_frgshader_fname = 
-    std::string("shader/cagemeshFrg.glsl");
-GLuint  CagedMeshSequence::m_gl2Program = -1;
-
-
-CagedMeshSequence::~CagedMeshSequence()
-{
-  Clear();
-}
+//float CagedMeshSequence::m_HANDLE_WIDTH  = 1.0;
+//float CagedMeshSequence::m_HANDLE_LENGTH = 1.0;
+//float CagedMeshSequence::m_CP_RADIUS     = 1.0;
 
 
 CagedMeshSequence::CagedMeshSequence()
 {
   m_harmcoord = 0;
-}
-
-
-CagedMeshSequence::CagedMeshSequence(const CagedMeshSequence &src)
-{
-  m_harmcoord = 0;
-  Copy(src);
-}
-
-
-CagedMeshSequence &CagedMeshSequence::operator=(const CagedMeshSequence &src) 
-{ 
-  Copy(src); 
-  return *this;
 }
 
 
@@ -506,7 +479,7 @@ void CagedMeshSequence::SetCageVtxSelected( std::set<int> &ids){
 
 
 
-std::set<int> CagedMeshSequence::GetSelectedCageVtx()
+std::set<int> CagedMeshSequence::GetSelectedCageVtxSet()
 {
   std::set<int> s;
   for ( int i=0; i< (int) m_cagevtx_hl.size(); ++i)
@@ -576,6 +549,7 @@ void CagedMeshSequence::SelectCageVtxByPick(
     const int    frame_idx, 
     const EVec3f &ray_pos, 
     const EVec3f &ray_dir,
+    const float  cp_rad,
     const int select_mode)
 {
   if ( frame_idx < 0 || m_cages.size() <= frame_idx  ) return; 
@@ -588,7 +562,7 @@ void CagedMeshSequence::SelectCageVtxByPick(
   for ( int i = 0; i < cage.m_vSize; ++i)
   {
     const EVec3f &vertex = cage.m_vVerts[i];
-    if ( DistRayAndPoint( ray_pos, ray_dir, vertex) > m_CP_RADIUS )
+    if ( DistRayAndPoint( ray_pos, ray_dir, vertex) > cp_rad)
       continue;
     
     float d = Dist(vertex, ray_pos);
@@ -699,11 +673,6 @@ std::vector<std::vector<EVec3f>> CagedMeshSequence::GetSelectVtx1RingSeq()
 
 
 
-
-
-
-
-
 //Move all selected vertices---------------------------------------------------
 //translate, rotate, or scaling with respect to the gravity center
 void CagedMeshSequence::TranslateSelectedVerts(
@@ -748,6 +717,7 @@ void CagedMeshSequence::RotateSelectedVerts(
     const EVec2i &p0, 
     const EVec2i &p1, 
     ORTHO_HANDLE_ID handle_id,
+    float handle_len,
     OglForCLI* ogl)
 {
 
@@ -771,21 +741,21 @@ void CagedMeshSequence::RotateSelectedVerts(
   if ( handle_id == OHDL_XY ) 
   {
     trans[2] = 0;
-    float theta = trans.norm() / m_HANDLE_LENGTH; 
+    float theta = trans.norm() / handle_len;
     if( trans.cross(eye_ray).z() < 0 ) theta *= -1;
     dR = Eigen::AngleAxisf(theta, EVec3f(0,0,1));
   }
   if ( handle_id == OHDL_YZ ) 
   {
     trans[0] = 0;
-    float theta = trans.norm() / m_HANDLE_LENGTH; 
+    float theta = trans.norm() / handle_len;
     if( trans.cross(eye_ray).x() < 0 ) theta *= -1;
     dR = Eigen::AngleAxisf(theta, EVec3f(1,0,0));
   }
   if ( handle_id == OHDL_ZX ) 
   {
     trans[1] = 0;
-    float theta = trans.norm() / m_HANDLE_LENGTH; 
+    float theta = trans.norm() / handle_len;
     if( trans.cross(eye_ray).y() < 0 ) theta *= -1;
     dR = Eigen::AngleAxisf(theta, EVec3f(0,1,0));
   }
@@ -886,11 +856,6 @@ void CagedMeshSequence::ScaleCage(const int frame_idx, const EVec3f& center, con
 
 
 
-
-
-
-
-
 void CagedMeshSequence::CopyOneFrameToTheOtherAllFrames( const int frame_idx )
 {
   if ( frame_idx < 0 || (int)m_cages.size() <= frame_idx  ) return; 
@@ -902,156 +867,6 @@ void CagedMeshSequence::CopyOneFrameToTheOtherAllFrames( const int frame_idx )
     UpdateMeshShape(i);
   }
 }
-
-
-
-
-
-///////////////////////////////////////////////////////////
-//rendering ///////////////////////////////////////////////
-///////////////////////////////////////////////////////////
-
-// crssec_*の付近のみ不透明にでレンダリング
-// crssec_*は[0,1]に正規化されているものとする
-void CagedMeshSequence::DrawMesh(
-  int frame_idx, 
-  float planex01, //plane position (normalized into [0,1])
-  float planey01, //plane position (normalized into [0,1])
-  float planez01, //plane position (normalized into [0,1])
-  float opacity , //surface opacity   
-  const EVec3f &cuboid) const
-{
-  if ( frame_idx < 0 || (int)m_meshes.size() <= frame_idx  ) return; 
-
-  if ( m_gl2Program == -1  )
-  {
-    t_InitializeShader(
-        m_vtxshader_fname.c_str(), 
-        m_frgshader_fname.c_str(), 
-        m_gl2Program);
-  }
-
-  //bind shader
-  glUseProgram(m_gl2Program);
-  glUniform1f(glGetUniformLocation(m_gl2Program, "u_crssec_x_01"), planex01);
-  glUniform1f(glGetUniformLocation(m_gl2Program, "u_crssec_y_01"), planey01);
-  glUniform1f(glGetUniformLocation(m_gl2Program, "u_crssec_z_01"), planez01);
-  glUniform1f(glGetUniformLocation(m_gl2Program, "u_cuboid_w"   ), cuboid[0]);
-  glUniform1f(glGetUniformLocation(m_gl2Program, "u_cuboid_h"   ), cuboid[1]);
-  glUniform1f(glGetUniformLocation(m_gl2Program, "u_cuboid_d"   ), cuboid[2]);
-  glUniform1f(glGetUniformLocation(m_gl2Program, "u_opacity"    ), opacity);
-
-  m_meshes[frame_idx].Draw(); 
-  glUseProgram(0);
-}
-
-
-
-
-
-void CagedMeshSequence::DrawCage(
-    int frame_idx, 
-    bool allmesh) const
-{
-  if ( frame_idx < 0 || (int)m_cages.size() <= frame_idx  ) return; 
-  const TMesh &c = m_cages[frame_idx];
-
-  //cage edges
-  glDisable( GL_LIGHTING );
-  if( allmesh ) 
-    c.DrawEdges(3, 0.3, 0.5, 1);
-  else
-    c.DrawEdges(3, 0.3, 0.5, 1, m_cagevtx_hl );
-
-  //cage vtx
-  glEnable ( GL_LIGHTING );
-  glEnable(GL_CULL_FACE);
-  glCullFace( GL_BACK );
-  for ( int i = 0; i < c.m_vSize; ++i)
-  {
-    if( !allmesh && !m_cagevtx_hl[i] ) continue;
-
-    if ( m_cagevtx_hl[i] )
-      TMesh::DrawSphere( c.m_vVerts[i], m_CP_RADIUS, 
-        COLOR_R, COLOR_R, COLOR_W, COLOR_SHIN64);
-    else
-      TMesh::DrawSphere( c.m_vVerts[i], m_CP_RADIUS, 
-        COLOR_GRAY, COLOR_GRAY, COLOR_W, COLOR_SHIN64);
-  }
-}
-
-
-
-void CagedMeshSequence::DrawHandle(int frame_idx, int trans_rot_scale) const
-{
-  if ( frame_idx < 0 || (int)m_cages.size() <= frame_idx  ) return; 
-  if ( GetNumSelectedVtx() <= 0 ) return;
-  const EVec3f c = GetSelectedVtxCentroid( frame_idx );
-  const float len = m_HANDLE_LENGTH;
-  const float wid = m_HANDLE_WIDTH;
-  //translation, rotation, scaling
-  if ( trans_rot_scale == 0) 
-    DrawHandleOrthoArrows( c, len, wid, COLOR_R, COLOR_G, COLOR_B);
-  if ( trans_rot_scale == 1) 
-    DrawHandleOrthoCircles(c, m_HANDLE_LENGTH                    );
-  if ( trans_rot_scale == 2)
-    DrawHandleOrthoCubes  (c, len, wid, COLOR_R, COLOR_G, COLOR_B);
-}
-
-
-
-void CagedMeshSequence::DrawHandleCenter(int frame_idx, int trans_rot_scale) const
-{
-  if (frame_idx < 0 || (int)m_cages.size() <= frame_idx) return;
-  
-  EVec3f gc(0, 0, 0);
-  for (int i = 0; i < (int)m_cagevtx_hl.size(); ++i)
-  {
-      gc += m_cages[frame_idx].m_vVerts[i];
-  }
-  if (m_cages[frame_idx].m_vSize != 0) gc /= (float) m_cages[frame_idx].m_vSize;
-
-  const EVec3f c = gc;
-  const float len = m_HANDLE_LENGTH;
-  const float wid = m_HANDLE_WIDTH;
-  //translation, rotation, scaling
-  if (trans_rot_scale == 0)
-    DrawHandleOrthoArrows(c, len, wid, COLOR_R, COLOR_G, COLOR_B);
-  if (trans_rot_scale == 1)
-    DrawHandleOrthoCircles(c, m_HANDLE_LENGTH);
-  if (trans_rot_scale == 2)
-    DrawHandleOrthoCubes(c, len, wid, COLOR_R, COLOR_G, COLOR_B);
-}
-
-
-
-
-
-ORTHO_HANDLE_ID CagedMeshSequence::PickCageHandle(
-    const int    frame_idx, 
-    const EVec3f ray_pos  , 
-    const EVec3f ray_dir  , 
-    const int trans_rot_scale)
-{
-  if ( frame_idx < 0 || (int)m_cages.size() <= frame_idx  ) return OHDL_NON;
-  if ( GetNumSelectedVtx() <= 0 ) return OHDL_NON;
-
-  const float length = m_HANDLE_LENGTH;
-  const float radius = m_HANDLE_WIDTH ;
-  const EVec3f c = GetSelectedVtxCentroid( frame_idx );
-
-  if ( trans_rot_scale == 0) {
-    return PickHandleOrthoArrows (ray_pos, ray_dir, c, length, radius);
-  }
-  else if ( trans_rot_scale == 1){
-    return PickHandleOrthoCircles(ray_pos, ray_dir, c, length, radius);
-  }
-  else if ( trans_rot_scale == 2){
-    return PickHandleOrthoArrows (ray_pos, ray_dir, c, length, radius);
-  }
-  return OHDL_NON;
-}
-
 
 
 
@@ -1079,7 +894,7 @@ void CagedMeshSequence::ImportCageSequenceFromTxt(
   
   if (modify_num_frame && tmp_numframe != num_frames)
   {
-    // frame����ύX����
+    // frame
     TMesh c = m_cages[0];
     TMesh m = m_meshes[0];
     m_cages.resize(tmp_numframe);
@@ -1151,9 +966,6 @@ void CagedMeshSequence::ExportCageMeshSequenceAsTxt(std::string fname, bool b_ca
 }
 
 
-
-
-
 void CagedMeshSequence::ExportCageMeshSequenceAsObj(std::string fname, bool b_cage)
 {
   if ( !IsInitialized() ) return;
@@ -1170,6 +982,77 @@ void CagedMeshSequence::ExportCageMeshSequenceAsObj(std::string fname, bool b_ca
   }
 }
 
+
+
+
+///////////////////////////////////////////////////////////
+//rendering ///////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
+
+void DrawMeshWithCrossecHL(
+  const TMesh& mesh,
+  float crssec_x_01,
+  float crssec_y_01,
+  float crssec_z_01,
+  float opacity,
+  const EVec3f& cuboid)
+{
+  static char vtxshader_fname[] = "shader/cagemeshVtx.glsl";
+  static char frgshader_fname[] = "shader/cagemeshFrg.glsl";
+  static GLuint      gl2Program = -1;
+
+  if (gl2Program == -1)
+  {
+    t_InitializeShader(vtxshader_fname, frgshader_fname, gl2Program);
+  }
+
+  //bind shader
+  glUseProgram(gl2Program);
+  glUniform1f(glGetUniformLocation(gl2Program, "u_crssec_x_01"), crssec_x_01);
+  glUniform1f(glGetUniformLocation(gl2Program, "u_crssec_y_01"), crssec_y_01);
+  glUniform1f(glGetUniformLocation(gl2Program, "u_crssec_z_01"), crssec_z_01);
+  glUniform1f(glGetUniformLocation(gl2Program, "u_cuboid_w"), cuboid[0]);
+  glUniform1f(glGetUniformLocation(gl2Program, "u_cuboid_h"), cuboid[1]);
+  glUniform1f(glGetUniformLocation(gl2Program, "u_cuboid_d"), cuboid[2]);
+  glUniform1f(glGetUniformLocation(gl2Program, "u_opacity"), opacity);
+
+  mesh.Draw();
+  glUseProgram(0);
+}
+
+
+void DrawCageWithCPs(
+  const TMesh& mesh,
+  bool  allmesh,
+  float cp_radius,
+  const std::vector<int>& vtx_hl
+)
+{
+
+  static float GRAY[4] = { 0.5f, 0.5f, 0.5f, 0.5f };
+  static float RED[4] = { 1.0f, 0.0f, 0.0f, 0.5f };
+  static float SHIN64[1] = { 64 };
+
+  //cage edges
+  glDisable(GL_LIGHTING);
+  if (allmesh) mesh.DrawEdges(3, 0.3, 0.5, 1);
+  else         mesh.DrawEdges(3, 0.3, 0.5, 1, vtx_hl);
+
+  //cage vtx
+  glEnable(GL_LIGHTING);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  for (int i = 0; i < mesh.m_vSize; ++i)
+  {
+    if (!allmesh && !vtx_hl[i]) continue;
+
+    if (vtx_hl[i])
+      TMesh::DrawSphere(mesh.m_vVerts[i], cp_radius, RED, RED, RED, SHIN64);
+    else
+      TMesh::DrawSphere(mesh.m_vVerts[i], cp_radius, GRAY, GRAY, GRAY, SHIN64);
+  }
+}
 
 
 

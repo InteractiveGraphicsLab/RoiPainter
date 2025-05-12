@@ -57,8 +57,7 @@ class GeneralizedCylinder
 
 public:
 	~GeneralizedCylinder(){}
-	GeneralizedCylinder();
-	GeneralizedCylinder( float r1, float r2, float twistangle, std::vector<EVec3f>& cps );
+	GeneralizedCylinder( float r1, float r2, float twistangle, std::vector<EVec3f> cps );
 
 	GeneralizedCylinder(const GeneralizedCylinder& src)
 	{
@@ -92,11 +91,13 @@ public:
 	}
 
 	const std::vector<OrientedBoundBox>& getOBBs() const { return m_obbs; }
-	void DrawCylinder(float transparency) const;
-	void DrawRadiusDir(EVec4f color_r1, EVec4f color_r2) const;
-	void DrawOBBs()const ;
-	void DrawAxisCurve( const EVec3f& color, float lineWidth) const;
+  
+  void Draw(bool b_active, bool b_drawobb, float cp_radius, float trans);
 
+private:
+	void DrawRadiusDir(EVec4f color_r1, EVec4f color_r2) const;
+
+public:
   std::vector<EVec3f> GetAxisCurve() const
   {
     return m_axiscurve;

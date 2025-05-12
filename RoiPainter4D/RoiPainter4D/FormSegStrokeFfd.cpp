@@ -1,6 +1,5 @@
 #pragma managed
 #include "FormSegStrokeFfd.h"
-#include "FormMain.h"
 //#include "CliMessageBox.h"
 
 #pragma unmanaged
@@ -145,6 +144,12 @@ System::Void FormSegStrokeFfd::m_btn_copycagetoallframes_Click(System::Object^ s
   ModeSegStrokeFfd::GetInst()->CopyCageToAllFrames();
 }
 
+System::Void FormSegStrokeFfd::m_btn_finish_segmentation_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeSegStrokeFfd::GetInst()->FinishSegmentation();
+}
+
+
 
 std::string FormSegStrokeFfd::GetAlpha()
 {
@@ -175,19 +180,14 @@ int FormSegStrokeFfd::GetDeformMode()
 }
 
 
-int FormSegStrokeFfd::GetTransformMode()
+int FormSegStrokeFfd::GetMode_TransRotScale()
 {
-  if (m_radiobtn_movement->Checked) return 0;
-  if (m_radiobtn_rotation->Checked) return 1;
-  if (m_radiobtn_scaling->Checked) return 2;
-  return -1;
+  if      (m_radiobtn_movement->Checked) return 0;
+  else if (m_radiobtn_rotation->Checked) return 1;
+  else return 2; //m_radiobtn_scaling->Checked;
 }
 
 
-int FormSegStrokeFfd::GetCPSize()
-{
-  return static_cast<int>(m_numbox_cpsize->Value);
-}
 
 
 bool FormSegStrokeFfd::GetShowOnlySelectedStroke()
@@ -196,30 +196,31 @@ bool FormSegStrokeFfd::GetShowOnlySelectedStroke()
 }
 
 
-void FormSegStrokeFfd::SetDeformMode(const int& _mode)
+void FormSegStrokeFfd::SwitchDeformMode()
 {
-  if (_mode == 0)
-  {
-    m_radiobtn_stroke->Checked = true;
-  }
-  else if (_mode == 1)
+  if (m_radiobtn_stroke->Checked)
   {
     m_radiobtn_cage->Checked = true;
   }
+  else
+  {
+    m_radiobtn_stroke->Checked = true;
+  }
 }
 
-
-void FormSegStrokeFfd::SetTransformMode(const int& _mode)
+void FormSegStrokeFfd::SwitchUiModeNext()
 {
-  if (_mode == 0)
+  int trs = (GetMode_TransRotScale() + 1) % 3;
+
+  if (trs == 0)
   {
     m_radiobtn_movement->Checked = true;
   }
-  else if (_mode == 1)
+  else if (trs == 1)
   {
     m_radiobtn_rotation->Checked = true;
   }
-  else if (_mode == 2)
+  else if (trs == 2)
   {
     m_radiobtn_scaling->Checked = true;
   }
@@ -232,59 +233,18 @@ void FormSegStrokeFfd::FrameChanged()
 }
 
 
-System::Void FormSegStrokeFfd::m_radiobtn_stroke_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
-{
-  if (m_radiobtn_stroke->Checked)
-  {
-    ModeSegStrokeFfd::GetInst()->SetDeformMode();
-  }
-}
-
-
-System::Void FormSegStrokeFfd::m_radiobtn_cage_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
-{
-  if (m_radiobtn_cage->Checked)
-  {
-    ModeSegStrokeFfd::GetInst()->SetDeformMode();
-  }
-}
-
-
-System::Void FormSegStrokeFfd::m_radiobtn_movement_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
-{
-  if (m_radiobtn_movement->Checked)
-  {
-    ModeSegStrokeFfd::GetInst()->SetTransformMode();
-  }
-}
-
-
-System::Void FormSegStrokeFfd::m_radiobtn_rotation_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
-{
-  if (m_radiobtn_rotation->Checked)
-  {
-    ModeSegStrokeFfd::GetInst()->SetTransformMode();
-  }
-}
-
-
-System::Void FormSegStrokeFfd::m_radiobtn_scaling_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
-{
-  if (m_radiobtn_scaling->Checked)
-  {
-    ModeSegStrokeFfd::GetInst()->SetTransformMode();
-  }
-}
+System::Void FormSegStrokeFfd::m_radiobtn_stroke_CheckedChanged(System::Object^ sender, System::EventArgs^ e){}
+System::Void FormSegStrokeFfd::m_radiobtn_cage_CheckedChanged(System::Object^ sender, System::EventArgs^ e){}
+System::Void FormSegStrokeFfd::m_radiobtn_movement_CheckedChanged(System::Object^ sender, System::EventArgs^ e){}
+System::Void FormSegStrokeFfd::m_radiobtn_rotation_CheckedChanged(System::Object^ sender, System::EventArgs^ e){}
+System::Void FormSegStrokeFfd::m_radiobtn_scaling_CheckedChanged(System::Object^ sender, System::EventArgs^ e){}
+System::Void FormSegStrokeFfd::m_checkbox_showonlyselectedstroke_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {}
 
 
 System::Void FormSegStrokeFfd::m_numbox_cpsize_ValueChanged(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeSegStrokeFfd::GetInst()->SetCPSize();
+  ModeSegStrokeFfd::GetInst()->SetCPSize(static_cast<int>(m_numbox_cpsize->Value));
 }
 
 
-System::Void FormSegStrokeFfd::m_checkbox_showonlyselectedstroke_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
-{
-  ModeSegStrokeFfd::GetInst()->SetShowOnlySelectedStroke();
-}
 

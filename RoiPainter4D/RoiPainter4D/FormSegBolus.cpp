@@ -216,7 +216,7 @@ System::Void FormSegBolus::m_btn_loadcylinder_fit_Clicked(
 
   IntPtr mptr = System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(dlg->FileName);
   std::string fname = static_cast<const char*>(mptr.ToPointer());
-	ModeSegBolus::getInst()->LoadCylinderInfoFromFile(fname, true);
+	ModeSegBolus::getInst()->LoadCylinderInfoFromTextFile(fname, true);
 }
 
 
@@ -232,7 +232,7 @@ System::Void FormSegBolus::m_btn_loadcylinder_Clicked(
 
   IntPtr mptr = System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(dlg->FileName);
   std::string fname = static_cast<const char*>(mptr.ToPointer());
-  ModeSegBolus::getInst()->LoadCylinderInfoFromFile(fname, false);
+  ModeSegBolus::getInst()->LoadCylinderInfoFromTextFile(fname, false);
 }
 
 
@@ -250,7 +250,7 @@ System::Void FormSegBolus::m_btn_savecylinder_Clicked(
 
 	IntPtr mptr = System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(dlg->FileName);
   std::string fname = static_cast<const char*>(mptr.ToPointer());
-	ModeSegBolus::getInst()->ExportCylinderInfoByText(fname);
+	ModeSegBolus::getInst()->SaveCylinderInfoAsTextFile(fname);
 }
 
 
@@ -258,7 +258,7 @@ System::Void FormSegBolus::m_btn_cancel_Clicked(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-	ModeSegBolus::getInst()->cancelSegmentation();
+	ModeSegBolus::getInst()->CancelSegmentation();
 }
 
 System::Void FormSegBolus::m_btn_finish_Clicked(

@@ -80,23 +80,23 @@ inline void DrawCube(double cube_size)
   double r = cube_size;
   glBegin(GL_TRIANGLES);
   glNormal3d(0, 0, -1);
-  glVertex3d(-r, -r, -r); glVertex3d(r, r, -r); glVertex3d(r, -r, -r);
-  glVertex3d(-r, -r, -r); glVertex3d(-r, r, -r); glVertex3d(r, r, -r);
+  glVertex3d(-r, -r, -r); glVertex3d( r,  r, -r); glVertex3d( r, -r, -r);
+  glVertex3d(-r, -r, -r); glVertex3d(-r,  r, -r); glVertex3d( r,  r, -r);
   glNormal3d(0, 0, 1);
-  glVertex3d(-r, -r, r); glVertex3d(r, -r, r); glVertex3d(r, r, r);
-  glVertex3d(-r, -r, r); glVertex3d(r, r, r); glVertex3d(-r, r, r);
+  glVertex3d(-r, -r,  r); glVertex3d( r, -r,  r); glVertex3d( r,  r,  r);
+  glVertex3d(-r, -r,  r); glVertex3d( r,  r,  r); glVertex3d(-r,  r,  r);
   glNormal3d(0, -1, 0);
-  glVertex3d(-r, -r, -r); glVertex3d(r, -r, -r); glVertex3d(r, -r, r);
-  glVertex3d(-r, -r, -r); glVertex3d(r, -r, r); glVertex3d(-r, -r, r);
+  glVertex3d(-r, -r, -r); glVertex3d( r, -r, -r); glVertex3d( r, -r,  r);
+  glVertex3d(-r, -r, -r); glVertex3d( r, -r,  r); glVertex3d(-r, -r,  r);
   glNormal3d(0, 1, 0);
-  glVertex3d(-r, r, -r); glVertex3d(r, r, r); glVertex3d(r, r, -r);
-  glVertex3d(-r, r, -r); glVertex3d(-r, r, r); glVertex3d(r, r, r);
+  glVertex3d(-r,  r, -r); glVertex3d( r,  r,  r); glVertex3d( r,  r, -r);
+  glVertex3d(-r,  r, -r); glVertex3d(-r,  r,  r); glVertex3d( r,  r,  r);
   glNormal3d(-1, 0, 0);
-  glVertex3d(-r, -r, -r); glVertex3d(-r, r, r); glVertex3d(-r, r, -r);
-  glVertex3d(-r, -r, -r); glVertex3d(-r, -r, r); glVertex3d(-r, r, r);
+  glVertex3d(-r, -r, -r); glVertex3d(-r,  r,  r); glVertex3d(-r, r, -r);
+  glVertex3d(-r, -r, -r); glVertex3d(-r, -r,  r); glVertex3d(-r, r,  r);
   glNormal3d(1, 0, 0);
-  glVertex3d(r, -r, -r); glVertex3d(r, r, -r); glVertex3d(r, r, r);
-  glVertex3d(r, -r, -r); glVertex3d(r, r, r); glVertex3d(r, -r, r);
+  glVertex3d( r, -r, -r); glVertex3d( r,  r, -r); glVertex3d( r,  r, r);
+  glVertex3d( r, -r, -r); glVertex3d( r,  r,  r); glVertex3d( r, -r, r);
   glEnd();
 }
 
@@ -361,6 +361,55 @@ inline ORTHO_HANDLE_ID PickHandleOrthoCircles
 }
 
 
+inline void DrawHandle(
+    const EVec3f &center,
+    const float  length,
+    const float  width ,
+    int trans_rot_scale //0:trans 1:rot 2:scale
+)
+{
+  static float CR[4] = { 1.0f, 0.0f, 0.0f, 0.5f };
+  static float CG[4] = { 0.0f, 1.0f, 0.0f, 0.5f };
+  static float CB[4] = { 0.0f, 0.0f, 1.0f, 0.5f };
+
+  if (trans_rot_scale == 0)
+    DrawHandleOrthoArrows (center, length, width, CR, CG, CB);
+  if (trans_rot_scale == 1)
+    DrawHandleOrthoCircles(center, length);
+  if (trans_rot_scale == 2)
+    DrawHandleOrthoCubes  (center, length, width, CR, CG, CB);
+}
+
+
+
+inline ORTHO_HANDLE_ID PickHandle(
+    const EVec3f &center,
+    const float   length,
+    const float   width,
+    const EVec3f  ray_pos,
+    const EVec3f  ray_dir,
+    const int trans_rot_scale //0:trans 1:rot 2:scale
+)
+{
+  if (trans_rot_scale == 0) 
+    return PickHandleOrthoArrows(ray_pos, ray_dir, center, length, width);
+  else if (trans_rot_scale == 1) 
+    return PickHandleOrthoCircles(ray_pos, ray_dir, center, length, width);
+  else if (trans_rot_scale == 2) 
+    return PickHandleOrthoArrows(ray_pos, ray_dir, center, length, width);
+  return OHDL_NON;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -405,6 +454,9 @@ inline void DrawCylinder
   }
   glEnd();
 }
+
+
+
 
 inline void DrawSphere
 (

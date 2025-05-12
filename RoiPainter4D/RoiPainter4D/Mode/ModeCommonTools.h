@@ -6,26 +6,8 @@
 // include only from CPP
 
 #include "OglForCLI.h"
-#include "GlslShader.h"
 
 
-void BindAllVolumes();
-
-void DrawCrossSections(
-  const EVec3f& cuboid,
-  const EVec3i& reso,
-  const bool& do_hilight,
-  GlslShaderCrsSec& shader);
-
-void DrawVolumeSlices(
-  const EVec3f& cuboid,
-  const EVec3i& reso,
-  const EVec3f& cam_pos,
-  const EVec3f& cam_focus,
-  const bool& do_hilight,
-  const bool& is_manipulation,
-  GlslShaderVolume& shader
-);
 
 
 CRSSEC_ID PickCrssec(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos);
@@ -35,7 +17,6 @@ CRSSEC_ID PickCrssec(const CRSSEC_ID trgt_id,
 //pick and move cross section by wheeling
 bool WheelingCrssec(const EVec2i& p, short z_delta, OglForCLI* ogl);
 void UpdateImageCoreVisVolumes();
-int  GetNumVolumeRenderSlice(bool b_during_manipulation);
 
 
 inline EMat3f CalcObjectRotationMatrixByMouseDragF(
@@ -117,6 +98,23 @@ inline EVec3f CalcObjectTransVectorByMouseDragF(
   float dy = -coef * cursor_dy;
   return dx * xdir + dy * cam_up;
 }
+
+
+//ImageCore::m_flg4D に対する処理
+void RunErosion3D_OneFrame_flg4(int frame_idx);
+void RunFillHole3D_OneFrame_flg4(int frame_idx);
+void RunDilation3D_OneFrame_flg4(int frame_idx);
+
+void RunErosion3D_AllFrame_flg4();
+void RunFillHole3D_AllFrame_flg4();
+void RunDilation3D_AllFrame_flg4();
+
+bool bForeVoxelExist_flg4();
+
+
+
+
+
 
 
 static const char* MESSAGE_NO_FOREGROUND =

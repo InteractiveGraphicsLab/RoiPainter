@@ -6,14 +6,12 @@
 #include "Mode/ModeSegRGrow.h"
 #include "Mode/ModeSegPixPaint.h"
 #include "Mode/ModeSegRigidICP.h"
-#include "Mode/ModeSegClosestPix.h"
 #include "Mode/ModeSegLocalRGrow.h"
 #include "Mode/ModeSegBolus.h"
 #include "Mode/ModeSegSwallowOrgans.h"
 #include "Mode/ModeRefStrokeTrim.h"
 #include "Mode/ModeSegJointTracker.h"
 #include "Mode/ModeSegBronchi.h"
-#include "Mode/ModeSegSwallowTempGen.h"
 #include "Mode/ModeSegStrokeFfd.h"
 #include "Mode/ModePlaceCPs.h"
 #include "Mode/ModeRefCurveDeform.h"
@@ -24,14 +22,12 @@
 #include "FormSegPixPaint.h"
 #include "FormSegRGrow.h"
 #include "FormSegRigidICP.h"
-#include "FormSegClosestPix.h"
 #include "FormSegLocalRGrow.h"
 #include "FormSegJointTracker.h"
 #include "FormSegBolus.h"
 #include "FormSegSwallowOrgans.h"
 #include "FormSegSwallowOrganTimeline.h"
 #include "FormSegBronchi.h"
-#include "FormSegSwallowTempGen.h"
 #include "FormRefStrokeTrim.h"
 #include "FormSegStrokeFfd.h"
 #include "FormPlaceCPs.h"
@@ -68,13 +64,11 @@ void ModeCore::ModeSwitch(MODE_ID m)
   else if (m == MODE_SEG_REGGROW)   m_mode = ModeSegRGrow::GetInst();
   else if (m == MODE_SEG_PIXPAINT)  m_mode = ModeSegPixPaint::GetInst();
   else if (m == MODE_SEG_RIGIDICP)  m_mode = ModeSegRigidICP::GetInst();
-  else if (m == MODE_SEG_CLOSESTPIX)m_mode = ModeSegClosestPix::GetInst();
   //else if (m == MODE_SEG_PARACONT) 
   //  m_mode = ModeSegParaConts::getInst();
   else if (m == MODE_SEG_LCLRGROW)  m_mode = ModeSegLocalRGrow::GetInst();
   else if (m == MODE_SEG_BOLUS)     m_mode = ModeSegBolus::getInst();
   else if (m == MODE_SEG_SWALLOW)   m_mode = ModeSegSwallowOrgans::GetInst();
-  else if (m == MODE_SEG_SWLTMPGEN) m_mode = ModeSegSwallowTempGen::getInst();
   else if (m == MODE_REF_STRKTRIM)  m_mode = ModeRefStrokeTrim::GetInst();
   else if (m == MODE_SEG_JTRACKER)  m_mode = ModeSegJointTracker::GetInst();
   else if (m == MODE_SEG_STROKEFFD) m_mode = ModeSegStrokeFfd::GetInst();
@@ -90,7 +84,6 @@ void ModeCore::ModeSwitch(MODE_ID m)
   formSegPixPaint_Hide();
   formSegRGrow_Hide();
   FormSegRigidICPHide();
-  formSegClosestPix_Hide();
   FormSegLocalRGrow_Hide();
   FormSegSwallowOrgans_Hide();
   formRefStrokeTrim_Hide();
@@ -98,7 +91,6 @@ void ModeCore::ModeSwitch(MODE_ID m)
   FormSegJointTracker_Hide();
   FormSegSwallowTimeline_Hide();
   formSegBronchi_Hide();
-  FormSegSwallowTempGen_Hide();
   FormSegStrokeFfd_Hide();
   FormPlaceCPs_Hide();
   FormRefCurveDeform_Hide();

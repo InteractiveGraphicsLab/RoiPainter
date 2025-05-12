@@ -3,13 +3,13 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 
 #include <vector>
 #include <map>
 
-//UI 
+//-----------------------------------------------
+// (*) User Interface 
 // step1 
 //   閾値指定 --> iso surface 生成
 // step2 tracking  
@@ -17,12 +17,10 @@
 //  step 2-2. double click --> cp 配置 
 //  step 2-3 run tracking ボタン --> ICPにより，2個の関節の位置あわせ
 //  2-1, 2-2は frameidx == 0 に限定
-
 // step3 
 //   step3-1 外部からobj読み込み
 //   step3-2 ドラッグにより位置あわせ
 //   step3-3 位置あわせと距離計算
-//
 // manipuration mode
 //   - cp placement bone 1 
 //   - cp placement bone 2
@@ -30,25 +28,9 @@
 //   - rot / trans bone 2
 //   - rot / trans fitting surface 
 //
-//vol_flg
+// (*) vol_flg[i]
 // flg volume is not used for this 
-
-//
-// OK gen form
-// OK gen mouse event 
-// OK gen drawscene
-// OK step1
-// OK step2
-// OK step3
-//
-// OK CPs io
-// OK vis flg in dlg
-// OK test VIS 
-// OK test cp i/o 
-// OK test accracy  
-// 
-
-
+//-----------------------------------------------
 
 class TVtxDistInfo
 {
@@ -83,14 +65,8 @@ public:
 
 
 
-
-
 class ModeSegJointTracker : public ModeInterface
 {
-  //shaders
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-  
   //iso surfaces (by step1)
   int                m_isovalue    ;
   std::vector<TMesh> m_isosurfaces ;
@@ -143,7 +119,7 @@ public:
 
   bool CanEndMode();
   void StartMode();
-  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+  void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt);
   //-----------------------------------------------------------------
 
   void FinishSegmentation();

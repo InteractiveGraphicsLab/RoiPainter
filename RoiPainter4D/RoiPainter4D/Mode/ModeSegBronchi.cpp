@@ -37,11 +37,9 @@ using namespace RoiPainter4D;
 
 
 
-ModeSegBronchi::ModeSegBronchi() :
-  m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg_Seg.glsl"),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegBronchi::ModeSegBronchi() 
 {
-  std::cout << "ModeSegBronchi.......................................!!!!!!!!!!!!\n";
+  std::cout << "ModeSegBronchi... \n";
   m_bL = m_bR = m_bM = false;
   std::cout << "ModeSegBronchi done\n";
 }
@@ -140,9 +138,11 @@ void ModeSegBronchi::FinishSegmentation()
 }
 
 
-void ModeSegBronchi::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF)
+
+
+void ModeSegBronchi::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt)
 {
-  BindAllVolumes();
+  ImageCore::GetInst()->BindAllVolumes();
 
   if (m_b_draw_cutstroke)
   {
@@ -162,8 +162,6 @@ void ModeSegBronchi::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const E
   const static float shin_root[1] = { 56.0f };
 
   const int frame_idx = formVisParam_getframeI();
-
-
 
   if (m_roots[frame_idx] != nullptr)
   {
@@ -219,35 +217,11 @@ void ModeSegBronchi::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const E
     }
   }
 
+  DrawCrossSectionsVisFore(IsSpaceKeyOn());
 
-
-  //draw cross section
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
-  const bool b_xy = formVisParam_bPlaneXY();
-  const bool b_yz = formVisParam_bPlaneYZ();
-  const bool b_zx = formVisParam_bPlaneZX();
-  m_crssec_shader.bind(0, 1, 2, 3, 6, reso, false, IsSpaceKeyOn());
-  CrssecCore::DrawCrssec(b_xy, b_yz, b_zx, cuboid);
-  m_crssec_shader.unbind();
-  if (DEBUG_DRAWSCENE) std::cout << "draw cross section後\n";
-
-
-  //volume
   if (formVisParam_bRendVol())
   {
-    const bool  b_pseudo = formVisParam_bDoPsued();
-    const float alpha = formVisParam_getAlpha();
-    const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    const int   num_slice = GetNumVolumeRenderSlice(b_onmanip);
-
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    m_volume_shader.bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, camP, b_pseudo, !IsSpaceKeyOn());
-    t_drawSlices(num_slice, camP, camF, cuboid);
-    m_volume_shader.unbind();
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
-    if (DEBUG_DRAWSCENE) std::cout << "volume後\n";
+    DrawVolumeVisFore(!IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
   if (DEBUG_DRAWSCENE) std::cout << ".........end drawScene\n";

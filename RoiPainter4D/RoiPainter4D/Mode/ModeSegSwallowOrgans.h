@@ -4,15 +4,35 @@
 
 #include "ModeInterface.h"
 #include "CagedMeshSequence.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 
 #include <tuple>
 
 #define NUM_POINT_GROUPS 10
 
-//複数の軟組織テンプレートを制御点移動により変形し領域分割するモード
-//変形にはケージベースの手法 (harmonic coordinate)を採用
+
+//-----------------------------------------------
+// (*) User Interface 
+// 複数の軟組織テンプレートを制御点移動により変形し領域分割するモード
+// 変形にはケージベースの手法 (harmonic coordinate)を採用
+// Selection 
+// + Shift + R drag  --> 頂点の矩形選択
+// + Shift + R click --> 頂点のクリック選択
+// + s key + L drag  --> 頂点の矩形選択
+// + s key + L click --> 頂点のクリック選択
+// Modification 
+// + Shift + L - drag : まとめて回転・平行移動・拡大 
+//   (modeはダイアログより切り替え可能)
+// Others
+// + meshとcageはダイアログよりロード可能
+// + 他の領域を表すmeshもダイアログよりロード可能
+// 
+// (*) vol_flg[i]
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
+//-----------------------------------------------
+
 
 
 class CagePointGroup
@@ -75,10 +95,6 @@ public:
 
 class ModeSegSwallowOrgans : public ModeInterface
 {
-  //shaders
-  GlslShaderVolume  m_volume_shader;
-  GlslShaderCrsSec  m_crssec_shader;
-
   std::string m_fpath_cage;
   std::string m_fpath_mesh;
 
@@ -89,7 +105,8 @@ class ModeSegSwallowOrgans : public ModeInterface
   std::vector<EVec3f> m_stroke;
 
   //user interface (制御点選択，制御点移動)
-  ORTHO_HANDLE_ID m_draghandle_id;
+  ORTHO_HANDLE_ID     m_draghandle_id;
+  float m_handle_len, m_handle_wid, m_cp_radi;
   std::vector<EVec3f> m_cagevtx_prev;
 
   bool   m_b_draw_selectionrect;
@@ -106,10 +123,7 @@ class ModeSegSwallowOrgans : public ModeInterface
 
   std::vector<TMeshSequence > m_vismeshes;
 
-  static const std::string m_vtxshader_fname;
-  static const std::string m_frgshader_fname;
-  static GLuint  m_gl2Program;
-  bool is_vismesh_transparent;
+  bool m_b_vismesh_transparent;
 
   ModeSegSwallowOrgans();
 public:
@@ -131,13 +145,11 @@ public:
   void MBtnDclk(const EVec2i& p, OglForCLI* ogl);
   void MouseMove(const EVec2i& p, OglForCLI* ogl);
   void MouseWheel(const EVec2i& p, short z_delta, OglForCLI* ogl);
-
   void KeyDown(int nChar);
   void KeyUp(int nChar);
-
   bool CanEndMode();
   void StartMode();
-  void DrawScene(const EVec3f& cuboid, const EVec3f& cam_pos, const EVec3f& cam_center);
+  void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center);
   //-----------------------------------------------------------------
 
   // IO for mesh and cage data   
@@ -145,8 +157,7 @@ public:
   void LoadCageSequence(std::string fname);
   void SaveCageMeshSequenceObj(std::string fname, bool b_cage);
   void SaveCageMeshSequenceTxt(std::string fname, bool b_cage);
-
-  void DeformImportedCage(std::string fname_cage, std::string fname_output);
+  void LoadObj_ApplyFfdExportAsTxt(std::string fname_obj, std::string fname_output);
 
 
   // Finish/Cancel Segmentation
@@ -182,6 +193,10 @@ public:
   void ClearVisObjs() {
     m_vismeshes.clear();
   }
+
+  void SetHandleLength(float len ) { m_handle_len = len; m_handle_wid = m_handle_len * 0.04f;}
+  void SetCpRadius    (float radi) { m_cp_radi = radi; }
+
 private:
   void  FillInMesh();
 };

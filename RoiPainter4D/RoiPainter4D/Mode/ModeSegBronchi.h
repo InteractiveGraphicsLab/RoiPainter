@@ -3,11 +3,26 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 #include <vector>
 #include <set>
 #include <unordered_set>
+
+
+
+
+//-----------------------------------------------
+// (*) User Interface 
+// shift + L click : add control point
+// shift + L drag  : move control point
+// shift + R click : change the active parent control points
+//
+// (*) vol_flg[i]
+// 0   : not the target (actually not consider the locked mask TODO)
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
+//-----------------------------------------------
+
 
 
 class TreeObj
@@ -49,8 +64,8 @@ public:
 		m_pathToChildren           = src.m_pathToChildren;
 	}
 
-	TreeObj(const TreeObj& src) { std::cout << "コピーコンストラクタ\n"; Copy(src); }
-	TreeObj& TreeObj::operator=(const TreeObj& src) { std::cout << "代入演算子オーバーロード\n"; Copy(src); return *this; }
+	TreeObj(const TreeObj& src) { Copy(src); }
+	TreeObj& TreeObj::operator=(const TreeObj& src) { Copy(src); return *this; }
 	
 	static float GetRadius()    { return m_radius; }
 	static float GetPathWidth() { return m_path_width; }
@@ -89,7 +104,6 @@ public:
 		std::vector<TreeObj*> tmp_chs;
 		std::vector<std::vector<EVec3f>> tmp_paths;
 
-
 		for( int i = 0; i < (int) m_children.size(); ++i)
 		{
 			if (m_children[i] == ptr) {
@@ -110,9 +124,6 @@ public:
 class ModeSegBronchi : public ModeInterface 
 {
 private:
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   bool                m_b_draw_cutstroke;
   std::vector<EVec3f> m_stroke;
 
@@ -141,14 +152,13 @@ public:
   }
 
 
-  /////////////////////////////////////////////////////////////////
-  virtual MODE_ID GetModeID() { return MODE_SEG_BRONCHI; }
+	// overload functions ---------------------------------------------
+	virtual MODE_ID GetModeID() { return MODE_SEG_BRONCHI; }
 
 	virtual void StartMode();
 	virtual bool CanEndMode();
 	virtual void FinishSegmentation();
-	virtual void DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF);
-	
+	virtual void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt);
 
 	virtual void LBtnDown   (const EVec2i& p, OglForCLI* ogl);
 	virtual void LBtnUp     (const EVec2i& p, OglForCLI* ogl);
@@ -163,7 +173,8 @@ public:
 	virtual void MouseWheel	(const EVec2i &p, short zDelta, OglForCLI *ogl);
 	virtual void KeyDown    (int nChar) ;
 	virtual void KeyUp      (int nChar) ;
-	
+	// -----------------------------------------------------------------
+
 
 	void UpControlPointSize();
 	void DownControlPointSize();
@@ -182,11 +193,9 @@ public:
 	void DeleteCp  (const int frame_idx, TreeObj* cp     );
 	void UpdatePath(const int frame_idx, TreeObj* trgt_cp, bool path_to_parent = true);
 
-
 	void SaveCp(std::string fname);
 	void LoadCp(std::string fname);
 	void CopyPrevFrameCp();
-
 
 	//Region Growing + Shortest Path Algorithm
 	void ComputePathOneFrameAllCp(const int frame_idx);

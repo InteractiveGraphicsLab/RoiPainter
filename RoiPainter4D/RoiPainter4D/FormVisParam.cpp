@@ -155,22 +155,11 @@ System::Void FormVisParam::sliceBar_Scroll(
 }
 
 
-#define HIST_BIN_SIZE   256
 
 void FormVisParam::UpdateHistogramBmp()
 {
-  OglImage3D& vol = ImageCore::GetInst()->m_vol;
-  const int N = vol.GetW() * vol.GetH() * vol.GetD();
-
-  //compute normalized histogram
-  float hist[HIST_BIN_SIZE];
-  memset(hist, 0, sizeof(float) * HIST_BIN_SIZE);
-
-  for (int i = 0; i < N; ++i)  hist[vol[i]] += 1;
-
-  float maxV = 0;
-  for (int i = 5; i < HIST_BIN_SIZE - 5; ++i) maxV = std::max(maxV, hist[i]);
-  for (int i = 0; i < HIST_BIN_SIZE; ++i) hist[i] /= maxV;
+  std::vector<float> hist = ImageCore::GetInst()->Calc8bitHistogram_visvol();
+  int histbin_size = (int) hist.size();
 
   //gen histgram bitmap
   const int W = pictBox->Width;
@@ -179,7 +168,7 @@ void FormVisParam::UpdateHistogramBmp()
 
   for (int x = 0; x < W; ++x)
   {
-    int xPos = (int)(x / (double)W * (HIST_BIN_SIZE - 1));
+    int xPos = (int)(x / (double)W * (histbin_size - 1));
     int histVal = (int)(hist[xPos] * H);
 
     for (int y = 0; y < H; ++y)

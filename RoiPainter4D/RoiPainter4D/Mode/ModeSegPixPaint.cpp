@@ -1,11 +1,9 @@
 #pragma unmanaged 
 #include "ModeSegPixPaint.h"
 #include "ModeCommonTools.h"
-
 #include "ImageCore.h"
 #include "ModeCore.h"
 #include "CrsSecCore.h"
-#include <iostream>
 
 #pragma managed
 #include "FormMain.h"
@@ -17,11 +15,7 @@
 using namespace RoiPainter4D;
 
 
-
-
-ModeSegPixPaint::ModeSegPixPaint() :
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl"),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegPixPaint::ModeSegPixPaint()
 {
   std::cout << "ModeSegPixPaint...\n";
 
@@ -33,9 +27,11 @@ ModeSegPixPaint::ModeSegPixPaint() :
   std::cout << "ModeSegPixPaint DONE\n";
 }
 
+
 ModeSegPixPaint::~ModeSegPixPaint()
 {
 }
+
 
 
 bool ModeSegPixPaint::CanEndMode()
@@ -48,22 +44,7 @@ bool ModeSegPixPaint::CanEndMode()
 
 void ModeSegPixPaint::FinishSegmentation()
 {
-  std::vector<byte*> &flg4d = ImageCore::GetInst()->m_flg4d;
-  const EVec3i   reso  = ImageCore::GetInst()->GetReso();
-  const int  num_frame = (int)flg4d.size();
-  const int  num_voxel = reso[0] * reso[1] * reso[2];
-
-  bool b_roiexist = false;
-
-  for (int fi = 0; fi < num_frame && !b_roiexist; ++fi)
-  {
-    for (int i = 0; i < num_voxel && !b_roiexist; ++i)
-    {
-      if (flg4d[fi][i] == 255) b_roiexist = true;
-    }
-  }
-
-  if (!b_roiexist)
+  if (!bForeVoxelExist_flg4())
   {
     ShowMsgDlg_OK(MESSAGE_NO_FOREGROUND, "no foreground");
     return;
@@ -105,10 +86,7 @@ void ModeSegPixPaint::StartMode()
 
   //4D volume (cpu) --> vis volume (gpu)
   UpdateImageCoreVisVolumes();
-
-  std::cout << "finish ModeSegPixPaint::startMode!!!!\n";
 }
-
 
 
 
@@ -184,7 +162,6 @@ static void t_addPixsInsideLasso
 	const EVec3f          pitch,
 	const std::vector<EVec3f> &lasso_stroke,
 	const bool            b_fore,
-
    		  byte* vol_flg
 )
 {
@@ -272,9 +249,6 @@ static void t_addPixsInsideLasso
     }
 	}
 }
-
-
-
 
 
 
@@ -435,13 +409,13 @@ void ModeSegPixPaint::MBtnDown(const EVec2i &p, OglForCLI *ogl)
   ogl->BtnDown_Zoom(p);
 }
 
+
 void ModeSegPixPaint::MBtnUp(const EVec2i &p, OglForCLI *ogl)
 {
   m_bM = false;
   ogl->BtnUp();
   formMain_RedrawMainPanel();
 }
-
 
 
 
@@ -489,27 +463,18 @@ void ModeSegPixPaint::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 void ModeSegPixPaint::LBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeSegPixPaint::RBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeSegPixPaint::MBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
-
 void ModeSegPixPaint::KeyDown(int nChar) {}
 void ModeSegPixPaint::KeyUp(int nChar) {}
 
 
-void ModeSegPixPaint::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+void ModeSegPixPaint::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 {
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
-
-  BindAllVolumes();
-  DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader);
+  ImageCore::GetInst()->BindAllVolumes();
+  DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
   if (formVisParam_bRendVol())
   {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices( cuboid, reso, camP, camF, 
-                     !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeVisFore(!IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
   const EVec3f pitch = ImageCore::GetInst()->GetPitch();
@@ -517,20 +482,14 @@ void ModeSegPixPaint::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const 
 
   if (m_b_drawlasso) 
   {
-    EVec3f ofset = (camP - camF).normalized() * 0.5;
-    glLineWidth(2);
-    glColor3d(0.2, 0.4, 1.0);
-
+    EVec3f ofset = (cam_pos - cam_cnt).normalized() * 0.5;
     glPushMatrix();
     glTranslated(ofset[0], ofset[1], ofset[2]);
-    glBegin(GL_LINE_LOOP);
-    for (auto itr : m_lasso) glVertex3f(itr.x(), itr.y(), itr.z());
-    glEnd();
+    DrawPolyLine( EVec3f(0.2f, 0.4f, 1.0f), 3, m_lasso, true);
     glPopMatrix();
   }
+
 }
 
 
-
 #pragma managed 
-

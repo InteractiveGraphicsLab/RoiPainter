@@ -1,6 +1,7 @@
 #pragma unmanaged
 
 #include "GeneralizedCylinder.h"
+#include "Mode/ModeInterface.h"
 #include "OglForCLI.h"
 #include <algorithm>
 #include "tmesh.h"
@@ -318,13 +319,6 @@ void OrientedBoundBox::Draw(float line_width, float r, float g, float b, float a
 
 
 
-
-
-
-
-
-
-
 void GeneralizedCylinder::AddControlPoint   (const EVec3f& cp)
 {
   m_cps.push_back( cp );
@@ -407,29 +401,13 @@ void GeneralizedCylinder::ParameterModified(bool do_update_axis, bool do_update_
 
 
 
-void GeneralizedCylinder::DrawAxisCurve( const EVec3f& color, float lineWidth) const
-{
-  DrawPolyLine( color, lineWidth, m_axiscurve);
-}
 
-
-
-
-GeneralizedCylinder::GeneralizedCylinder()
-{
-  m_cps.clear();
-  m_axiscurve.clear();
-  m_twist_angle = 0.0f;
-  
-	m_radius1 = 10.0f;
-	m_radius2 = 10.0f;
-}
 
 GeneralizedCylinder::GeneralizedCylinder( 
     float r1, 
     float r2, 
     float twistangle, 
-    std::vector<EVec3f>& cps )
+    std::vector<EVec3f> cps )
 {
 	m_radius1 = r1;
 	m_radius2 = r2;
@@ -487,20 +465,36 @@ void GeneralizedCylinder::UpdateOrientedBoundinbBox()
 
 
 
-void GeneralizedCylinder::DrawOBBs() const
+void GeneralizedCylinder::Draw(bool b_active, bool b_drawobb, float cp_radius, float transparency)
 {
-  for (const auto& obb : m_obbs) 
-    obb.Draw( 5.0f, 1,0,0,1);
-}
+  //0 draw obb
+  if ( b_drawobb )
+  {
+    for (const auto& obb : m_obbs)
+      obb.Draw(5.0f, 1, 0, 0, 1);
+  }
 
+  //1 axis curve
+  glDisable(GL_LIGHTING);
+  if(b_active) DrawPolyLine(EVec3f(0, 1, 0), 2 * cp_radius, m_axiscurve);
+  else         DrawPolyLine(EVec3f(1, 0, 1), 2 * cp_radius, m_axiscurve);
 
+  //2 control points
+  glEnable(GL_LIGHTING);
+  for (int i = 0; i < (int)m_cps.size(); ++i)
+  {
+    if (i == m_cps.size() - 1)
+      TMesh::DrawSphere(m_cps[i], cp_radius, COLOR_M, COLOR_MH, COLOR_W, COLOR_SHIN64);
+    else
+      TMesh::DrawSphere(m_cps[i], cp_radius, COLOR_R, COLOR_RH, COLOR_W, COLOR_SHIN64);
+  }
+  
+  //3 Draw Radius Dir
+  DrawRadiusDir(EVec4f(1, 1, 0, 1), EVec4f(0, 1, 1, 1));
 
-
-
-
-
-void GeneralizedCylinder::DrawCylinder(float transparency) const
-{
+  //4 Draw Cylinder
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
   static float diffCylinder[4] = { 0.0f, 0.0f, 0.5f, 0.8f };
   static float specCylinder[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
   static float ambiCylinder[4] = { 0.1f, 0.1f, 0.2f, 0.8f };
@@ -508,7 +502,10 @@ void GeneralizedCylinder::DrawCylinder(float transparency) const
   diffCylinder[3] = transparency;
   specCylinder[3] = transparency;
   m_mesh.Draw(diffCylinder, ambiCylinder, specCylinder, shinCylinder);
+
 }
+
+
 
 
 void GeneralizedCylinder::DrawRadiusDir(EVec4f color_r1, EVec4f color_r2) const

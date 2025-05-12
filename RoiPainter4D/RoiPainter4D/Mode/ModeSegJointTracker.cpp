@@ -28,16 +28,7 @@ using namespace RoiPainter4D;
 
 
 
-//memo rigid transform matrix Matrix4f 
-// todo 0501 
-// rigid trackingの内容を再確認 OK
-// ライトの位置を調整 
-// shiftを押していないとドラッグできないように OK
-// eval meshにもハンドル表示を  OK 
-
-ModeSegJointTracker::ModeSegJointTracker() : 
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl"),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegJointTracker::ModeSegJointTracker() 
 {
 }
 
@@ -431,13 +422,9 @@ void ModeSegJointTracker::DrawCpTrajectory(int frameidx, int cpidx)
 
 
 
-
-
-
 void ModeSegJointTracker::DrawScene(
-    const EVec3f &cuboid, 
-    const EVec3f &camP, 
-    const EVec3f &camF)
+    const EVec3f &cam_pos, 
+    const EVec3f &cam_cnt)
 {
   GLfloat ambi0[3] = {0.5f,0.5f,0.5f};
   GLfloat ambi1[3] = {0,0,0};
@@ -460,11 +447,10 @@ void ModeSegJointTracker::DrawScene(
   glLightfv(GL_LIGHT2, GL_DIFFUSE , diff);
   glLightfv(GL_LIGHT2, GL_SPECULAR, spec);
 
-  const EVec3i reso      = ImageCore::GetInst()->GetReso();
-  const int    frame_idx = formVisParam_getframeI();
-
-  BindAllVolumes();
-  DrawCrossSections( cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader );
+  const int frame_idx = formVisParam_getframeI();
+  const EVec3f cuboid = ImageCore::GetCuboid();
+  ImageCore::GetInst()->BindAllVolumes();
+  DrawCrossSectionsVisFore(!IsSpaceKeyOn());
    
   //draw iso surfaces
   if ( FormJTrack_bVisIsoSurface() ) IsoSurf_Draw( frame_idx );
@@ -501,14 +487,7 @@ void ModeSegJointTracker::DrawScene(
 
   if (formVisParam_bRendVol())
   {
-    const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    DrawVolumeSlices( cuboid, reso, camP, camF, 
-                      !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeVisFore(!IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
 }

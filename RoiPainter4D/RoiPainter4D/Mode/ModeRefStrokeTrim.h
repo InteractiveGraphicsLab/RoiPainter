@@ -3,33 +3,28 @@
 #pragma unmanaged 
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 
 //-----------------------------------------------
 // (*) User Interface 
-// L double click : place / remove control point
-// shift + L drag : move control point
-//
+// L drag  : draw trim stroke
+// R click : cancel drawn stroke
+// 
 // (*) vol_flg
-//0 対象外
-//1   : 背景
-//255 : 前景
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
 //-----------------------------------------------
 
 class ModeRefStrokeTrim: public ModeInterface
 {
-	GlslShaderVolume    m_volumeShader;	
-	GlslShaderCrsSec    m_crssecShader;
-	std::vector<EVec3f> m_CutStroke;
-	std::vector<EVec2i> m_TrimStroke;
+	//strokes 
+	bool m_b_draw_cutstroke;
+	bool m_b_draw_trimstroke;
+	std::vector<EVec2i> m_stroke2d;
+	std::vector<EVec3f> m_stroke3d;
 
-	bool m_bModified;
-	bool m_bDrawTrimStr;
-    
-  //cut stroke
-  bool m_b_draw_cutstroke;
-	bool m_bDrawCrssec;
-	std::vector<EVec3f> m_stroke;
+	bool m_b_modified;
+	bool m_b_draw_crssec;
 
 	byte *m_msk3D_pre;
 	int   m_msk3D_pre_fi;
@@ -56,13 +51,13 @@ public:
 	void KeyUp  (int nChar);
 	bool CanEndMode();
 	void StartMode ();
-	void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+	void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center);
 	void finishTrim();
 	void cancelBtnClick();
 	//-----------------------------------------------------------------
 
 private:
-	void updateVolFlgByStroke(OglForCLI &ogl);
+	void UpdateVolFlgByStroke(OglForCLI &ogl);
 };
 
 #endif

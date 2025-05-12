@@ -19,14 +19,11 @@
 
 using namespace RoiPainter4D;
 
-
-ModeSegLocalRGrow::ModeSegLocalRGrow() :
-    m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl"),
-    m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegLocalRGrow::ModeSegLocalRGrow()
 {
   std::cout << "ModeSegThreshPnt...\n";
-  m_bL = m_bR = m_bM = false;
 
+  m_bL = m_bR = m_bM = false;
   m_active_seed_id = -1;
   m_is_modified          = false;
   m_is_drag_activeseed   = false;
@@ -43,22 +40,7 @@ ModeSegLocalRGrow::~ModeSegLocalRGrow()
 
 void ModeSegLocalRGrow::FinishSegmentation()
 {
-  std::vector<byte*> &flg4d = ImageCore::GetInst()->m_flg4d;
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  const int num_voxels = ImageCore::GetInst()->GetNumVoxels();
-
-  bool bForeExist = false;
-
-  for (int fi = 0; fi < num_frames && !bForeExist; ++fi)
-  {
-    byte* flg3d = flg4d[fi];
-    for (int i = 0; i < num_voxels && !bForeExist; ++i)
-    {
-      if ( flg3d[i] == 255) bForeExist = true;
-    }
-  }
-
-  if (!bForeExist)
+  if (!bForeVoxelExist_flg4())
   {
     ShowMsgDlg_OK(MESSAGE_NO_FOREGROUND, "no foreground");
     return;
@@ -74,7 +56,6 @@ void ModeSegLocalRGrow::FinishSegmentation()
   m_seeds.clear();
   m_active_seed_id = -1;
   formMain_RedrawMainPanel();
-
 }
 
 
@@ -95,6 +76,37 @@ void ModeSegLocalRGrow::CancelSegmentation()
 }
 
 
+void ModeSegLocalRGrow::StartMode()
+{
+  //initialize field 
+  m_bL = m_bR = m_bM = false;
+  m_is_modified = false;
+  m_active_seed_id = -1;
+  m_is_drag_activeseed = false;
+  m_is_resize_activeseed = false;
+  m_seeds.clear();
+
+  m_cp_radius = 2.0f * ImageCore::GetInst()->GetPitch().x();
+  m_unitsphere.InitializeAsSphere(1.0, 20, 20);
+
+  //initialize vFlg 0, 1
+  ImageCore::GetInst()->InitializeFlg4dByMask(formMain_SetProgressValue);
+
+  //show dialog
+  EVec2i minmax = ImageCore::GetInst()->GetVolumeMinMax();
+  EVec3f cube = ImageCore::GetInst()->GetCuboidF();
+  float max_radius = max3(cube[0], cube[1], cube[2]);
+
+  FormSegLocalRGrow_Show();
+  FormSegLocalRGrow_InitAllItems(max_radius, minmax[0], minmax[1]);
+
+  //4D volume (cpu) --> vis volume (gpu)
+  UpdateImageCoreVisVolumes();
+  FormSegLocalRGrow_UpdateSeedSelection();
+}
+
+
+
 
 void ModeSegLocalRGrow::SaveSeedInfo(std::string fname)
 {
@@ -106,7 +118,6 @@ void ModeSegLocalRGrow::SaveSeedInfo(std::string fname)
   if( fname.length() == 0 )
     fname= "./segmemo" + std::to_string( time(NULL) ) + ".txt";
 	
-
   std::ofstream fs(fname);
 
 	fs << "num_seeds  " << m_seeds.size() << "\n";
@@ -114,7 +125,6 @@ void ModeSegLocalRGrow::SaveSeedInfo(std::string fname)
   fs << "mode_fixrad    " << (rad_fixallframe   ?1:0) <<"\n"; 
   fs << "mode_fixpos    " << (pos_fixallframe   ?1:0)<<"\n"; 
   fs << "mode_fixthresh " << (thresh_fixallframe?1:0) <<"\n"; 
-
 
   for ( int i = 0; i < (int)m_seeds.size(); ++i)
   {
@@ -156,7 +166,6 @@ void ModeSegLocalRGrow::LoadSeedInfo(std::string fname)
   fs >> str >> fixpos; 
   fs >> str >> fixthresh; 
   
-
   if ( num_frames != ImageCore::GetInst()->GetNumFrames() )
   {
     fs.close();
@@ -183,7 +192,7 @@ void ModeSegLocalRGrow::LoadSeedInfo(std::string fname)
       bedit[f] = flg_01?true:false;
     }
 
-    m_seeds.push_back( LocalSeed( num_frames, radius, position, thresh, bedit ));
+    m_seeds.push_back( SphereSeed4D( radius, position, thresh, bedit  ));
   }
 
   m_active_seed_id = (int)m_seeds.size() - 1;
@@ -215,16 +224,17 @@ void ModeSegLocalRGrow::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 
   if (m_active_seed_id != -1)
   {
-    int frame_idx = formVisParam_getframeI();
-    const EVec3f seed_pos = m_seeds[ m_active_seed_id ].GetPosition(frame_idx);
-    const float  seed_rad = m_seeds[ m_active_seed_id ].GetRadius  (frame_idx); 
+    int frame_idx   = formVisParam_getframeI();
+    EVec3f seed_pos = m_seeds[ m_active_seed_id ].GetPosition(frame_idx);
+    float  seed_rad = m_seeds[ m_active_seed_id ].GetRadius  (frame_idx);
 
     if ( DistRayAndPoint(ray_pos, ray_dir, seed_pos) > 0.8 * seed_rad )
     {
       formMain_setCursorNESW();
       m_is_resize_activeseed = true;
     }
-    else{
+    else
+    {
       m_is_drag_activeseed = true;
     }
   }
@@ -269,6 +279,7 @@ void ModeSegLocalRGrow::RBtnUp(const EVec2i &p, OglForCLI *ogl)
   formMain_RedrawMainPanel();
 }
 
+
 void ModeSegLocalRGrow::MBtnUp(const EVec2i &p, OglForCLI *ogl)
 {
   m_bM = false;
@@ -281,32 +292,31 @@ void ModeSegLocalRGrow::LBtnDclk(const EVec2i &p, OglForCLI *ogl)
 {
   if (!IsShiftKeyOn()) return;
 
-  EVec3f rayP, rayD, pos;
-  ogl->GetCursorRay(p, rayP, rayD);
+  EVec3f ray_pos, ray_dir, pos;
+  ogl->GetCursorRay(p, ray_pos, ray_dir);
+  int pickSeedI = PickSeeds(ray_pos, ray_dir);
 
-  int pickSeedI = PickSeeds(rayP, rayD);
-
-  //シードをダブルクリックしたらそのシードを消す
   if (pickSeedI != -1)
   {
+    //pick下シードを削除
     std::cout << "delete local seed id = " << pickSeedI << "\n";
     m_seeds.erase(m_seeds.begin() + pickSeedI);
-    if (m_seeds.size() == 0 || pickSeedI == m_active_seed_id)m_active_seed_id = -1;
+    m_active_seed_id = -1;
   }
-  else if ( PickCrssec(rayP, rayD, pos) != CRSSEC_NON && m_active_seed_id < 0)
+  else if ( PickCrssec(ray_pos, ray_dir, pos) != CRSSEC_NON && m_active_seed_id < 0)
   {
-    const int    frameI = formVisParam_getframeI();
-    const int    frameN = (int)ImageCore::GetInst()->m_img4d.size();
-    const EVec3f cube = ImageCore::GetInst()->GetCuboidF();
-    const EVec3f pitch = ImageCore::GetInst()->GetPitch();
-    const int init_max_thresh = -400;
-    const int init_min_thresh = -1500;
+    int frame_idx = formVisParam_getframeI();
+    int num_frame = ImageCore::GetInst()->GetNumFrames();
+    EVec3f  pitch = ImageCore::GetInst()->GetPitch();
 
-    const short max_thresh = (m_seeds.size() == 0)? init_max_thresh : m_seeds.back().GetThreshold(frameI)[1];
-    const short min_thresh = (m_seeds.size() == 0)? init_min_thresh : m_seeds.back().GetThreshold(frameI)[0];
-    const float radius     = (m_seeds.size() == 0)? max3(pitch[0], pitch[1], pitch[2]) * 10: m_seeds.back().GetRadius(frameI);
-
-    m_seeds.push_back( LocalSeed( frameN, frameI, pos, radius, EVec2i(min_thresh, max_thresh)) );
+    EVec2i thresh(-1500 , -400);
+    float  radius = max3(pitch[0], pitch[1], pitch[2]) * 10;
+    if(m_seeds.size() != 0)
+    {
+      thresh = m_seeds.back().GetThreshold(frame_idx);
+      radius = m_seeds.back().GetRadius(frame_idx);
+    }
+    m_seeds.push_back( SphereSeed4D( num_frame, frame_idx, pos, radius, thresh) );
 
     m_active_seed_id = (int)m_seeds.size() - 1;
     std::cout << "create local seed\n";
@@ -316,8 +326,12 @@ void ModeSegLocalRGrow::LBtnDclk(const EVec2i &p, OglForCLI *ogl)
   formMain_RedrawMainPanel();
 }
 
+
 void ModeSegLocalRGrow::RBtnDclk(const EVec2i &p, OglForCLI *ogl){}
 void ModeSegLocalRGrow::MBtnDclk(const EVec2i &p, OglForCLI *ogl){}
+void ModeSegLocalRGrow::KeyDown(int nChar) {}
+void ModeSegLocalRGrow::KeyUp(int nChar) {}
+
 
 
 void ModeSegLocalRGrow::MouseMove(const EVec2i &p, OglForCLI *ogl)
@@ -343,7 +357,6 @@ void ModeSegLocalRGrow::MouseMove(const EVec2i &p, OglForCLI *ogl)
     {
       formMain_setCursorDefault();
     }
-
     return;
   }
 
@@ -371,6 +384,7 @@ void ModeSegLocalRGrow::MouseMove(const EVec2i &p, OglForCLI *ogl)
 }
 
 
+
 void ModeSegLocalRGrow::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 {
   EVec3f ray_pos, ray_dir, pos;
@@ -383,9 +397,11 @@ void ModeSegLocalRGrow::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *og
     float seed_rad = m_seeds[ sid ].GetRadius( frame_idx ) + z_delta * 0.01f;
     if(seed_rad  < 0.11f) seed_rad = 0.11f; 
     SelectSeed_SetRadius( seed_rad );
+    SelectSeed_RunInterpolation();
     FormSegLocalRGrow_UpdateSeedSelection();
   }
-  else if(!WheelingCrssec(p, z_delta, ogl) ) {
+  else if(!WheelingCrssec(p, z_delta, ogl) ) 
+  {
     ogl->ZoomCamera(z_delta * 0.1f);
   }
 
@@ -415,74 +431,24 @@ int ModeSegLocalRGrow::PickSeeds(const EVec3f &ray_pos, const EVec3f &ray_dir)
 }
 
 
-void ModeSegLocalRGrow::KeyDown(int nChar) {}
-void ModeSegLocalRGrow::KeyUp(int nChar) {}
-
-
-
-
-
-
-void ModeSegLocalRGrow::StartMode()
-{
-  //initialize field 
-  m_bL = m_bR = m_bM = false;
-  m_is_modified = false;
-  m_active_seed_id = -1;
-  m_is_drag_activeseed   = false;
-  m_is_resize_activeseed = false;
-
-  m_seeds.clear();
-  m_cp_radius = 2.0f*ImageCore::GetInst()->GetPitch().x();
-
-  m_unitsphere.InitializeAsSphere( 1.0, 20, 20);
-
-  //initialize vFlg 0, 1
-  ImageCore::GetInst()->InitializeFlg4dByMask( formMain_SetProgressValue );
-
-  //show dialog
-  EVec2i minmax = ImageCore::GetInst()->GetVolumeMinMax();
-  EVec3f cube  = ImageCore::GetInst()->GetCuboidF();
-  float max_radius = max3(cube[0], cube[1], cube[2]);
-
-  FormSegLocalRGrow_Show();
-  FormSegLocalRGrow_InitAllItems(max_radius, minmax[0], minmax[1]);
-
-  //4D volume (cpu) --> vis volume (gpu)
-  UpdateImageCoreVisVolumes();
-
-  FormSegLocalRGrow_UpdateSeedSelection();
-}
-
 
 
 void ModeSegLocalRGrow::DrawScene(
-    const EVec3f &cuboid, 
     const EVec3f &cam_pos, 
     const EVec3f &cam_cnt)
 {
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
-
-  //bind volumes ---------------------------------------
-  BindAllVolumes();
-  DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssec_shader);
+  ImageCore::GetInst()->BindAllVolumes();
+  DrawCrossSectionsVisFore(!IsSpaceKeyOn());
 
   if ( formVisParam_bRendVol() )
   {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices( cuboid, reso, cam_pos, cam_cnt, 
-                     !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeVisFore(!IsSpaceKeyOn(), cam_pos, cam_cnt);
   }
 
   const int num_seeds  = (int) m_seeds.size();
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
   const int frame_idx  = formVisParam_getframeI();
 
-  //draw control points
+  //draw seed center 
   glEnable(GL_LIGHTING);
   glEnable(GL_BLEND);
   if(!IsSKeyOn())
@@ -503,8 +469,8 @@ void ModeSegLocalRGrow::DrawScene(
 
 	for (int i = 0; i < num_seeds; ++i)
 	{ 
-    const EVec3f p = m_seeds[i].GetPosition( frame_idx );
-    const float r  = m_seeds[i].GetRadius(frame_idx);
+    const EVec3f p = m_seeds[i].GetPosition( frame_idx);
+    const float  r = m_seeds[i].GetRadius  ( frame_idx);
 
 		if (m_active_seed_id == i) 
       glColor4f(1.0f, 1.0f, 0.0f, 0.3f);
@@ -523,12 +489,11 @@ void ModeSegLocalRGrow::DrawScene(
 
 
 
-
 void ModeSegLocalRGrow::SelectSeed_SetRadius(float new_radius)
 {
   if ( m_active_seed_id < 0 || (int)m_seeds.size() <= m_active_seed_id ) return;
 
-  LocalSeed &seed = m_seeds[ m_active_seed_id ];  
+  SphereSeed4D &seed = m_seeds[ m_active_seed_id ];  
   
   if ( FormSegLocalRGrow_DoSetSameRadForAllFrame() ) 
   {
@@ -548,7 +513,7 @@ void ModeSegLocalRGrow::SelectSeed_SetPosition( EVec3f new_pos )
 {
   if ( m_active_seed_id < 0 || (int)m_seeds.size() <= m_active_seed_id ) return;
 
-  LocalSeed &seed = m_seeds[ m_active_seed_id ];  
+  SphereSeed4D &seed = m_seeds[ m_active_seed_id ];  
   
   if ( FormSegLocalRGrow_DoSetSamePosForAllFrame() ) 
   {
@@ -569,7 +534,7 @@ void ModeSegLocalRGrow::SelectSeed_SetThreshMax( int maxv )
 {
   if ( m_active_seed_id < 0 || (int)m_seeds.size() <= m_active_seed_id ) return;
 
-  LocalSeed &seed = m_seeds[ m_active_seed_id ];  
+  SphereSeed4D &seed = m_seeds[ m_active_seed_id ];  
   
   if ( FormSegLocalRGrow_DoSetSameThreshForAllFrame() ) 
   {
@@ -589,7 +554,7 @@ void ModeSegLocalRGrow::SelectSeed_SetThreshMin( int minv )
 {
   if ( m_active_seed_id < 0 || (int)m_seeds.size() <= m_active_seed_id ) return;
 
-  LocalSeed &seed = m_seeds[ m_active_seed_id ];  
+  SphereSeed4D &seed = m_seeds[ m_active_seed_id ];  
   
   if ( FormSegLocalRGrow_DoSetSameThreshForAllFrame() ) 
   {
@@ -631,7 +596,7 @@ void ModeSegLocalRGrow::RunSeedInterpolation( int trgt_seed_id)
   bool rad_fixallframe    = FormSegLocalRGrow_DoSetSameRadForAllFrame();
   bool pos_fixallframe    = FormSegLocalRGrow_DoSetSamePosForAllFrame();
   bool thresh_fixallframe = FormSegLocalRGrow_DoSetSameThreshForAllFrame();
-  LocalSeed &seed = m_seeds[trgt_seed_id];
+  SphereSeed4D &seed = m_seeds[trgt_seed_id];
 
 
   if( !rad_fixallframe ) 
@@ -708,13 +673,13 @@ void ModeSegLocalRGrow::RunSeedInterpolation( int trgt_seed_id)
 
 
 
-
 template<class T, class M>
 static bool t_inRange(const M &num, const T &min, const T &max) {
   if (min > num) return false;
   if (max < num) return false;
   return true;
 }
+
 
 
 void t_RunLocalRegionGrow3D
@@ -729,7 +694,6 @@ void t_RunLocalRegionGrow3D
   byte* flg3d
 )
 {
-  //get resolution (この関数でImageCore二アクセスするのは少し気持ち悪いけど許容)
   int WH = W*H, WHD = W*H*D;
   const short minv = seed_minmax[0];
   const short maxv = seed_minmax[1];
@@ -777,6 +741,7 @@ void t_RunLocalRegionGrow3D
 }
 
 
+
 void ModeSegLocalRGrow::RunLocalRegionGrow_OnlyTrgtFrame(int trgt_frame_idx)
 {
   int W,H,D,WH,WHD;
@@ -798,7 +763,7 @@ void ModeSegLocalRGrow::RunLocalRegionGrow_OnlyTrgtFrame(int trgt_frame_idx)
   byte* tmp_flg3d  = new byte[WHD];
   memcpy(init_inout, flg3d, sizeof(byte)*WHD);
 
-  //region growing for each frame
+  //region growing for each seeds
   for( int si = 0; si < m_seeds.size(); ++si)
   {
     memcpy(tmp_flg3d, init_inout, sizeof(byte)*WHD);
@@ -809,25 +774,15 @@ void ModeSegLocalRGrow::RunLocalRegionGrow_OnlyTrgtFrame(int trgt_frame_idx)
       m_seeds[si].GetThreshold(trgt_frame_idx), 
       W,H,D,pitch, img3d, tmp_flg3d);
 
-    //int cnt_0 = 0, cnt_1 = 0, cnt_255 = 0;
-
-    for (int vi = 0; vi < WHD; ++vi) {
-      if (tmp_flg3d[vi] == 255)
-        flg3d[vi] = 255;
-
-      //if (flg3d[vi] == 0) cnt_0++;
-      //if (flg3d[vi] == 1) cnt_1++;
-      //if (flg3d[vi] == 255) cnt_255++;
-
+    for (int vi = 0; vi < WHD; ++vi) 
+    {
+      if (tmp_flg3d[vi] == 255) flg3d[vi] = 255;
     }
-    //cout << "  0 " << cnt_0 << "\n";//0のみ
-    //cout << "  1 " << cnt_1 << "\n";
-    //cout << "255 " << cnt_255 << "\n";
-
   }
   delete[] tmp_flg3d ;
   delete[] init_inout;
 }
+
 
 
 void ModeSegLocalRGrow::RunLocalRegionGrow_Allframe()
@@ -854,7 +809,6 @@ void ModeSegLocalRGrow::RunLocalRegionGrow_OnlyCurrentFrame()
   UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
 }
-
 
 
 #pragma managed

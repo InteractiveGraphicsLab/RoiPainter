@@ -4,20 +4,26 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 #include "ttrianglesoup.h"
 #include <vector>
 #include <set>
 
+//-----------------------------------------------
+// (*) User Interface 
+// shift + L click : place control point
+// shift + L drag  : move  control point
+// shift + R click : remove control point
+//
+// (*) vol_flg[i]
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
+//-----------------------------------------------
 
 
 class ModePlaceCPs : public ModeInterface
 {
-  //shaders
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   //等値面情報
   int                        m_isovalue;
   std::vector<TTriangleSoup> m_isosurfaces;
@@ -33,11 +39,10 @@ class ModePlaceCPs : public ModeInterface
   TMesh m_cp_mesh;
 
   //template mesh
-  std::vector<EVec3f> m_template_cps;
-  int m_drag_tmpcpid; //-1 if nothing 
   TMesh m_template;
-
-  std::vector<std::pair<EMat3f, EVec3f>> m_template_rottrans;//rigid transform
+  int m_drag_tmpcpid; //-1 if nothing 
+  std::vector<EVec3f> m_template_cps;
+  std::vector<EMat4f> m_template_rottrans;//rigid transform
 
 
   ModePlaceCPs();
@@ -63,21 +68,18 @@ public:
   void KeyUp(int nChar);
   bool CanEndMode();
   void StartMode();
-  void DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF);
+  void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center);
   // ---------------------------------------------------------------
 
-  void IsosurfaceGenerateOneFrame(const int    isovalue, const int frame_index);
-  void IsosurfaceGenerateAllFrame(const int    isovalue);
+  void GenIsoSurface(const int isovalue, const bool do_all_frame, const int frame_index = -1);
   void FinishSegmentation();
   void CancelSegmentation();
 
   void ExportControlPoints(std::string fname);
   void ImportControlPoints(std::string fname);
 
-
   void LoadTemplateMesh(std::string fname);
   void FitTemplateUsingCPs(bool modify_scale);
-
 
 private:
   bool PickPlanesIsosurf(const EVec3f &ray_pos, const EVec3f &ray_dir, EVec3f &pos);

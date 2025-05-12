@@ -3,14 +3,15 @@
 
 #pragma unmanaged
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "GeneralizedCylinder.h"
 
+// Curved Cylinderを利用した Local Region Growing
 // 3次元空間内に cylinderとシードが複数配置される
 //  - cylinderの中心軸は領域拡張のシードになる
 //  - それ以外にも明示的に領域拡張のシードを配置できる
 
-//user interface
+//-----------------------------------------------
+// (*) User Interface 
 // -- Cylinder mode -- 
 // shift + L dblclick --> 選択状態なら cp追加
 // shift + L dblclick --> 選択無しなら cylinder追加
@@ -23,20 +24,24 @@
 // shift + L drag  --> seedを移動 or active cylinderのcpを移動
 //
 // ctl + L drag --> cylinderを平行移動
+//
+// (*) vol_flg[i]
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
+//-----------------------------------------------
+
+
 
 
 class ModeSegBolus : public ModeInterface
 {
 private:
-	GlslShaderVolume m_volume_shader_segm;
-	GlslShaderVolume m_volume_shader_norm;
-	GlslShaderCrsSec m_crssec_shader;
-  
   //support cut stroke 
   bool m_b_draw_cutstroke;
   std::vector<EVec3f> m_stroke;
 
-  HANDLE m_sub_thread;
+  //HANDLE m_sub_thread;
 
 	float m_cp_radius;
 	std::vector< GeneralizedCylinder > m_cylinders;
@@ -82,10 +87,10 @@ public:
 	void KeyUp(int nChar){}
 	bool CanEndMode();
 	void StartMode();
-	void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+	void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt);
 
 	void FinishSegmentation();
-	void cancelSegmentation();
+	void CancelSegmentation();
 	
 	// ---------------------------------------------------------------
 	void SetRadius1   ( float axis  );
@@ -109,11 +114,11 @@ public:
   void RunDilationAllFrame();
 
   //cylinder IO
-	void ExportCylinderInfoByText( std::string filePath );
-  void LoadCylinderInfoFromFile( std::string filePath, bool isFitting = true);
+	void SaveCylinderInfoAsTextFile( std::string filePath );
+  void LoadCylinderInfoFromTextFile( std::string filePath, bool isFitting = true);
 
 private:
-	EVec2i PickCPs    (const EVec3f &ray_pos, const EVec3f &ray_dir, const float max_depth);
+	EVec2i PickCPs(const EVec3f &ray_pos, const EVec3f &ray_dir, const float max_depth);
 	
 };
 

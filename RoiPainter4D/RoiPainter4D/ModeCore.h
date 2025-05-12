@@ -39,8 +39,8 @@ public:
   void KeyUp(int nChar) { m_mode->KeyUp(nChar); }
   void KeyDown(int nChar) { m_mode->KeyDown(nChar); }
 
-  void DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF) {
-    m_mode->DrawScene(cuboid, camP, camF);
+  void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center) {
+    m_mode->DrawScene(cam_pos, cam_center);
   }
 };
 

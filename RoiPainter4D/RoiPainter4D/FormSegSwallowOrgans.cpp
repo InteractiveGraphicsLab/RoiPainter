@@ -179,7 +179,7 @@ System::Void FormSegSwallowOrgans::m_btn_loaddeform_nextcage_Click(System::Objec
   IntPtr mptr_txt = Marshal::StringToHGlobalAnsi(dlg_txt->FileName);
   std::string fname_txt = static_cast<const char*>(mptr_txt.ToPointer());
 
-  ModeSegSwallowOrgans::GetInst()->DeformImportedCage(fname_cage, fname_txt);
+  ModeSegSwallowOrgans::GetInst()->LoadObj_ApplyFfdExportAsTxt(fname_cage, fname_txt);
 }
 
 
@@ -440,8 +440,8 @@ System::Void FormSegSwallowOrgans::m_updown_cpsize_ValueChanged(
 {
   auto c = ImageCore::GetInst()->GetCuboidF();
   int cprate = (int)m_updown_cpsize->Value;
-  CagedMeshSequence::SetHandleLength      ( c[0] * 0.03f   * cprate);
-  CagedMeshSequence::SetControlPointRadius( c[0] * 0.0015f * cprate);
+  ModeSegSwallowOrgans::GetInst()->SetHandleLength( c[0] * 0.03f   * cprate);
+  ModeSegSwallowOrgans::GetInst()->SetCpRadius    ( c[0] * 0.0015f * cprate);
   formMain_RedrawMainPanel();
 }
 

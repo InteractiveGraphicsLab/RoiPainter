@@ -3,29 +3,25 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 
 //-----------------------------------------------
 // (*) User Interface 
 // shift + L click : place control point
-// shift + L drag  : move control point
+// shift + L drag  : move  control point
 // shift + R click : remove control point
 //
-// (*) vol_flg
-// 0 対象外
-// 1   : 背景
-// 255 : 緑色ハイライト
+// (*) vol_flg[i]
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
 //-----------------------------------------------
 
 class ModeSegRGrow : public ModeInterface
 {
-  GlslShaderVolume  m_volume_shader;
-  GlslShaderCrsSec  m_crssec_shader;
-
-  //control points
+  //control points 
   float m_cp_radius;
-  int  m_drag_cpid; //-1 when false
-  std::vector<CtrlPt4D>  m_cps;
+  int   m_drag_cpid; //-1 when false
+  std::vector<CtrlPt4D> m_cps;
 
   //cut stroke
   bool m_b_draw_cutstroke;
@@ -58,16 +54,18 @@ public:
   void KeyUp (int nChar);
   bool CanEndMode();
   void StartMode();
-  void DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center);
+  void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center);
   //-----------------------------------------------------------------
 
-  void RunThresholding(const short minv, const short maxv);
-  void RunRegionGrow8 (const short minv, const short maxv);
-  void RunDilation3D_EachFrame();
-  void RunErosion3D_EachFrame();
-  void RunFillHole3D_EachFrame();
+  void RunThresholding_AllFrame(const short minv, const short maxv);
   void RunThresholding_OneFrame(const short minv, const short maxv, const int frame_idx);
-  void RunRegionGrow6_OneFrame (const short minv, const short maxv, const int frame_idx);
+
+  void RunRegionGrow4D (const short minv, const short maxv);
+  void RunRegionGrow3D_OneFrame(const short minv, const short maxv, const int frame_idx);
+
+  void RunDilation3D_AllFrame();
+  void RunErosion3D_AllFrame();
+  void RunFillHole3D_AllFrame();
 
   void FinishSegmentation();
   void cancelSegmentation();

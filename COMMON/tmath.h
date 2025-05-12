@@ -1396,4 +1396,130 @@ void FlipVolumeInZ(const EVec3i& reso, T* img)
 }
 
 
+
+
+
+//Given two sets pf points (x0, x1),  
+//compute translation t and rotation R to minimize 
+// Σ||R (x0-c0) - (x1-c1)||
+// c0 and c1 are gravty centers of x0 and x1
+// 
+// x0i' = R x0i - R c0 + c1 (Rot = R, trans = - R c0 + c1)
+//
+inline void CalcShapeMatching(
+  const std::vector<EVec3f>& x0,
+  const std::vector<EVec3f>& x1,
+
+  EMat4f& mat //output 
+)
+{
+  mat.setIdentity();
+
+  const int N = std::min((int)x0.size(), (int)x1.size());
+  if (N <= 3) return; //TODO N == 3の時は別の処理
+
+  //calc gc 
+  EVec3f c0(0, 0, 0), c1(0, 0, 0);
+  for (int i = 0; i < N; ++i)
+  {
+    c0 += x0[i];
+    c1 += x1[i];
+  }
+  c0 /= (float)N;
+  c1 /= (float)N;
+
+  //calc Apq = Σ(x1i-c1)(x0i-c0)^T
+  EMat3f Apq = EMat3f::Zero();
+  for (int i = 0; i < N; ++i)
+  {
+    EVec3f p = x1[i] - c1, q = x0[i] - c0;
+    Apq += p * q.transpose();
+  }
+
+  //AtA = V U Vt --> sqrt(AtA) = V sqrt(U) Vt 
+  EMat3f AtA = Apq.transpose() * Apq;
+  Eigen::SelfAdjointEigenSolver<EMat3f> eigensolver(AtA);
+  if (eigensolver.info() != Eigen::Success) return;
+  EMat3f V = eigensolver.eigenvectors();
+  EVec3f d = eigensolver.eigenvalues();
+
+  //calc D^-1
+  EMat3f D = EMat3f::Identity();
+  D(0, 0) = (d[0] > 0) ? 1 / sqrt(d[0]) : 1 / 0.000001f;
+  D(1, 1) = (d[1] > 0) ? 1 / sqrt(d[1]) : 1 / 0.000001f;
+  D(2, 2) = (d[2] > 0) ? 1 / sqrt(d[2]) : 1 / 0.000001f;
+
+  EMat3f sqrtAtA_inv = V * D * V.transpose();
+
+  //R = Apq * (V sqrt(U) Vt) ^ -1
+  mat.setIdentity();
+  mat.block<3, 3>(0, 0) = Apq * sqrtAtA_inv;
+  mat.block<3, 1>(0, 3) = -(Apq * sqrtAtA_inv) * c0 + c1;
+}
+
+
+
+
+// Given two triangles (x0, x1, x2) and (y0, y1, y2)
+// compute rotation R and translation t that minimize   
+// Σ||R ( xi - cx ) - (yi - cy)|| 
+// cx and cy are gravity center of xi and yi 
+// 
+// xi' = R xi - R cx + cy (Rot = R, trans = - R cx + cy)
+inline static void CalcTriangleMatching(
+  const std::vector<EVec3f>& x,
+  const std::vector<EVec3f>& y,
+  EMat4f& mat //OUTPUT :mat4d
+)
+{
+  const int N = std::min((int)x.size(), (int)y.size());
+  if (N != 3) return;
+
+  //calc gc 
+  EVec3f cx = (x[0] + x[1] + x[2]) / 3.0f;
+  EVec3f cy = (y[0] + y[1] + y[2]) / 3.0f;
+
+  //calc origin center point 
+  EVec3f x0 = x[0] - cx, x1 = x[1] - cx, x2 = x[2] - cx;
+  EVec3f y0 = y[0] - cy, y1 = y[1] - cy, y2 = y[2] - cy;
+
+  //calc normalized normal and rot axis
+  EVec3f nx = ((x1 - x0).cross(x2 - x0));
+  EVec3f ny = ((y1 - y0).cross(y2 - y0));
+  EVec3f axis_nxny = nx.cross(ny);
+
+  float len_nx = nx.norm();
+  float len_ny = ny.norm();
+  float len_axis_nxny = axis_nxny.norm();
+  if (len_nx < 0.00001f || len_ny < 0.00001f || len_axis_nxny < 0.00001f) return;
+  nx /= len_nx;
+  ny /= len_ny;
+  axis_nxny /= len_axis_nxny;
+
+  EMat3f Rot1 = CalcRotationMat(nx, ny, axis_nxny);
+  x0 = Rot1 * x0;
+  x1 = Rot1 * x1;
+  x2 = Rot1 * x2;
+
+  float t0 = (float)CalcAngle(x0, y0, ny);
+  float t1 = (float)CalcAngle(x1, y1, ny);
+  float t2 = (float)CalcAngle(x2, y2, ny);
+  float t = CalcAverageAngle3(t0, t1, t2);
+
+  EMat3f Rot2 = Eigen::AngleAxis<float>(t, ny).matrix();
+
+  //R = Apq * (V sqrt(U) Vt) ^ -1
+  mat.setIdentity();
+  mat.block<3, 3>(0, 0) = Rot2 * Rot1;
+  mat.block<3, 1>(0, 3) = -(Rot2 * Rot1) * cx + cy;
+}
+
+
+
+
+
+
+
+
+
 #endif

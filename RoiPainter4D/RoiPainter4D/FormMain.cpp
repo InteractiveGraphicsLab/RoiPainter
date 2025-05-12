@@ -6,7 +6,6 @@
 #include "FormSegRGrow.h"
 #include "FormSegPixPaint.h"
 #include "FormSegRigidICP.h"
-#include "FormSegClosestPix.h"
 #include "FormSegLocalRGrow.h"
 #include "FormSegSwallowOrgans.h"
 #include "FormSegSwallowOrganTimeline.h"
@@ -33,7 +32,6 @@
 #include "Mode/ModeSegRGrow.h"
 #include "Mode/ModeSegPixPaint.h"
 #include "Mode/ModeSegRigidICP.h"
-#include "Mode/ModeSegClosestPix.h"
 #include "Mode/ModeSegLocalRGrow.h"
 #include "Mode/ModeSegSwallowOrgans.h"
 #include "Mode/ModeSegJointTracker.h"
@@ -78,7 +76,6 @@ int main()
   ModeSegRGrow::GetInst();
   ModeSegPixPaint::GetInst();
   ModeSegRigidICP::GetInst();
-  ModeSegClosestPix::GetInst();
   ModeSegLocalRGrow::GetInst();
   ModeSegSwallowOrgans::GetInst();
   ModeRefStrokeTrim::GetInst();
@@ -147,7 +144,6 @@ void FormMain::InitializeSingletons()
   FormSegRGrow::GetInst()->Show();
   FormSegPixPaint::GetInst()->Show();
   FormSegRigidICP::GetInst()->Show();
-  FormSegClosestPix::GetInst()->Show();
   FormSegLocalRGrow::GetInst()->Show();
   FormSegBolus::GetInst()->Show();
   FormRefStrokeTrim::GetInst()->Show();
@@ -166,7 +162,6 @@ void FormMain::InitializeSingletons()
   FormSegRGrow::GetInst()->Hide();
   FormSegPixPaint::GetInst()->Hide();
   FormSegRigidICP::GetInst()->Hide();
-  FormSegClosestPix::GetInst()->Hide();
   FormSegLocalRGrow::GetInst()->Hide();
   FormSegBolus::GetInst()->Hide();
   FormRefStrokeTrim::GetInst()->Hide();
@@ -186,7 +181,6 @@ void FormMain::InitializeSingletons()
   FormSegRGrow::GetInst()->Owner = this;
   FormSegPixPaint::GetInst()->Owner = this;
   FormSegRigidICP::GetInst()->Owner = this;
-  FormSegClosestPix::GetInst()->Owner = this;
   FormSegLocalRGrow::GetInst()->Owner = this;
   FormSegBolus::GetInst()->Owner = this;
   FormRefStrokeTrim::GetInst()->Owner = this;
@@ -303,7 +297,7 @@ void FormMain::RedrawMainPanel()
 
   InitializeLights();
   if (FormVisParam::GetInst()->bRendFrame()) t_DrawFrame(cuboid);
-  ModeCore::GetInst()->DrawScene(cuboid, cam_pos, cam_cnt);
+  ModeCore::GetInst()->DrawScene(cam_pos, cam_cnt);
   if (FormVisParam::GetInst()->bRendIndi())
   {
     ViewIndiCore::getInst()->DrawIndicator(pw, ph, cam_pos, cam_cnt, cam_up);
@@ -407,7 +401,6 @@ void FormMain::ReplaceOtherForms()
   FormSegRGrow::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegPixPaint  ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegRigidICP  ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegClosestPix::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegLocalRGrow   ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormRefStrokeTrim   ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegBolus        ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
@@ -469,7 +462,6 @@ System::Void FormMain::switch_segRigidICP_Click(System::Object^  sender, System:
 
 System::Void FormMain::switch_segClosestPix_Click(System::Object^  sender, System::EventArgs^  e) 
 {
-  ModeCore::GetInst()->ModeSwitch(MODE_SEG_CLOSESTPIX);
   RedrawMainPanel();
 }
 
@@ -516,7 +508,6 @@ System::Void FormMain::switch_segBronchi_Click(System::Object^ sender, System::E
 
 System::Void FormMain::switch_segSwallowTempGen_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeCore::GetInst()->ModeSwitch(MODE_SEG_SWLTMPGEN);
   RedrawMainPanel();
 }
 

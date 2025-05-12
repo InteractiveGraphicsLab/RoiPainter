@@ -2,14 +2,18 @@
 #define MODE_MODEVISNORM_H_
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include <vector>
+
+//-----------------------------------------------
+// (*) User Interface 
+// + Standard Camera Rot/Trans/Zoom
+// 
+// (*) vol_flg[i]
+// not used
+//-----------------------------------------------
 
 class ModeVizNormal : public ModeInterface
 {
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   bool m_b_draw_cutstroke;
   std::vector<EVec3f> m_stroke;
 
@@ -39,7 +43,7 @@ public:
   void KeyUp(int nChar);
   bool CanEndMode();
   void StartMode();
-  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+  void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt);
 };
 
 #endif

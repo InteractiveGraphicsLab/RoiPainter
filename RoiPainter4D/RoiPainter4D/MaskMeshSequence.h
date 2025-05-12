@@ -5,14 +5,11 @@
 #include <GL/glew.h>
 #include "tmesh.h"
 #include "thandle3d.h"
-#include "ImageCore.h"
 
 
 class MaskMeshSequence
 {
 private:
-  //std::vector<byte*>& m_masks;
-  //std::vector<std::unique_ptr<short[]>> m_masks;
   int m_num_frames;
   int m_num_voxels;
   EVec3i m_reso;
@@ -28,13 +25,10 @@ public:
   bool is_initialized;
 
   MaskMeshSequence();
-  //MaskMeshSequence(const TMesh&);
   ~MaskMeshSequence();
 
-  //MaskMeshSequence& operator=(const MaskMeshSequence&);
-
   bool LoadMask(const int);
-  void UpdateMask(const int);
+  void UpdateMask();
 
   TMesh& GetMesh(const int);
 

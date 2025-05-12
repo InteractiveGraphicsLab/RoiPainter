@@ -24,10 +24,7 @@
 using namespace RoiPainter4D;
 
 
-ModeRefCurveDeform::ModeRefCurveDeform() :
-  //m_volume_shader("shader/volVtx.glsl", "shader/volFlg.glsl"),   // normal volume vis
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl"), // mask volume vis
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
+ModeRefCurveDeform::ModeRefCurveDeform()
 {
   std::cout << "ModeRefCurveDeform...\n";
   m_bL = m_bR = m_bM = false;
@@ -43,10 +40,9 @@ ModeRefCurveDeform::~ModeRefCurveDeform()
 
 bool ModeRefCurveDeform::CanEndMode()
 {
-  //今処理を終わっていいですか? 
   if (m_is_not_saved_state)
   {
-    return ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Leaving?");
+    return ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Do you want to leave without saving curves?");
   }
   return true;
 }
@@ -93,7 +89,7 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
     Do();
     EVec3f ray_pos, ray_dir, pos;
     ogl->GetCursorRay(p, ray_pos, ray_dir);
-    const int selected_stroke_idx = m_strokes[frame_idx].PickControlPoint(ray_pos, ray_dir, m_cp_rate * m_cp_size, false, m_show_only_selected_stroke);
+    const int selected_stroke_idx = m_strokes[frame_idx].PickCPs(ray_pos, ray_dir, m_cp_rate * m_cp_size, false, m_show_only_selected_stroke);
 
     if (selected_stroke_idx == -1)
     {
@@ -102,25 +98,25 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
       {
         if (dstroke.GetSelectedStrokeIdx() == -1)
         {
-          dstroke.AddStroke();
+          dstroke.AddNewStroke();
         }
-        if (!dstroke.AddControlPoint(pos))
+        if (!dstroke.AddCP_SelStroke(pos))
         {
-          dstroke.ReleaseStroke();
+          dstroke.UnselectStroke();
           m_prev_selected_stroke_idx = -1;
         }
       }
       else
       {
-        dstroke.ReleaseStroke();
+        dstroke.UnselectStroke();
         m_prev_selected_stroke_idx = -1;
       }
     }
     else
     {
-      m_strokes[frame_idx].PickControlPoint(ray_pos, ray_dir, m_cp_rate * m_cp_size, true, m_show_only_selected_stroke);
-      const int common_xyz = m_strokes[frame_idx].GetCommonXYZ();
-      const float common_coord = m_strokes[frame_idx].GetCommonCoord();
+      m_strokes[frame_idx].PickCPs(ray_pos, ray_dir, m_cp_rate * m_cp_size, true, m_show_only_selected_stroke);
+      const int common_xyz = m_strokes[frame_idx].GetPlaneXyz_SelStroke();
+      const float common_coord = m_strokes[frame_idx].GetPlanePos_SelStroke();
       const EVec3f cuboid = ImageCore::GetInst()->GetCuboidF();
       if (common_xyz == 0)
       {
@@ -138,7 +134,7 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
   }
   else
   {
-    m_strokes[frame_idx].ReleaseStroke();
+    m_strokes[frame_idx].UnselectStroke();
     m_prev_selected_stroke_idx = -1;
     ogl->BtnDown_Trans(p);
   }
@@ -153,7 +149,7 @@ void ModeRefCurveDeform::LBtnUp(const EVec2i& p, OglForCLI* ogl)
   m_bL = false;
   const int frame_idx = formVisParam_getframeI();
 
-  if (m_strokes[frame_idx].IsSelectedStrokeShared())
+  if (m_strokes[frame_idx].bSelStrokeShared())
   {
     UpdateSharedStroke();
   }
@@ -173,11 +169,11 @@ void ModeRefCurveDeform::RBtnDown(const EVec2i& p, OglForCLI* ogl)
   {
     EVec3f ray_pos, ray_dir, pos;
     ogl->GetCursorRay(p, ray_pos, ray_dir);
-    const int selected_stroke_idx = m_strokes[frame_idx].PickControlPoint(ray_pos, ray_dir, m_cp_rate * m_cp_size, true, m_show_only_selected_stroke);
+    const int selected_stroke_idx = m_strokes[frame_idx].PickCPs(ray_pos, ray_dir, m_cp_rate * m_cp_size, true, m_show_only_selected_stroke);
 
     if (selected_stroke_idx != -1)
     {
-      if (m_strokes[frame_idx].IsSelectedStrokeShared() == true)
+      if (m_strokes[frame_idx].bSelStrokeShared() == true)
       {
         if (ShowMsgDlgYesNo("All-frame曲線を解除しますか？\n（自動補間された曲線は削除されます）", "Unlock?"))
         {
@@ -188,13 +184,13 @@ void ModeRefCurveDeform::RBtnDown(const EVec2i& p, OglForCLI* ogl)
       {
         m_prev_selected_stroke_idx = selected_stroke_idx;
         Do();
-        m_strokes[frame_idx].DeleteSelectedControlPoint();
+        m_strokes[frame_idx].DeleteSelectedCP();
       }
     }
   }
   else
   {
-    m_strokes[frame_idx].ReleaseStroke();
+    m_strokes[frame_idx].UnselectStroke();
     m_prev_selected_stroke_idx = -1;
     ogl->BtnDown_Rot(p);
   }
@@ -219,7 +215,7 @@ void ModeRefCurveDeform::MBtnDown(const EVec2i& p, OglForCLI* ogl)
   m_bM = true;
 
   const int frame_idx = formVisParam_getframeI();
-  m_strokes[frame_idx].ReleaseStroke();
+  m_strokes[frame_idx].UnselectStroke();
   m_prev_selected_stroke_idx = -1;
 
   ogl->BtnDown_Zoom(p);
@@ -248,7 +244,7 @@ void ModeRefCurveDeform::MouseMove(const EVec2i& p, OglForCLI* ogl)
   {
     if (PickCrssec(ray_pos, ray_dir, pos) != CRSSEC_NON)
     {
-      m_strokes[frame_idx].MoveSelectedControlPoint(pos);
+      m_strokes[frame_idx].MoveSelectedCP(pos);
     }
   }
   else
@@ -287,7 +283,7 @@ void ModeRefCurveDeform::RBtnDclk(const EVec2i& p, OglForCLI* ogl)
   if (m_prev_selected_stroke_idx != -1)
   {
     m_strokes[frame_idx].SetSelectedStrokeIdx(m_prev_selected_stroke_idx);
-    if (m_strokes[frame_idx].IsSelectedStrokeShared() == true)
+    if (m_strokes[frame_idx].bSelStrokeShared() == true)
     {
       if (ShowMsgDlgYesNo("All-frame曲線を解除しますか？\n（自動補間された曲線は削除されます）", "Unlock?"))
       {
@@ -297,7 +293,7 @@ void ModeRefCurveDeform::RBtnDclk(const EVec2i& p, OglForCLI* ogl)
     else
     {
       Do();
-      m_strokes[frame_idx].DeleteSelectedStroke();
+      m_strokes[frame_idx].Delete_SelStroke();
     }
   }
 }
@@ -394,47 +390,22 @@ void ModeRefCurveDeform::KeyDown(int nChar)
 void ModeRefCurveDeform::KeyUp(int nChar) {}
 
 
-void ModeRefCurveDeform::DrawScene(
-  const EVec3f& cuboid,
-  const EVec3f& camP,
-  const EVec3f& camF)
-{
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
-  const EVec3f cube = ImageCore::GetInst()->GetCuboid();
-  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
 
+void ModeRefCurveDeform::DrawScene(
+    const EVec3f& cam_pos,
+    const EVec3f& cam_cnt)
+{
   const int frame_idx = formVisParam_getframeI();
 
   //ImageCore::GetInst()->UpdateImgMaskColor();
 
-  // bind volumes 
-  BindAllVolumes();
-
-  // draw cross section
-  DrawCrossSections(cuboid, reso, false, m_crssec_shader);
+  ImageCore::GetInst()->BindAllVolumes();
+  DrawCrossSectionsNormal();
 
   if (IsMKeyOn() && formVisParam_bRendVol())
   {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices(cuboid, reso, camP, camF, false, b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeVisMask(!IsShiftKeyOn(), cam_pos, cam_cnt);
   }
-
-  // draw mesh 
-
-  glDisable(GL_CULL_FACE);
-  glDepthMask(false);
-  glEnable(GL_BLEND);
-
-  const bool b_xy = formVisParam_bPlaneXY();
-  const bool b_yz = formVisParam_bPlaneYZ();
-  const bool b_zx = formVisParam_bPlaneZX();
-  float planexy = b_xy ? CrssecCore::GetInst()->GetPlanePosXY() : -1;
-  float planeyz = b_yz ? CrssecCore::GetInst()->GetPlanePosYZ() : -1;
-  float planezx = b_zx ? CrssecCore::GetInst()->GetPlanePosZX() : -1;
 
   glDepthMask(true);
   glDisable(GL_BLEND);
@@ -603,9 +574,8 @@ void ModeRefCurveDeform::ConvertMaskToMesh()
 
 void ModeRefCurveDeform::ConvertMeshToMask()
 {
-  const int frame_idx = formVisParam_getframeI();
-  m_mask_mesh.UpdateMask(frame_idx);
-
+  m_mask_mesh.UpdateMask();
+  UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
   m_is_not_saved_state = false;
@@ -709,14 +679,15 @@ void ModeRefCurveDeform::FindClosestPointFromStroke(const int _frame_idx, std::v
 
   TMesh& mesh = m_mask_mesh.GetMesh(_frame_idx);
 
-  auto& strokes = m_strokes[_frame_idx].GetStroke();
+  auto& strokes = m_strokes[_frame_idx].GetAllStrokeCurves();
   const int num_stroke = static_cast<int>(strokes.size());
 
   // for stroke
-  for (int i = 0; i < num_stroke; ++i) {
+  for (int i = 0; i < num_stroke; ++i) 
+  {
     const auto stroke = strokes[i];
     const int num_p = static_cast<int>(stroke.size());
-    const int commonXYZ = m_strokes[_frame_idx].GetStrokeInst(i)->GetCommonXYZ();
+    const int commonXYZ = m_strokes[_frame_idx].GetStrokePlaneXYZ(i);
     const EVec3f vec0 = EVec3f(
       commonXYZ == 0 ? 1.0f : 0.0f,
       commonXYZ == 1 ? 1.0f : 0.0f,
@@ -1014,25 +985,28 @@ void ModeRefCurveDeform::ShareSelectedStroke()
 
   if (dstrokes.GetSelectedStrokeIdx() == -1) return;
 
-  int shared_idx;
+  int newid;
   const int MAX_IDX = 1000;
-  for (shared_idx = 0; shared_idx < MAX_IDX; ++shared_idx)
+  for (newid = 0; newid < MAX_IDX; ++newid)
   {
-    if (m_shared_stroke_idxs.count(shared_idx) == 0)
-    {
-      break;
-    }
+    if (m_shared_stroke_idxs.count(newid) == 0) break;
   }
-  if (shared_idx == MAX_IDX)
+
+  if (newid == MAX_IDX)
   {
     std::cout << "Could not share.\n";
     return;
   }
-  m_shared_stroke_idxs.insert(shared_idx);
-  DeformationStrokes::Stroke* stroke = dstrokes.ShareSelectedStroke(shared_idx);
+
+  m_shared_stroke_idxs.insert(newid);
+  dstrokes.MakeShare_SelStroke(newid);
+  const auto& cps = dstrokes.GetCPs_SelStroke();
+  const int   p_xyz = dstrokes.GetPlaneXyz_SelStroke();
+  const float p_pos = dstrokes.GetPlanePos_SelStroke();
+
   for (int i = 0; i < num_frames; ++i)
   {
-    m_strokes[i].UpdateSharedStrokes(shared_idx, stroke, nullptr);
+    m_strokes[i].AddNewSharedStroke(newid, p_xyz, p_pos, cps, false);
   }
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
@@ -1043,15 +1017,15 @@ void ModeRefCurveDeform::UnshareSelectedStroke()
 {
   const int frame_idx = formVisParam_getframeI();
   DeformationStrokes& dstrokes = m_strokes[frame_idx];
-  const int shared_idx = dstrokes.UnshareSelectedStroke();
-  if (m_shared_stroke_idxs.count(shared_idx) == 0)
-  {
-    return;
-  }
+  const int shared_idx = dstrokes.GetShareIdx_SelStroke();
+
+  if (m_shared_stroke_idxs.count(shared_idx) == 0) return;
+
   for (auto& stroke : m_strokes)
   {
-    stroke.UpdateSharedStrokes(shared_idx, nullptr, nullptr);
+    stroke.UnsharedStroke(shared_idx);
   }
+
   m_shared_stroke_idxs.erase(shared_idx);
   formMain_RedrawMainPanel();
 }
@@ -1061,7 +1035,7 @@ void ModeRefCurveDeform::LockSelectedStroke()
 {
   const int frame_idx = formVisParam_getframeI();
   DeformationStrokes& dstrokes = m_strokes[frame_idx];
-  dstrokes.LockSelectedStroke();
+  dstrokes.Lock_SelStroke();
   UpdateSharedStroke();
   formMain_RedrawMainPanel();
 }
@@ -1071,7 +1045,7 @@ void ModeRefCurveDeform::UnlockSelectedStroke()
 {
   const int frame_idx = formVisParam_getframeI();
   DeformationStrokes& dstrokes = m_strokes[frame_idx];
-  dstrokes.UnlockSelectedStroke();
+  dstrokes.Unlock_SelStroke();
   UpdateSharedStroke();
   formMain_RedrawMainPanel();
 }
@@ -1087,37 +1061,42 @@ void ModeRefCurveDeform::UpdateSharedStroke()
     {
       DeformationStrokes& dstrokes = m_strokes[frame_i];
 
-      // get stroke from previous frame
-      DeformationStrokes::Stroke* stroke_left;
-      int framei_left;
+      int framei_left, framei_right;
+      bool left_found = false;
+      bool right_found = false;
+      std::vector<EVec3f> cps1, cps2;
+
       for (framei_left = frame_i; framei_left >= 0; --framei_left)
       {
-        stroke_left = m_strokes[framei_left].GetSharedStroke(shared_idx);
-        if (stroke_left != nullptr)
+        if(m_strokes[framei_left].GetCpsOfLockedSharedStroke(shared_idx, cps1))
         {
+          left_found = true;
           break;
         }
       }
 
-      // get stroke from following frame
-      DeformationStrokes::Stroke* stroke_right;
-      int framei_right;
       for (framei_right = frame_i + 1; framei_right < num_frames; ++framei_right)
       {
-        stroke_right = m_strokes[framei_right].GetSharedStroke(shared_idx);
-        if (stroke_right != nullptr)
+        if( m_strokes[framei_right].GetCpsOfLockedSharedStroke(shared_idx, cps2) )
         {
+          right_found = true;
           break;
         }
       }
 
-      // update
-      float rate = 0.0f;
-      if ((stroke_left != nullptr) && (stroke_right != nullptr))
+      if (left_found && right_found)
       {
-        rate = (float)(frame_i - framei_left) / (framei_right - framei_left);
+        float rate = (float)(frame_i - framei_left) / (framei_right - framei_left);
+        dstrokes.UpdateSharedStroke(shared_idx, cps1, cps2, rate);
       }
-      dstrokes.UpdateSharedStrokes(shared_idx, stroke_left, stroke_right, rate);
+      else if (left_found)
+      {
+        dstrokes.UpdateSharedStroke(shared_idx, cps1);
+      }
+      else if (right_found)
+      {
+        dstrokes.UpdateSharedStroke(shared_idx, cps2);
+      }
     }
   }
   formMain_RedrawMainPanel();

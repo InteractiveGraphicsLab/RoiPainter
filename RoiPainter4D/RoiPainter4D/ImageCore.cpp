@@ -4,6 +4,7 @@
 #pragma managed
 #include "CliMessageBox.h"
 #include "FormMain.h"
+#include "FormVisParam.h"
 #pragma unmanaged
 
 
@@ -24,7 +25,6 @@ static const EVec3i ColPallet[ColPalletN] = {
   EVec3i(  0,128,128), EVec3i(128,0,128), EVec3i(128,128, 0),
   EVec3i(255,128,  0), EVec3i(0,255,128), EVec3i(128,0,255),
   EVec3i(128,255,  0), EVec3i(0,128,255), EVec3i(255, 0, 128) ,
-
 };
 
 
@@ -553,19 +553,17 @@ void ImageCore::importObjOne(const std::string& fname, const int frameI)
   for (int i = 0; i < num_voxel; ++i)
   {
     if (img[i] && !mask_locked[flg3d[i]])
-    {
       flg3d[i] = 255;
-    }
     else
-    {
       flg3d[i] = 0;
-    }
   }
   img.reset();
 
   // store mask
   ImageCore::GetInst()->mask_storeCurrentForeGround();
 }
+
+
 
 
 void ImageCore::importObjAll(const std::vector<std::string>& fnames)
@@ -611,13 +609,9 @@ void ImageCore::importObjAll(const std::vector<std::string>& fnames)
     for (int i = 0; i < num_voxel; ++i)
     {
       if (img[i] && !mask_locked[flg3d[i]])
-      {
         flg3d[i] = 255;
-      }
       else
-      {
         flg3d[i] = 0;
-      }
     }
     img.reset();
   }
@@ -668,7 +662,7 @@ void ImageCore::ExportMaskCentroid(const std::string& fname)
     }
     else
     {
-      centroid /= num_active_voxels;
+      centroid /= (float) num_active_voxels;
       centroid = EVec3f(centroid[0] * pitch[0], centroid[1] * pitch[1], centroid[2] * pitch[2]);
 
       centroids[frame_idx] = centroid;
@@ -753,7 +747,7 @@ void ImageCore::ExportMaskEigenvalue(const std::string& fname)
       // calc covariance
       EVec3f mean = points.colwise().mean();
       Eigen::MatrixXf centered = points.rowwise() - mean.transpose();
-      Eigen::MatrixXf covariance = (centered.transpose() * centered) / (centered.rows() - 1);
+      Eigen::MatrixXf covariance = (centered.transpose() * centered) / ((float)centered.rows() - 1);
 
       // get eigenvalue
       Eigen::SelfAdjointEigenSolver<Eigen::MatrixXf> solver(covariance);
@@ -1098,8 +1092,6 @@ void ImageCore::LoadMask_Trawub(
 
 
 
-
-
 void ImageCore::UpdateVisVolume(int winlv_min, int winlv_max, int frame_idx)
 {
   if (frame_idx < 0 || m_img4d.size() - 1 < frame_idx) return;
@@ -1107,6 +1099,8 @@ void ImageCore::UpdateVisVolume(int winlv_min, int winlv_max, int frame_idx)
   m_vol_flg .SetValue( m_flg4d[frame_idx] );
   m_vol_mask.SetValue( m_mask4d[frame_idx]);
 }
+
+
 
 void ImageCore::UpdateImgMaskColor()
 {
@@ -1122,8 +1116,6 @@ void ImageCore::UpdateImgMaskColor()
   }
   m_img_maskcolor.SetUpdated();
 }
-
-
 
 
 
@@ -1184,6 +1176,42 @@ void ImageCore::InitializeFlg4dByMask( void (*progressfunc)(float) )
   }
 
   if( progressfunc != 0) progressfunc(0);
+}
+
+
+
+void ImageCore::BindAllVolumes()
+{
+  glActiveTextureARB(GL_TEXTURE0);
+  m_vol.BindOgl();
+  //glActiveTextureARB(GL_TEXTURE1);
+  //ImageCore::getInst()->m_volGmag.bindOgl();
+  glActiveTextureARB(GL_TEXTURE2);
+  m_vol_flg.BindOgl(false);
+  glActiveTextureARB(GL_TEXTURE3);
+  m_vol_mask.BindOgl(false);
+  glActiveTextureARB(GL_TEXTURE4);
+  formVisParam_bindTfImg();
+  glActiveTextureARB(GL_TEXTURE5);
+  formVisParam_bindPsuImg();
+  glActiveTextureARB(GL_TEXTURE6);
+  m_img_maskcolor.BindOgl(false);
+}
+
+
+
+std::vector<float> ImageCore::Calc8bitHistogram_visvol()
+{
+  const int N = m_vol.GetW() * m_vol.GetH() * m_vol.GetD();
+
+  std::vector<float> hist(256, 0);
+
+  for (int i = 0; i < N; ++i)  hist[m_vol[i]] += 1;
+
+  float maxV = 0;
+  for (int i = 5; i < 256 - 5; ++i) maxV = std::max(maxV, hist[i]);
+  for (int i = 0; i < 256; ++i) hist[i] /= maxV;
+  return hist;
 }
 
 

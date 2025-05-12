@@ -14,29 +14,49 @@ enum MODE_ID
 	MODE_VIS_NORMAL    , // ModeVizNormal       
 	MODE_VIS_MASK      , // ModeVizMask         
 
-	MODE_SEG_PIXPAINT  , // ModeSegPixPaint
-	MODE_SEG_REGGROW   , // ModeSegRegGrow     
-	MODE_SEG_RIGIDICP  , // ModeSegRigidICP    (SJTrackerより)
-	MODE_SEG_CLOSESTPIX, // ModeSegClosestPix  (SproutViewerより TODO Tomofumi Narita)
-	//MODE_SEG_PARACONT ,// ModeSegParaConts(Parallel Contours by Chika Tomiyama, Removed 20220517)
-	MODE_SEG_LCLRGROW ,  // ModeSegLocalRGrow (Local Region Growing by Hikaru Shionozaki)
-	MODE_SEG_BOLUS    ,  // ModeSegBolus      (by shionzaki )
-  MODE_SEG_JTRACKER ,  // ModeJontTracker   (For Hokkaidou Univ)
 	MODE_REF_STRKTRIM ,  // ModeRefStrkTrim     
+	MODE_REF_CURVEDEFORM,// ModeRefCurveDeform, FormRefCurveDeform (by Yuki Kimura, 2024)
+
+	MODE_SEG_PIXPAINT ,  // ModeSegPixPaint
+	MODE_SEG_REGGROW  ,  // ModeSegRegGrow     
+	MODE_SEG_RIGIDICP ,  // ModeSegRigidICP    (SJTrackerより)
+	MODE_SEG_LCLRGROW ,  // ModeSegLocalRGrow  (Local Region Growing by Hikaru Shionozaki)
+	MODE_SEG_BOLUS    ,  // ModeSegBolus       (by Shionozaki Thesis )
+  MODE_SEG_JTRACKER ,  // ModeJontTracker    (For Hokkaidou Univ)
   MODE_SEG_SWALLOW  ,  // ModeSegSwallowOrgans
-  MODE_SEG_SWLTMPGEN,  // ModeSegSallowTemGen 
   MODE_SEG_BRONCHI  ,  // ModeSegBronchi   (by Takata) FormSegModeBronchi
 	MODE_SEG_STROKEFFD,  // ModeSegStrokeFfd, FormSegStrokeFfd (by Yuki Kimura, 20220524)
-	MODE_PLC_CPS,         // ModePlaceCps    , FormPlaceCPs     tool for landmark placement
-	MODE_REF_CURVEDEFORM,        // ModeRefCurveDeform, FormRefCurveDeform (by Yuki Kimura, 2024)
 
+	MODE_PLC_CPS,        // ModePlaceCps    , FormPlaceCPs     tool for landmark placement
+
+	//MODE_SEG_PARACONT ,// ModeSegParaConts(Parallel Contours by Chika Tomiyama, Removed 20220517)
 	//MODE_SEG_GCUT   ,  // ModeSegGGut           
 	//MODE_SEG_THRESHPNT,// ModeSegTreshPnt      
 };
 
 
+
+//refactoring 4/15 
+//ModeVisNormal
+//ModeVisMask
+//ModeSegRGrow
+//ModeSegLocalRegionGrow
+//ModeSegBolus (Local Region Grow cylinder)
+//ModeSegPixelPaint
+//ModeSegICP
+//ModeRefTrim
+//ModePlaceCPS
+// 
+//MODE_REF_CURVEDEFORM
+//MODE_SEG_SWALLOW     
+//MODE_SEG_BRONCHI      
+//MODE_SEG_STROKEFFD   
+
+
+
+
 //red green blue
-static float COLOR_R [4] = {1.0f, 0.0f, 0.0f, 0.5f};
+static float COLOR_R[4] = { 1.0f, 0.0f, 0.0f, 0.5f };
 static float COLOR_RH[4] = {0.5f, 0.0f, 0.0f, 0.5f};
 static float COLOR_G [4] = {0.0f, 1.0f, 0.0f, 0.5f};
 static float COLOR_GH[4] = {0.0f, 0.5f, 0.0f, 0.5f};
@@ -51,12 +71,10 @@ static float COLOR_MH[4] = {0.5f, 0.0f, 0.5f, 0.5f};
 static float COLOR_C [4] = {0.0f, 1.0f, 1.0f, 0.5f};
 static float COLOR_CH[4] = {0.0f, 0.5f, 0.5f, 0.5f};
 
-static float COLOR_W   [4] = {1.0f, 1.0f, 1.0f, 0.5f};
-static float COLOR_GRAY[4] = {0.5f, 0.5f, 0.5f, 0.5f};
+static float COLOR_W[4] = { 1.0f, 1.0f, 1.0f, 0.5f };
+static float COLOR_GRAY[4] = { 0.5f, 0.5f, 0.5f, 0.5f };
 
-static float COLOR_SHIN64[1] = {64};
-
-
+static float COLOR_SHIN64[1] = { 64 };
 
 class ModeInterface
 {
@@ -88,7 +106,43 @@ public:
   //this function is called just after switch the mode
 	virtual void StartMode() = 0;
 
-	virtual void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF) = 0;
+	virtual void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center) = 0;
+
+protected:
+
+	enum REND_MODE 
+	{
+		RM_NORMAL , 
+		RM_HILIGHT, 
+		RM_MASK
+	};
+
+	//Render Cross sections (should be called acter BindAllVolumes)
+	void DrawCrossSectionsNormal (); 
+	void DrawCrossSectionsVisMask(bool do_hilight); 
+	void DrawCrossSectionsVisFore(bool do_hilight);
+
+	//Render Volumes
+	void DrawVolumeNormal (
+		const EVec3f& cam_pos, 
+		const EVec3f& cam_cnt,
+		bool do_coarse_rend_onmanip = true);
+
+	void DrawVolumeVisMask(
+		bool do_hilight, //mask可視化 on/off
+		const EVec3f& cam_pos, 
+		const EVec3f& cam_cnt, 
+		bool do_coarse_rend_onmanip = true);
+
+	void DrawVolumeVisFore(
+		bool is_hilight, //fore可視化 on/off
+		const EVec3f& cam_pos, 
+		const EVec3f& cam_cnt, 
+		bool do_coarse_rend_onmanip = true);
+
+
+private:
+
 };
 
 

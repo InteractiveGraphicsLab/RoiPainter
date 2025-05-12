@@ -4,27 +4,32 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "MaskMeshSequence.h"
 #include <vector>
 #include <stack>
 #include "DeformationStrokes.h"
 #include "LaplacianSurfaceEditing.h"
 
+//-----------------------------------------------
+// (*) User Interface 
+// + Shift drag --> place cps for new curve 
+// + see paper for detail
+//  
+// (*) vol_flg[i]
+// not used
+//-----------------------------------------------
+
 
 class ModeRefCurveDeform :
   public ModeInterface
 {
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   MaskMeshSequence m_mask_mesh;
 
-  int m_cp_size;
+  int   m_cp_size;
   float m_cp_rate;
-  int m_prev_frame_idx;
-  bool m_draw_surf_trans;
-  bool m_exist_mesh;
+  int   m_prev_frame_idx;
+  bool  m_draw_surf_trans;
+  bool  m_exist_mesh;
 
   // Stroke Mode
   std::vector<DeformationStrokes> m_strokes;
@@ -77,15 +82,13 @@ public:
   void MBtnDclk(const EVec2i& p, OglForCLI* ogl);
   void MouseMove(const EVec2i& p, OglForCLI* ogl);
   void MouseWheel(const EVec2i& p, short zDelta, OglForCLI* ogl);
-
   void KeyDown(int nChar);
   void KeyUp(int nChar);
-
   bool CanEndMode();
   void StartMode();
-
-  void DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF);
+  void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt);
   // -----------------------------------------------------------------
+
   void Deform();
   void Deform(const int);
   void DeformAllFrame();
@@ -112,13 +115,9 @@ public:
    void UnlockSelectedStroke();
    void UpdateSharedStroke();
 
-
 private:
   void _Deform(const int);
-
   void FindClosestPointFromStroke(const int, std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
-
-  //Add?
 
 
 };

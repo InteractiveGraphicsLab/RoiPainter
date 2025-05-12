@@ -3,21 +3,32 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 #include <vector>
 
-class LocalSeed
+
+//-----------------------------------------------
+// (*) User Interface 
+// shift + L DoubleClick : Place/Remove Sphere 
+// shift + L drag        : move sphere or modify sphere radius 
+// The position of sphere will be interpolated along the time line
+// 
+// (*) vol_flg[i]
+// 0   : not the target
+// 1   : backgroupd
+// 255 : foreground (highlighted in Green)
+//-----------------------------------------------
+
+class SphereSeed4D
 {
   //vectorでframe数分だけ管理する
   std::vector<float > m_radius  ;
-  std::vector<EVec3f> m_position; // 位置
-  std::vector<EVec2i> m_thresh  ; // 閾値
+  std::vector<EVec3f> m_position; 
+  std::vector<EVec2i> m_thresh  ; 
   std::vector<bool  > m_b_edit  ; // [i] = 1 なら i-th frameにおいて半径・閾値・位置のどれかがユーザにより編集された
 
 public:
-
-  LocalSeed(
+  SphereSeed4D(
     const int    num_frames,
     const int    edit_frame_idx,
     const EVec3f posision,
@@ -33,8 +44,7 @@ public:
     }
   }
 
-  LocalSeed( 
-    int   num_frames, 
+  SphereSeed4D( 
     std::vector<float > radius, 
     std::vector<EVec3f> position, 
     std::vector<EVec2i> thresh  , 
@@ -46,7 +56,10 @@ public:
     m_b_edit   = bedit   ;
   }
 
-  void Set(const LocalSeed& src)
+  SphereSeed4D& operator=(const SphereSeed4D& src) { Set(src); return *this; }
+  SphereSeed4D(const SphereSeed4D& src) { Set(src); }
+
+  void Set(const SphereSeed4D& src)
   {
     m_position  = src.m_position;
     m_radius    = src.m_radius;
@@ -54,16 +67,6 @@ public:
     m_thresh    = src.m_thresh;
   }
 
-  LocalSeed& operator=(const LocalSeed& src)
-  {
-    Set(src);
-    return *this;
-  }
-
-  LocalSeed(const LocalSeed& src)
-  {
-    Set(src);
-  }
 
   //setter
   void SetPosition ( int frame_idx, EVec3f pos   ){ m_position[frame_idx]    = pos;  }
@@ -96,35 +99,28 @@ public:
 	  if ( frame_idx < 0 || frame_idx >= m_b_edit.size() ) return false;
 	  else return m_b_edit[frame_idx];
   }
-
 };
 
 
 
-
-
-//sphere のみのLocal Region Growing
-// curved cylinderを領するのは ModeSegBolus 
-
+// Local Region Growing with SPHEREs 
+// ModeSegBolus supports Local Region Growing with Curved Cylinder
 
 class ModeSegLocalRGrow : public ModeInterface
 {
-  GlslShaderVolume  m_volume_shader;
-  GlslShaderCrsSec  m_crssec_shader;
-
-  std::vector<LocalSeed> m_seeds;
+  std::vector<SphereSeed4D> m_seeds;
   
   TMesh m_unitsphere;
   float m_cp_radius;
 
-  int   m_active_seed_id; //半径や閾値を変更する対象のシードid
+  //半径や閾値を変更する対象のシードid
+  int   m_active_seed_id;
   bool  m_is_drag_activeseed;
   bool  m_is_resize_activeseed;
 
   bool  m_is_modified;
 
   ModeSegLocalRGrow();
-
 public:
   ~ModeSegLocalRGrow();
   static ModeSegLocalRGrow* GetInst() {
@@ -132,6 +128,7 @@ public:
     return &p;
   }
 
+  // overload functions ---------------------------------------------
   MODE_ID GetModeID() { return MODE_SEG_LCLRGROW; }
   void LBtnUp    (const EVec2i &p, OglForCLI *ogl);
   void RBtnUp    (const EVec2i &p, OglForCLI *ogl);
@@ -144,17 +141,12 @@ public:
   void MBtnDclk  (const EVec2i &p, OglForCLI *ogl);
   void MouseMove (const EVec2i &p, OglForCLI *ogl);
   void MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl);
-
   void KeyDown( int nChar );
   void KeyUp  ( int nChar );
-
-  //this function is called before switch the mode (if return false, the mode will not be switched)
-  bool CanEndMode();
-
-  //this function is called just after switch the mode
   void StartMode();
-  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
-
+  bool CanEndMode();
+  void DrawScene(const EVec3f &camP, const EVec3f &camF);
+  //-----------------------------------------------------------------
 
   void FinishSegmentation();
   void CancelSegmentation();
@@ -173,9 +165,8 @@ public:
   void SelectSeed_SetThreshMin(int minv);
   void SelectSeed_RunInterpolation();
 
-  const std::vector<LocalSeed>& getSeedList() { return m_seeds; }
+  const std::vector<SphereSeed4D>& getSeedList() { return m_seeds; }
   
-  //todo 
   void RunSeedInterpolation(int trgt_seed_id);
   
   void RunLocalRegionGrow_Allframe();

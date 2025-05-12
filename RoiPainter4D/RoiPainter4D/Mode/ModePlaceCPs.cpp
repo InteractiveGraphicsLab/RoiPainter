@@ -5,37 +5,31 @@
 #include "ImageCore.h"
 #include "CrsSecCore.h"
 
-
 #pragma managed
 #include "FormPlaceCPs.h"
 #include "FormMain.h"
 #include "FormVisParam.h"
 #include "CliMessageBox.h"
-
 #pragma unmanaged
+
 #include "tmath.h"
 #include "tmesh.h"
 #include "thandle3d.h"
 #include "tmarchingcubes.h"
 
-
 using namespace RoiPainter4D;
 using namespace marchingcubes;
 
+
 ModePlaceCPs::~ModePlaceCPs() 
 {
-
 }
 
 
-ModePlaceCPs::ModePlaceCPs():
-  m_volume_shader("shader/volVtx.glsl", "shader/volFlg.glsl"),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
+ModePlaceCPs::ModePlaceCPs()
 {
   std::cout << "ModePlaceCPs...\n";
   m_bL = m_bR = m_bM = false;
-  m_b_draw_stroke = false;
-
   std::cout << "ModePlaceCPs done\n";
 }
 
@@ -49,6 +43,7 @@ bool ModePlaceCPs::CanEndMode()
 void ModePlaceCPs::StartMode() 
 {
   m_bL = m_bR = m_bM = false;
+  m_b_draw_stroke = false;
   m_drag_cpid = -1;
   m_drag_tmpcpid = -1;
 
@@ -56,25 +51,19 @@ void ModePlaceCPs::StartMode()
   FormPlaceCPs_InitParam();
   FormPlaceCPs_Show();
   
-  //initialize vFlg
+  //initialize vFlg & 4D volume (cpu) --> vis volume (gpu)
   ImageCore::GetInst()->InitializeFlg4dByMask(formMain_SetProgressValue);
+  UpdateImageCoreVisVolumes();
 
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  m_isosurfaces.clear();
-  m_isosurfaces.resize(num_frames);
-  
   m_cp_rad = ImageCore::GetInst()->GetPitch()[0] * 2;
-  m_cps.clear();
-  m_cps.resize(num_frames);
   m_cp_mesh.InitializeAsSphere(m_cp_rad, 10, 10);
 
-  m_template_rottrans.resize(num_frames);
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+  m_isosurfaces       = std::vector<TTriangleSoup      >(num_frames);
+  m_cps               = std::vector<std::vector<EVec3f>>(num_frames);
+  m_template_rottrans = std::vector<EMat4f             >(num_frames);
 
-  //4D volume (cpu) --> vis volume (gpu)
-  UpdateImageCoreVisVolumes();
 }
-
-
 
 
 
@@ -93,8 +82,7 @@ void ModePlaceCPs::FinishSegmentation()
   for (int f = 0; f < num_frame; ++f)
   {
     TMesh mesh = m_template;
-    mesh.Rotate(m_template_rottrans[f].first);
-    mesh.Translate(m_template_rottrans[f].second);
+    mesh.MultMat(m_template_rottrans[f]);
     mesh.GenBinaryVolume(reso, pitch, flgInOut);
 
     byte* flg3d = flg4d[f];
@@ -121,13 +109,6 @@ void ModePlaceCPs::FinishSegmentation()
 
 
 
-
-
-
-
-
-
-
 void ModePlaceCPs::CancelSegmentation() 
 {
   ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
@@ -135,15 +116,20 @@ void ModePlaceCPs::CancelSegmentation()
 }
 
 
+
 //表示されているplaneと isosurfaceをピッキングして、近い点を返す
-bool ModePlaceCPs::PickPlanesIsosurf(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos)
+bool ModePlaceCPs::PickPlanesIsosurf(
+    const EVec3f& ray_pos, 
+    const EVec3f& ray_dir, 
+    EVec3f& pos)
 {
   const int fidx = formVisParam_getframeI();
   if (fidx < 0 || m_isosurfaces.size() <= fidx ) return false;
 
   EVec3f p1, p2;
   bool pick1 = PickCrssec(ray_pos, ray_dir, p1);
-  bool pick2 = FormPlaceCPs_VisIsoSurface() && m_isosurfaces[fidx].PickByRay(ray_pos, ray_dir, p2);
+  bool pick2 = FormPlaceCPs_VisIsoSurface() && 
+               m_isosurfaces[fidx].PickByRay(ray_pos, ray_dir, p2);
 
   if (!pick1 && !pick2) return false;
 
@@ -181,7 +167,8 @@ static int pick_cps(
   return min_idx;
 }
 
-bool pick_to_erase_cps(
+
+static bool pick_to_erase_cps(
     const EVec3f& ray_pos,
     const EVec3f& ray_dir,
     const float cp_rad,
@@ -200,11 +187,8 @@ bool pick_to_erase_cps(
 
 void ModePlaceCPs::LBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
-  std::cout << "Down__";
-
   m_bL = true;
   
-
   if (IsCtrKeyOn())
   {
     m_stroke.clear();
@@ -248,7 +232,6 @@ void ModePlaceCPs::LBtnDown(const EVec2i& p, OglForCLI* ogl)
 
 void ModePlaceCPs::LBtnUp(const EVec2i& p, OglForCLI* ogl)
 {
-  std::cout << "Up\n";
   if (m_b_draw_stroke)
   {
     EVec3f cuboid = ImageCore::GetInst()->GetCuboidF();
@@ -263,6 +246,7 @@ void ModePlaceCPs::LBtnUp(const EVec2i& p, OglForCLI* ogl)
   ogl->BtnUp();
   formMain_RedrawMainPanel();
 }
+
 
 
 void ModePlaceCPs::RBtnDown(const EVec2i& p, OglForCLI* ogl)
@@ -288,8 +272,6 @@ void ModePlaceCPs::RBtnDown(const EVec2i& p, OglForCLI* ogl)
   {
     ogl->BtnDown_Rot(p);
   }
-
-
 }
 
 
@@ -368,37 +350,6 @@ void ModePlaceCPs::KeyDown(int nChar)
 void ModePlaceCPs::KeyUp(int nChar) {}
 
 
-template<class TMESH_TRIANGLESOUP>
-static void DrawTransparentMesh(
-    const TMESH_TRIANGLESOUP &m,
-    const float diff[4], 
-    const float ambi[4],
-    const float spec[4],
-    const float shin[1])
-{
-
-  glDepthMask(false);
-  glEnable(GL_BLEND);
-  m.Draw(diff, ambi, spec, shin);
-  glDisable(GL_BLEND);
-  glDepthMask(true);
-}
-
-static void DrawTranslatedMesh(
-  const TMesh  &m,
-  const EVec3f &t,
-  const float diff[4],
-  const float ambi[4],
-  const float spec[4],
-  const float shin[1])
-{
-  glPushMatrix();
-  glTranslated(t[0], t[1], t[2]);
-  m.Draw(diff,ambi, spec, shin);
-  glPopMatrix();
-
-}
-
 
 static void DrawColoredCPs(
     const TMesh &cp_mesh,  
@@ -411,45 +362,34 @@ static void DrawColoredCPs(
     {1.0f, 0.5f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.5f, 0.5f}, {0.5f, 0.0f, 1.0f, 0.5f},
     {0.5f, 0.0f, 0.0f, 0.5f}, {0.0f, 0.5f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.5f, 0.5f}
   };
-  static float SPEC[4] = { 0.9f,0.9f,0.9f,0.3f };
-  static float SHIN[1] = { 54.0f };
 
   for (int i = 0; i < cps.size(); ++i)
   {
-    float* color = COLOR[i % NUM_COL];
-    DrawTranslatedMesh(cp_mesh, cps[i], color, color, SPEC, SHIN);
+    float* c = COLOR[i % NUM_COL];
+    glPushMatrix();
+    glTranslated(cps[i][0], cps[i][1], cps[i][2]);
+    cp_mesh.Draw(c, c, COLOR_W, COLOR_SHIN64);
+    glPopMatrix();
   }
 }
 
 
-
-static float SPEC[4] = { 0.9f,0.9f,0.9f,0.3f };
-static float SHIN[1] = { 54.0f };
-static float DIFF1[4] = { 0.3f,0.4f,0.1f,0.3f };
-static float AMBI1[4] = { 0.3f,0.4f,0.1f,0.3f };
-static float DIFF2[4] = { 0.8f,0.2f,0.8f,0.3f };
-static float AMBI2[4] = { 0.8f,0.2f,0.8f,0.3f };
+static float COLOR_HY[4] = { 0.3f, 0.4f, 0.1f, 0.3f };
+static float COLOR_RB[4] = { 0.8f, 0.2f, 0.8f, 0.3f };
 
 
-void ModePlaceCPs::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF) 
+void ModePlaceCPs::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt) 
 {
-  const int    frame_idx = formVisParam_getframeI();
-  const EVec3i reso      = ImageCore::GetInst()->GetReso();
-  const EVec3f pitch     = ImageCore::GetInst()->GetPitch();
+  const int frame_idx = formVisParam_getframeI();
 
-  if (frame_idx < 0 || m_isosurfaces.size() <= frame_idx) 
+  if (frame_idx < 0 || m_isosurfaces.size() <= frame_idx || m_cps.size() <= frame_idx)
   {
-    std::cout << "something wrong 1...\n";
-    return;
-  }
-  if (frame_idx < 0 || m_cps.size() <= frame_idx)
-  {
-    std::cout << "something wrong 2...\n";
+    std::cout << "something wrong ...\n";
     return;
   }
 
-  BindAllVolumes();
-  DrawCrossSections(cuboid, reso, false, m_crssec_shader);
+  ImageCore::GetInst()->BindAllVolumes();
+  DrawCrossSectionsNormal();
   
   if (m_b_draw_stroke)
   {
@@ -466,52 +406,60 @@ void ModePlaceCPs::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVe
     //draw isosurface
     if (FormPlaceCPs_VisIsoSurface())
     {
-      m_isosurfaces[frame_idx].Draw(DIFF1, AMBI1, SPEC, SHIN);
-      //DrawTransparentMesh(m_isosurfaces[frame_idx], DIFF1, AMBI1, SPEC, SHIN);
+      m_isosurfaces[frame_idx].Draw(COLOR_HY, COLOR_HY, COLOR_W, COLOR_SHIN64);
     }
 
-    m_template.Draw(DIFF2, AMBI2, SPEC, SHIN);
+    m_template.Draw(COLOR_RB, COLOR_RB, COLOR_W, COLOR_SHIN64);
 
     if (FormPlaceCPs_VisFitTemplate())
     {
-      float m[16];
-      const EMat3f& r = m_template_rottrans[frame_idx].first;
-      const EVec3f& t = m_template_rottrans[frame_idx].second;
-      m[0]=r(0,0); m[4]=r(0,1); m[ 8]=r(0,2); m[12] = t[0];
-      m[1]=r(1,0); m[5]=r(1,1); m[ 9]=r(1,2); m[13] = t[1];
-      m[2]=r(2,0); m[6]=r(2,1); m[10]=r(2,2); m[14] = t[2];
-      m[3]=  0 ; m[7]=  0 ; m[11]=  0 ; m[15] =    1;
       glPushMatrix();
-      glMultMatrixf(m);
-      m_template.Draw(DIFF2, AMBI2, SPEC, SHIN);
+      glMultMatrixf(m_template_rottrans[frame_idx].data());
+      m_template.Draw(COLOR_RB, COLOR_RB, COLOR_W, COLOR_SHIN64);
       DrawColoredCPs(m_cp_mesh, m_template_cps);
       glPopMatrix();
     }
-    
   }
-
 
   if (formVisParam_bRendVol())
   {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    const bool b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeSlices(cuboid, reso, camP, camF,
-      !IsSpaceKeyOn(), b_onmanip, m_volume_shader);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolumeNormal(cam_pos, cam_cnt);
   }
-  
 }
 
 
 
+static void GenIsoSurfHalf(
+  const EVec3i reso  ,
+  const EVec3f pitch ,
+  const short  *volume,
+  const int  isovalue,
+  TTriangleSoup &mesh
+)
+{
+  const int W = reso[0], H = reso[1], D = reso[2];
+  const int hW = W / 2, hH = H / 2, hD = D / 2;
+  EVec3i rh(hW, hH, hD);
+  EVec3f ph(pitch[0] * 2, pitch[1] * 2, pitch[2] * 2);
 
-void ModePlaceCPs::IsosurfaceGenerateOneFrame(
-    const int isovalue, 
-    const int frame_idx) 
+  short* vh = new short[hW * hH * hD];
+  for (int z = 0; z < hD; ++z)
+    for (int y = 0; y < hH; ++y)
+      for (int x = 0; x < hW; ++x)
+        vh[z * hW * hH + y * hW + x] = volume[2 * z * W * H + 2 * y * W + 2 * x];
+
+  MarchingCubesPolygonSoup(rh, ph, vh, isovalue, 0, 0, mesh);
+  delete[] vh;
+}
+
+
+void ModePlaceCPs::GenIsoSurface(
+    const int  isovalue, 
+    const bool do_all_frame, 
+    const int  frame_idx)
 {
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
+
   if (m_isosurfaces.size() != num_frames)
   {
     m_isosurfaces.clear();
@@ -519,75 +467,38 @@ void ModePlaceCPs::IsosurfaceGenerateOneFrame(
   }
   m_isovalue = isovalue;
 
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
+  const EVec3i reso  = ImageCore::GetInst()->GetReso();
   const EVec3f pitch = ImageCore::GetInst()->GetPitch();
-  const short* volume = ImageCore::GetInst()->m_img4d[frame_idx];
-  
-  if (reso[0] % 2 == 0 && reso[2] % 2 == 0 && reso[2] % 2 == 0)
+  bool do_halfen = reso[0] % 2 == 0 && reso[1] % 2 == 0 && reso[2] % 2 == 0;
+
+  if (do_all_frame)
   {
-    //halfen volume 
-    const int W = reso[0], H = reso[1], D = reso[2];
-    const int hW = W / 2, hH = H / 2, hD = D / 2;
-    EVec3i rh( hW, hH, hD);
-    EVec3f ph(pitch[0] * 2, pitch[1] * 2, pitch[2] * 2);
-    short* vh = new short[hW * hH * hD];
-    for (int z = 0; z < hD; ++z)
-      for (int y = 0; y < hH; ++y)
-        for (int x = 0; x < hW; ++x)
-          vh[z * hW * hH + y * hW + x] = volume[2*z*W*H + 2*y*W + 2*x];
+    for (int i = 0; i < num_frames; ++i)
+    {
+      short* volume = ImageCore::GetInst()->m_img4d[i];
 
-    MarchingCubesPolygonSoup(rh, ph, vh, isovalue, 0, 0, m_isosurfaces[frame_idx]);
-    delete[] vh;
-
+      if (do_halfen)
+        GenIsoSurfHalf(reso, pitch, volume, isovalue, m_isosurfaces[i]);
+      else
+        MarchingCubesPolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[i]);
+      
+      std::cout << "isoSurfGen " << i << "/" << num_frames << "\n";
+    }
   }
   else
   {
-    MarchingCubesPolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[frame_idx]);
-  }
+    const short* volume = ImageCore::GetInst()->m_img4d[frame_idx];
 
-
-  std::cout << "isoSurfGen1Frame " << frame_idx << " / " << num_frames << "\n";
-}
-
-
-void ModePlaceCPs::IsosurfaceGenerateAllFrame(const int isovalue) 
-{
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  m_isosurfaces.clear();
-  m_isosurfaces.resize(num_frames);
-  m_isovalue = isovalue;
-
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
-  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
-
-  const int W = reso[0], H = reso[1], D = reso[2];
-  const int hW = W / 2, hH = H / 2, hD = D / 2;
-  EVec3i rh(hW, hH, hD);
-  EVec3f ph(pitch[0] * 2, pitch[1] * 2, pitch[2] * 2);
-  short* vh = new short[hW * hH * hD];
-
-  for (int i = 0; i < num_frames; ++i)
-  {
-    short* volume = ImageCore::GetInst()->m_img4d[i];
-    if (W % 2 == 0 && H % 2 == 0 && D % 2 == 0)
-    {
-      //halfen volume 
-      for (int z = 0; z < hD; ++z)
-        for (int y = 0; y < hH; ++y)
-          for (int x = 0; x < hW; ++x)
-            vh[z * hW * hH + y * hW + x] = volume[2 * z * W * H + 2 * y * W + 2 * x];
-      MarchingCubesPolygonSoup(rh, ph, vh, isovalue, 0, 0, m_isosurfaces[i]);
-    }
+    if (do_halfen)
+      GenIsoSurfHalf(reso, pitch, volume, isovalue, m_isosurfaces[frame_idx]);
     else
-    {
-      MarchingCubesPolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[i]);
-    }
-    std::cout << "isoSurfGen " << i << "/" << num_frames << "\n";
+      MarchingCubesPolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurfaces[frame_idx]);
+
+    std::cout << "isoSurfGen1Frame " << frame_idx << " / " << num_frames << "\n";
   }
 
-  delete[] vh;
-
 }
+
 
 
 
@@ -610,8 +521,8 @@ void ModePlaceCPs::ExportControlPoints(std::string fname)
       WriteToFstream(ofs, m_cps[f][i]);
   }
   ofs.close();
-
 }
+
 
 
 void ModePlaceCPs::ImportControlPoints(std::string fname) 
@@ -649,16 +560,13 @@ void ModePlaceCPs::ImportControlPoints(std::string fname)
   }
   ifs.close();
 
-  
   formMain_RedrawMainPanel();
-
 }
 
 
 
 void ModePlaceCPs::LoadTemplateMesh(std::string fname)
 {
-  EVec3f cuboid = ImageCore::GetInst()->GetCuboid();
   m_template_cps.clear();
   m_template.Initialize(fname.c_str());
   
@@ -668,152 +576,6 @@ void ModePlaceCPs::LoadTemplateMesh(std::string fname)
 }
 
 
-
-//Eigen solver test
-static void EigenSolverTest()
-{
-  EMat3f M;
-  M << 1, 2, 3,
-  2, -1, 5,
-  3, 5, 2;
-
-  Eigen::SelfAdjointEigenSolver<EMat3f> eigensolver(M);
-
-  if (eigensolver.info() == Eigen::Success)
-  {
-    EMat3f V = eigensolver.eigenvectors();
-    EVec3f d = eigensolver.eigenvalues();
-
-    EMat3f D;
-    D << d[0], 0, 0,
-      0, d[1], 0,
-      0, 0, d[2];
-
-    std::cout << "vis\n";
-    std::cout << V * V.transpose() << " -- \n\n"; //matrix (v0,v1,v2)
-    std::cout << V.transpose() * V << " -- \n\n"; //matrix (v0,v1,v2)
-    std::cout << V * D * V.transpose() << "\n\n";
-  }
-}
-
-
-
-//given (x0, x1, x2) and (y0, y1, y2) 
-// Σ||R (x0-c0) - (x1-c1)|| 
-// x0' = R x0 + (R c0 + c)
-// t = 
-static void CalcTriangleMatching(
-  const std::vector<EVec3f>& x,      
-  const std::vector<EVec3f>& y,
-  std::pair<EMat3f, EVec3f>& rottrans //OUTPUT : rotation, transpose
-)
-{
-  rottrans.first = EMat3f::Identity();
-  rottrans.second << 0, 0, 0;
-
-  const int N = std::min((int)x.size(), (int)y.size());
-  if (N != 3) return; 
-
-  //calc gc 
-  EVec3f cx = (x[0] + x[1] + x[2]) / 3.0f;
-  EVec3f cy = (y[0] + y[1] + y[2]) / 3.0f;
-
-  //calc origin center point 
-  EVec3f x0 = x[0]-cx, x1 = x[1]-cx, x2 = x[2]-cx;
-  EVec3f y0 = y[0]-cy, y1 = y[1]-cy, y2 = y[2]-cy;
-
-  //calc normalized normal and rot axis
-  EVec3f nx = ((x1 - x0).cross(x2 - x0));
-  EVec3f ny = ((y1 - y0).cross(y2 - y0));  
-  EVec3f axis_nxny = nx.cross(ny);
-
-  float len_nx = nx.norm();
-  float len_ny = ny.norm();
-  float len_axis_nxny = axis_nxny.norm();
-  if (len_nx < 0.00001f || len_ny < 0.00001f || len_axis_nxny < 0.00001f ) return;
-  nx /= len_nx;
-  ny /= len_ny;
-  axis_nxny /= len_axis_nxny;
-
-  EMat3f Rot1 = CalcRotationMat(nx, ny, axis_nxny);
-  x0 = Rot1 * x0;
-  x1 = Rot1 * x1;
-  x2 = Rot1 * x2;
-
-  float t0 = (float)CalcAngle(x0, y0, ny);
-  float t1 = (float)CalcAngle(x1, y1, ny);
-  float t2 = (float)CalcAngle(x2, y2, ny);
-  float t = CalcAverageAngle3(t0, t1, t2);
-
-  EMat3f Rot2 = Eigen::AngleAxis<float>(t, ny).matrix();
-
-  //R = Apq * (V sqrt(U) Vt) ^ -1
-  rottrans.first = Rot2 * Rot1;
-  rottrans.second = -rottrans.first * cx + cy;
-}
-
-
-
-
-//given two sets pf points 
-//compute translation t and rotation R to minimize 
-// Σ||R (x0-c0) - (x1-c1)||
-// c0 and c1 are gravty centers of x0 and x1
-// t = - R c0 + c
-static void CalcShapeMatching(
-    const std::vector<EVec3f> &x0,
-    const std::vector<EVec3f> &x1,
-    std::pair<EMat3f, EVec3f> &rottrans //OUTPUT : rotation, transpose
-)
-{
-  rottrans.first  = EMat3f::Identity();
-  rottrans.second << 0, 0, 0;
-
-  const int N = std::min((int)x0.size(), (int)x1.size());
-  if (N<=3) return; //TODO N == 3の時は別の処理
-
-  //calc gc 
-  EVec3f c0(0,0,0), c1(0,0,0);
-  for (int i = 0; i < N; ++i )
-  {
-    c0 += x0[i];
-    c1 += x1[i];
-  }
-  c0 /= (float)N;
-  c1 /= (float)N;
-
-  //calc Apq = Σ((x1i-c1))(x0i-c0)-T
-  EMat3f Apq = EMat3f::Zero();
-  for (int i = 0; i < N; ++i)
-  {
-    EVec3f p = x1[i] - c1, q = x0[i] - c0;
-    Apq(0,0) += p[0]*q[0];  Apq(0,1) += p[0]*q[1];  Apq(0,2) += p[0]*q[2];
-    Apq(1,0) += p[1]*q[0];  Apq(1,1) += p[1]*q[1];  Apq(1,2) += p[1]*q[2];
-    Apq(2,0) += p[2]*q[0];  Apq(2,1) += p[2]*q[1];  Apq(2,2) += p[2]*q[2];
-  }
-  
-  //AtA = V U Vt --> sqrt(AtA) = V sqrt(U) Vt 
-  EMat3f AtA = Apq.transpose() * Apq;
-  Eigen::SelfAdjointEigenSolver<EMat3f> eigensolver(AtA);
-  if (eigensolver.info() != Eigen::Success) return;
-  EMat3f V = eigensolver.eigenvectors();
-  EVec3f d = eigensolver.eigenvalues();
-
-  EMat3f D = EMat3f::Identity();
-  D(0, 0) = (d[0] > 0) ? sqrt(d[0]) : 0.000001f;
-  D(1, 1) = (d[1] > 0) ? sqrt(d[1]) : 0.000001f;
-  D(2, 2) = (d[2] > 0) ? sqrt(d[2]) : 0.000001f;
-  
-  //D --> D^-1
-  D(0, 0) = 1.0f / D(0, 0);
-  D(1, 1) = 1.0f / D(1, 1);
-  D(2, 2) = 1.0f / D(2, 2);
-  EMat3f sqrtAtA_inv = V * D * V.transpose();
-
-  //R = Apq * (V sqrt(U) Vt) ^ -1
-  rottrans.first = Apq * sqrtAtA_inv;
-  rottrans.second = -rottrans.first * c0 + c1;
-}
 
 
 void ModePlaceCPs::FitTemplateUsingCPs(bool modify_scale)
@@ -834,5 +596,38 @@ void ModePlaceCPs::FitTemplateUsingCPs(bool modify_scale)
       CalcShapeMatching(m_template_cps, m_cps[f], m_template_rottrans[f]);
     }
   }
-
 }
+
+
+
+
+/*
+
+//Eigen solver test
+static void EigenSolverTest()
+{
+  EMat3f M;
+  M << 1, 2, 3,
+    2, -1, 5,
+    3, 5, 2;
+
+  Eigen::SelfAdjointEigenSolver<EMat3f> eigensolver(M);
+
+  if (eigensolver.info() == Eigen::Success)
+  {
+    EMat3f V = eigensolver.eigenvectors();
+    EVec3f d = eigensolver.eigenvalues();
+
+    EMat3f D;
+    D << d[0], 0, 0,
+      0, d[1], 0,
+      0, 0, d[2];
+
+    std::cout << "vis\n";
+    std::cout << V * V.transpose() << " -- \n\n"; //matrix (v0,v1,v2)
+    std::cout << V.transpose() * V << " -- \n\n"; //matrix (v0,v1,v2)
+    std::cout << V * D * V.transpose() << "\n\n";
+  }
+}
+
+*/
