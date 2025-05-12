@@ -144,6 +144,12 @@ System::Void FormSegStrokeFfd::m_btn_copycagetoallframes_Click(System::Object^ s
   ModeSegStrokeFfd::GetInst()->CopyCageToAllFrames();
 }
 
+System::Void FormSegStrokeFfd::m_btn_finish_segmentation_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeSegStrokeFfd::GetInst()->FinishSegmentation();
+}
+
+
 
 std::string FormSegStrokeFfd::GetAlpha()
 {

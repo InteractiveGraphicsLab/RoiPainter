@@ -45,12 +45,9 @@ class ModeSegStrokeFfd : public ModeInterface
   // Stroke Mode
   std::vector<DeformationStrokes> m_strokes;
   std::set<int> m_shared_stroke_idxs;
-  int m_prev_selected_stroke_idx;
 
   // Cage Mode
   ORTHO_HANDLE_ID m_draghandle_id;
-
-  int   m_prev_frame_idx;
 
   bool   m_b_draw_selectionrect;
   EVec3f m_selectrect[4];
@@ -58,8 +55,6 @@ class ModeSegStrokeFfd : public ModeInterface
   EVec2i m_initpt;
   EVec2i m_prevpt;
 
-  // canEndMode
-  bool m_is_not_saved_state;
   bool m_debug;
 
   ModeSegStrokeFfd();
@@ -113,6 +108,8 @@ public:
   void UpdateSharedStroke();
   void SetCPSize(int size);
   void ClearSelectedStrokes();
+
+  void FinishSegmentation();
 };
 
 
