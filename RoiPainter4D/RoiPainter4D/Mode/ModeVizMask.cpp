@@ -41,7 +41,8 @@ void ModeVizMask::StartMode()
   m_bL = m_bR = m_bM = false;
   m_mask_mesh = MaskMeshSequence();
   m_tmeshes = std::vector<TMesh>(ImageCore::GetInst()->GetNumFrames());
-  const int scale = 2;
+  ImageCore::GetInst()->SetSelectMaskId(1); //ベクトル場を表示するマスクID、編集が必要
+  const int scale = 2; //?
   if (!m_mask_mesh.LoadMask(scale))
   {
       std::cout << "Failed to load mask." << "\n";
@@ -130,7 +131,7 @@ void ModeVizMask::KeyUp(int nChar) {}
 
 void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
 {
-  const EVec3i reso = ImageCore::GetInst()->GetReso(); //解像度取得
+  const EVec3i reso = ImageCore::GetInst()->GetReso();
 
   ImageCore::GetInst()->UpdateImgMaskColor();
 
@@ -148,6 +149,19 @@ void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec
                     !IsSpaceKeyOn(), b_manip, m_volumeShader);
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
+  }
+
+  if (true)
+  {
+      //ベクトルを描画 TO DO!!!!
+      /*
+      glDisable(GL_LIGHTING);
+      glLineWidth(2);
+      glColor3d(1, 1, 0);
+      glBegin(GL_LINES);
+      glVertex3d(0, 0, 0); glVertex3d(100, 100, 0);
+      glEnd();
+      */
   }
   
 }
