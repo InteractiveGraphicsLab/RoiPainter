@@ -39,6 +39,17 @@ bool ModeVizMask::CanEndMode()
 void ModeVizMask::StartMode()
 {
   m_bL = m_bR = m_bM = false;
+  m_mask_mesh = MaskMeshSequence();
+  m_tmeshes = std::vector<TMesh>(ImageCore::GetInst()->GetNumFrames());
+  const int scale = 2;
+  if (!m_mask_mesh.LoadMask(scale))
+  {
+      std::cout << "Failed to load mask." << "\n";
+  }
+  for (int i = 0; i < ImageCore::GetInst()->GetNumFrames(); ++i) {
+      m_tmeshes[i] = m_mask_mesh.GetMesh(i);
+      std::cout << "got meshes." << "\n";
+  }
   
   UpdateImageCoreVisVolumes();
   formVisMask_Show();
@@ -119,7 +130,7 @@ void ModeVizMask::KeyUp(int nChar) {}
 
 void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
 {
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
+  const EVec3i reso = ImageCore::GetInst()->GetReso(); //‰ð‘œ“xŽæ“¾
 
   ImageCore::GetInst()->UpdateImgMaskColor();
 

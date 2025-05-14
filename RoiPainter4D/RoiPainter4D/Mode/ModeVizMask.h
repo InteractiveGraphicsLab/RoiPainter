@@ -3,11 +3,17 @@
 
 #include "ModeInterface.h"
 #include "GlslShader.h"
+#include "MaskMeshSequence.h"
+#include "tmesh.h"
+
 
 class ModeVizMask : public ModeInterface
 {
   GlslShaderVolume m_volumeShader;
   GlslShaderCrsSec m_crssecShader;
+  
+  MaskMeshSequence m_mask_mesh;
+  std::vector<TMesh> m_tmeshes;
 
   ModeVizMask();
 public:
