@@ -8,6 +8,7 @@
 #include "FormMain.h"
 #include "FormVisParam.h"
 #include "FormVisMask.h"
+#include "FormSelectMskId.h"
 #pragma unmanaged 
 
 
@@ -41,7 +42,8 @@ void ModeVizMask::StartMode()
   m_bL = m_bR = m_bM = false;
   m_mask_mesh = MaskMeshSequence();
   m_tmeshes = std::vector<TMesh>(ImageCore::GetInst()->GetNumFrames());
-  ImageCore::GetInst()->SetSelectMaskId(1); //ベクトル場を表示するマスクID、編集が必要
+  //ImageCore::GetInst()->SetSelectMaskId(2); //ベクトル場を表示するマスクID、編集が必要
+  ImageCore::GetInst()->SetSelectMaskId(2);
   const int scale = 2; //?
   if (!m_mask_mesh.LoadMask(scale))
   {
@@ -49,8 +51,8 @@ void ModeVizMask::StartMode()
   }
   for (int i = 0; i < ImageCore::GetInst()->GetNumFrames(); ++i) {
       m_tmeshes[i] = m_mask_mesh.GetMesh(i);
-      std::cout << "got meshes." << "\n";
   }
+  std::cout << "got meshes." << "\n";
   
   UpdateImageCoreVisVolumes();
   formVisMask_Show();
@@ -150,18 +152,22 @@ void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
   }
-
-  if (true)
+  int f_idx = formVisParam_getframeI();
+  if (m_tmeshes[f_idx + 1].m_vSize)
   {
-      //ベクトルを描画 TO DO!!!!
-      /*
-      glDisable(GL_LIGHTING);
-      glLineWidth(2);
-      glColor3d(1, 1, 0);
-      glBegin(GL_LINES);
-      glVertex3d(0, 0, 0); glVertex3d(100, 100, 0);
-      glEnd();
-      */
+    glDisable(GL_LIGHTING);
+    glLineWidth(2);
+    glColor3d(1, 1, 0);
+    glBegin(GL_LINES);
+    for (int i = 0; i < m_tmeshes[f_idx].m_vSize; i += 250)
+    {
+      int p_idx = i;
+      EVec3f p = m_tmeshes[f_idx].m_vVerts[p_idx];
+      int q_idx = m_tmeshes[f_idx + 1].GetNearestVertexIdx(p);
+      EVec3f q = m_tmeshes[f_idx + 1].m_vVerts[q_idx];
+      glVertex3d(p[0], p[1], p[2]); glVertex3d(q[0], q[1], q[2]);
+    }
+    glEnd();
   }
   
 }
