@@ -204,28 +204,41 @@ void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec
       EVec3f vec = EVec3f(q[0] - p[0], q[1] - p[1], q[2] - p[2]);
       float V = std::sqrtf(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
       float l = std::sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
-      vec = EVec3f(vec[0] / V, vec[1] / V, vec[2] / V);
-      /*
+      EVec3f new_z = EVec3f(vec[0] / V, vec[1] / V, vec[2] / V);
+
       glBegin(GL_LINES);
-      glVertex3d(p[0], p[1], p[2]); glVertex3d(p[0] + vec[0], p[1] + vec[1], p[2] + vec[2]);
+      glVertex3d(p[0], p[1], p[2]); glVertex3d(p[0] + (2*new_z[0]), p[1] + (2*new_z[1]), p[2] + (2 * new_z[2]));
       glEnd();
-      */
+
       glPushMatrix();
       {
+          glTranslatef(p[0] + (2 * new_z[0]), p[1] + (2 * new_z[1]), p[2] + (2 * new_z[2]));
+          EVec3f up(0.0f, 1.0f, 0.0f);
+          EVec3f new_x = up.cross(vec);
+          new_x.normalize();
+          EVec3f new_y = vec.cross(new_x);
           GLfloat m1[16] = {
-              vec[0] * vec[2], -vec[1], vec[0] * l, p[0],
-              vec[1]       , vec[0] , vec[1] * l, p[1],
-              -l           , 0      , vec[2]    , p[2],
-              0            , 0      , 0         , 1.0f
+              new_x[0], new_x[1], new_x[2], 0.0f,
+              new_y[0], new_y[1], new_y[2], 0.0f,
+              new_z[0], new_z[1], new_z[2], 0.0f,
+                  0.0f,     0.0f,     0.0f, 1.0f
           };
-          ConvertToOpenGLMatrix(m1);
           glMultMatrixf(m1);
+          
+          /*
+          // 3. スケーリング: gluCylinderで描画される円錐の高さをdistance_pqに合わせる
+          // gluCylinderの高さは現在2.0fで指定されている。
+          // Z軸方向のスケーリングファクター = (目標の高さ distance_pq) / (gluCylinderのネイティブな高さ 2.0f)
+          float cylinder_native_height = 2.0f;
+          glScalef(1.0f, 1.0f, V / cylinder_native_height);
+          */
+
           //オブジェクト生成
-          GLUquadricObj* sphere = gluNewQuadric();
+          GLUquadricObj* sphere = gluNewQuadric(); // 変数名はsphereのままですが、実際はconeです
           //描画スタイルの設定
           gluQuadricDrawStyle(sphere, GLU_FILL);
-          //円錐の描画
-          gluCylinder(sphere, 0.5, 0, 2, 20, 20);
+          //円錐の描画 (底面半径0.5, 先端半径0, ネイティブ高さ2.0)
+          gluCylinder(sphere, 0.5, 0, 2.0, 20, 20);
           //メモリ解放
           gluDeleteQuadric(sphere);
       }
