@@ -130,6 +130,43 @@ void ModeVizMask::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 void ModeVizMask::KeyDown(int nChar) {}
 void ModeVizMask::KeyUp(int nChar) {}
 
+void ConvertToOpenGLMatrix(GLfloat m0[16])
+{
+    //変換前
+        //  a0   a1   a2   a3
+        //  a4   a5   a6   a7
+        //  a8   a9  a10  a11
+        // a12  a13  a14  a15
+
+
+    //変換後
+        // a0  a4   a8  a12
+        // a1  a5   a9  a13
+        // a2  a6  a10  a14
+        // a3  a7  a11  a15
+
+    GLfloat m1[16] = { 0 };
+
+    m1[0] = m0[0];
+    m1[1] = m0[4];
+    m1[2] = m0[8];
+    m1[3] = m0[12];
+    m1[4] = m0[1];
+    m1[5] = m0[5];
+    m1[6] = m0[9];
+    m1[7] = m0[13];
+    m1[8] = m0[2];
+    m1[9] = m0[6];
+    m1[10] = m0[10];
+    m1[11] = m0[14];
+    m1[12] = m0[3];
+    m1[13] = m0[7];
+    m1[14] = m0[11];
+    m1[15] = m0[15];
+
+    memcpy(m0, m1, sizeof(GLfloat) * 16);
+}
+
 
 void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
 {
@@ -156,18 +193,44 @@ void ModeVizMask::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec
   if (m_tmeshes[f_idx + 1].m_vSize)
   {
     glDisable(GL_LIGHTING);
-    glLineWidth(2);
-    glColor3d(1, 1, 0);
-    glBegin(GL_LINES);
+    //glLineWidth(2);
+    glColor3d(0, 1, 0);
     for (int i = 0; i < m_tmeshes[f_idx].m_vSize; i += 250)
     {
       int p_idx = i;
       EVec3f p = m_tmeshes[f_idx].m_vVerts[p_idx];
       int q_idx = m_tmeshes[f_idx + 1].GetNearestVertexIdx(p);
       EVec3f q = m_tmeshes[f_idx + 1].m_vVerts[q_idx];
-      glVertex3d(p[0], p[1], p[2]); glVertex3d(q[0], q[1], q[2]);
+      EVec3f vec = EVec3f(q[0] - p[0], q[1] - p[1], q[2] - p[2]);
+      float V = std::sqrtf(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
+      float l = std::sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
+      vec = EVec3f(vec[0] / V, vec[1] / V, vec[2] / V);
+      /*
+      glBegin(GL_LINES);
+      glVertex3d(p[0], p[1], p[2]); glVertex3d(p[0] + vec[0], p[1] + vec[1], p[2] + vec[2]);
+      glEnd();
+      */
+      glPushMatrix();
+      {
+          GLfloat m1[16] = {
+              vec[0] * vec[2], -vec[1], vec[0] * l, p[0],
+              vec[1]       , vec[0] , vec[1] * l, p[1],
+              -l           , 0      , vec[2]    , p[2],
+              0            , 0      , 0         , 1.0f
+          };
+          ConvertToOpenGLMatrix(m1);
+          glMultMatrixf(m1);
+          //オブジェクト生成
+          GLUquadricObj* sphere = gluNewQuadric();
+          //描画スタイルの設定
+          gluQuadricDrawStyle(sphere, GLU_FILL);
+          //円錐の描画
+          gluCylinder(sphere, 0.5, 0, 2, 20, 20);
+          //メモリ解放
+          gluDeleteQuadric(sphere);
+      }
+      glPopMatrix();
     }
-    glEnd();
   }
   
 }
