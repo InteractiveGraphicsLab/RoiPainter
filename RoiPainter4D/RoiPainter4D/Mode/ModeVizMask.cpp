@@ -43,7 +43,7 @@ void ModeVizMask::StartMode()
   m_mask_mesh = MaskMeshSequence();
   m_tmeshes = std::vector<TMesh>(ImageCore::GetInst()->GetNumFrames());
   //ImageCore::GetInst()->SetSelectMaskId(2); //ベクトル場を表示するマスクID、編集が必要
-  ImageCore::GetInst()->SetSelectMaskId(2);
+  ImageCore::GetInst()->SetSelectMaskId(3);
   const int scale = 2; //?
   if (!m_mask_mesh.LoadMask(scale))
   {
