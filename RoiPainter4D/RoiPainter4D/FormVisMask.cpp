@@ -59,6 +59,20 @@ void FormVisMask::updateList()
 
 
 
+void FormVisMask::Init()
+{
+  FormSelectMskId^ modal = gcnew FormSelectMskId();
+  if (modal->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
+
+  int trgtId = modal->getTrgtID();
+  modal->Close();
+
+  ImageCore::GetInst()->SetSelectMaskId(trgtId);
+}
+
+
+
+
 System::Void FormVisMask::maskList_SelectionChanged(System::Object^  sender, System::EventArgs^  e)
 {
   //FormVisMask::updateList の maskList->Rows->Clear(); のタイミングで呼ばれてしまうので、その際は何もしない

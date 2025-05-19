@@ -77,6 +77,7 @@ namespace RoiPainter4D {
 
   public:
     void updateList();
+    void Init();
   private: System::ComponentModel::IContainer^  components;
   protected:
 
@@ -440,4 +441,5 @@ namespace RoiPainter4D {
   inline void formVisMask_Show() { FormVisMask::GetInst()->Show(); }
   inline void formVisMask_Hide() { FormVisMask::GetInst()->Hide(); }
   inline void formVisMask_updateList() { FormVisMask::GetInst()->updateList(); }
+  inline void formVisMask_Init() { FormVisMask::GetInst()->Init(); }
 }
