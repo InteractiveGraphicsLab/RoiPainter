@@ -12,8 +12,13 @@ class ModeVizMask : public ModeInterface
   GlslShaderVolume m_volumeShader;
   GlslShaderCrsSec m_crssecShader;
   
+  /*
   MaskMeshSequence m_mask_mesh;
   std::vector<TMesh> m_tmeshes;
+  */
+  std::vector<int> m_edge_4dIdx;
+  std::vector<int> m_num_edgeIdxes;
+  std::vector<EVec3f> m_vectors;
 
   ModeVizMask();
 public:
