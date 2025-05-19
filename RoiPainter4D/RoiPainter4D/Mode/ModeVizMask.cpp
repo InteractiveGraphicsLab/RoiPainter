@@ -49,6 +49,27 @@ EVec3i CalcPos(const EVec3i &reso, const int& idx)
   return EVec3i(x, y, z);
 }
 
+EVec3i SearchManhattan(const EVec3i &reso, const std::vector<int> &goalIdxes, const EVec3i &startPos, const int &maxDist)
+{
+  for (int dist = 1; dist <= maxDist; dist++)
+  {
+	for (int dy = -dist; dy <= dist; dy++)
+	{
+	  int dz = dist - abs(dy);
+	  int y1 = startPos[1] + dy;
+	  int z1 = startPos[2] + dz;
+	  int y2 = startPos[1] + dy;
+	  int z2 = startPos[2] - dz;
+	  for (int i = 0; i < goalIdxes.size(); i++)
+	  {
+		if (CalcIdx(reso, startPos[0], y1, z1) == goalIdxes[i]) return EVec3i(startPos[0], y1, z1);
+		if (CalcIdx(reso, startPos[0], y2, z2) == goalIdxes[i]) return EVec3i(startPos[0], y1, z1);
+	  }
+	}
+  }
+  return EVec3i(-1, -1, -1);
+}
+
 EVec3f CalcVec(const EVec3f& pitch, const EVec3i& a, const EVec3i& b)
 {
   EVec3f a_pos = EVec3f(pitch[0] * (float)(a[0] + 0.5), pitch[1] * (float)(a[1] + 0.5), pitch[2] * (float)(a[2] + 0.5));
@@ -109,40 +130,34 @@ void ModeVizMask::StartMode()
 	for (int i = num_idxes; i < num_idxes + num_nowIdxes; i++)
 	{
 	  EVec3i pos = CalcPos(reso, m_edge_4dIdx[i]);
-	  bool roopFlg = false;
-	  int def = 0;
-	  while (1)
+	  int MAX_DIST = 100;
+	  std::vector<int> nextFrmIdxes;
+	  for (int j = 1; j < m_num_edgeIdxes[f + 1]; j++)
 	  {
-		std::cout << def << "\n";
-		for (int j = 1; j < m_num_edgeIdxes[f + 1]; j++)
-		{
-		  int nextFrmIdx = m_edge_4dIdx[j + num_idxes];
-		  if (CalcIdx(reso, pos[0], pos[1] + def, pos[2]) == nextFrmIdx ||
-			  CalcIdx(reso, pos[0], pos[1] - def, pos[2]) == nextFrmIdx ||
-			  CalcIdx(reso, pos[0], pos[1], pos[2] + def) == nextFrmIdx ||
-			  CalcIdx(reso, pos[0], pos[1], pos[2] - def) == nextFrmIdx
-			)
-		  {
-			m_vectors.push_back(CalcVec(pitch, pos, CalcPos(reso, nextFrmIdx)));
-			roopFlg = true;
-			break;
-		  }
-		}
-		if (roopFlg)
-		{
-		  break;
-		}
-		if (def > 50)
-		{
-		  m_vectors.push_back(EVec3f(0, 0, 0));
-		  break;
-		}
-		def++;
+	    nextFrmIdxes.push_back(m_edge_4dIdx[j + num_idxes + num_nowIdxes]);
+	  }
+	  EVec3i goal = SearchManhattan(reso, nextFrmIdxes, pos, MAX_DIST);
+	  if (goal[1] != -1 && goal[2] != -1)
+	  {
+		m_vectors.push_back(CalcVec(pitch, pos, goal));
+	  }
+	  else
+	  {
+		m_vectors.push_back(EVec3f(0, 0, 0));
 	  }
 	}
 	num_idxes += num_nowIdxes;
   }
-  std::cout << NUM_FRM << "," << m_edge_4dIdx.size() << "," << m_vectors.size() << ",(" << m_vectors[5000][0] << ", " << m_vectors[5000][1] << ", " << m_vectors[5000][2] << ")\n";
+  std::cout << m_vectors.size() << ", " << m_edge_4dIdx.size() << "\n";
+  
+  /*
+  //debug
+  for (int i = 0; i < m_vectors.size(); i += 10)
+  {
+	std::cout << m_vectors[i][0] << ", " << m_vectors[i][1] << ", " << m_vectors[i][2] << "\n";
+  }
+  */
+  
 
   /*
   //メッシュモデル取得
@@ -273,6 +288,7 @@ void ConvertToOpenGLMatrix(GLfloat m0[16])
 void ModeVizMask::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec3f& camF)
 {
   const EVec3i reso = ImageCore::GetInst()->GetReso();
+  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
 
   ImageCore::GetInst()->UpdateImgMaskColor();
 
@@ -283,10 +299,39 @@ void ModeVizMask::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec
   //ベクトル表示
   if (true)
   {
-	const int NUM_FRM = ImageCore::GetInst()->GetNumFrames();
-	for (int f = 0; f < NUM_FRM - 1; f++)
+	const int frm_idx = formVisParam_getframeI();
+	int now_frmIdx = 0;
+	for (int i = 0; i < frm_idx; i++)
 	{
+	  now_frmIdx += m_num_edgeIdxes[i];
 	}
+
+	
+	glDisable(GL_LIGHTING);
+	glLineWidth(2);
+	glPointSize(5.0f);
+	glColor3d(0, 1, 0);
+	//glBegin(GL_LINES);
+	
+	for (int i = 0; i < m_num_edgeIdxes[frm_idx]; i++)
+	{
+	  int idx = i + now_frmIdx;
+	  EVec3i startPosIdx = CalcPos(reso, m_edge_4dIdx[idx]);
+	  EVec3f startPosf = EVec3f(pitch[0] * (startPosIdx[0] + 0.5), pitch[1] * (startPosIdx[1] + 0.5), pitch[2] * (startPosIdx[2] + 0.5));
+	  //glPushMatrix();
+	  //std::cout << startPosf[0] << ", " << startPosf[1] << ", " << startPosf[2] << "\n";
+	  //glTranslatef(startPosf[0], startPosf[1], startPosf[2]);
+	  //glBegin(GL_POINTS);
+	  //glVertex3f(startPosf[0], startPosf[1], startPosf[2]);
+	  //glEnd();
+	  glBegin(GL_LINES);
+	  glVertex3f(startPosf[0], startPosf[1], startPosf[2]); glVertex3f(startPosf[0] + m_vectors[idx][0], startPosf[1] + m_vectors[idx][1], startPosf[2] + m_vectors[idx][2]);
+	  glEnd();
+	  //std::cout << m_vectors[idx][1] << ", " << m_vectors[idx][2] << "\n";
+	  //glPopMatrix();
+	}
+
+	//glEnd();
   }
 
   if (formVisParam_bRendVol())
