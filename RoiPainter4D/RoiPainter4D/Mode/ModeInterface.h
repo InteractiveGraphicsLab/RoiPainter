@@ -16,6 +16,8 @@ enum MODE_ID
 
 	MODE_REF_STRKTRIM ,  // ModeRefStrkTrim     
 	MODE_REF_CURVEDEFORM,// ModeRefCurveDeform, FormRefCurveDeform (by Yuki Kimura, 2024)
+	MODE_REF_PIXPAINT,   //  (by Takahiro Kikuchi, 2024)
+
 
 	MODE_SEG_PIXPAINT ,  // ModeSegPixPaint
 	MODE_SEG_REGGROW  ,  // ModeSegRegGrow     
@@ -208,7 +210,7 @@ inline bool IsAltKeyOn  () { return GetKeyState(VK_MENU   ) < 0; }
 //inline bool IsAKeyOn  ()   { return GetKeyState(0x41) < 0; }
 //inline bool IsBKeyOn  ()   { return GetKeyState(0x42) < 0; }
 inline bool IsCKeyOn  ()   { return GetKeyState(0x43) < 0; }
-//inline bool IsDKeyOn  ()   { return GetKeyState(0x44) < 0; }
+inline bool IsDKeyOn  ()   { return GetKeyState(0x44) < 0; }
 //inline bool IsEKeyOn  ()   { return GetKeyState(0x45) < 0; }
 //inline bool IsFKeyOn  ()   { return GetKeyState(0x46) < 0; }
 //inline bool IsGKeyOn  ()   { return GetKeyState(0x47) < 0; }

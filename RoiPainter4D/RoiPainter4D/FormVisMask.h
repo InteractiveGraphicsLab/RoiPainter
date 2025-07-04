@@ -359,7 +359,7 @@ namespace RoiPainter4D {
       this->label1->Name = L"label1";
       this->label1->Size = System::Drawing::Size(96, 12);
       this->label1->TabIndex = 25;
-      this->label1->Text = L"Space: Hide Mask";
+      this->label1->Text = L"Shift: Hide Mask";
       // 
       // btnThisImpObj
       // 

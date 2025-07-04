@@ -16,8 +16,10 @@ using namespace RoiPainter4D;
 void FormRefCurveDeform::InitAllItems()
 {
   m_numbox_cpsize->Value = 10;
-  m_checkbox_showonlyselectedstroke->Checked = true;
+  m_checkbox_showonlyselectedstroke->Checked = false;
   m_trackbar_mcscale->Value = 2;
+  m_checkbox_vissurf_trans->Checked = true;
+  m_checkbox_vissurf_solid->Checked = false;
 
   FormSelectMskId^ modal = gcnew FormSelectMskId();
   if (modal->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
@@ -99,6 +101,31 @@ System::Void FormRefCurveDeform::m_btn_savestate_Click(System::Object^ sender, S
   SaveState();
 }
 
+
+System::Void FormRefCurveDeform::m_checkbox_visbound_CheckedChanged(
+  System::Object^ sender,
+  System::EventArgs^ e)
+{
+  formMain_RedrawMainPanel();
+}
+
+System::Void FormRefCurveDeform::m_checkbox_vissurf_CheckedChanged(
+  System::Object^ sender,
+  System::EventArgs^ e)
+{
+  if (m_checkbox_vissurf_trans->Checked)
+    m_checkbox_vissurf_solid->Checked = false;
+  formMain_RedrawMainPanel();
+}
+
+System::Void FormRefCurveDeform::m_checkbox_vissurf_solid_CheckedChanged(
+  System::Object^ sender,
+  System::EventArgs^ e)
+{
+  if (m_checkbox_vissurf_solid->Checked)
+    m_checkbox_vissurf_trans->Checked = false;
+  formMain_RedrawMainPanel();
+}
 
 void FormRefCurveDeform::LoadState()
 {

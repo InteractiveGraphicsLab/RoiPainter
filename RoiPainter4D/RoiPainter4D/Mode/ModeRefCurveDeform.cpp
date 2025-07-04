@@ -2,6 +2,7 @@
 
 #include "ModeRefCurveDeform.h"
 #include "ModeCommonTools.h"
+#include "CagedMeshSequence.h"
 
 #include "OglForCLI.h"   // openGLを利用するためのクラス
 #include "ImageCore.h"   // 画像データを保持しているクラス 　
@@ -67,7 +68,7 @@ void ModeRefCurveDeform::StartMode()
   //}
   m_shared_stroke_idxs = std::set<int>();
   m_histories = std::vector<History>(ImageCore::GetInst()->GetNumFrames());
-  m_show_only_selected_stroke = true;
+  m_show_only_selected_stroke = FormRefCurveDeform_GetShowOnlySelectedStroke();
   m_prev_selected_stroke_idx = -1;
   m_draw_surf_trans = true;
   m_exist_mesh = false;
@@ -400,7 +401,7 @@ void ModeRefCurveDeform::DrawScene(
   //ImageCore::GetInst()->UpdateImgMaskColor();
 
   ImageCore::GetInst()->BindAllVolumes();
-  DrawCrossSectionsNormal();
+  DrawCrossSectionsVisFore(IsDKeyOn());
 
   if (IsMKeyOn() && formVisParam_bRendVol())
   {
@@ -411,11 +412,47 @@ void ModeRefCurveDeform::DrawScene(
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
+
+
   // draw mesh
-  if (!IsSpaceKeyOn())
+  const EVec3f cuboid = ImageCore::GetCuboid();
+  bool draw_bound      = FormRefCurveDeform_bVisBound();
+  bool draw_surf_trans = FormRefCurveDeform_bVisSurfTrans();
+  bool draw_surf_solid = FormRefCurveDeform_bVisSurfSolid();
+  const bool b_xy = formVisParam_bPlaneXY();
+  const bool b_yz = formVisParam_bPlaneYZ();
+  const bool b_zx = formVisParam_bPlaneZX();
+  if (!IsSpaceKeyOn() && m_exist_mesh && (draw_bound || draw_surf_trans))
   {
-    m_mask_mesh.DrawMesh(frame_idx);
+    //draw cage & mesh 
+    glDisable(GL_CULL_FACE);
+    glDepthMask(false);
+    glEnable(GL_BLEND);
+
+    float planexy = b_xy ? CrssecCore::GetInst()->GetPlanePosXY() : -1;
+    float planeyz = b_yz ? CrssecCore::GetInst()->GetPlanePosYZ() : -1;
+    float planezx = b_zx ? CrssecCore::GetInst()->GetPlanePosZX() : -1;
+    if (!draw_bound)
+    {
+      planexy = planeyz = planezx = -1;
+    }
+
+    float opacity = draw_surf_trans ? (float)0.4 : (float)0;
+    const auto& m = m_mask_mesh.GetMesh(frame_idx);
+    DrawMeshWithCrossecHL(m, planeyz, planezx, planexy, opacity, cuboid);
+
+    glDepthMask(true);
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
   }
+  //draw mesh (solid)
+  if (!IsSpaceKeyOn() && m_exist_mesh && draw_surf_solid)
+  {
+    glDisable(GL_CULL_FACE);
+    const auto& m = m_mask_mesh.GetMesh(frame_idx);
+    DrawMeshWithCrossecHL(m, -1, -1, -1, 1.0f, cuboid);
+  }
+
 
   // draw stroke
   if (!IsSKeyOn())
@@ -579,6 +616,7 @@ void ModeRefCurveDeform::ConvertMeshToMask()
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
   m_is_not_saved_state = false;
+  std::cout << "\n" << "\n" << "finished ConvertMeshToMask." << "\n";
 }
 
 
