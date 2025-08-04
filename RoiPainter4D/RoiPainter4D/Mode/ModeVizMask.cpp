@@ -63,7 +63,7 @@ EVec3i SearchManhattan(const EVec3i &reso, const std::vector<int> &goalIdxes, co
 	  for (int i = 0; i < goalIdxes.size(); i++)
 	  {
 		if (CalcIdx(reso, startPos[0], y1, z1) == goalIdxes[i]) return EVec3i(startPos[0], y1, z1);
-		if (CalcIdx(reso, startPos[0], y2, z2) == goalIdxes[i]) return EVec3i(startPos[0], y1, z1);
+		if (CalcIdx(reso, startPos[0], y2, z2) == goalIdxes[i]) return EVec3i(startPos[0], y2, z2);
 	  }
 	}
   }
@@ -90,66 +90,69 @@ void ModeVizMask::StartMode()
   m_num_edgeIdxes.clear();
   m_vectors.clear();
 
-  const byte selectMaskIdx = static_cast<byte>(ImageCore::GetInst()->GetSelectMaskIdx());
+  byte selectMaskIdx = static_cast<byte>(ImageCore::GetInst()->GetSelectMaskIdx());
   const EVec3i reso = ImageCore::GetInst()->GetReso();
   const int NUM_FRM = ImageCore::GetInst()->GetNumFrames();
   //一番外側にあるidx取得
-  for (int f = 0; f < NUM_FRM; f++)
+  int a = selectMaskIdx;
+  if (selectMaskIdx != -1 && selectMaskIdx != 0)
   {
-	int numIdx = 0;
-	for (int x = 0; x < reso[0]; x += 10)
+	for (int f = 0; f < NUM_FRM; f++)
 	{
-	  for (int y = 0; y < reso[1]; y++)
+	  int numIdx = 0;
+	  for (int x = 0; x < reso[0]; x += 10)
 	  {
-		for (int z = 0; z < reso[2]; z++)
+		for (int y = 0; y < reso[1]; y++)
 		{
-		  if (ImageCore::GetInst()->m_mask4d[f][CalcIdx(reso, x, y, z)] == selectMaskIdx)
+		  for (int z = 0; z < reso[2]; z++)
 		  {
-			if (ImageCore::GetInst()->m_mask4d[f][CalcIdx(reso, x, y + 1, z)] != selectMaskIdx ||
-			  ImageCore::GetInst()->m_mask4d[f][CalcIdx(reso, x, y - 1, z)] != selectMaskIdx ||
-			  ImageCore::GetInst()->m_mask4d[f][CalcIdx(reso, x, y, z + 1)] != selectMaskIdx ||
-			  ImageCore::GetInst()->m_mask4d[f][CalcIdx(reso, x, y, z - 1)] != selectMaskIdx)
+			if (ImageCore::GetInst()->m_mask4d[f][CalcIdx(reso, x, y, z)] == selectMaskIdx)
 			{
-			  m_edge_4dIdx.push_back(CalcIdx(reso, x, y, z));
-			  numIdx++;
+			  if (ImageCore::GetInst()->m_mask4d[f][CalcIdx(reso, x, y + 1, z)] != selectMaskIdx ||
+				ImageCore::GetInst()->m_mask4d[f][CalcIdx(reso, x, y - 1, z)] != selectMaskIdx ||
+				ImageCore::GetInst()->m_mask4d[f][CalcIdx(reso, x, y, z + 1)] != selectMaskIdx ||
+				ImageCore::GetInst()->m_mask4d[f][CalcIdx(reso, x, y, z - 1)] != selectMaskIdx)
+			  {
+				m_edge_4dIdx.push_back(CalcIdx(reso, x, y, z));
+				numIdx++;
+			  }
 			}
 		  }
 		}
 	  }
+	  m_num_edgeIdxes.push_back(numIdx);
 	}
-	m_num_edgeIdxes.push_back(numIdx);
-  }
 
-  //次時相の最近傍点までのベクトルを計算
-  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
-  int num_idxes = 0;
-  for (int f = 0; f < NUM_FRM - 1; f++)
-  {
-	std::cout << "calcFrame" << f << "\n";
-	int num_nowIdxes = m_num_edgeIdxes[f];
-	for (int i = num_idxes; i < num_idxes + num_nowIdxes; i++)
+	//次時相の最近傍点までのベクトルを計算
+	const EVec3f pitch = ImageCore::GetInst()->GetPitch();
+	int num_idxes = 0;
+	for (int f = 0; f < NUM_FRM - 1; f++)
 	{
-	  EVec3i pos = CalcPos(reso, m_edge_4dIdx[i]);
-	  int MAX_DIST = 100;
-	  std::vector<int> nextFrmIdxes;
-	  for (int j = 1; j < m_num_edgeIdxes[f + 1]; j++)
+	  std::cout << "calcFrame" << f << "\n";
+	  int num_nowIdxes = m_num_edgeIdxes[f];
+	  for (int i = num_idxes; i < num_idxes + num_nowIdxes; i++)
 	  {
-	    nextFrmIdxes.push_back(m_edge_4dIdx[j + num_idxes + num_nowIdxes]);
+		EVec3i pos = CalcPos(reso, m_edge_4dIdx[i]);
+		int MAX_DIST = 100;
+		std::vector<int> nextFrmIdxes;
+		for (int j = 1; j < m_num_edgeIdxes[f + 1]; j++)
+		{
+		  nextFrmIdxes.push_back(m_edge_4dIdx[j + num_idxes + num_nowIdxes]);
+		}
+		EVec3i goal = SearchManhattan(reso, nextFrmIdxes, pos, MAX_DIST);
+		if (goal[1] != -1 && goal[2] != -1)
+		{
+		  m_vectors.push_back(CalcVec(pitch, pos, goal));
+		}
+		else
+		{
+		  m_vectors.push_back(EVec3f(0, 0, 0));
+		}
 	  }
-	  EVec3i goal = SearchManhattan(reso, nextFrmIdxes, pos, MAX_DIST);
-	  if (goal[1] != -1 && goal[2] != -1)
-	  {
-		m_vectors.push_back(CalcVec(pitch, pos, goal));
-	  }
-	  else
-	  {
-		m_vectors.push_back(EVec3f(0, 0, 0));
-	  }
+	  num_idxes += num_nowIdxes;
 	}
-	num_idxes += num_nowIdxes;
+	std::cout << m_vectors.size() << ", " << m_edge_4dIdx.size() << "\n";
   }
-  std::cout << m_vectors.size() << ", " << m_edge_4dIdx.size() << "\n";
-  
   /*
   //debug
   for (int i = 0; i < m_vectors.size(); i += 10)
@@ -297,7 +300,7 @@ void ModeVizMask::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec
   DrawCrossSections(cuboid, reso, !IsSpaceKeyOn(), m_crssecShader);
 
   //ベクトル表示
-  if (true)
+  if (m_vectors.size() > 0)
   {
 	const int frm_idx = formVisParam_getframeI();
 	int now_frmIdx = 0;
@@ -308,30 +311,78 @@ void ModeVizMask::DrawScene(const EVec3f& cuboid, const EVec3f& camP, const EVec
 
 	
 	glDisable(GL_LIGHTING);
-	glLineWidth(2);
-	glPointSize(5.0f);
-	glColor3d(0, 1, 0);
-	//glBegin(GL_LINES);
-	
-	for (int i = 0; i < m_num_edgeIdxes[frm_idx]; i++)
-	{
-	  int idx = i + now_frmIdx;
-	  EVec3i startPosIdx = CalcPos(reso, m_edge_4dIdx[idx]);
-	  EVec3f startPosf = EVec3f(pitch[0] * (startPosIdx[0] + 0.5), pitch[1] * (startPosIdx[1] + 0.5), pitch[2] * (startPosIdx[2] + 0.5));
-	  //glPushMatrix();
-	  //std::cout << startPosf[0] << ", " << startPosf[1] << ", " << startPosf[2] << "\n";
-	  //glTranslatef(startPosf[0], startPosf[1], startPosf[2]);
-	  //glBegin(GL_POINTS);
-	  //glVertex3f(startPosf[0], startPosf[1], startPosf[2]);
-	  //glEnd();
-	  glBegin(GL_LINES);
-	  glVertex3f(startPosf[0], startPosf[1], startPosf[2]); glVertex3f(startPosf[0] + m_vectors[idx][0], startPosf[1] + m_vectors[idx][1], startPosf[2] + m_vectors[idx][2]);
-	  glEnd();
-	  //std::cout << m_vectors[idx][1] << ", " << m_vectors[idx][2] << "\n";
-	  //glPopMatrix();
-	}
+	glLineWidth(3);
+	// 半透明にするための設定
+	glEnable(GL_BLEND); // ブレンドを有効にする
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // 標準的なブレンド関数を設定
 
-	//glEnd();
+	// アルファ値を0.5（半透明）に設定
+	glColor4d(0, 1, 0, 0.5);
+	if (frm_idx != (ImageCore::GetInst()->GetNumFrames() - 1))
+	{
+	  for (int i = 0; i < m_num_edgeIdxes[frm_idx]; i++)
+	  {
+		int idx = i + now_frmIdx;
+		EVec3i startPosIdx = CalcPos(reso, m_edge_4dIdx[idx]);
+		EVec3f startPosf = EVec3f(pitch[0] * (startPosIdx[0] + 0.5), pitch[1] * (startPosIdx[1] + 0.5), pitch[2] * (startPosIdx[2] + 0.5));
+		glBegin(GL_LINES);
+		glVertex3f(startPosf[0], startPosf[1], startPosf[2]); glVertex3f(startPosf[0] + m_vectors[idx][0], startPosf[1] + m_vectors[idx][1], startPosf[2] + m_vectors[idx][2]);
+		glEnd();
+		if (true)
+		{
+		  // 矢じりのサイズと角度を設定
+		  float arrowHeadLength = 0.15f; // 矢じりの長さ
+		  float arrowHeadAngle = M_PI / 6.0f; // 矢じりの開き角度（30度）
+
+		  // ベクトルの正規化
+		  EVec3f direction = m_vectors[idx].normalized();
+
+		  // 線分の終点
+		  EVec3f endPos = startPosf + m_vectors[idx];
+
+		  // 矢じりのための回転軸と角度を計算
+		  // 矢じりはYZ平面に描画されるため、回転軸はX軸となります。
+		  // ベクトルがX軸に平行な場合、回転軸を適切に選択する必要があります。
+		  // ここでは、デフォルトの垂直方向をY軸正方向と仮定し、
+		  // ベクトルとY軸との外積を取ることで回転軸を決定します。
+		  EVec3f referenceVec(0.0f, 1.0f, 0.0f); // Y軸正方向を基準とする
+		  if (direction.isApprox(referenceVec) || direction.isApprox(-referenceVec)) {
+			// ベクトルがY軸に平行な場合、X軸を回転軸とする
+			referenceVec = EVec3f(1.0f, 0.0f, 0.0f);
+		  }
+
+		  EVec3f rotationAxis = direction.cross(referenceVec).normalized();
+		  if (rotationAxis.norm() < 1e-6) { // もし外積がゼロベクトルに近い場合（ベクトルと基準ベクトルが平行な場合）
+			rotationAxis = EVec3f(1.0f, 0.0f, 0.0f); // X軸をデフォルトの回転軸とする
+		  }
+
+		  // 矢じりの2つの点を計算するための基底ベクトルを生成
+		  // ベクトルに垂直で、YZ平面に存在するようなベクトル
+		  // ここでは、方向ベクトルと回転軸の外積を取ることで、
+		  // 矢じりの「横方向」のベクトルを得る
+		  EVec3f perpendicularVec = direction.cross(rotationAxis).normalized();
+
+		  // 矢じりの左側の点
+		  // 終点から方向ベクトルを逆向きにarrowHeadLengthだけ進み、
+		  // そこからperpendicularVecをarrowHeadAngleだけ回転させた方向のベクトルを加える
+		  EVec3f leftPoint = endPos - direction * arrowHeadLength + perpendicularVec * std::tan(arrowHeadAngle) * arrowHeadLength;
+
+		  // 矢じりの右側の点
+		  EVec3f rightPoint = endPos - direction * arrowHeadLength - perpendicularVec * std::tan(arrowHeadAngle) * arrowHeadLength;
+
+		  // 矢じりの描画 (GL_LINES)
+		  // 矢じりの中心の頂点から左右の頂点へ線を描画
+		  glBegin(GL_LINES);
+		  glVertex3f(endPos[0], endPos[1], endPos[2]);
+		  glVertex3f(leftPoint[0], leftPoint[1], leftPoint[2]);
+
+		  glVertex3f(endPos[0], endPos[1], endPos[2]);
+		  glVertex3f(rightPoint[0], rightPoint[1], rightPoint[2]);
+		  glEnd();
+		}
+	  }
+	  glDisable(GL_BLEND);
+	}
   }
 
   if (formVisParam_bRendVol())
