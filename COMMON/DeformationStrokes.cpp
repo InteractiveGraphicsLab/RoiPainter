@@ -420,8 +420,10 @@ bool DeformationStrokes::Stroke::AddNewCP(const EVec3f _pos)
   if (num_cps == 0)
   {
     m_cps.push_back(_pos);
+    m_normals.push_back(EVec3f(0.0f, 1.0f, 0.0f));
     m_selected_cpid = num_cps;
     UpdateStroke();
+    UpdateAllNormals();
     return true;
   }
   
@@ -433,10 +435,12 @@ bool DeformationStrokes::Stroke::AddNewCP(const EVec3f _pos)
     if (xyz == -1) return false;
 
     m_cps.push_back(_pos);
+    m_normals.push_back(EVec3f(0.0f, 1.0f, 0.0f));
     m_selected_cpid = num_cps;
     m_plane_xyz = xyz;
     m_plane_pos = m_cps[0][xyz];
     UpdateStroke();
+    UpdateAllNormals();
     return true;
   }
 
@@ -446,8 +450,10 @@ bool DeformationStrokes::Stroke::AddNewCP(const EVec3f _pos)
   if (num_cps == 2)
   {
     m_cps.push_back(_pos);
+    m_normals.push_back(EVec3f(0.0f, 1.0f, 0.0f));
     m_selected_cpid = num_cps;
     UpdateStroke();
+    UpdateAllNormals();
     return true;
   }
 
@@ -475,9 +481,11 @@ bool DeformationStrokes::Stroke::AddNewCP(const EVec3f _pos)
     insert_idx = num_cps;
   }
   m_cps.insert(m_cps.begin() + insert_idx, _pos);
+  m_normals.insert(m_normals.begin() + insert_idx, EVec3f(0.0f, 1.0f, 0.0f));
   m_selected_cpid = insert_idx;
 
   UpdateStroke();
+  UpdateAllNormals();
 
   if (m_debug)
   {
@@ -498,6 +506,7 @@ void DeformationStrokes::Stroke::MoveSelectedCP(const EVec3f& _pos)
   m_is_locked = true;
 
   UpdateStroke();
+  UpdateAllNormals();
 }
 
 
@@ -506,8 +515,10 @@ void DeformationStrokes::Stroke::DeleteSelectedCP()
   //shared strokeの制御点は消せない
   if (m_selected_cpid == -1 || m_shared_idx != -1) return;
   m_cps.erase(m_cps.begin() + m_selected_cpid);
+  m_normals.erase(m_normals.begin() + m_selected_cpid);
   m_selected_cpid = -1;
   UpdateStroke();
+  UpdateAllNormals();
 }
 
 
@@ -568,6 +579,67 @@ void DeformationStrokes::Stroke::UpdateStroke()
 }
 
 
+
+void DeformationStrokes::Stroke::UpdateAllNormals()
+{
+  
+  const int cp_size = static_cast<int>(m_cps.size());
+  if (cp_size < 2)
+  {
+    for (int i = 0; i < cp_size; ++i)
+    {
+      m_normals[i] = EVec3f(0.0f, 1.0f, 0.0f);
+    }
+    return;
+  }
+
+  const EVec3f global_up(0.0f, 1.0f, 0.0f);
+
+  for (int i = 0; i < cp_size; ++i)
+  {
+    // --- ステップ1: 従来通り、この点の「法線候補」を計算 ---
+    EVec3f tangent;
+    if (i == 0)
+    {
+      tangent = m_cps[i + 1] - m_cps[i];
+    }
+    else if (i == cp_size - 1)
+    {
+      tangent = m_cps[i] - m_cps[i - 1];
+    }
+    else
+    {
+      tangent = m_cps[i + 1] - m_cps[i - 1];
+    }
+    tangent.normalize();
+
+    EVec3f binormal = tangent.cross(global_up);
+    if (binormal.squaredNorm() < 1e-6)
+    {
+      binormal = tangent.cross(EVec3f(1.0f, 0.0f, 0.0f));
+    }
+    binormal.normalize();
+
+    EVec3f current_normal_candidate = binormal.cross(tangent);
+    current_normal_candidate.normalize();
+
+    // 法線の向きを揃える処理
+    if (i > 0)
+    {
+      const EVec3f& previous_normal = m_normals[i - 1];
+
+      if (previous_normal.dot(current_normal_candidate) < 0.0f)
+      {
+        current_normal_candidate = -current_normal_candidate;
+      }
+    }
+
+    m_normals[i] = current_normal_candidate;
+  }
+}
+
+
+
 static const EVec3f COLOR_R = { 1.0f, 0.0f, 0.0f };
 static const EVec3f COLOR_Y = { 1.0f, 1.0f, 0.0f };
 static const EVec3f COLOR_G = { 0.0f, 1.0f, 0.0f };
@@ -610,6 +682,26 @@ void DeformationStrokes::Stroke::DrawControlPoints(const float& _cp_radius, cons
     TMesh::DrawSphere(m_cps[i], _cp_radius);
     glDisable(GL_LIGHTING);
   }
+
+  // 法線を別の色（例：鮮やかな青）で描画
+  glColor3f(0.0f, 0.5f, 1.0f);
+  // 線の太さを少し太くすると見やすい
+  glLineWidth(2.0f);
+
+  glBegin(GL_LINES);
+  for (int i = 0; i < size; ++i)
+  {
+    // 線の始点：コントロールポイントの位置
+    glVertex3fv(m_cps[i].data());
+
+    // 線の終点：CPの位置から法線方向に線を伸ばした位置
+    // 長さはコントロールポイントの半径の2倍程度にするとバランスが良い
+    const EVec3f normal_end = m_cps[i] + m_normals[i] * _cp_radius * 2.0f;
+    glVertex3fv(normal_end.data());
+  }
+  glEnd();
+
+  glLineWidth(1.0f);
 }
 
 
@@ -634,6 +726,8 @@ void DeformationStrokes::Stroke::LoadState(const std::vector<EVec3f>& _cps)
   for (const auto& cp : _cps)
     m_cps.push_back(cp);
   
+  m_normals.resize(m_cps.size(), EVec3f(0.0f, 1.0f, 0.0f));
+
   if (m_cps.size() >= 2)
   {
     m_plane_xyz = (fabsf(m_cps[0][0] - m_cps[1][0]) < 0.001f) ?  0 : 
@@ -642,7 +736,7 @@ void DeformationStrokes::Stroke::LoadState(const std::vector<EVec3f>& _cps)
   }
   m_selected_cpid = (int) m_cps.size() - 1 ;
   UpdateStroke();
-
+  UpdateAllNormals();
 }
 
 

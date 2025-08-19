@@ -86,10 +86,10 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
 
   if (IsShiftKeyOn())
   {
-    Do();
+    Do(); //undo,redo処理
     EVec3f ray_pos, ray_dir, pos;
     ogl->GetCursorRay(p, ray_pos, ray_dir);
-    const int selected_stroke_idx = m_strokes[frame_idx].PickCPs(ray_pos, ray_dir, m_cp_rate * m_cp_size, false, m_show_only_selected_stroke);
+    const int selected_stroke_idx = m_strokes[frame_idx].PickCPs(ray_pos, ray_dir, m_cp_rate * m_cp_size, false, m_show_only_selected_stroke); //CPを選択してるかチェック
 
     if (selected_stroke_idx == -1)
     {
