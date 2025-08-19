@@ -84,11 +84,12 @@ private:
   //plane info
   int   m_plane_xyz; //0: yz, 1:zx, 2:xy
   float m_plane_pos; //pposition 
+  EVec3f m_plane_normal;
   
   //cp and stroke info 
   std::vector<EVec3f> m_stroke;
   std::vector<EVec3f> m_cps;
-  std::vector<EVec3f> m_normals;
+  bool m_normal_side;
   int m_selected_cpid;
 
 public:
@@ -116,9 +117,7 @@ public:
   }
   void SetCPs(const std::vector<EVec3f>& _cps){
     m_cps = _cps;
-    m_normals.resize(m_cps.size(), EVec3f(0.0f, 1.0f, 0.0f));
     UpdateStroke();
-    UpdateAllNormals();
   }
   
   //CP manipulation
@@ -128,8 +127,8 @@ public:
 
   int  PickCPs(const EVec3f& _ray_pos, const EVec3f& _ray_dir, const float& _cp_radius, const bool& _change_selected_idx);
 
+  void ChangeSide();
   void UpdateStroke();
-  void UpdateAllNormals();
   void DrawStroke(const bool& _is_selected) const;
   void DrawControlPoints(const float& _cp_radius, const bool& _is_selected) const;
 
