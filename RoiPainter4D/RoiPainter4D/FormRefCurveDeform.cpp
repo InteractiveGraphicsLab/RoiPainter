@@ -99,6 +99,10 @@ System::Void FormRefCurveDeform::m_btn_savestate_Click(System::Object^ sender, S
   SaveState();
 }
 
+System::Void FormRefCurveDeform::m_btn_flip_normals_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->FlipSelectedStrokeNormalSide();
+}
 
 void FormRefCurveDeform::LoadState()
 {

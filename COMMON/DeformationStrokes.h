@@ -70,7 +70,9 @@ public:
 
   void  UnlockAllStrokes(); // copy from prevしたときの shared strokeの扱いが不明
   bool bSelStrokeShared();
-
+  
+  // flip normal
+  void FlipSelNormals();
 
   std::string OutputAsText() const;
   void LoadState(const std::vector<int>& _vec_shared_idxs, const std::vector<std::vector<EVec3f>>& _vec_cps);
@@ -127,7 +129,7 @@ public:
 
   int  PickCPs(const EVec3f& _ray_pos, const EVec3f& _ray_dir, const float& _cp_radius, const bool& _change_selected_idx);
 
-  void ChangeSide();
+  void FlipNormal();
   void UpdateStroke();
   void DrawStroke(const bool& _is_selected) const;
   void DrawControlPoints(const float& _cp_radius, const bool& _is_selected) const;

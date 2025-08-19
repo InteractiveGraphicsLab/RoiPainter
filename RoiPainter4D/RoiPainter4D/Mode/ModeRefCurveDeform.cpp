@@ -977,6 +977,18 @@ void ModeRefCurveDeform::LoadState(const std::string& _fpath, const std::set<int
 }
 
 
+
+void ModeRefCurveDeform::FlipSelectedStrokeNormalSide()
+{
+  const int frame_idx = formVisParam_getframeI();
+  DeformationStrokes& dstrokes = m_strokes[frame_idx];
+  dstrokes.FlipSelNormals();
+  formMain_RedrawMainPanel();
+  formMain_ActivateMainForm();
+}
+
+
+
 void ModeRefCurveDeform::ShareSelectedStroke()
 {
   const int frame_idx = formVisParam_getframeI();

@@ -319,6 +319,14 @@ bool DeformationStrokes::bSelStrokeShared()
 
 
 
+void DeformationStrokes::FlipSelNormals()
+{
+  if (m_selected_stroke_idx == -1) return;
+  m_strokes[m_selected_stroke_idx].FlipNormal();
+}
+
+
+
 
 void DeformationStrokes::DrawStrokes(const bool& _only_selected_stroke) const
 {
@@ -539,7 +547,7 @@ int DeformationStrokes::Stroke::PickCPs(
 
 
 
-void DeformationStrokes::Stroke::ChangeSide()
+void DeformationStrokes::Stroke::FlipNormal()
 {
   m_normal_side = m_normal_side ? false : true;
 }
