@@ -87,6 +87,7 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
   if (IsShiftKeyOn())
   {
     Do(); //undo,redo処理
+    TMesh& mesh = m_mask_mesh.GetMesh(frame_idx);
     EVec3f ray_pos, ray_dir, pos;
     ogl->GetCursorRay(p, ray_pos, ray_dir);
     const int selected_stroke_idx = m_strokes[frame_idx].PickCPs(ray_pos, ray_dir, m_cp_rate * m_cp_size, false, m_show_only_selected_stroke); //CPを選択してるかチェック
@@ -96,11 +97,13 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
       DeformationStrokes& dstroke = m_strokes[frame_idx];
       if (PickCrssec(ray_pos, ray_dir, pos) != CRSSEC_NON)
       {
+        const int nearest_vertex_idx = mesh.GetNearestVertexIdx(pos);
+        const EVec3f nearest_vertex_normal = mesh.m_vNorms[nearest_vertex_idx];
         if (dstroke.GetSelectedStrokeIdx() == -1)
         {
           dstroke.AddNewStroke();
         }
-        if (!dstroke.AddCP_SelStroke(pos))
+        if (!dstroke.AddCP_SelStroke(pos, nearest_vertex_normal))
         {
           dstroke.UnselectStroke();
           m_prev_selected_stroke_idx = -1;
@@ -693,7 +696,7 @@ void ModeRefCurveDeform::FindClosestPointFromStroke(const int _frame_idx, std::v
       commonXYZ == 1 ? 1.0f : 0.0f,
       commonXYZ == 2 ? 1.0f : 0.0f
     );
-
+    const bool normals_side = m_strokes[_frame_idx].GetStrokeNormalsSide(i);
 #ifdef DEBUG_MODE_REF_CURVEDEFORM
     std::cout << "num_p: " << num_p << "\n";
 #endif
@@ -739,12 +742,21 @@ void ModeRefCurveDeform::FindClosestPointFromStroke(const int _frame_idx, std::v
       const EVec3f& p_next = idx < num_p - 1 ? stroke[idx + 1] : stroke[num_p - 1];
       const EVec3f vec1 = (p_next - p_prev).normalized();
       const EVec3f vec2 = vec0.cross(vec1).normalized();
+      EVec3f tangent;
+      if (idx == 0) tangent = stroke[idx + 1] - stroke[idx];
+      else if (idx == stroke.size() - 1) tangent = stroke[idx] - stroke[idx - 1];
+      else tangent = stroke[idx + 1] - stroke[idx - 1];
+      tangent.normalize();
+      EVec3f stroke_normal = vec0.cross(tangent);
+      stroke_normal.normalize();
+      stroke_normal *= (normals_side ? 1.0f : -1.0f);
 
       // get nearest vertex idx
       float dist_max = FLT_MAX;
       int idx_max = -1;
       for (int k = 0; k < mesh.m_vSize; ++k)
       {
+        if (mesh.m_vNorms[k].dot(stroke_normal) <= 0.0f) continue;
         const EVec3f diff = p - mesh.m_vVerts[k];
         Eigen::MatrixXf mat =
             powf(5.0f, 2.0f) * vec0 * vec0.transpose()

@@ -37,6 +37,7 @@ public:
   void AddNewStroke();
   void ClearAllStrokes();
   int  GetStrokePlaneXYZ(const int _idx);
+  bool GetStrokeNormalsSide(const int _idx);
   void UnselectStroke();
   int PickCPs(const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius, 
               const bool change_selected_idx = true, const bool only_selected = false);
@@ -45,6 +46,7 @@ public:
   //Manipulation for selected stroke
   void  Delete_SelStroke();
   bool  AddCP_SelStroke(const EVec3f& _pos);
+  bool  AddCP_SelStroke(const EVec3f& _pos, const EVec3f& _nearest_vertex_normal);
   int   GetPlaneXyz_SelStroke() const;
   float GetPlanePos_SelStroke() const;
   void  Lock_SelStroke();
@@ -86,7 +88,6 @@ private:
   //plane info
   int   m_plane_xyz; //0: yz, 1:zx, 2:xy
   float m_plane_pos; //pposition 
-  EVec3f m_plane_normal;
   
   //cp and stroke info 
   std::vector<EVec3f> m_stroke;
@@ -108,6 +109,7 @@ public:
   int   GetNumCPs  () const{ return static_cast<int>(m_cps.size()); }
   int   GetPlaneXYZ() const{ return m_plane_xyz; }
   float GetPlanePos() const{ return m_plane_pos; }
+  bool GetNormalSide() const { return m_normal_side; }
   void  SetPlaneXYZ(int plane_xyz) { m_plane_xyz = plane_xyz; }
   void  SetPlanePos(float plane_pos) { m_plane_pos = plane_pos; }
   std::vector<EVec3f> GetStroke() const { return m_stroke; }
@@ -124,6 +126,7 @@ public:
   
   //CP manipulation
   bool AddNewCP(const EVec3f _pos);
+  bool AddNewCP(const EVec3f _pos, const EVec3f& _nearest_vertex_normal);
   void MoveSelectedCP(const EVec3f& _pos);
   void DeleteSelectedCP();
 
