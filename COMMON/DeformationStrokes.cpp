@@ -623,8 +623,6 @@ void DeformationStrokes::Stroke::DrawStroke(const bool& _is_selected) const
     EVec3f draw_normal = m_plane_normal.cross(tangent);
     draw_normal.normalize();
 
-    draw_normal.normalize();
-
     if (i == 0)
     {
       previous_draw_normal = draw_normal;
