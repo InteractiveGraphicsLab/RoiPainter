@@ -138,6 +138,13 @@ System::Void FormRefCurveDeform::m_checkbox_vissurf_solid_CheckedChanged(
   formMain_RedrawMainPanel();
 }
 
+System::Void FormRefCurveDeform::m_checkbox_visnormals_CheckedChanged(
+  System::Object^ sender,
+  System::EventArgs^ e)
+{
+  formMain_RedrawMainPanel();
+}
+
 void FormRefCurveDeform::LoadState()
 {
   std::string fpath;

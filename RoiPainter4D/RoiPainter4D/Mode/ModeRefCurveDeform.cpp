@@ -460,7 +460,7 @@ void ModeRefCurveDeform::DrawScene(
   // draw stroke
   if (!IsSKeyOn())
   {
-    m_strokes[frame_idx].DrawStrokes(m_show_only_selected_stroke);
+    m_strokes[frame_idx].DrawStrokes(m_show_only_selected_stroke, FormRefCurveDeform_bVisNormals());
 
     for (int i = 0; i < m_matched_pos.size(); ++i)
     {

@@ -78,6 +78,7 @@ namespace RoiPainter4D {
 	private: System::Windows::Forms::CheckBox^ m_checkbox_vissurf_trans;
 
 	private: System::Windows::Forms::Button^ m_btn_flip_normals;
+	private: System::Windows::Forms::CheckBox^ m_checkbox_visnormals;
 
 	protected:
 
@@ -123,6 +124,7 @@ namespace RoiPainter4D {
 			this->m_checkbox_visbound = (gcnew System::Windows::Forms::CheckBox());
 			this->m_checkbox_vissurf_trans = (gcnew System::Windows::Forms::CheckBox());
 			this->m_btn_flip_normals = (gcnew System::Windows::Forms::Button());
+			this->m_checkbox_visnormals = (gcnew System::Windows::Forms::CheckBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_numbox_cpsize))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackbar_mcscale))->BeginInit();
 			this->SuspendLayout();
@@ -345,11 +347,10 @@ namespace RoiPainter4D {
 			// label6
 			// 
 			this->label6->AutoSize = true;
-			this->label6->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(128)));
-			this->label6->Location = System::Drawing::Point(241, 508);
+			this->label6->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9));
+			this->label6->Location = System::Drawing::Point(242, 519);
 			this->label6->Name = L"label6";
-			this->label6->Size = System::Drawing::Size(204, 80);
+			this->label6->Size = System::Drawing::Size(182, 72);
 			this->label6->TabIndex = 0;
 			this->label6->Text = L"[s key] hide stroke.\r\n[Space key] hide mesh.\r\n[d key] show mask.\r\n[m key] show vo"
 				L"lume.";
@@ -406,14 +407,28 @@ namespace RoiPainter4D {
 			// 
 			// m_btn_flip_normals
 			// 
-			this->m_btn_flip_normals->Location = System::Drawing::Point(8, 54);
+			this->m_btn_flip_normals->Location = System::Drawing::Point(16, 52);
 			this->m_btn_flip_normals->Name = L"m_btn_flip_normals";
-			this->m_btn_flip_normals->Size = System::Drawing::Size(133, 23);
+			this->m_btn_flip_normals->Size = System::Drawing::Size(133, 30);
 			this->m_btn_flip_normals->TabIndex = 30;
 			this->m_btn_flip_normals->Text = L"flip normals";
 			this->m_btn_flip_normals->UseVisualStyleBackColor = true;
 			this->m_btn_flip_normals->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_flip_normals_Click);
-			//
+			// 
+			// m_checkbox_visnormals
+			// 
+			this->m_checkbox_visnormals->AutoSize = true;
+			this->m_checkbox_visnormals->Checked = true;
+			this->m_checkbox_visnormals->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->m_checkbox_visnormals->Location = System::Drawing::Point(45, 89);
+			this->m_checkbox_visnormals->Margin = System::Windows::Forms::Padding(5, 4, 5, 4);
+			this->m_checkbox_visnormals->Name = L"m_checkbox_visnormals";
+			this->m_checkbox_visnormals->Size = System::Drawing::Size(135, 22);
+			this->m_checkbox_visnormals->TabIndex = 31;
+			this->m_checkbox_visnormals->Text = L"show normals";
+			this->m_checkbox_visnormals->UseVisualStyleBackColor = true;
+			this->m_checkbox_visnormals->CheckedChanged += gcnew System::EventHandler(this, &FormRefCurveDeform::m_checkbox_visnormals_CheckedChanged);
+			// 
 			// FormRefCurveDeform
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(10, 18);
@@ -421,6 +436,7 @@ namespace RoiPainter4D {
 			this->ClientSize = System::Drawing::Size(500, 600);
 			this->Controls->Add(this->m_btn_flip_normals);
 			this->Controls->Add(this->m_checkbox_vissurf_solid);
+			this->Controls->Add(this->m_checkbox_visnormals);
 			this->Controls->Add(this->m_checkbox_visbound);
 			this->Controls->Add(this->m_checkbox_vissurf_trans);
 			this->Controls->Add(this->label7);
@@ -471,7 +487,8 @@ namespace RoiPainter4D {
 		System::Void m_checkbox_vissurf_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_checkbox_visbound_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_checkbox_vissurf_solid_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_flip_normals_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_flip_normals_Click(System::Object^ sender, System::EventArgs^ e); 
+		System::Void m_checkbox_visnormals_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
 	public:
 		void LoadState();
 		void SaveState();
@@ -481,6 +498,7 @@ namespace RoiPainter4D {
 		bool DoVisSurfTrans() { return m_checkbox_vissurf_trans->Checked; }
 		bool DoVisSurfSolid() { return m_checkbox_vissurf_solid->Checked; }
 		bool DoVisBound() { return m_checkbox_visbound->Checked; }
+		bool DoVisNormals() { return m_checkbox_visnormals->Checked; }
 };
 
 	inline void FormRefCurveDeform_Show() { FormRefCurveDeform::GetInst()->Show(); }
@@ -494,5 +512,6 @@ namespace RoiPainter4D {
 	inline bool FormRefCurveDeform_bVisBound() {return FormRefCurveDeform::GetInst()->DoVisBound();}
 	inline bool FormRefCurveDeform_bVisSurfTrans() {return FormRefCurveDeform::GetInst()->DoVisSurfTrans();}
 	inline bool FormRefCurveDeform_bVisSurfSolid() {return FormRefCurveDeform::GetInst()->DoVisSurfSolid();}
+	inline bool FormRefCurveDeform_bVisNormals() { return FormRefCurveDeform::GetInst()->DoVisNormals(); }
 
 }
