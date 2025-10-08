@@ -58,7 +58,7 @@ void ModeRefCurveDeform::StartMode()
   m_mask_mesh = MaskMeshSequence();
   auto c = ImageCore::GetInst()->GetCuboidF();
   m_cp_rate = c[0] * 0.0006f;
-  m_cp_size = 10;
+  m_cp_size = 3;
   m_prev_frame_idx = formVisParam_getframeI();
   m_strokes = std::vector<DeformationStrokes>(ImageCore::GetInst()->GetNumFrames());
   m_tmeshes = std::vector<TMesh>(ImageCore::GetInst()->GetNumFrames());
@@ -85,7 +85,7 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
   m_bL = true;
   const int frame_idx = formVisParam_getframeI();
 
-  if (IsShiftKeyOn())
+  if (IsShiftKeyOn() && m_mask_mesh.is_initialized)
   {
     Do(); //undo,redo処理
     TMesh& mesh = m_mask_mesh.GetMesh(frame_idx);
@@ -406,7 +406,7 @@ void ModeRefCurveDeform::DrawScene(
   ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsVisFore(IsDKeyOn());
 
-  if (IsMKeyOn() && formVisParam_bRendVol())
+  if (IsVKeyOn())
   {
     DrawVolumeVisMask(!IsShiftKeyOn(), cam_pos, cam_cnt);
   }
@@ -655,6 +655,28 @@ void ModeRefCurveDeform::CopyFromPrevFrame()
 }
 
 
+void ModeRefCurveDeform::CopyToNextFrame()
+{
+  const int frame_idx = formVisParam_getframeI();
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+  DeformationStrokes& dstrokes = m_strokes[frame_idx];
+
+  if (dstrokes.GetSelectedStrokeIdx() == -1) return;
+  if (frame_idx < 0) return;
+  if (frame_idx >= num_frames -1) return;
+  if (dstrokes.bSelStrokeShared() ) return;
+
+  dstrokes.CleanStrokesNormalsSide();
+  DeformationStrokes& dstrokes_next = m_strokes[frame_idx +1];
+  dstrokes_next.AddNewStroke( dstrokes.CloneSelStroke() );
+
+  std::cout << "Copy to next frame.\n";
+  Do();
+  formMain_RedrawMainPanel();
+  formMain_ActivateMainForm();
+}
+
+
 void ModeRefCurveDeform::CopyStrokesToAllFrame()
 {
   const int frame_idx = formVisParam_getframeI();
@@ -884,6 +906,8 @@ void ModeRefCurveDeform::SaveState(const std::string& _fpath, const std::set<int
   for (int i = 0; i < num_frames; ++i)
   {
     if (!_set_frame_idx.count(i)) continue;
+
+    m_strokes[i].CleanStrokesNormalsSide();
 
     file << "Frame:\n";
     file << std::to_string(i) + "\n\n";

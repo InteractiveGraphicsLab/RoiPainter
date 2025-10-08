@@ -16,7 +16,7 @@ using namespace RoiPainter4D;
 
 void FormRefCurveDeform::InitAllItems()
 {
-  m_numbox_cpsize->Value = 10;
+  m_numbox_cpsize->Value = 3;
   m_checkbox_showonlyselectedstroke->Checked = false;
   m_trackbar_mcscale->Value = 2;
   m_checkbox_vissurf_trans->Checked = true;
@@ -73,6 +73,10 @@ System::Void FormRefCurveDeform::m_copy_from_prev_frame_Click(System::Object^ se
   ModeRefCurveDeform::GetInst()->CopyFromPrevFrame();
 }
 
+System::Void FormRefCurveDeform::m_copy_to_next_frame_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->CopyToNextFrame();
+}
 
 System::Void FormRefCurveDeform::m_btn_convert_mesh_mask_Click(System::Object^ sender, System::EventArgs^ e)
 {

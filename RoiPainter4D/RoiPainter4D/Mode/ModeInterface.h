@@ -219,7 +219,7 @@ inline bool IsDKeyOn  ()   { return GetKeyState(0x44) < 0; }
 //inline bool IsJKeyOn  ()   { return GetKeyState(0x4A) < 0; }
 //inline bool IsKKeyOn  ()   { return GetKeyState(0x4B) < 0; }
 //inline bool IsLKeyOn  ()   { return GetKeyState(0x4C) < 0; }
-inline bool IsMKeyOn  ()   { return GetKeyState(0x4D) < 0; }
+//inline bool IsMKeyOn  ()   { return GetKeyState(0x4D) < 0; }
 //inline bool IsNKeyOn  ()   { return GetKeyState(0x4E) < 0; }
 //inline bool IsOKeyOn  ()   { return GetKeyState(0x4F) < 0; }
 //inline bool IsPKeyOn  ()   { return GetKeyState(0x50) < 0; }
@@ -228,7 +228,7 @@ inline bool IsMKeyOn  ()   { return GetKeyState(0x4D) < 0; }
 inline bool IsSKeyOn  ()   { return GetKeyState(0x53) < 0; }
 //inline bool IsTKeyOn  ()   { return GetKeyState(0x54) < 0; }
 //inline bool IsUKeyOn  ()   { return GetKeyState(0x55) < 0; }
-//inline bool IsVKeyOn  ()   { return GetKeyState(0x56) < 0; }
+inline bool IsVKeyOn  ()   { return GetKeyState(0x56) < 0; }
 //inline bool IsWKeyOn  ()   { return GetKeyState(0x57) < 0; }
 //inline bool IsXKeyOn  ()   { return GetKeyState(0x58) < 0; }
 //inline bool IsYKeyOn  ()   { return GetKeyState(0x59) < 0; }

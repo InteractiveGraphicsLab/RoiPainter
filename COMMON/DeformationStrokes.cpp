@@ -32,6 +32,11 @@ void DeformationStrokes::AddNewStroke()
   m_selected_stroke_idx = static_cast<int>(m_strokes.size()) - 1;
 }
 
+void DeformationStrokes::AddNewStroke(const Stroke& newstroke)
+{
+  m_strokes.push_back(newstroke);
+  m_selected_stroke_idx = static_cast<int>(m_strokes.size()) - 1;
+}
 
 void DeformationStrokes::ClearAllStrokes()
 {
@@ -213,6 +218,11 @@ void DeformationStrokes::UnlockAllStrokes()
 void DeformationStrokes::MakeShare_SelStroke(const int new_shared_idx)
 {
   if (m_selected_stroke_idx == -1) return ;
+  if (!m_strokes[m_selected_stroke_idx].GetNormalSide())
+  {
+    m_strokes[m_selected_stroke_idx].ReverseStrokeAndCps();
+    m_strokes[m_selected_stroke_idx].FlipNormal();
+  }
   m_strokes[m_selected_stroke_idx].m_is_shared = true;
   m_strokes[m_selected_stroke_idx].m_shared_idx = new_shared_idx;
   m_strokes[m_selected_stroke_idx].m_is_locked = true;
@@ -348,7 +358,23 @@ void DeformationStrokes::FlipSelNormals()
   if (m_selected_stroke_idx == -1) return;
   m_strokes[m_selected_stroke_idx].FlipNormal();
 }
-
+DeformationStrokes::Stroke DeformationStrokes::CloneSelStroke()
+{
+  Stroke newstroke = m_strokes[m_selected_stroke_idx];
+  return newstroke;
+}
+void DeformationStrokes::CleanStrokesNormalsSide()
+{
+  const int size = static_cast<int>(m_strokes.size());
+  for (int i = 0; i < size; ++i)
+  {
+    if (!m_strokes[i].GetNormalSide())
+    {
+      m_strokes[i].ReverseStrokeAndCps();
+      m_strokes[i].FlipNormal();
+    }
+  }
+}
 
 
 
@@ -665,6 +691,11 @@ void DeformationStrokes::Stroke::FlipNormal()
   m_normal_side = m_normal_side ? false : true;
 }
 
+void DeformationStrokes::Stroke::ReverseStrokeAndCps()
+{
+  std::reverse(m_cps.begin(), m_cps.end());
+  std::reverse(m_stroke.begin(), m_stroke.end());
+}
 
 
 void DeformationStrokes::Stroke::UpdateStroke()
@@ -684,7 +715,9 @@ void DeformationStrokes::Stroke::UpdateStroke()
   stroke_2f = KCurves::CalcKCurvesOpen(cps_2f);
 
   //failed
-  if (stroke_2f.size() == 0) return;
+  if (stroke_2f.size() == 0) { std::cout << "x"; return; }
+
+  std::cout << "o";
 
   // convert stroke: EVec2f to EVec3f
   m_stroke.clear();
