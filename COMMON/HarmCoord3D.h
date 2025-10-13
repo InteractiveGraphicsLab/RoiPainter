@@ -4,7 +4,6 @@
 
 #include "tmesh.h"
 
-
 class HarmCoord3D
 {
 public:

@@ -13,8 +13,14 @@ class ModeCore
   ModeInterface* m_mode;
 
   ModeCore();
-public:
   ~ModeCore();
+
+  ModeCore(const ModeCore&) = delete;            
+  ModeCore& operator=(const ModeCore&) = delete; 
+  ModeCore(ModeCore&&) = delete;                 
+  ModeCore& operator=(ModeCore&&) = delete;      
+
+public:
 
   static ModeCore* GetInst() {
     static ModeCore p;
@@ -41,7 +47,8 @@ public:
     m_mode->DrawScene(cuboid, cam_pos, cam_center);
   }
 
-  MODE_ID GetCurrentModeId(){ return m_mode_id; }
+  MODE_ID GetCurrentModeId() const { return m_mode_id; }
+
 
 };
 

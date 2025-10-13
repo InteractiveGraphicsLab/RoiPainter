@@ -46,18 +46,20 @@ void ModeCore::ModeSwitch(MODE_ID m)
 
   if (!m_mode->CanLeaveMode()) return;
 
-  if      (m == MODE_VIS_MASK      ) { m_mode = ModeVizMask         ::getInst(); m_mode_id = m; }
-  else if (m == MODE_SEG_REGGROW   ) { m_mode = ModeSegRGrow        ::GetInst(); m_mode_id = m; }
-  else if (m == MODE_SEG_GCUT      ) { m_mode = ModeSegGCut         ::getInst(); m_mode_id = m; }
-  else if (m == MODE_SEG_VOXPAINT  ) { m_mode = ModeSegVoxelPaint   ::GetInst(); m_mode_id = m; }
-  else if (m == MODE_SEG_PARAWIRE  ) { m_mode = ModeSegParallelWires::GetInst(); m_mode_id = m; }
-  else if (m == MODE_REF_STRKTRIM  ) { m_mode = ModeRefStrokeTrim   ::GetInst(); m_mode_id = m; }
-  else if (m == MODE_REF_VOXPAINT  ) { m_mode = ModeSegVoxelPaint   ::GetInst(); m_mode_id = m; }
-  else if (m == MODE_SEG_LCLRGROW  ) { m_mode = ModeSegLocalRGrow   ::GetInst(); m_mode_id = m; }
-  else if (m == MODE_REF_SPLITPLANE) { m_mode = ModeRefSplitByPlane ::GetInst(); m_mode_id = m; }
-  else	                             { m_mode = ModeVizNormal::getInst(); m_mode_id = MODE_VIS_NORMAL; }
+  m_mode_id = m;
+  switch (m) {
+    case MODE_VIS_MASK:       m_mode = ModeVizMask::getInst(); break;
+    case MODE_SEG_REGGROW:    m_mode = ModeSegRGrow::GetInst(); break;
+    case MODE_SEG_GCUT:       m_mode = ModeSegGCut::getInst(); break;
+    case MODE_SEG_VOXPAINT:   m_mode = ModeSegVoxelPaint::GetInst(); break;
+    case MODE_SEG_PARAWIRE:   m_mode = ModeSegParallelWires::GetInst(); break;
+    case MODE_REF_STRKTRIM:   m_mode = ModeRefStrokeTrim::GetInst(); break;
+    case MODE_REF_VOXPAINT:   m_mode = ModeSegVoxelPaint::GetInst(); break;
+    case MODE_SEG_LCLRGROW:   m_mode = ModeSegLocalRGrow::GetInst(); break;
+    case MODE_REF_SPLITPLANE: m_mode = ModeRefSplitByPlane::GetInst(); break;
+    default:                  m_mode = ModeVizNormal::getInst(); m_mode_id = MODE_VIS_NORMAL; break;
+  }
 
-  //// Hide all Forms
   formVisNorm_Hide();
   formVisMask_Hide();
   formSegRGrow_Hide();
@@ -68,6 +70,5 @@ void ModeCore::ModeSwitch(MODE_ID m)
   formSegLocalRGrow_Hide();
   formRefSplitByPlane_Hide();
 
-  // start new mode
   m_mode->StartMode();
 }
