@@ -229,7 +229,7 @@ System::Void FormVisParam::winLevelMinBar_MouseUp(System::Object^  sender, Syste
 {
   winLevelMinTextBox->Text = winLevelMinBar->Value.ToString();
   winLevelMinTextBox->Refresh();
-  ImageCore::GetInst()->UpdateOGLVolume(winLevelMinBar->Value, winLevelMaxBar->Value);
+  ImageCore::GetInst()->UpdateOglVolume(winLevelMinBar->Value, winLevelMaxBar->Value);
 
   updateHistogramBmp();
   redrawTransFuncPictBox();
@@ -241,7 +241,7 @@ System::Void FormVisParam::winLevelMaxBar_MouseUp(System::Object^  sender, Syste
   winLevelMaxTextBox->Text = winLevelMaxBar->Value.ToString();
   winLevelMaxTextBox->Refresh();
 
-  ImageCore::GetInst()->UpdateOGLVolume(winLevelMinBar->Value, winLevelMaxBar->Value);
+  ImageCore::GetInst()->UpdateOglVolume(winLevelMinBar->Value, winLevelMaxBar->Value);
 
   updateHistogramBmp();
   redrawTransFuncPictBox();

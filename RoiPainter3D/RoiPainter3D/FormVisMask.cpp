@@ -98,7 +98,7 @@ System::Void FormVisMask::btnColorPallet_Click  (
     return;
   
   EVec3i c(colorDialog->Color.R, colorDialog->Color.G, colorDialog->Color.B);
-  ImageCore::GetInst()->ActiveMask_SetColor( c );
+  ImageCore::GetInst()->ActiveMaskSetColor( c );
 
   updateList();
   RedrawScene();
@@ -111,7 +111,7 @@ System::Void FormVisMask::checkbox_lock_CheckedChanged(
     System::EventArgs^  e)
 {
   bool locked = (checkbox_lock->CheckState == CheckState::Checked);
-  ImageCore::GetInst()->ActiveMask_SetLocked( locked );
+  ImageCore::GetInst()->ActiveMaskSetLocked( locked );
   RedrawScene();
 }
 
@@ -120,7 +120,7 @@ System::Void FormVisMask::trackbar_alpha_Scroll (
     System::Object^  sender, 
     System::EventArgs^  e) 
 {
-  ImageCore::GetInst()->ActiveMask_SetAlpha( trackbar_alpha->Value / 100.0);
+  ImageCore::GetInst()->ActiveMaskSetAlpha( trackbar_alpha->Value / 100.0);
   RedrawScene();
 }
 
@@ -130,7 +130,7 @@ System::Void FormVisMask::btnDelete_Click(
     System::Object^  sender, 
     System::EventArgs^  e) 
 {
-  ImageCore::GetInst()->ActiveMask_Delete();
+  ImageCore::GetInst()->ActiveMaskDelete();
   updateList();
   RedrawScene();
 }
@@ -167,7 +167,7 @@ System::Void FormVisMask::btnErode_Click(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  ImageCore::GetInst()->ActiveMask_Erode();
+  ImageCore::GetInst()->ActiveMaskErode();
   updateList();
   RedrawScene();
 }
@@ -178,7 +178,7 @@ System::Void FormVisMask::btnDilate_Click(
     System::Object^  sender, 
     System::EventArgs^  e)
 {
-  ImageCore::GetInst()->ActiveMask_Dilate();
+  ImageCore::GetInst()->ActiveMaskDilate();
   updateList();
   RedrawScene();
 }
@@ -226,7 +226,7 @@ System::Void FormVisMask::btnExpObj_Click(
   IntPtr mptr  = Marshal::StringToHGlobalAnsi(dlg->FileName);
   std::string fname = static_cast<const char*>(mptr.ToPointer());
 
-  ImageCore::GetInst()->ActiveMask_ExportObj(fname);
+  ImageCore::GetInst()->ActiveMaskExportObj(fname);
 }
 
 

@@ -6,6 +6,8 @@
 #include "kcurves.h"
 #include <fstream>
 #include "../ModeCore.h"
+#include "OglForCLI.h"
+
 
 #pragma managed
 #include "FormSegParallelWires.h"
@@ -497,7 +499,7 @@ void ModeSegParallelWires::DrawScene(
     const EVec3f &camF)
 {
   //bind volumes ---------------------------------------
-  ImageCore::GetInst()->UpdateOGLMaskColorImg();
+  ImageCore::GetInst()->UpdateOglMaskColorImg();
   BindAllVolumes();
 
   const EVec3i reso = ImageCore::GetInst()->GetResolution();

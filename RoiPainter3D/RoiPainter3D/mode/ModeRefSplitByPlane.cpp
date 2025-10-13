@@ -7,6 +7,7 @@
 #include "time.h"
 #include "LogCore.h"
 #include "OglImage.h"
+#include "OglForCLI.h"
 
 #pragma managed
 #include "FormMain.h"

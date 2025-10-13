@@ -6,6 +6,7 @@
 #include "CrsSecCore.h"
 #include "time.h"
 #include "LogCore.h"
+#include "OglForCLI.h"
 
 #pragma managed
 #include "FormMain.h"

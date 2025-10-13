@@ -5,6 +5,7 @@
 #include "ModeCore.h"
 #include "CrsSecCore.h"
 #include <algorithm>
+#include "OglForCLI.h"
 
 #pragma managed 
 #include "FormMain.h"

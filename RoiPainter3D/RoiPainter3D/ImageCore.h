@@ -14,19 +14,15 @@
 //-------------------------------------
 
 #pragma unmanaged
-#include "OglForCLI.h"
-#include "OglImage.h"
 #include "tmath.h"
-#include "tmesh.h"
-#include "MaskData.h"
 #include <vector>
 #include <string>
-#include <iostream>
+#include "OglImage.h"
+#include "MaskData.h"
 
 
 class ImageCore
 {  
-
 private:
 	//volume info 
 	EVec3i      m_resolution ;
@@ -51,19 +47,21 @@ public:
   //singleton
 private:
   ImageCore();
+  ImageCore(const ImageCore&) = delete;
+  ImageCore& operator=(const ImageCore&) = delete;
+
 public:
 	static ImageCore* GetInst(){ static ImageCore p; return &p;}
 
   //update opengl volumes by linear tone mapping 
-	void UpdateOGLVolume( short windowlv_min,  short windowlv_max);
-  void UpdateOGLMaskColorImg();
+	void UpdateOglVolume( short windowlv_min,  short windowlv_max);
+  void UpdateOglMaskColorImg();
 
 	//I/O Loaders volume 
 	bool  LoadVolume   (std::vector<std::string> fnames, std::string fext);
 	bool  LoadVolume   (std::string fname              , std::string fext) ;
 	void  LoadMask     (const char *fname);
 	void  SaveMask     (const char *fname);
-	void  SaveMaskAsFav(const char *fname);
   void  SaveVolumeAsTraw3dss(const char *fname);
 
 	//getter & setter for resolution and pitch
@@ -141,14 +139,14 @@ public:
   void ClearMaskSurface(int trgtid);
   void DrawMaskSurfaces();
   // manipuration for active (user-selected) mask id
-  void ActiveMask_SetLocked  (const bool   tf    );
-  void ActiveMask_SetRendSurf(const bool   tf    );
-  void ActiveMask_SetAlpha   (const double alpha );
-  void ActiveMask_SetColor   (const EVec3i &c    );
-  void ActiveMask_Delete   ( );
-  void ActiveMask_Erode    ( );
-  void ActiveMask_Dilate   ( );
-  void ActiveMask_ExportObj(const std::string &fname);
+  void ActiveMaskSetLocked  (const bool   tf    );
+  void ActiveMaskSetRendSurf(const bool   tf    );
+  void ActiveMaskSetAlpha   (const double alpha );
+  void ActiveMaskSetColor   (const EVec3i &c    );
+  void ActiveMaskDelete   ( );
+  void ActiveMaskErode    ( );
+  void ActiveMaskDilate   ( );
+  void ActiveMaskExportObj(const std::string &fname);
   void FillHole ( std::set<int> &ids );
 
   void SmartFillHole( std::set<int> &ids, int dilation_size);

@@ -43,7 +43,7 @@ static bool t_LoadDefoultVolume(
 	)
 {
 	const int N = 64, R = N/5;
-	reso  << N, N+3, N -3;
+	reso  << N, N + 3, N -3;
 	pitch << 1, 1, 1;
 	vol = new short[reso[0] * reso[1] * reso[2]];
 
@@ -146,69 +146,6 @@ static bool t_LoadTxt(
 	return true;
 }
 
-
-/*
-////////////////////////////////////////////////////////////////////////////////////
-static bool t_LoadFAV(
-	const  string fname,
-	EVec3i &reso     ,
-	EVec3f &pitch    ,
-	short* &vol)
-{
-
-	std::cout << "t_LoadFAV";
-	
-	FavLibrary::Fav fav;
-	fav.read( fname.c_str() );
-
-	if (fav.getNumObjects() == 0) return false;
-	
-	int id = fav.getObjects().begin()->first;
-	FavLibrary::Object     &obj       = fav.getObjects().begin()->second;
-	FavLibrary::Structure  &structure = obj.structure;		;
-	FavLibrary::Grid       &grid      = obj.grid     ;
-	FavLibrary::BitPerVoxel bitPerVox = structure.getBitPerVoxel();
-	std::cout << fav.getObjects().size() << " " << id << " " << bitPerVox << "\n";
-
-	FavLibrary::ColorMode cMode = structure.getColorMode();
-	std::cout << "mode " << structure.getColorMode() << "\n";
-
-	const int W = (int)structure.getDimensionX();
-	const int H = (int)structure.getDimensionY();
-	const int D = (int)structure.getDimensionZ();
-	
-	
-	reso  << W, H, D;
-	pitch << 1, 1, 1;
-	vol = new short[W*H*D];
-
-	std::cout << "dimension << W << " " << H << " " << D << "\n";
-	std::cout << structure.get_voxel_map()      ->size() << "\n";
-	std::cout << structure.get_voxel_map_16bit()->size() << "\n";
-	std::cout << structure.get_alpha_map()      ->size() << "\n";
-	std::cout << structure.get_color_map()      ->size() << "\n";
-	std::cout << structure.get_color_map_16bit()->size() << "\n";
-
-  
-	for( int z = 0; z < D; ++z)
-  {
-	  for( int y = 0; y < H; ++y)
-    {
-	    for( int x = 0; x < W; ++x)
-	    {
-		    //int r = structure.getColorRed  (x, y, z);
-		    //int g = structure.getColorGreen(x, y, z);
-		    //int b = structure.getColorBlue (x, y, z);
-		    //std::cout << r << " " << g << " " << b << "--" ;
-		    //vol[x + y * W + z * W*H] = r+g+b;
-	    }
-    }
-  }
-
-
-    return true;
-}
-*/
 
 
 static bool t_LoadBMP_TIFs
@@ -508,14 +445,14 @@ void ImageCore::UpdateGradMagnituteVolume()
 
 
 
-void ImageCore::UpdateOGLVolume(short windowlv_min,  short windowlv_max)
+void ImageCore::UpdateOglVolume(short windowlv_min,  short windowlv_max)
 {
   m_vol.SetValue( m_vol_orig, (short)windowlv_min, (short)windowlv_max);
 }
 
 
 
-void ImageCore::UpdateOGLMaskColorImg()
+void ImageCore::UpdateOglMaskColorImg()
 {
   //gen mask color id
   m_img_maskcolor.SetZero();
@@ -691,7 +628,7 @@ void ImageCore::GetFlgVolByMask_0_1_255(
 
 
 
-void ImageCore::ActiveMask_Delete  ()
+void ImageCore::ActiveMaskDelete  ()
 {
   if (m_active_maskid < 0 || m_mask_data.size() <= m_active_maskid) return;
 
@@ -883,7 +820,7 @@ void ImageCore::SmartFillHole( std::set<int> &ids, int dilation_size )
 
 
 
-void ImageCore::ActiveMask_Erode()
+void ImageCore::ActiveMaskErode()
 {
   std::cout << "mask erode...\n";
   if ( m_active_maskid <= 0 || m_mask_data.size() <= m_active_maskid) return;
@@ -912,7 +849,7 @@ void ImageCore::ActiveMask_Erode()
 
 
 
-void ImageCore::ActiveMask_Dilate  ()
+void ImageCore::ActiveMaskDilate  ()
 {
   if ( m_active_maskid <= 0 || m_mask_data.size() <= m_active_maskid) return;
 
@@ -1001,7 +938,7 @@ void ImageCore::FillHole( std::set<int> &ids )
 
 
 
-void ImageCore::ActiveMask_ExportObj  (const string &fname)
+void ImageCore::ActiveMaskExportObj  (const string &fname)
 {
   if ( m_active_maskid <= 0 || m_mask_data.size() <= m_active_maskid) return;
 
@@ -1236,21 +1173,21 @@ void ImageCore::StoreForegroundAsNewMask()
 }
 
 
-void ImageCore::ActiveMask_SetLocked(const bool tf)
+void ImageCore::ActiveMaskSetLocked(const bool tf)
 {
 	if( m_active_maskid < 0 || m_mask_data.size() <= m_active_maskid ) return;
 	m_mask_data[m_active_maskid].m_b_locked = tf;
 }
 
 
-void ImageCore::ActiveMask_SetAlpha(const double alpha)
+void ImageCore::ActiveMaskSetAlpha(const double alpha)
 {
 	if( m_active_maskid < 0 || m_mask_data.size() <= m_active_maskid ) return;
 	m_mask_data[m_active_maskid].m_alpha = alpha;
 }
 
 
-void ImageCore::ActiveMask_SetColor(const EVec3i &c)
+void ImageCore::ActiveMaskSetColor(const EVec3i &c)
 {
 	if( m_active_maskid < 0 || m_mask_data.size() <= m_active_maskid ) return;
 	m_mask_data[m_active_maskid].m_color = c;
@@ -1258,7 +1195,7 @@ void ImageCore::ActiveMask_SetColor(const EVec3i &c)
 
 
 
-void ImageCore::ActiveMask_SetRendSurf(const bool tf)
+void ImageCore::ActiveMaskSetRendSurf(const bool tf)
 {
 	if( m_active_maskid < 0 || m_mask_data.size() <= m_active_maskid ) return;
 	MaskData &trgtMsk = m_mask_data[m_active_maskid];

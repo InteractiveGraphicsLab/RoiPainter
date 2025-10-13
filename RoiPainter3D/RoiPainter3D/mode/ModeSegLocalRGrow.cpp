@@ -17,6 +17,7 @@
 #include "FormVisParam.h"
 #include "FormSegLocalRGrow.h"
 #include "climessagebox.h"
+#include "OglForCLI.h"
 
 #pragma unmanaged
 

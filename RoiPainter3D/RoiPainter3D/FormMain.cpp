@@ -22,6 +22,7 @@
 #include "CrsSecCore.h"
 #include "ViewAngleCore.h"
 #include <iostream>
+#include "OglForCLI.h"
 
 #pragma managed
 

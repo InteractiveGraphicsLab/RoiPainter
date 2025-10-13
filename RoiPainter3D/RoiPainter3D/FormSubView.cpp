@@ -8,6 +8,7 @@
 #include "CrsSecCore.h"
 #include "ModeCore.h"
 #include "ViewAngleCore.h"
+#include "OglForCLI.h"
 
 #pragma managed
 

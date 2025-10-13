@@ -5,6 +5,7 @@
 #include "CrsSecCore.h"
 #include "tmesh.h"
 #include "tmarchingcubes.h"
+#include "OglForCLI.h"
 
 #pragma managed
 #include "FormVisMask.h"
@@ -153,7 +154,7 @@ void ModeVizMask::DrawScene(
     const EVec3f &cam_pos, 
     const EVec3f &cam_cnt)
 {
-  ImageCore::GetInst()->UpdateOGLMaskColorImg();
+  ImageCore::GetInst()->UpdateOglMaskColorImg();
 
   //bind volumes ---------------------------------------
   BindAllVolumes();

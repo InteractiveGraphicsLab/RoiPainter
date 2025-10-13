@@ -5,6 +5,7 @@
 
 #include "ImageCore.h"
 #include "CrsSecCore.h" 
+#include "OglForCLI.h"
 
 #pragma managed
 #include "FormVisParam.h" 
