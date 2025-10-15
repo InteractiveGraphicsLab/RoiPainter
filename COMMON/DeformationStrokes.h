@@ -35,8 +35,11 @@ public:
 
   // Stroke Manipulation 
   void AddNewStroke();
+  void AddNewStroke(const Stroke &newstroke);
   void ClearAllStrokes();
   int  GetStrokePlaneXYZ(const int _idx);
+  bool GetStrokeNormalsSide(const int _idx);
+  void CleanStrokesNormalsSide();
   void UnselectStroke();
   int PickCPs(const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius, 
               const bool change_selected_idx = true, const bool only_selected = false);
@@ -45,6 +48,7 @@ public:
   //Manipulation for selected stroke
   void  Delete_SelStroke();
   bool  AddCP_SelStroke(const EVec3f& _pos);
+  bool  AddCP_SelStroke(const EVec3f& _pos, const EVec3f& _nearest_vertex_normal);
   int   GetPlaneXyz_SelStroke() const;
   float GetPlanePos_SelStroke() const;
   void  Lock_SelStroke();
@@ -56,7 +60,7 @@ public:
   void MoveSelectedCP(const EVec3f& _pos);
   void DeleteSelectedCP();
 
-  void DrawStrokes(const bool& _only_selected_stroke = false) const;
+  void DrawStrokes(const bool& _only_selected_stroke = false, const bool& _show_nowrmals = true ) const;
   void DrawControlPoints(const float& _cp_radius, const bool& _only_selected_stroke = false) const;
 
   //Shared stroke関連
@@ -70,7 +74,11 @@ public:
 
   void  UnlockAllStrokes(); // copy from prevしたときの shared strokeの扱いが不明
   bool bSelStrokeShared();
+  
+  // flip normal
+  void FlipSelNormals();
 
+  Stroke CloneSelStroke();
 
   std::string OutputAsText() const;
   void LoadState(const std::vector<int>& _vec_shared_idxs, const std::vector<std::vector<EVec3f>>& _vec_cps);
@@ -88,6 +96,7 @@ private:
   //cp and stroke info 
   std::vector<EVec3f> m_stroke;
   std::vector<EVec3f> m_cps;
+  bool m_normal_side;
   int m_selected_cpid;
 
 public:
@@ -104,6 +113,7 @@ public:
   int   GetNumCPs  () const{ return static_cast<int>(m_cps.size()); }
   int   GetPlaneXYZ() const{ return m_plane_xyz; }
   float GetPlanePos() const{ return m_plane_pos; }
+  bool GetNormalSide() const { return m_normal_side; }
   void  SetPlaneXYZ(int plane_xyz) { m_plane_xyz = plane_xyz; }
   void  SetPlanePos(float plane_pos) { m_plane_pos = plane_pos; }
   std::vector<EVec3f> GetStroke() const { return m_stroke; }
@@ -120,13 +130,16 @@ public:
   
   //CP manipulation
   bool AddNewCP(const EVec3f _pos);
+  bool AddNewCP(const EVec3f _pos, const EVec3f& _nearest_vertex_normal);
   void MoveSelectedCP(const EVec3f& _pos);
   void DeleteSelectedCP();
 
   int  PickCPs(const EVec3f& _ray_pos, const EVec3f& _ray_dir, const float& _cp_radius, const bool& _change_selected_idx);
 
+  void FlipNormal();
+  void ReverseStrokeAndCps();
   void UpdateStroke();
-  void DrawStroke(const bool& _is_selected) const;
+  void DrawStroke(const bool& _is_selected, const bool& _show_nowrmals) const;
   void DrawControlPoints(const float& _cp_radius, const bool& _is_selected) const;
 
   std::string OutputAsText() const;

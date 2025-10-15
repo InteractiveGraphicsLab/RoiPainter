@@ -102,6 +102,7 @@ public:
    void ReloadMesh();
    void ReloadMesh(const int);
    void CopyFromPrevFrame();
+   void CopyToNextFrame();
    void CopyStrokesToAllFrame();
    void SetShowOnlySelectedStroke();
    void SetCPSize();
@@ -109,6 +110,7 @@ public:
    void SaveState(const std::string&, const std::set<int>&);
    void LoadState(const std::string&, const std::set<int>&);
 
+   void FlipSelectedStrokeNormalSide();
    void ShareSelectedStroke();
    void UnshareSelectedStroke();
    void LockSelectedStroke();

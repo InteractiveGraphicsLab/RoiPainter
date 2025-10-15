@@ -15,6 +15,7 @@
 #include "Mode/ModeSegStrokeFfd.h"
 #include "Mode/ModePlaceCPs.h"
 #include "Mode/ModeRefCurveDeform.h"
+#include "Mode/ModeRefPixPaint.h"
 
 #pragma managed
 #include "FormVisMask.h"
@@ -32,6 +33,7 @@
 #include "FormSegStrokeFfd.h"
 #include "FormPlaceCPs.h"
 #include "FormRefCurveDeform.h"
+#include "FormRefPixPaint.h"
 #pragma unmanaged
 
 using namespace RoiPainter4D;
@@ -75,6 +77,7 @@ void ModeCore::ModeSwitch(MODE_ID m)
   else if (m == MODE_SEG_BRONCHI )  m_mode = ModeSegBronchi::GetInst();
   else if (m == MODE_PLC_CPS)       m_mode = ModePlaceCPs  ::GetInst();
   else if (m == MODE_REF_CURVEDEFORM)       m_mode = ModeRefCurveDeform::GetInst();
+  else if (m == MODE_REF_PIXPAINT)  m_mode = ModeRefPixPaint::GetInst();
   else
     m_mode = ModeVizNormal ::GetInst();
 
@@ -94,6 +97,7 @@ void ModeCore::ModeSwitch(MODE_ID m)
   FormSegStrokeFfd_Hide();
   FormPlaceCPs_Hide();
   FormRefCurveDeform_Hide();
+  formRefPixPaint_Hide();
 
   m_mode->StartMode();
 }

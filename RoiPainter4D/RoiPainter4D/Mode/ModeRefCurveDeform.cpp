@@ -2,6 +2,7 @@
 
 #include "ModeRefCurveDeform.h"
 #include "ModeCommonTools.h"
+#include "CagedMeshSequence.h"
 
 #include "OglForCLI.h"   // openGLを利用するためのクラス
 #include "ImageCore.h"   // 画像データを保持しているクラス 　
@@ -57,7 +58,7 @@ void ModeRefCurveDeform::StartMode()
   m_mask_mesh = MaskMeshSequence();
   auto c = ImageCore::GetInst()->GetCuboidF();
   m_cp_rate = c[0] * 0.0006f;
-  m_cp_size = 10;
+  m_cp_size = 3;
   m_prev_frame_idx = formVisParam_getframeI();
   m_strokes = std::vector<DeformationStrokes>(ImageCore::GetInst()->GetNumFrames());
   m_tmeshes = std::vector<TMesh>(ImageCore::GetInst()->GetNumFrames());
@@ -67,7 +68,7 @@ void ModeRefCurveDeform::StartMode()
   //}
   m_shared_stroke_idxs = std::set<int>();
   m_histories = std::vector<History>(ImageCore::GetInst()->GetNumFrames());
-  m_show_only_selected_stroke = true;
+  m_show_only_selected_stroke = FormRefCurveDeform_GetShowOnlySelectedStroke();
   m_prev_selected_stroke_idx = -1;
   m_draw_surf_trans = true;
   m_exist_mesh = false;
@@ -84,23 +85,26 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
   m_bL = true;
   const int frame_idx = formVisParam_getframeI();
 
-  if (IsShiftKeyOn())
+  if (IsShiftKeyOn() && m_mask_mesh.is_initialized)
   {
-    Do();
+    Do(); //undo,redo処理
+    TMesh& mesh = m_mask_mesh.GetMesh(frame_idx);
     EVec3f ray_pos, ray_dir, pos;
     ogl->GetCursorRay(p, ray_pos, ray_dir);
-    const int selected_stroke_idx = m_strokes[frame_idx].PickCPs(ray_pos, ray_dir, m_cp_rate * m_cp_size, false, m_show_only_selected_stroke);
+    const int selected_stroke_idx = m_strokes[frame_idx].PickCPs(ray_pos, ray_dir, m_cp_rate * m_cp_size, false, m_show_only_selected_stroke); //CPを選択してるかチェック
 
     if (selected_stroke_idx == -1)
     {
       DeformationStrokes& dstroke = m_strokes[frame_idx];
       if (PickCrssec(ray_pos, ray_dir, pos) != CRSSEC_NON)
       {
+        const int nearest_vertex_idx = mesh.GetNearestVertexIdx(pos);
+        const EVec3f nearest_vertex_normal = mesh.m_vNorms[nearest_vertex_idx];
         if (dstroke.GetSelectedStrokeIdx() == -1)
         {
           dstroke.AddNewStroke();
         }
-        if (!dstroke.AddCP_SelStroke(pos))
+        if (!dstroke.AddCP_SelStroke(pos, nearest_vertex_normal))
         {
           dstroke.UnselectStroke();
           m_prev_selected_stroke_idx = -1;
@@ -400,9 +404,9 @@ void ModeRefCurveDeform::DrawScene(
   //ImageCore::GetInst()->UpdateImgMaskColor();
 
   ImageCore::GetInst()->BindAllVolumes();
-  DrawCrossSectionsNormal();
+  DrawCrossSectionsVisFore(IsDKeyOn());
 
-  if (IsMKeyOn() && formVisParam_bRendVol())
+  if (IsVKeyOn())
   {
     DrawVolumeVisMask(!IsShiftKeyOn(), cam_pos, cam_cnt);
   }
@@ -411,16 +415,52 @@ void ModeRefCurveDeform::DrawScene(
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
+
+
   // draw mesh
-  if (!IsSpaceKeyOn())
+  const EVec3f cuboid = ImageCore::GetCuboid();
+  bool draw_bound      = FormRefCurveDeform_bVisBound();
+  bool draw_surf_trans = FormRefCurveDeform_bVisSurfTrans();
+  bool draw_surf_solid = FormRefCurveDeform_bVisSurfSolid();
+  const bool b_xy = formVisParam_bPlaneXY();
+  const bool b_yz = formVisParam_bPlaneYZ();
+  const bool b_zx = formVisParam_bPlaneZX();
+  if (!IsSpaceKeyOn() && m_exist_mesh && (draw_bound || draw_surf_trans))
   {
-    m_mask_mesh.DrawMesh(frame_idx);
+    //draw cage & mesh 
+    glDisable(GL_CULL_FACE);
+    glDepthMask(false);
+    glEnable(GL_BLEND);
+
+    float planexy = b_xy ? CrssecCore::GetInst()->GetPlanePosXY() : -1;
+    float planeyz = b_yz ? CrssecCore::GetInst()->GetPlanePosYZ() : -1;
+    float planezx = b_zx ? CrssecCore::GetInst()->GetPlanePosZX() : -1;
+    if (!draw_bound)
+    {
+      planexy = planeyz = planezx = -1;
+    }
+
+    float opacity = draw_surf_trans ? (float)0.4 : (float)0;
+    const auto& m = m_mask_mesh.GetMesh(frame_idx);
+    DrawMeshWithCrossecHL(m, planeyz, planezx, planexy, opacity, cuboid);
+
+    glDepthMask(true);
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
   }
+  //draw mesh (solid)
+  if (!IsSpaceKeyOn() && m_exist_mesh && draw_surf_solid)
+  {
+    glDisable(GL_CULL_FACE);
+    const auto& m = m_mask_mesh.GetMesh(frame_idx);
+    DrawMeshWithCrossecHL(m, -1, -1, -1, 1.0f, cuboid);
+  }
+
 
   // draw stroke
   if (!IsSKeyOn())
   {
-    m_strokes[frame_idx].DrawStrokes(m_show_only_selected_stroke);
+    m_strokes[frame_idx].DrawStrokes(m_show_only_selected_stroke, FormRefCurveDeform_bVisNormals());
 
     for (int i = 0; i < m_matched_pos.size(); ++i)
     {
@@ -579,6 +619,7 @@ void ModeRefCurveDeform::ConvertMeshToMask()
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
   m_is_not_saved_state = false;
+  std::cout << "\n" << "\n" << "finished ConvertMeshToMask." << "\n";
 }
 
 
@@ -608,6 +649,28 @@ void ModeRefCurveDeform::CopyFromPrevFrame()
   if (frame_idx <= 0) return;
   m_strokes[frame_idx] = m_strokes[frame_idx - 1];
   std::cout << "Copy from previous frame.\n";
+  Do();
+  formMain_RedrawMainPanel();
+  formMain_ActivateMainForm();
+}
+
+
+void ModeRefCurveDeform::CopyToNextFrame()
+{
+  const int frame_idx = formVisParam_getframeI();
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+  DeformationStrokes& dstrokes = m_strokes[frame_idx];
+
+  if (dstrokes.GetSelectedStrokeIdx() == -1) return;
+  if (frame_idx < 0) return;
+  if (frame_idx >= num_frames -1) return;
+  if (dstrokes.bSelStrokeShared() ) return;
+
+  dstrokes.CleanStrokesNormalsSide();
+  DeformationStrokes& dstrokes_next = m_strokes[frame_idx +1];
+  dstrokes_next.AddNewStroke( dstrokes.CloneSelStroke() );
+
+  std::cout << "Copy to next frame.\n";
   Do();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
@@ -693,7 +756,7 @@ void ModeRefCurveDeform::FindClosestPointFromStroke(const int _frame_idx, std::v
       commonXYZ == 1 ? 1.0f : 0.0f,
       commonXYZ == 2 ? 1.0f : 0.0f
     );
-
+    const bool normals_side = m_strokes[_frame_idx].GetStrokeNormalsSide(i);
 #ifdef DEBUG_MODE_REF_CURVEDEFORM
     std::cout << "num_p: " << num_p << "\n";
 #endif
@@ -739,12 +802,21 @@ void ModeRefCurveDeform::FindClosestPointFromStroke(const int _frame_idx, std::v
       const EVec3f& p_next = idx < num_p - 1 ? stroke[idx + 1] : stroke[num_p - 1];
       const EVec3f vec1 = (p_next - p_prev).normalized();
       const EVec3f vec2 = vec0.cross(vec1).normalized();
+      EVec3f tangent;
+      if (idx == 0) tangent = stroke[idx + 1] - stroke[idx];
+      else if (idx == stroke.size() - 1) tangent = stroke[idx] - stroke[idx - 1];
+      else tangent = stroke[idx + 1] - stroke[idx - 1];
+      tangent.normalize();
+      EVec3f stroke_normal = vec0.cross(tangent);
+      stroke_normal.normalize();
+      stroke_normal *= (normals_side ? 1.0f : -1.0f);
 
       // get nearest vertex idx
       float dist_max = FLT_MAX;
       int idx_max = -1;
       for (int k = 0; k < mesh.m_vSize; ++k)
       {
+        if (mesh.m_vNorms[k].dot(stroke_normal) <= 0.0f) continue;
         const EVec3f diff = p - mesh.m_vVerts[k];
         Eigen::MatrixXf mat =
             powf(5.0f, 2.0f) * vec0 * vec0.transpose()
@@ -834,6 +906,8 @@ void ModeRefCurveDeform::SaveState(const std::string& _fpath, const std::set<int
   for (int i = 0; i < num_frames; ++i)
   {
     if (!_set_frame_idx.count(i)) continue;
+
+    m_strokes[i].CleanStrokesNormalsSide();
 
     file << "Frame:\n";
     file << std::to_string(i) + "\n\n";
@@ -975,6 +1049,18 @@ void ModeRefCurveDeform::LoadState(const std::string& _fpath, const std::set<int
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
+
+
+
+void ModeRefCurveDeform::FlipSelectedStrokeNormalSide()
+{
+  const int frame_idx = formVisParam_getframeI();
+  DeformationStrokes& dstrokes = m_strokes[frame_idx];
+  dstrokes.FlipSelNormals();
+  formMain_RedrawMainPanel();
+  formMain_ActivateMainForm();
+}
+
 
 
 void ModeRefCurveDeform::ShareSelectedStroke()

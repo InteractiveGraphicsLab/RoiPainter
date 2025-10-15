@@ -71,6 +71,15 @@ namespace RoiPainter4D {
 	private: System::Windows::Forms::Button^ m_btn_loadstate;
 	private: System::Windows::Forms::Button^ m_btn_savestate;
 
+	private: System::Windows::Forms::Label^ label6;
+	private: System::Windows::Forms::Label^ label7;
+	private: System::Windows::Forms::CheckBox^ m_checkbox_vissurf_solid;
+	private: System::Windows::Forms::CheckBox^ m_checkbox_visbound;
+	private: System::Windows::Forms::CheckBox^ m_checkbox_vissurf_trans;
+
+	private: System::Windows::Forms::Button^ m_btn_flip_normals;
+	private: System::Windows::Forms::CheckBox^ m_checkbox_visnormals;
+	private: System::Windows::Forms::Button^ m_copy_to_next_frame;
 
 
 	protected:
@@ -111,6 +120,14 @@ namespace RoiPainter4D {
 			this->m_btn_sharestroke = (gcnew System::Windows::Forms::Button());
 			this->m_btn_loadstate = (gcnew System::Windows::Forms::Button());
 			this->m_btn_savestate = (gcnew System::Windows::Forms::Button());
+			this->label6 = (gcnew System::Windows::Forms::Label());
+			this->label7 = (gcnew System::Windows::Forms::Label());
+			this->m_checkbox_vissurf_solid = (gcnew System::Windows::Forms::CheckBox());
+			this->m_checkbox_visbound = (gcnew System::Windows::Forms::CheckBox());
+			this->m_checkbox_vissurf_trans = (gcnew System::Windows::Forms::CheckBox());
+			this->m_btn_flip_normals = (gcnew System::Windows::Forms::Button());
+			this->m_checkbox_visnormals = (gcnew System::Windows::Forms::CheckBox());
+			this->m_copy_to_next_frame = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_numbox_cpsize))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackbar_mcscale))->BeginInit();
 			this->SuspendLayout();
@@ -119,9 +136,10 @@ namespace RoiPainter4D {
 			// 
 			this->m_btn_convert_mask_mesh->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
-			this->m_btn_convert_mask_mesh->Location = System::Drawing::Point(8, 10);
+			this->m_btn_convert_mask_mesh->Location = System::Drawing::Point(10, 12);
+			this->m_btn_convert_mask_mesh->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_btn_convert_mask_mesh->Name = L"m_btn_convert_mask_mesh";
-			this->m_btn_convert_mask_mesh->Size = System::Drawing::Size(135, 23);
+			this->m_btn_convert_mask_mesh->Size = System::Drawing::Size(214, 40);
 			this->m_btn_convert_mask_mesh->TabIndex = 0;
 			this->m_btn_convert_mask_mesh->Text = L"Convert mask -> mesh";
 			this->m_btn_convert_mask_mesh->UseVisualStyleBackColor = true;
@@ -129,9 +147,10 @@ namespace RoiPainter4D {
 			// 
 			// m_btn_deform
 			// 
-			this->m_btn_deform->Location = System::Drawing::Point(8, 83);
+			this->m_btn_deform->Location = System::Drawing::Point(10, 283);
+			this->m_btn_deform->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_btn_deform->Name = L"m_btn_deform";
-			this->m_btn_deform->Size = System::Drawing::Size(135, 23);
+			this->m_btn_deform->Size = System::Drawing::Size(216, 38);
 			this->m_btn_deform->TabIndex = 1;
 			this->m_btn_deform->Text = L"Deform";
 			this->m_btn_deform->UseVisualStyleBackColor = true;
@@ -139,9 +158,10 @@ namespace RoiPainter4D {
 			// 
 			// m_btn_undo
 			// 
-			this->m_btn_undo->Location = System::Drawing::Point(8, 145);
+			this->m_btn_undo->Location = System::Drawing::Point(232, 382);
+			this->m_btn_undo->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_btn_undo->Name = L"m_btn_undo";
-			this->m_btn_undo->Size = System::Drawing::Size(65, 23);
+			this->m_btn_undo->Size = System::Drawing::Size(86, 38);
 			this->m_btn_undo->TabIndex = 2;
 			this->m_btn_undo->Text = L"UNDO";
 			this->m_btn_undo->UseVisualStyleBackColor = true;
@@ -149,9 +169,10 @@ namespace RoiPainter4D {
 			// 
 			// m_btn_redo
 			// 
-			this->m_btn_redo->Location = System::Drawing::Point(80, 145);
+			this->m_btn_redo->Location = System::Drawing::Point(328, 382);
+			this->m_btn_redo->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_btn_redo->Name = L"m_btn_redo";
-			this->m_btn_redo->Size = System::Drawing::Size(63, 23);
+			this->m_btn_redo->Size = System::Drawing::Size(84, 38);
 			this->m_btn_redo->TabIndex = 2;
 			this->m_btn_redo->Text = L"REDO";
 			this->m_btn_redo->UseVisualStyleBackColor = true;
@@ -159,19 +180,24 @@ namespace RoiPainter4D {
 			// 
 			// m_copy_from_prev_frame
 			// 
-			this->m_copy_from_prev_frame->Location = System::Drawing::Point(149, 145);
+			this->m_copy_from_prev_frame->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 8));
+			this->m_copy_from_prev_frame->Location = System::Drawing::Point(9, 426);
+			this->m_copy_from_prev_frame->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_copy_from_prev_frame->Name = L"m_copy_from_prev_frame";
-			this->m_copy_from_prev_frame->Size = System::Drawing::Size(144, 23);
+			this->m_copy_from_prev_frame->Size = System::Drawing::Size(216, 38);
 			this->m_copy_from_prev_frame->TabIndex = 1;
-			this->m_copy_from_prev_frame->Text = L"Copy from prev frame";
+			this->m_copy_from_prev_frame->Text = L"Copy strokes from prev frame";
 			this->m_copy_from_prev_frame->UseVisualStyleBackColor = true;
 			this->m_copy_from_prev_frame->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_copy_from_prev_frame_Click);
 			// 
 			// m_btn_copy_stroke_all_frame
 			// 
-			this->m_btn_copy_stroke_all_frame->Location = System::Drawing::Point(149, 174);
+			this->m_btn_copy_stroke_all_frame->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(128)));
+			this->m_btn_copy_stroke_all_frame->Location = System::Drawing::Point(9, 470);
+			this->m_btn_copy_stroke_all_frame->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_btn_copy_stroke_all_frame->Name = L"m_btn_copy_stroke_all_frame";
-			this->m_btn_copy_stroke_all_frame->Size = System::Drawing::Size(144, 23);
+			this->m_btn_copy_stroke_all_frame->Size = System::Drawing::Size(216, 38);
 			this->m_btn_copy_stroke_all_frame->TabIndex = 1;
 			this->m_btn_copy_stroke_all_frame->Text = L"Copy strokes to all frame";
 			this->m_btn_copy_stroke_all_frame->UseVisualStyleBackColor = true;
@@ -180,33 +206,34 @@ namespace RoiPainter4D {
 			// m_numbox_cpsize
 			// 
 			this->m_numbox_cpsize->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 11.5F));
-			this->m_numbox_cpsize->Location = System::Drawing::Point(233, 221);
+			this->m_numbox_cpsize->Location = System::Drawing::Point(337, 81);
+			this->m_numbox_cpsize->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_numbox_cpsize->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
 			this->m_numbox_cpsize->Name = L"m_numbox_cpsize";
-			this->m_numbox_cpsize->Size = System::Drawing::Size(57, 23);
+			this->m_numbox_cpsize->Size = System::Drawing::Size(56, 27);
 			this->m_numbox_cpsize->TabIndex = 25;
 			this->m_numbox_cpsize->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
-			this->m_numbox_cpsize->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 10, 0, 0, 0 });
+			this->m_numbox_cpsize->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 3, 0, 0, 0 });
 			this->m_numbox_cpsize->ValueChanged += gcnew System::EventHandler(this, &FormRefCurveDeform::m_numbox_cpsize_ValueChanged);
 			// 
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(181, 226);
+			this->label4->Location = System::Drawing::Point(270, 85);
+			this->label4->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(46, 12);
+			this->label4->Size = System::Drawing::Size(59, 15);
 			this->label4->TabIndex = 26;
 			this->label4->Text = L"CP size:";
 			// 
 			// m_checkbox_showonlyselectedstroke
 			// 
 			this->m_checkbox_showonlyselectedstroke->AutoSize = true;
-			this->m_checkbox_showonlyselectedstroke->Checked = true;
-			this->m_checkbox_showonlyselectedstroke->CheckState = System::Windows::Forms::CheckState::Checked;
 			this->m_checkbox_showonlyselectedstroke->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 8));
-			this->m_checkbox_showonlyselectedstroke->Location = System::Drawing::Point(149, 250);
+			this->m_checkbox_showonlyselectedstroke->Location = System::Drawing::Point(240, 114);
+			this->m_checkbox_showonlyselectedstroke->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_checkbox_showonlyselectedstroke->Name = L"m_checkbox_showonlyselectedstroke";
-			this->m_checkbox_showonlyselectedstroke->Size = System::Drawing::Size(148, 15);
+			this->m_checkbox_showonlyselectedstroke->Size = System::Drawing::Size(181, 18);
 			this->m_checkbox_showonlyselectedstroke->TabIndex = 27;
 			this->m_checkbox_showonlyselectedstroke->Text = L"Show only selected stroke";
 			this->m_checkbox_showonlyselectedstroke->UseVisualStyleBackColor = true;
@@ -216,9 +243,10 @@ namespace RoiPainter4D {
 			// 
 			this->m_btn_convert_mesh_mask->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
-			this->m_btn_convert_mesh_mask->Location = System::Drawing::Point(8, 245);
+			this->m_btn_convert_mesh_mask->Location = System::Drawing::Point(125, 530);
+			this->m_btn_convert_mesh_mask->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_btn_convert_mesh_mask->Name = L"m_btn_convert_mesh_mask";
-			this->m_btn_convert_mesh_mask->Size = System::Drawing::Size(135, 23);
+			this->m_btn_convert_mesh_mask->Size = System::Drawing::Size(180, 38);
 			this->m_btn_convert_mesh_mask->TabIndex = 0;
 			this->m_btn_convert_mesh_mask->Text = L"Convert mesh -> mask";
 			this->m_btn_convert_mesh_mask->UseVisualStyleBackColor = true;
@@ -227,47 +255,52 @@ namespace RoiPainter4D {
 			// m_trackbar_mcscale
 			// 
 			this->m_trackbar_mcscale->LargeChange = 1;
-			this->m_trackbar_mcscale->Location = System::Drawing::Point(147, 10);
+			this->m_trackbar_mcscale->Location = System::Drawing::Point(225, 12);
+			this->m_trackbar_mcscale->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_trackbar_mcscale->Maximum = 4;
 			this->m_trackbar_mcscale->Minimum = 1;
 			this->m_trackbar_mcscale->Name = L"m_trackbar_mcscale";
-			this->m_trackbar_mcscale->Size = System::Drawing::Size(139, 45);
+			this->m_trackbar_mcscale->Size = System::Drawing::Size(186, 56);
 			this->m_trackbar_mcscale->TabIndex = 28;
 			this->m_trackbar_mcscale->Value = 2;
 			// 
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(152, 43);
+			this->label1->Location = System::Drawing::Point(231, 49);
+			this->label1->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(17, 12);
+			this->label1->Size = System::Drawing::Size(22, 15);
 			this->label1->TabIndex = 29;
 			this->label1->Text = L"x1";
 			// 
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(190, 43);
+			this->label2->Location = System::Drawing::Point(283, 49);
+			this->label2->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(17, 12);
+			this->label2->Size = System::Drawing::Size(22, 15);
 			this->label2->TabIndex = 29;
 			this->label2->Text = L"x2";
 			// 
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(228, 43);
+			this->label3->Location = System::Drawing::Point(333, 49);
+			this->label3->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(17, 12);
+			this->label3->Size = System::Drawing::Size(22, 15);
 			this->label3->TabIndex = 29;
 			this->label3->Text = L"x4";
 			// 
 			// label5
 			// 
 			this->label5->AutoSize = true;
-			this->label5->Location = System::Drawing::Point(265, 43);
+			this->label5->Location = System::Drawing::Point(383, 49);
+			this->label5->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label5->Name = L"label5";
-			this->label5->Size = System::Drawing::Size(17, 12);
+			this->label5->Size = System::Drawing::Size(22, 15);
 			this->label5->TabIndex = 29;
 			this->label5->Text = L"x8";
 			// 
@@ -275,9 +308,10 @@ namespace RoiPainter4D {
 			// 
 			this->m_btn_reload_mesh->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
-			this->m_btn_reload_mesh->Location = System::Drawing::Point(8, 112);
+			this->m_btn_reload_mesh->Location = System::Drawing::Point(10, 327);
+			this->m_btn_reload_mesh->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_btn_reload_mesh->Name = L"m_btn_reload_mesh";
-			this->m_btn_reload_mesh->Size = System::Drawing::Size(135, 23);
+			this->m_btn_reload_mesh->Size = System::Drawing::Size(216, 38);
 			this->m_btn_reload_mesh->TabIndex = 0;
 			this->m_btn_reload_mesh->Text = L"Reload mesh";
 			this->m_btn_reload_mesh->UseVisualStyleBackColor = true;
@@ -285,9 +319,10 @@ namespace RoiPainter4D {
 			// 
 			// m_btn_sharestroke
 			// 
-			this->m_btn_sharestroke->Location = System::Drawing::Point(8, 174);
+			this->m_btn_sharestroke->Location = System::Drawing::Point(230, 426);
+			this->m_btn_sharestroke->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_btn_sharestroke->Name = L"m_btn_sharestroke";
-			this->m_btn_sharestroke->Size = System::Drawing::Size(135, 23);
+			this->m_btn_sharestroke->Size = System::Drawing::Size(180, 38);
 			this->m_btn_sharestroke->TabIndex = 1;
 			this->m_btn_sharestroke->Text = L"Set as all frame curve";
 			this->m_btn_sharestroke->UseVisualStyleBackColor = true;
@@ -295,9 +330,10 @@ namespace RoiPainter4D {
 			// 
 			// m_btn_loadstate
 			// 
-			this->m_btn_loadstate->Location = System::Drawing::Point(149, 83);
+			this->m_btn_loadstate->Location = System::Drawing::Point(230, 283);
+			this->m_btn_loadstate->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_btn_loadstate->Name = L"m_btn_loadstate";
-			this->m_btn_loadstate->Size = System::Drawing::Size(144, 23);
+			this->m_btn_loadstate->Size = System::Drawing::Size(182, 38);
 			this->m_btn_loadstate->TabIndex = 1;
 			this->m_btn_loadstate->Text = L"Load state";
 			this->m_btn_loadstate->UseVisualStyleBackColor = true;
@@ -305,25 +341,134 @@ namespace RoiPainter4D {
 			// 
 			// m_btn_savestate
 			// 
-			this->m_btn_savestate->Location = System::Drawing::Point(149, 112);
+			this->m_btn_savestate->Location = System::Drawing::Point(230, 327);
+			this->m_btn_savestate->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->m_btn_savestate->Name = L"m_btn_savestate";
-			this->m_btn_savestate->Size = System::Drawing::Size(144, 23);
+			this->m_btn_savestate->Size = System::Drawing::Size(182, 38);
 			this->m_btn_savestate->TabIndex = 1;
 			this->m_btn_savestate->Text = L"Save state";
 			this->m_btn_savestate->UseVisualStyleBackColor = true;
 			this->m_btn_savestate->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_savestate_Click);
 			// 
+			// label6
+			// 
+			this->label6->AutoSize = true;
+			this->label6->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9));
+			this->label6->Location = System::Drawing::Point(237, 203);
+			this->label6->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label6->Name = L"label6";
+			this->label6->Size = System::Drawing::Size(156, 60);
+			this->label6->TabIndex = 0;
+			this->label6->Text = L"[Space key] hide mesh.\r\n[s key] hide stroke.\r\n[d key] show mask.\r\n[v key] show vo"
+				L"lume.";
+			// 
+			// label7
+			// 
+			this->label7->AutoSize = true;
+			this->label7->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(128)));
+			this->label7->Location = System::Drawing::Point(6, 81);
+			this->label7->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->label7->Name = L"label7";
+			this->label7->Size = System::Drawing::Size(241, 51);
+			this->label7->TabIndex = 0;
+			this->label7->Text = L"[Shift] show control points(CP). \r\n[R click] make/move a CP. \r\n[L click] remove a"
+				L" CP.";
+			// 
+			// m_checkbox_vissurf_solid
+			// 
+			this->m_checkbox_vissurf_solid->AutoSize = true;
+			this->m_checkbox_vissurf_solid->Location = System::Drawing::Point(9, 244);
+			this->m_checkbox_vissurf_solid->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
+			this->m_checkbox_vissurf_solid->Name = L"m_checkbox_vissurf_solid";
+			this->m_checkbox_vissurf_solid->Size = System::Drawing::Size(148, 19);
+			this->m_checkbox_vissurf_solid->TabIndex = 32;
+			this->m_checkbox_vissurf_solid->Text = L"show surface solid";
+			this->m_checkbox_vissurf_solid->UseVisualStyleBackColor = true;
+			this->m_checkbox_vissurf_solid->CheckedChanged += gcnew System::EventHandler(this, &FormRefCurveDeform::m_checkbox_vissurf_solid_CheckedChanged);
+			// 
+			// m_checkbox_visbound
+			// 
+			this->m_checkbox_visbound->AutoSize = true;
+			this->m_checkbox_visbound->Checked = true;
+			this->m_checkbox_visbound->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->m_checkbox_visbound->Location = System::Drawing::Point(66, 219);
+			this->m_checkbox_visbound->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
+			this->m_checkbox_visbound->Name = L"m_checkbox_visbound";
+			this->m_checkbox_visbound->Size = System::Drawing::Size(124, 19);
+			this->m_checkbox_visbound->TabIndex = 31;
+			this->m_checkbox_visbound->Text = L"show boundary";
+			this->m_checkbox_visbound->UseVisualStyleBackColor = true;
+			this->m_checkbox_visbound->CheckedChanged += gcnew System::EventHandler(this, &FormRefCurveDeform::m_checkbox_visbound_CheckedChanged);
+			// 
+			// m_checkbox_vissurf_trans
+			// 
+			this->m_checkbox_vissurf_trans->AutoSize = true;
+			this->m_checkbox_vissurf_trans->Location = System::Drawing::Point(9, 203);
+			this->m_checkbox_vissurf_trans->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
+			this->m_checkbox_vissurf_trans->Name = L"m_checkbox_vissurf_trans";
+			this->m_checkbox_vissurf_trans->Size = System::Drawing::Size(152, 19);
+			this->m_checkbox_vissurf_trans->TabIndex = 30;
+			this->m_checkbox_vissurf_trans->Text = L"show surface trans";
+			this->m_checkbox_vissurf_trans->UseVisualStyleBackColor = true;
+			this->m_checkbox_vissurf_trans->CheckedChanged += gcnew System::EventHandler(this, &FormRefCurveDeform::m_checkbox_vissurf_CheckedChanged);
+			// 
+			// m_btn_flip_normals
+			// 
+			this->m_btn_flip_normals->Location = System::Drawing::Point(122, 149);
+			this->m_btn_flip_normals->Margin = System::Windows::Forms::Padding(2);
+			this->m_btn_flip_normals->Name = L"m_btn_flip_normals";
+			this->m_btn_flip_normals->Size = System::Drawing::Size(102, 27);
+			this->m_btn_flip_normals->TabIndex = 30;
+			this->m_btn_flip_normals->Text = L"flip normals";
+			this->m_btn_flip_normals->UseVisualStyleBackColor = true;
+			this->m_btn_flip_normals->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_flip_normals_Click);
+			// 
+			// m_checkbox_visnormals
+			// 
+			this->m_checkbox_visnormals->AutoSize = true;
+			this->m_checkbox_visnormals->Checked = true;
+			this->m_checkbox_visnormals->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->m_checkbox_visnormals->Location = System::Drawing::Point(9, 149);
+			this->m_checkbox_visnormals->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
+			this->m_checkbox_visnormals->Name = L"m_checkbox_visnormals";
+			this->m_checkbox_visnormals->Size = System::Drawing::Size(116, 19);
+			this->m_checkbox_visnormals->TabIndex = 31;
+			this->m_checkbox_visnormals->Text = L"show normals";
+			this->m_checkbox_visnormals->UseVisualStyleBackColor = true;
+			this->m_checkbox_visnormals->CheckedChanged += gcnew System::EventHandler(this, &FormRefCurveDeform::m_checkbox_visnormals_CheckedChanged);
+			// 
+			// m_copy_to_next_frame
+			// 
+			this->m_copy_to_next_frame->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 8));
+			this->m_copy_to_next_frame->Location = System::Drawing::Point(10, 382);
+			this->m_copy_to_next_frame->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
+			this->m_copy_to_next_frame->Name = L"m_copy_to_next_frame";
+			this->m_copy_to_next_frame->Size = System::Drawing::Size(216, 38);
+			this->m_copy_to_next_frame->TabIndex = 33;
+			this->m_copy_to_next_frame->Text = L"Copy sel stroke to next frame";
+			this->m_copy_to_next_frame->UseVisualStyleBackColor = true;
+			this->m_copy_to_next_frame->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_copy_to_next_frame_Click);
+			// 
 			// FormRefCurveDeform
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
+			this->AutoScaleDimensions = System::Drawing::SizeF(8, 15);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(300, 316);
+			this->ClientSize = System::Drawing::Size(425, 567);
+			this->Controls->Add(this->m_copy_to_next_frame);
+			this->Controls->Add(this->label6);
+			this->Controls->Add(this->m_checkbox_showonlyselectedstroke);
+			this->Controls->Add(this->m_btn_flip_normals);
+			this->Controls->Add(this->m_checkbox_vissurf_solid);
+			this->Controls->Add(this->m_checkbox_visnormals);
+			this->Controls->Add(this->m_checkbox_visbound);
+			this->Controls->Add(this->m_checkbox_vissurf_trans);
+			this->Controls->Add(this->label7);
 			this->Controls->Add(this->label5);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->m_trackbar_mcscale);
-			this->Controls->Add(this->m_checkbox_showonlyselectedstroke);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->m_numbox_cpsize);
 			this->Controls->Add(this->m_btn_redo);
@@ -337,6 +482,7 @@ namespace RoiPainter4D {
 			this->Controls->Add(this->m_btn_convert_mesh_mask);
 			this->Controls->Add(this->m_btn_reload_mesh);
 			this->Controls->Add(this->m_btn_convert_mask_mesh);
+			this->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->Name = L"FormRefCurveDeform";
 			this->Text = L"RefCurveDeform";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_numbox_cpsize))->EndInit();
@@ -354,18 +500,28 @@ namespace RoiPainter4D {
 		System::Void m_btn_undo_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_redo_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_copy_from_prev_frame_Click(System::Object^ sender, System::EventArgs^ e);
+    System::Void m_copy_to_next_frame_Click(System::Object^ sender, System::EventArgs^ e) ;
 		System::Void m_btn_convert_mesh_mask_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_copy_stroke_all_frame_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_sharestroke_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_loadstate_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_savestate_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_checkbox_showonlyselectedstroke_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
+		System::Void m_checkbox_vissurf_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
+		System::Void m_checkbox_visbound_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
+		System::Void m_checkbox_vissurf_solid_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_flip_normals_Click(System::Object^ sender, System::EventArgs^ e); 
+		System::Void m_checkbox_visnormals_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
 	public:
 		void LoadState();
 		void SaveState();
 		int GetCPSize();
 		bool GetShowOnlySelectedStroke();
 		int GetMCScale();
+		bool DoVisSurfTrans() { return m_checkbox_vissurf_trans->Checked; }
+		bool DoVisSurfSolid() { return m_checkbox_vissurf_solid->Checked; }
+		bool DoVisBound() { return m_checkbox_visbound->Checked; }
+		bool DoVisNormals() { return m_checkbox_visnormals->Checked; }
 };
 
 	inline void FormRefCurveDeform_Show() { FormRefCurveDeform::GetInst()->Show(); }
@@ -376,5 +532,9 @@ namespace RoiPainter4D {
 	inline int FormRefCurveDeform_GetCPSize() { return FormRefCurveDeform::GetInst()->GetCPSize(); }
 	inline bool FormRefCurveDeform_GetShowOnlySelectedStroke() { return FormRefCurveDeform::GetInst()->GetShowOnlySelectedStroke(); }
 	inline int FormRefCurveDeform_GetMCScale() { return FormRefCurveDeform::GetInst()->GetMCScale(); }
+	inline bool FormRefCurveDeform_bVisBound() {return FormRefCurveDeform::GetInst()->DoVisBound();}
+	inline bool FormRefCurveDeform_bVisSurfTrans() {return FormRefCurveDeform::GetInst()->DoVisSurfTrans();}
+	inline bool FormRefCurveDeform_bVisSurfSolid() {return FormRefCurveDeform::GetInst()->DoVisSurfSolid();}
+	inline bool FormRefCurveDeform_bVisNormals() { return FormRefCurveDeform::GetInst()->DoVisNormals(); }
 
 }

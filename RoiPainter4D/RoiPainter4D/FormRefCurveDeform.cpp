@@ -2,10 +2,11 @@
 #include "FormRefCurveDeform.h"
 #include "FormMain.h"
 #include "FormSelectMskId.h"
-//#include "CliMessageBox.h"
+#include "CliMessageBox.h"
 
 #pragma unmanaged
 #include "ImageCore.h"
+#include "ModeCore.h"
 #include "mode/ModeRefCurveDeform.h"
 #pragma managed
 
@@ -15,14 +16,22 @@ using namespace RoiPainter4D;
 
 void FormRefCurveDeform::InitAllItems()
 {
-  m_numbox_cpsize->Value = 10;
-  m_checkbox_showonlyselectedstroke->Checked = true;
+  m_numbox_cpsize->Value = 3;
+  m_checkbox_showonlyselectedstroke->Checked = false;
   m_trackbar_mcscale->Value = 2;
+  m_checkbox_vissurf_trans->Checked = true;
+  m_checkbox_vissurf_solid->Checked = false;
 
   FormSelectMskId^ modal = gcnew FormSelectMskId();
   if (modal->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
 
   int trgtId = modal->getTrgtID();
+  if (trgtId == 0)
+  {
+    ShowMsgDlg_OK("0th region (background) cannot be deformed", "caution");
+    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
+    return;
+  }
   modal->Close();
 
   ImageCore::GetInst()->SetSelectMaskId(trgtId);
@@ -64,6 +73,10 @@ System::Void FormRefCurveDeform::m_copy_from_prev_frame_Click(System::Object^ se
   ModeRefCurveDeform::GetInst()->CopyFromPrevFrame();
 }
 
+System::Void FormRefCurveDeform::m_copy_to_next_frame_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->CopyToNextFrame();
+}
 
 System::Void FormRefCurveDeform::m_btn_convert_mesh_mask_Click(System::Object^ sender, System::EventArgs^ e)
 {
@@ -99,6 +112,42 @@ System::Void FormRefCurveDeform::m_btn_savestate_Click(System::Object^ sender, S
   SaveState();
 }
 
+System::Void FormRefCurveDeform::m_btn_flip_normals_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->FlipSelectedStrokeNormalSide();
+}
+
+System::Void FormRefCurveDeform::m_checkbox_visbound_CheckedChanged(
+  System::Object^ sender,
+  System::EventArgs^ e)
+{
+  formMain_RedrawMainPanel();
+}
+
+System::Void FormRefCurveDeform::m_checkbox_vissurf_CheckedChanged(
+  System::Object^ sender,
+  System::EventArgs^ e)
+{
+  if (m_checkbox_vissurf_trans->Checked)
+    m_checkbox_vissurf_solid->Checked = false;
+  formMain_RedrawMainPanel();
+}
+
+System::Void FormRefCurveDeform::m_checkbox_vissurf_solid_CheckedChanged(
+  System::Object^ sender,
+  System::EventArgs^ e)
+{
+  if (m_checkbox_vissurf_solid->Checked)
+    m_checkbox_vissurf_trans->Checked = false;
+  formMain_RedrawMainPanel();
+}
+
+System::Void FormRefCurveDeform::m_checkbox_visnormals_CheckedChanged(
+  System::Object^ sender,
+  System::EventArgs^ e)
+{
+  formMain_RedrawMainPanel();
+}
 
 void FormRefCurveDeform::LoadState()
 {
