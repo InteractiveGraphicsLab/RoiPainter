@@ -124,10 +124,10 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../../3rdParty/glew/include;../../3rdParty/dcmtk/include;../../3rdParty/zlib/include;../../3rdParty/Eigen;../../COMMON</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../../3rdParty/glew/include;../../3rdParty/dcmtk/include;../../3rdParty/zlib/include;../../3rdParty/Eigen;../../COMMON;./SonyXR\openXR\include;./SonyXR\sony_xr_common\include;./SonyXR\srd-api\include;./SonyXR\srd-openxr\include;./SonyXR\xr-runtime\include</AdditionalIncludeDirectories>
       <OpenMPSupport>true</OpenMPSupport>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
@@ -207,6 +207,16 @@
     <ClCompile Include="Mode\ModeSegSwallowOrgans.cpp" />
     <ClCompile Include="Mode\ModeVizMask.cpp" />
     <ClCompile Include="Mode\ModeVizNormal.cpp" />
+    <ClCompile Include="SonyXR\sony_xr_common\src\registry_utility.cpp" />
+    <ClCompile Include="SonyXR\sony_xr_common\src\string_utility.cpp" />
+    <ClCompile Include="SonyXR\srd-api\src\misc_util_wrapper.cpp" />
+    <ClCompile Include="SonyXR\srd-api\src\xr_basic_api_wrapper.cpp" />
+    <ClCompile Include="SonyXR\srd-openxr\src\srd_openxr_api_wrapper.cc" />
+    <ClCompile Include="SonyXR\srd-openxr\src\srd_openxr_library_loader.cpp" />
+    <ClCompile Include="SonyXR\xr-runtime\src\load_library_utility.cc" />
+    <ClCompile Include="SonyXR\xr-runtime\src\xr_api_wrapper.cc" />
+    <ClCompile Include="SonyXR\xr-runtime\src\xr_api_wrapper_utility.cpp" />
+    <ClCompile Include="SonyXR\xrprogram.cpp" />
     <ClCompile Include="SplineCurve_3D.cpp" />
     <ClCompile Include="ViewIndiCore.cpp" />
   </ItemGroup>
@@ -311,6 +321,7 @@
     <ClInclude Include="Mode\ModeSegSwallowOrgans.h" />
     <ClInclude Include="Mode\ModeVizMask.h" />
     <ClInclude Include="Mode\ModeVizNormal.h" />
+    <ClInclude Include="SonyXR\xrprogram.hpp" />
     <ClInclude Include="SplineCurve_3D.h" />
     <ClInclude Include="ViewIndiCore.h" />
   </ItemGroup>

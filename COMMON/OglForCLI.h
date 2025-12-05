@@ -2,6 +2,7 @@
 #define COMMON_OGLFORCLI_H_
 #pragma unmanaged
 
+#define NOMINMAX
 #include <windows.h> 
 // windows.h have min max functions 
 #undef min
