@@ -2,10 +2,11 @@
 #include "FormRefCurveDeform.h"
 #include "FormMain.h"
 #include "FormSelectMskId.h"
-//#include "CliMessageBox.h"
+#include "CliMessageBox.h"
 
 #pragma unmanaged
 #include "ImageCore.h"
+#include "ModeCore.h"
 #include "mode/ModeRefCurveDeform.h"
 #pragma managed
 
@@ -23,6 +24,12 @@ void FormRefCurveDeform::InitAllItems()
   if (modal->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
 
   int trgtId = modal->getTrgtID();
+  if (trgtId == 0)
+  {
+    ShowMsgDlg_OK("0th region (background) cannot be deformed", "caution");
+    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
+    return;
+  }
   modal->Close();
 
   ImageCore::GetInst()->SetSelectMaskId(trgtId);
@@ -99,6 +106,10 @@ System::Void FormRefCurveDeform::m_btn_savestate_Click(System::Object^ sender, S
   SaveState();
 }
 
+System::Void FormRefCurveDeform::m_btn_flip_normals_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->FlipSelectedStrokeNormalSide();
+}
 
 void FormRefCurveDeform::LoadState()
 {
