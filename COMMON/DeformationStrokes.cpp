@@ -32,6 +32,11 @@ void DeformationStrokes::AddNewStroke()
   m_selected_stroke_idx = static_cast<int>(m_strokes.size()) - 1;
 }
 
+void DeformationStrokes::AddNewStroke(const Stroke& newstroke)
+{
+  m_strokes.push_back(newstroke);
+  m_selected_stroke_idx = static_cast<int>(m_strokes.size()) - 1;
+}
 
 void DeformationStrokes::ClearAllStrokes()
 {
@@ -213,6 +218,11 @@ void DeformationStrokes::UnlockAllStrokes()
 void DeformationStrokes::MakeShare_SelStroke(const int new_shared_idx)
 {
   if (m_selected_stroke_idx == -1) return ;
+  if (!m_strokes[m_selected_stroke_idx].GetNormalSide())
+  {
+    m_strokes[m_selected_stroke_idx].ReverseStrokeAndCps();
+    m_strokes[m_selected_stroke_idx].FlipNormal();
+  }
   m_strokes[m_selected_stroke_idx].m_is_shared = true;
   m_strokes[m_selected_stroke_idx].m_shared_idx = new_shared_idx;
   m_strokes[m_selected_stroke_idx].m_is_locked = true;
@@ -348,11 +358,27 @@ void DeformationStrokes::FlipSelNormals()
   if (m_selected_stroke_idx == -1) return;
   m_strokes[m_selected_stroke_idx].FlipNormal();
 }
+DeformationStrokes::Stroke DeformationStrokes::CloneSelStroke()
+{
+  Stroke newstroke = m_strokes[m_selected_stroke_idx];
+  return newstroke;
+}
+void DeformationStrokes::CleanStrokesNormalsSide()
+{
+  const int size = static_cast<int>(m_strokes.size());
+  for (int i = 0; i < size; ++i)
+  {
+    if (!m_strokes[i].GetNormalSide())
+    {
+      m_strokes[i].ReverseStrokeAndCps();
+      m_strokes[i].FlipNormal();
+    }
+  }
+}
 
 
 
-
-void DeformationStrokes::DrawStrokes(const bool& _only_selected_stroke) const
+void DeformationStrokes::DrawStrokes(const bool& _only_selected_stroke, const bool& _show_nowrmals) const
 {
   const int size = static_cast<int>(m_strokes.size());
   for (int i = 0; i < size; ++i)
@@ -360,7 +386,7 @@ void DeformationStrokes::DrawStrokes(const bool& _only_selected_stroke) const
     if (_only_selected_stroke && (m_selected_stroke_idx != -1) && (m_selected_stroke_idx != i)) continue;
 
     const bool flag = (m_selected_stroke_idx == i);
-    m_strokes[i].DrawStroke(flag);
+    m_strokes[i].DrawStroke(flag,_show_nowrmals);
   }
 }
 
@@ -665,6 +691,11 @@ void DeformationStrokes::Stroke::FlipNormal()
   m_normal_side = m_normal_side ? false : true;
 }
 
+void DeformationStrokes::Stroke::ReverseStrokeAndCps()
+{
+  std::reverse(m_cps.begin(), m_cps.end());
+  std::reverse(m_stroke.begin(), m_stroke.end());
+}
 
 
 void DeformationStrokes::Stroke::UpdateStroke()
@@ -684,7 +715,9 @@ void DeformationStrokes::Stroke::UpdateStroke()
   stroke_2f = KCurves::CalcKCurvesOpen(cps_2f);
 
   //failed
-  if (stroke_2f.size() == 0) return;
+  if (stroke_2f.size() == 0) { std::cout << "x"; return; }
+
+  std::cout << "o";
 
   // convert stroke: EVec2f to EVec3f
   m_stroke.clear();
@@ -706,7 +739,7 @@ static const EVec3f COLOR_Y = { 1.0f, 1.0f, 0.0f };
 static const EVec3f COLOR_G = { 0.0f, 1.0f, 0.0f };
 static const EVec3f COLOR_A = { 0.0f, 1.0f, 1.0f };
 
-void DeformationStrokes::Stroke::DrawStroke(const bool& _is_selected) const
+void DeformationStrokes::Stroke::DrawStroke(const bool& _is_selected, const bool& _show_nowrmals) const
 {
   if (m_stroke.size() == 0) return;
 
@@ -716,44 +749,46 @@ void DeformationStrokes::Stroke::DrawStroke(const bool& _is_selected) const
 
   DrawPolyLine(color, _is_selected ? 1.5f * 6 : 1.0f * 6, m_stroke, false);
 
-  glDisable(GL_LIGHTING);
-  glColor3f(0.0f, 1.0f, 1.0f);
-  glLineWidth(_is_selected ? 1.5f * 6 : 1.0f * 6);
+  if (_show_nowrmals) {
+    glDisable(GL_LIGHTING);
+    glColor3f(0.0f, 1.0f, 1.0f);
+    glLineWidth(_is_selected ? 1.5f * 6 : 1.0f * 6);
 
-  const float normal_length = 1.0f;
+    const float normal_length = 1.0f;
 
-  EVec3f previous_draw_normal = EVec3f(0.0f, 0.0f, 0.0f);
+    EVec3f previous_draw_normal = EVec3f(0.0f, 0.0f, 0.0f);
 
-  const EVec3f plane_normal = EVec3f(
-    m_plane_xyz == 0 ? 1.0f : 0.0f,
-    m_plane_xyz == 1 ? 1.0f : 0.0f,
-    m_plane_xyz == 2 ? 1.0f : 0.0f
-  );
+    const EVec3f plane_normal = EVec3f(
+      m_plane_xyz == 0 ? 1.0f : 0.0f,
+      m_plane_xyz == 1 ? 1.0f : 0.0f,
+      m_plane_xyz == 2 ? 1.0f : 0.0f
+    );
 
-  glBegin(GL_LINES);
-  for (size_t i = 0; i < m_stroke.size(); ++i)
-  {
-    EVec3f tangent;
-    if (i == 0) tangent = m_stroke[i + 1] - m_stroke[i];
-    else if (i == m_stroke.size() - 1) tangent = m_stroke[i] - m_stroke[i - 1];
-    else tangent = m_stroke[i + 1] - m_stroke[i - 1];
-    tangent.normalize();
-
-    EVec3f draw_normal = plane_normal.cross(tangent);
-    draw_normal.normalize();
-
-    if (i == 0) previous_draw_normal = draw_normal;
-    else
+    glBegin(GL_LINES);
+    for (size_t i = 0; i < m_stroke.size(); ++i)
     {
-      if (previous_draw_normal.dot(draw_normal) < 0.0f) draw_normal = -draw_normal;
-      previous_draw_normal = draw_normal;
-    }
+      EVec3f tangent;
+      if (i == 0) tangent = m_stroke[i + 1] - m_stroke[i];
+      else if (i == m_stroke.size() - 1) tangent = m_stroke[i] - m_stroke[i - 1];
+      else tangent = m_stroke[i + 1] - m_stroke[i - 1];
+      tangent.normalize();
 
-    glVertex3fv(m_stroke[i].data());
-    const EVec3f normal_end = m_stroke[i] + draw_normal * normal_length * (m_normal_side ? 1.0f : -1.0f);
-    glVertex3fv(normal_end.data());
+      EVec3f draw_normal = plane_normal.cross(tangent);
+      draw_normal.normalize();
+
+      if (i == 0) previous_draw_normal = draw_normal;
+      else
+      {
+        if (previous_draw_normal.dot(draw_normal) < 0.0f) draw_normal = -draw_normal;
+        previous_draw_normal = draw_normal;
+      }
+
+      glVertex3fv(m_stroke[i].data());
+      const EVec3f normal_end = m_stroke[i] + draw_normal * normal_length * (m_normal_side ? 1.0f : -1.0f);
+      glVertex3fv(normal_end.data());
+    }
+    glEnd();
   }
-  glEnd();
 }
 
 

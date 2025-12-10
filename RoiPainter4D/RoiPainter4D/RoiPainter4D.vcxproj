@@ -170,6 +170,7 @@
     <ClCompile Include="FormLoadFrameIdx.cpp" />
     <ClCompile Include="FormMain.cpp" />
     <ClCompile Include="FormPlaceCPs.cpp" />
+    <ClCompile Include="FormRefPixPaint.cpp" />
     <ClCompile Include="FormRefStrokeTrim.cpp" />
     <ClCompile Include="FormSegBolus.cpp" />
     <ClCompile Include="FormSegBronchi.cpp" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Mode\ModeRefCurveDeform.cpp" />
     <ClCompile Include="Mode\ModeInterface.cpp" />
     <ClCompile Include="Mode\ModePlaceCPs.cpp" />
+    <ClCompile Include="Mode\ModeRefPixPaint.cpp" />
     <ClCompile Include="Mode\ModeRefStrokeTrim.cpp" />
     <ClCompile Include="Mode\ModeSegBolus.cpp" />
     <ClCompile Include="Mode\ModeSegBronchi.cpp" />
@@ -240,6 +242,9 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="FormPlaceCPs.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="FormRefPixPaint.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="FormRefStrokeTrim.h">
@@ -299,6 +304,7 @@
     <ClInclude Include="Mode\ModeRefCurveDeform.h" />
     <ClInclude Include="Mode\ModeInterface.h" />
     <ClInclude Include="Mode\ModePlaceCPs.h" />
+    <ClInclude Include="Mode\ModeRefPixPaint.h" />
     <ClInclude Include="Mode\ModeRefStrokeTrim.h" />
     <ClInclude Include="Mode\ModeSegBolus.h" />
     <ClInclude Include="Mode\ModeSegBronchi.h" />
@@ -327,6 +333,7 @@
     <EmbeddedResource Include="FormPlaceCPs.resx">
       <DependentUpon>FormPlaceCPs.h</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormRefPixPaint.resx" />
     <EmbeddedResource Include="FormRefStrokeTrim.resx">
       <DependentUpon>FormRefStrokeTrim.h</DependentUpon>
     </EmbeddedResource>

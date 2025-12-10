@@ -19,6 +19,7 @@
 #include "FormPlaceCPs.h"
 #include "FormRefCurveDeform.h"
 #include "FormSelectMskId.h"
+#include "FormRefPixPaint.h"
 
 #pragma unmanaged
 #include "OglForCLI.h"
@@ -39,6 +40,7 @@
 #include "Mode/ModeSegStrokeFfd.h"
 #include "Mode/ModePlaceCPs.h"
 #include "Mode/ModeRefCurveDeform.h"
+#include "Mode/ModeRefPixPaint.h"
 #include <string>
 #include <vector>
 #pragma managed
@@ -81,6 +83,7 @@ int main()
   ModeRefStrokeTrim::GetInst();
   //ModeSegStrokeFfd::GetInst();
   ModeRefCurveDeform::GetInst();
+  ModeRefPixPaint::GetInst();
   FormSegBolus::GetInst();
 
   std::cout << "FormMain::getInst()->ShowDialog() \n";
@@ -147,6 +150,7 @@ void FormMain::InitializeSingletons()
   FormSegLocalRGrow::GetInst()->Show();
   FormSegBolus::GetInst()->Show();
   FormRefStrokeTrim::GetInst()->Show();
+  FormRefPixPaint::GetInst()->Show();
   FormSegSwallowOrgans::GetInst()->Show();
   FormSegSwallowOrganTimeline::GetInst()->Show();
   FormSegJointTracker::GetInst()->Show();
@@ -165,6 +169,7 @@ void FormMain::InitializeSingletons()
   FormSegLocalRGrow::GetInst()->Hide();
   FormSegBolus::GetInst()->Hide();
   FormRefStrokeTrim::GetInst()->Hide();
+  FormRefPixPaint::GetInst()->Hide();
   FormSegSwallowOrgans::GetInst()->Hide();
   FormSegSwallowOrganTimeline::GetInst()->Hide();
   FormSegJointTracker::GetInst()->Hide();
@@ -184,6 +189,7 @@ void FormMain::InitializeSingletons()
   FormSegLocalRGrow::GetInst()->Owner = this;
   FormSegBolus::GetInst()->Owner = this;
   FormRefStrokeTrim::GetInst()->Owner = this;
+  FormRefPixPaint::GetInst()->Owner = this;
   FormSegSwallowOrgans::GetInst()->Owner = this;
   FormSegStrokeFfd::GetInst()->Owner = this;
   FormSegSwallowOrganTimeline::GetInst()->Owner = this;
@@ -403,6 +409,7 @@ void FormMain::ReplaceOtherForms()
   FormSegRigidICP  ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegLocalRGrow   ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormRefStrokeTrim   ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormRefPixPaint     ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegBolus        ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegSwallowOrgans::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegJointTracker ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
@@ -481,6 +488,10 @@ System::Void FormMain::switch_segSwallowOrgans_Click(System::Object^  sender, Sy
 System::Void FormMain::switch_refStrokeTrim_Click(System::Object^  sender, System::EventArgs^  e) {
   ModeCore::GetInst()->ModeSwitch(MODE_REF_STRKTRIM);
   RedrawMainPanel();
+}
+System::Void FormMain::switch_refPixPaint_Click(System::Object^ sender, System::EventArgs^ e) {
+    ModeCore::GetInst()->ModeSwitch(MODE_REF_PIXPAINT);
+    RedrawMainPanel();
 }
 
 System::Void FormMain::switch_SegBolus_Click(System::Object^  sender, System::EventArgs^  e)

@@ -260,7 +260,7 @@ void ModeRefStrokeTrim::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_cnt)
 	ImageCore::GetInst()->BindAllVolumes();
 
 	if (m_b_draw_crssec)
-    DrawCrossSectionsVisFore(!IsSKeyOn());
+    DrawCrossSectionsVisFore(!IsDKeyOn());
 
   if (m_b_draw_cutstroke)
     DrawPolyLine( EVec3f(1,1,0), 3, m_stroke3d, false);

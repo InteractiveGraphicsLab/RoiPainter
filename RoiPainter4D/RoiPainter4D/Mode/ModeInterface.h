@@ -16,6 +16,8 @@ enum MODE_ID
 
 	MODE_REF_STRKTRIM ,  // ModeRefStrkTrim     
 	MODE_REF_CURVEDEFORM,// ModeRefCurveDeform, FormRefCurveDeform (by Yuki Kimura, 2024)
+	MODE_REF_PIXPAINT,   //  (by Takahiro Kikuchi, 2024)
+
 
 	MODE_SEG_PIXPAINT ,  // ModeSegPixPaint
 	MODE_SEG_REGGROW  ,  // ModeSegRegGrow     
@@ -208,7 +210,7 @@ inline bool IsAltKeyOn  () { return GetKeyState(VK_MENU   ) < 0; }
 //inline bool IsAKeyOn  ()   { return GetKeyState(0x41) < 0; }
 //inline bool IsBKeyOn  ()   { return GetKeyState(0x42) < 0; }
 inline bool IsCKeyOn  ()   { return GetKeyState(0x43) < 0; }
-//inline bool IsDKeyOn  ()   { return GetKeyState(0x44) < 0; }
+inline bool IsDKeyOn  ()   { return GetKeyState(0x44) < 0; }
 //inline bool IsEKeyOn  ()   { return GetKeyState(0x45) < 0; }
 //inline bool IsFKeyOn  ()   { return GetKeyState(0x46) < 0; }
 //inline bool IsGKeyOn  ()   { return GetKeyState(0x47) < 0; }
@@ -217,7 +219,7 @@ inline bool IsCKeyOn  ()   { return GetKeyState(0x43) < 0; }
 //inline bool IsJKeyOn  ()   { return GetKeyState(0x4A) < 0; }
 //inline bool IsKKeyOn  ()   { return GetKeyState(0x4B) < 0; }
 //inline bool IsLKeyOn  ()   { return GetKeyState(0x4C) < 0; }
-inline bool IsMKeyOn  ()   { return GetKeyState(0x4D) < 0; }
+//inline bool IsMKeyOn  ()   { return GetKeyState(0x4D) < 0; }
 //inline bool IsNKeyOn  ()   { return GetKeyState(0x4E) < 0; }
 //inline bool IsOKeyOn  ()   { return GetKeyState(0x4F) < 0; }
 //inline bool IsPKeyOn  ()   { return GetKeyState(0x50) < 0; }
@@ -226,7 +228,7 @@ inline bool IsMKeyOn  ()   { return GetKeyState(0x4D) < 0; }
 inline bool IsSKeyOn  ()   { return GetKeyState(0x53) < 0; }
 //inline bool IsTKeyOn  ()   { return GetKeyState(0x54) < 0; }
 //inline bool IsUKeyOn  ()   { return GetKeyState(0x55) < 0; }
-//inline bool IsVKeyOn  ()   { return GetKeyState(0x56) < 0; }
+inline bool IsVKeyOn  ()   { return GetKeyState(0x56) < 0; }
 //inline bool IsWKeyOn  ()   { return GetKeyState(0x57) < 0; }
 //inline bool IsXKeyOn  ()   { return GetKeyState(0x58) < 0; }
 //inline bool IsYKeyOn  ()   { return GetKeyState(0x59) < 0; }
