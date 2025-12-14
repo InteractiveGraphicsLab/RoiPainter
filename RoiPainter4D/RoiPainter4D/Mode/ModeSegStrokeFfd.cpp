@@ -584,7 +584,7 @@ void ModeSegStrokeFfd::DrawScene(
     // draw stroke
     if (!IsSKeyOn())
     {
-      m_strokes[frame_idx].DrawStrokes(vis_activestroke_only);
+      m_strokes[frame_idx].DrawStrokes(vis_activestroke_only, false);
     }
 
     if (IsShiftKeyOn())

@@ -273,6 +273,24 @@ static void InitializeLights()
 }
 
 
+//--------------------------------------------------------
+//SR1上にMainFormを配置してMouseイベントを拾う実装
+Screen^ FindSr1ScreenOrNull()
+{
+  for each (Screen ^ s in Screen::AllScreens)
+  {
+    // 解像度で判定（必要なら == にしても OK）
+    if (s->Bounds.Width >= 3840 &&
+      s->Bounds.Height >= 2160)
+    {
+      return s;
+    }
+  }
+  return nullptr;
+}
+
+
+
 void FormMain::RedrawMainPanel()
 {
   static bool isFirst = true;
@@ -282,16 +300,44 @@ void FormMain::RedrawMainPanel()
     //このタイミングで 他のformを生成し, Show()も読んでOK
     InitializeSingletons();
     ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
+
+    // Prepare for XR ----------------------------------------------
+    Screen^ sr1 = FindSr1ScreenOrNull();
+    if (sr1 != nullptr)
+    {
+      System::Windows::Forms::DialogResult dr = 
+        System::Windows::Forms::MessageBox::Show( this, "SRモニタを描画利用しますか？(Use SR monitor?)","USE SR Monitor?",
+          System::Windows::Forms::MessageBoxButtons::OKCancel, System::Windows::Forms::MessageBoxIcon::Question);
+
+      if (dr == System::Windows::Forms::DialogResult::OK)
+      {
+        wglMakeCurrent(m_ogl->GetHDC(), m_ogl->GetHGLRC());
+        xr_program = new XrProgram("SRD Sample", m_ogl->GetHGLRC(), m_ogl->GetHDC());
+        if (!xr_program->init()) return;
+        m_is_xr_mode = true;
+        //タイマー開始（フレームペースは xrWaitFrame に任せる）
+        xrTimer = gcnew System::Windows::Forms::Timer();
+        xrTimer->Interval = 1; // 1〜5msでOK
+        xrTimer->Tick += gcnew EventHandler(this, &FormMain::XrTimerTick);
+        xrTimer->Start();
+
+        //overlay用のformをSR1上に配置
+        m_overlay = gcnew OverlayForm();
+        m_overlay->PlaceOnScreen(sr1);
+      }
+    }
+    //-----------------------------------------------------------------
   }
+
 
   EVec3f cuboid = ImageCore::GetInst()->GetCuboidF();
   float  nearDist = (cuboid[0] + cuboid[1] + cuboid[2]) / 3.0f * 0.01f;
   float  farDist = (cuboid[0] + cuboid[1] + cuboid[2]) / 3.0f * 8;
-  int    pw = FormMainPanel->Width ;
+  int    pw = FormMainPanel->Width;
   int    ph = FormMainPanel->Height;
   EVec3f cam_pos = m_ogl->GetCamPos();
   EVec3f cam_cnt = m_ogl->GetCamCnt();
-  EVec3f cam_up  = m_ogl->GetCamUp();
+  EVec3f cam_up = m_ogl->GetCamUp();
 
   m_ogl->OnDrawBegin(pw, ph, 45.0, nearDist, farDist);
 
@@ -303,7 +349,14 @@ void FormMain::RedrawMainPanel()
     ViewIndiCore::getInst()->DrawIndicator(pw, ph, cam_pos, cam_cnt, cam_up);
   }
   m_ogl->OnDrawEnd();
+
 }
+
+
+
+
+
+
 
 
 void FormMain::ActivateMainForm()
@@ -1022,3 +1075,83 @@ System::Void FormMain::FormMain_MouseWheel(
 
 
 
+
+
+void FormMain::CloseXrProgram(System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e)
+{
+  if (xrTimer) xrTimer->Stop();
+
+  if (xr_program) {
+    // XRの破棄（swapchain/space/session/instance）
+    xr_program->destroy();
+    delete xr_program;
+    xr_program = nullptr;
+  }
+  m_is_xr_mode = false;
+
+  // OpenGL の current を外す（OglForCLI 側で解放するなら任意）
+  if (wglGetCurrentContext()) wglMakeCurrent(nullptr, nullptr);
+}
+
+
+void FormMain::XrTimerTick(System::Object^ sender, System::EventArgs^ e)
+{
+  if (!m_is_xr_mode || !xr_program) return;
+
+  m_ogl->oglMakeCurrent();
+  const bool ok = xr_program->XrMainFunction();
+
+  if (!ok)
+  {
+    // ランタイムが終了要求したなど
+    xrTimer->Stop();
+    if (xr_program)
+    {
+      xr_program->destroy();
+      delete xr_program;
+      xr_program = nullptr;
+    }
+    m_is_xr_mode = false;
+    FormMainPanel->Invalidate();
+  }
+}
+
+
+void FormMain::XrMouseMove(MouseEventArgs^ e)
+{
+  if (xr_program == nullptr) return;
+  xr_program->MouseMove(e->X, e->Y);
+}
+void FormMain::XrLBtnDown(MouseEventArgs^ e)
+{
+  if (xr_program == nullptr) return;
+  EVec2i p(e->X, e->Y);
+  if (e->Button == System::Windows::Forms::MouseButtons::Left)   xr_program->LBtnDown(e->X, e->Y);
+  if (e->Button == System::Windows::Forms::MouseButtons::Middle) xr_program->MBtnDown(e->X, e->Y);
+  if (e->Button == System::Windows::Forms::MouseButtons::Right)  xr_program->RBtnDown(e->X, e->Y);
+}
+void FormMain::XrLBtnUp(MouseEventArgs^ e)
+{
+  if (xr_program == nullptr) return;
+  EVec2i p(e->X, e->Y);
+  if (e->Button == System::Windows::Forms::MouseButtons::Left)   xr_program->LBtnUp(e->X, e->Y);
+  if (e->Button == System::Windows::Forms::MouseButtons::Middle) xr_program->MBtnUp(e->X, e->Y);
+  if (e->Button == System::Windows::Forms::MouseButtons::Right)  xr_program->RBtnUp(e->X, e->Y);
+}
+
+
+
+void OverlayForm::OnMouseUpSR1(Object^ sender, MouseEventArgs^ e)
+{
+  FormMain::GetInst()->XrLBtnUp(e);
+}
+
+void OverlayForm::OnMouseDownSR1(Object^ sender, MouseEventArgs^ e)
+{
+  FormMain::GetInst()->XrLBtnDown(e);
+}
+
+void OverlayForm::OnMouseMoveSR1(Object^ sender, MouseEventArgs^ e)
+{
+  FormMain::GetInst()->XrMouseMove(e);
+}

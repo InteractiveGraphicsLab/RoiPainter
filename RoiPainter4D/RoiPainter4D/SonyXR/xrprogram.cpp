@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include "../ModeCore.h"
+#include "../ImageCore.h"
 #pragma unmanaged
 #pragma comment(lib, "openxr_loader.lib")
 #pragma comment(lib, "Advapi32.lib")
@@ -19,12 +20,14 @@ XrProgram::XrProgram(const char* application_name, HGLRC hglrc, HDC hdc)
 {
 	strcpy_s(this->application_name, XR_MAX_APPLICATION_NAME_SIZE, application_name);
 
-	m_near_z = 0.01f;
-	m_far_z = 100.f;
+	m_near_z = 0.001f;
+	m_far_z = 10.f;
 
 	//added by Takashi
 	m_hglrc = hglrc;
 	m_hdc = hdc;
+
+  m_xr_camera.Set(EVec3f(0, 0, 2), EVec3f(0, 0, 0), EVec3f(0, 1, 0));
 	return;
 }
 
@@ -735,6 +738,7 @@ bool XrProgram::XrMainFunction()
 				return false;
 			}
 		}
+		std::cout << depth_index << "aaaaaaaaaaaaaaaaaaaaa\n";
 		this->m_projection_views[i].fov = views[i].fov;
 		this->m_projection_views[i].pose = views[i].pose;
 
@@ -807,43 +811,109 @@ bool XrProgram::XrMainFunction()
 }
 
 
-//
-//static void DrawScene(
-//	const float view[16], 
-//	const float proj[16],
-//	float length   = 1.0f, 
-//	float distance = 0.0f)
-//{
-//	glUseProgram(0);
-//	glEnable(GL_DEPTH_TEST);
-//	glDisable(GL_CULL_FACE); // 線なのでカリング不要
-//
-//	// 射影
-//	glMatrixMode(GL_PROJECTION);
-//	glLoadMatrixf(proj);
-//
-//	// モデルビュー = view * model
-//	glMatrixMode(GL_MODELVIEW);
-//	glLoadMatrixf(view);
-//
-//	// ★ ビュー空間で前へ（-Z 方向に）オフセットして原点に軸を出す
-//	glTranslatef(0.f, 0.f, -distance);
-//
-//	glLineWidth(5.0f);
-//	glBegin(GL_LINES);
-//	glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(length, 0, 0);   // X 赤
-//	glColor3f(0, 1, 0); glVertex3f(0, 0, 0); glVertex3f(0, length, 0);   // Y 緑
-//	glColor3f(0, 0, 1); glVertex3f(0, 0, 0); glVertex3f(0, 0, length);   // Z 青
-//	glEnd();
-//
-//
-//
-//
-//}
-//
-//
+
+static void DrawSceneTest(
+	float length   = 1.0f, 
+	float distance = 0.0f)
+{
+	glTranslatef(0.f, 0.f, -distance);
+
+	glLineWidth(5.0f);
+	glBegin(GL_LINES);
+	glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(length, 0, 0);   // X 赤
+	glColor3f(0, 1, 0); glVertex3f(0, 0, 0); glVertex3f(0, length, 0);   // Y 緑
+	glColor3f(0, 0, 1); glVertex3f(0, 0, 0); glVertex3f(0, 0, length);   // Z 青
+	glEnd();
+
+}
 
 
+
+
+
+
+
+
+
+
+
+void cam2view(const EVec3f& cam_pos,
+	const EVec3f& cam_cnt,
+	const EVec3f& cam_up, float view[16])
+{
+	EVec3f cy = cam_up.normalized();
+	EVec3f cz = -(cam_cnt - cam_pos).normalized();
+	EVec3f cx = cy.cross(cz).normalized();
+
+	cy = cz.cross(cx).normalized();  //安定化のための再直行化
+
+	view[0] = cx[0]; view[4] = cx[1]; view[8] = cx[2]; view[12] = -cx.dot(cam_pos);
+	view[1] = cy[0]; view[5] = cy[1]; view[9] = cy[2]; view[13] = -cy.dot(cam_pos);
+	view[2] = cz[0]; view[6] = cz[1]; view[10] = cz[2]; view[14] = -cz.dot(cam_pos);
+	view[3] = 0.0f; view[7] = 0.0f; view[11] = 0.0f; view[15] = 1.0f;
+}
+
+static void view2cam(
+	const float viewmat[16],
+	EVec3f& cam_xdir,
+	EVec3f& cam_ydir,
+	EVec3f& cam_zdir,
+	EVec3f& cam_trans)
+{
+	const float* m = viewmat;
+	cam_xdir << m[0], m[4], m[8];
+	cam_ydir << m[1], m[5], m[9];
+	cam_zdir << m[2], m[6], m[10];
+
+	// cam_trans = -R^T t
+	EVec3f t(m[12], m[13], m[14]);
+	cam_trans[0] = -(m[0] * t[0] + m[1] * t[1] + m[2] * t[2]);
+	cam_trans[1] = -(m[4] * t[0] + m[5] * t[1] + m[6] * t[2]);
+	cam_trans[2] = -(m[8] * t[0] + m[9] * t[1] + m[10] * t[2]);
+}
+
+static void MultMat(const float m1[16], const float m2[16], float res[16])
+{
+	EMat4f a = EMat4f::Map(m1);
+	EMat4f b = EMat4f::Map(m2);
+	EMat4f c = a * b;
+	memcpy(res, c.data(), sizeof(float) * 16);
+}
+
+
+
+static void t_DrawFrame(const EVec3f& c)
+{
+	glDisable(GL_LIGHTING);
+	glLineWidth(2);
+	glColor3d(1, 1, 0);
+	glBegin(GL_LINES);
+	glVertex3d(0, 0, 0); glVertex3d(c[0], 0, 0);
+	glVertex3d(c[0], 0, 0); glVertex3d(c[0], c[1], 0);
+	glVertex3d(c[0], c[1], 0); glVertex3d(0, c[1], 0);
+	glVertex3d(0, c[1], 0); glVertex3d(0, 0, 0);
+	glVertex3d(0, 0, c[2]); glVertex3d(c[0], 0, c[2]);
+	glVertex3d(c[0], 0, c[2]); glVertex3d(c[0], c[1], c[2]);
+	glVertex3d(c[0], c[1], c[2]); glVertex3d(0, c[1], c[2]);
+	glVertex3d(0, c[1], c[2]); glVertex3d(0, 0, c[2]);
+	glVertex3d(0, 0, 0); glVertex3d(0, 0, c[2]);
+	glVertex3d(c[0], 0, 0); glVertex3d(c[0], 0, c[2]);
+	glVertex3d(c[0], c[1], 0); glVertex3d(c[0], c[1], c[2]);
+	glVertex3d(0, c[1], 0); glVertex3d(0, c[1], c[2]);
+	glEnd();
+
+
+	glDisable(GL_LIGHTING);
+	glBegin(GL_LINES);
+	glColor3d(1, 0, 0); glVertex3d(0, 0, 0); glVertex3d(10, 0, 0);
+	glColor3d(0, 1, 0); glVertex3d(0, 0, 0); glVertex3d(0, 10, 0);
+	glColor3d(0, 0, 1); glVertex3d(0, 0, 0); glVertex3d(0, 0, 10);
+	glEnd();
+
+}
+
+
+static GLuint rbo = 0;
 
 bool XrProgram::renderFrame_SidebySide(
 		int width, 
@@ -857,8 +927,45 @@ bool XrProgram::renderFrame_SidebySide(
 		XrSwapchainImageOpenGLKHR image, 
 		XrTime predicted_time)
 {
+
+	EVec3f c = ImageCore::GetInst()->GetCuboid();
+	float scale = max3(c[0], c[1], c[2]);
+  scale = 2.0f / scale;
+	float cammat[16];
+	float view_mult_cammat[16];
+	cam2view(m_xr_camera.m_pos, m_xr_camera.m_cnt, m_xr_camera.m_up, cammat);
+
+
 	//Bind the framebuffer to openGL
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+	//Attach depth buffers
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, image.image, 0);
+	if (depthbuffer != UINT32_MAX) {
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthbuffer, 0);
+	}
+  else 
+	{
+		if (rbo == 0) {
+			glGenRenderbuffers(1, &rbo);
+		}
+		glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
+	}
+
+
+
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE) {
+		printf("XR FBO incomplete! status = 0x%X, depthbuffer=%u\n", status, depthbuffer);
+	}
+
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
 
 	glViewport(0, 0, width/2, height);
 	glEnable(GL_SCISSOR_TEST);
@@ -868,25 +975,56 @@ bool XrProgram::renderFrame_SidebySide(
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	//Attach depth buffers
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, image.image, 0);
-	if (depthbuffer != UINT32_MAX) {
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthbuffer, 0);
-	}
+
+  //LEFT EYE
+	MultMat(view_matrix_L.m, cammat, view_mult_cammat);
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(perspective_matrix_L.m);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(view_mult_cammat);
+
+	glUseProgram(0);
+	glEnable(GL_NORMALIZE);
+	glDisable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_TRUE);
+	glClearDepth(1.0);
+	glDepthRange(0.0, 1.0);
+
+	DrawSceneTest();
+	glScalef(scale, scale, scale);
+	t_DrawFrame(c);
+	ModeCore::GetInst()->DrawScene(m_xr_camera.m_pos, m_xr_camera.m_cnt);
 	
-	ModeCore::GetInst()->DrawScene(view_matrix_L.m, perspective_matrix_L.m);
-
-
+  //RIGHT EYE
 	glViewport(width/2, 0, width / 2, height);
 	glScissor(width/2, 0, width / 2, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	RenderCore::GetInst()->XrDrawScene(view_matrix_R.m, perspective_matrix_R.m);
+
+	MultMat(view_matrix_R.m, cammat, view_mult_cammat);
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(perspective_matrix_R.m);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(view_mult_cammat);
+	DrawSceneTest();
+	glScalef(scale, scale, scale);
+	t_DrawFrame(c);
+	ModeCore::GetInst()->DrawScene(m_xr_camera.m_pos, m_xr_camera.m_cnt);
 
 	glDisable(GL_SCISSOR_TEST);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDisable(GL_NORMALIZE);
+
+	
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 
 	return true;
 }
@@ -975,7 +1113,7 @@ void XrProgram::destroy()
 	}
 
 	if (this->m_instance != XR_NULL_HANDLE) 
-	{
+	{	
 		sony::openxr::extension::UnlinkXrLibrary();
 		sony::oz::xr_runtime::UnlinkXrLibrary();
 		xrDestroyInstance(this->m_instance);
@@ -983,6 +1121,44 @@ void XrProgram::destroy()
 }
 
 
+void XrProgram::LBtnDown(int x, int y)
+{
+	m_is_L = true;
+	m_prepos << x, y;
+}
+void XrProgram::MBtnDown(int x, int y) 
+{
+	m_is_M = true;
+  m_prepos << x, y;
+}
+void XrProgram::RBtnDown(int x, int y) 
+{
+	m_is_R = true;
+  m_prepos << x, y;
+}
+void XrProgram::LBtnUp(int x, int y)
+{
+  m_is_L = false;
+}
+void XrProgram::MBtnUp(int x, int y) 
+{
+  m_is_M = false;
+}
+void XrProgram::RBtnUp(int x, int y) 
+{
+  m_is_R = false;
+}
+
+
+void XrProgram::MouseMove(int x, int y) 
+{
+  int dx = x - m_prepos(0);
+  int dy = y - m_prepos(1);
+	if (m_is_L) m_xr_camera.TranslateCamera(dx, dy);
+  if (m_is_M) m_xr_camera.ZoomCamera(dy);
+  if (m_is_R) m_xr_camera.RotateCamera(dx, dy);
+  m_prepos << x, y;
+}
 
 
 

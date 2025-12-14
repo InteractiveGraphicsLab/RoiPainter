@@ -58,7 +58,7 @@ public:
   void MoveSelectedCP(const EVec3f& _pos);
   void DeleteSelectedCP();
 
-  void DrawStrokes(const bool& _only_selected_stroke = false) const;
+  void DrawStrokes(bool _only_selected_stroke, bool vis_normal) const;
   void DrawControlPoints(const float& _cp_radius, const bool& _only_selected_stroke = false) const;
 
   //Shared stroke関連
@@ -93,7 +93,7 @@ private:
   std::vector<EVec3f> m_stroke;
   std::vector<EVec3f> m_cps;
   bool m_normal_side;
-  int m_selected_cpid;
+  int  m_selected_cpid;
 
 public:
   bool m_is_shared;
@@ -106,14 +106,14 @@ public:
   bool operator!=(const Stroke& _src) const;
 
   //Getters / Setters 
-  int   GetNumCPs  () const{ return static_cast<int>(m_cps.size()); }
-  int   GetPlaneXYZ() const{ return m_plane_xyz; }
-  float GetPlanePos() const{ return m_plane_pos; }
-  bool GetNormalSide() const { return m_normal_side; }
-  void  SetPlaneXYZ(int plane_xyz) { m_plane_xyz = plane_xyz; }
+  int   GetNumCPs    () const { return static_cast<int>(m_cps.size()); }
+  int   GetPlaneXYZ  () const { return m_plane_xyz; }
+  float GetPlanePos  () const { return m_plane_pos; }
+  bool  GetNormalSide() const { return m_normal_side; }
+  void  SetPlaneXYZ(int   plane_xyz) { m_plane_xyz = plane_xyz; }
   void  SetPlanePos(float plane_pos) { m_plane_pos = plane_pos; }
   std::vector<EVec3f> GetStroke() const { return m_stroke; }
-  std::vector<EVec3f> GetCPs() const { return m_cps; }
+  std::vector<EVec3f> GetCPs   () const { return m_cps;    }
 
   int  GetSelectedCpIdx() const { return m_selected_cpid; }
   void SetSelectedCpIdx(const int _idx){ 
@@ -134,7 +134,7 @@ public:
 
   void FlipNormal();
   void UpdateStroke();
-  void DrawStroke(const bool& _is_selected) const;
+  void DrawStroke(bool _is_selected, bool _vis_normal) const;
   void DrawControlPoints(const float& _cp_radius, const bool& _is_selected) const;
 
   std::string OutputAsText() const;

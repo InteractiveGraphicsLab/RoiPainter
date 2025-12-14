@@ -35,6 +35,7 @@
 #define XR_USE_PLATFORM_WIN32
 
 #pragma unmanaged
+
 #include <windows.h>
 #undef min
 #undef max
@@ -56,6 +57,7 @@
 #include <misc_util_wrapper.h>
 #include <xr_api_wrapper.h>
 
+#include "OglForCLI.h"
 
 #define VIEW_SPACE_SCALE 15.0f
 
@@ -156,6 +158,25 @@ private:
 
 	//削除
 	//bool renderFrame(int width, int height, XrMatrix4x4f perspective_matrix, XrMatrix4x4f view_matrix, GLuint framebuffer, GLuint depthbuffer, XrSwapchainImageOpenGLKHR image, XrTime predicted_time);
+
+	
+private:
+	bool m_is_L = false;
+	bool m_is_R = false;
+	bool m_is_M = false;
+	OglCameraParam m_xr_camera;
+	EVec2i m_prepos;
+
+public:
+	void LBtnDown(int x, int y);
+  void LBtnUp(int x, int y);
+	void MBtnDown(int x, int y);
+	void MBtnUp(int x, int y);
+	void RBtnDown(int x, int y);
+	void RBtnUp(int x, int y);
+  void MouseMove(int x, int y);
+
+
 
 };
 

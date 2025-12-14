@@ -142,7 +142,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>glew32.lib;zlib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../3rdParty/glew/lib/Release/x64;../../3rdParty/dcmtk/staticlibMD;../../3rdParty/zlib/lib;../packages\opencvcontrib.3.1.0/build/native/lib/x64/v140/Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../3rdParty/glew/lib/Release/x64;../../3rdParty/dcmtk/staticlibMD;../../3rdParty/zlib/lib;../packages\opencvcontrib.3.1.0/build/native/lib/x64/v140/Release;./SonyXR\openXR\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>

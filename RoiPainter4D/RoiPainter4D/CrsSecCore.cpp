@@ -21,6 +21,10 @@ CrssecCore::~CrssecCore()
 //!!NOTE!! shader will be unbinded in this function
 void CrssecCore::DrawCrssec_(bool bXY, bool bYZ, bool bZX, const EVec3f &C)
 {
+  glEnable(GL_DEPTH_TEST);
+  glDepthMask(GL_TRUE);
+  glDepthFunc(GL_LEQUAL);
+
   glLineWidth(2);
   glColor3d(1, 1, 1);
 
