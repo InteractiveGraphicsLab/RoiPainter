@@ -43,6 +43,10 @@
 #include <vector>
 #pragma managed
 
+//
+//このブランチでビルドするには、SonyXR SDKが必要。
+//RoiPainter以下にNative SDKを入れつつ、xrprogram cpp hppについては、微修正したものを入れる必要がある。
+//
 
 using namespace System;
 using namespace System::IO;
