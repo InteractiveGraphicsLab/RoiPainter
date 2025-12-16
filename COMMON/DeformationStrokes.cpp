@@ -5,6 +5,300 @@
 #include <fstream>
 
 
+bool PlanarCurve::AddCP(const EVec3f &pos, int& inserted_idx)
+{
+  const int num_cps = static_cast<int>(m_cps.size());
+
+  if (num_cps == 0)
+  {
+    m_cps.push_back(pos);
+    inserted_idx = 0;
+    UpdateCurve();
+    return true;
+  }
+  else if (num_cps == 1)
+  {
+    int xyz = (fabsf(m_cps[0][0] - pos[0]) < 0.001f) ? 0 :
+              (fabsf(m_cps[0][1] - pos[1]) < 0.001f) ? 1 :
+              (fabsf(m_cps[0][2] - pos[2]) < 0.001f) ? 2 : -1;
+    if (xyz == -1) 
+    {
+      std::cout << "strange input at AddCP 1\n";
+      return false;
+    }
+
+    m_cps.push_back(pos);
+    inserted_idx = num_cps;
+    m_plane_xyz = xyz;
+    m_plane_pos = m_cps[0][xyz];
+    UpdateCurve();
+    return true;
+  }
+
+  if (fabsf(m_plane_pos - pos[m_plane_xyz]) > 0.001f) {
+    std::cout << "strange input at AddCP 2\n";
+    return false;
+  }
+
+  // 2点以上：端点・中点を見て挿入位置決定 ----
+  float min_dist = std::numeric_limits<float>::max();
+  int   best_idx = 0;
+
+  for (int i = 0; i <= num_cps; ++i)
+  {
+    EVec3f trgt = (i == 0      ) ? m_cps.front() :
+                  (i == num_cps) ? m_cps.back()  :
+                                   0.5f * (m_cps[i - 1] + m_cps[i]);
+    const float  dist = (pos - trgt).norm();
+
+    if (dist < min_dist)
+    {
+      min_dist = dist;
+      best_idx = i;
+    }
+  }
+
+  m_cps.insert(m_cps.begin() + best_idx, pos);
+  inserted_idx = best_idx;
+
+  UpdateCurve();
+
+  return true;
+}
+
+
+
+void PlanarCurve::MoveCP(int cpidx, const EVec3f& pos)
+{
+  if (cpidx < 0 || cpidx >= m_cps.size()) return;
+  if (fabsf(m_plane_pos - pos[m_plane_xyz]) >= 0.001f) return;
+  m_cps[cpidx] = pos;
+  UpdateCurve();
+}
+
+
+
+void PlanarCurve::DeleteCP(int cpidx)
+{
+  if (cpidx < 0 || cpidx >= m_cps.size()) return;
+  m_cps.erase(m_cps.begin() + cpidx);
+  UpdateCurve();
+}
+
+
+
+int PlanarCurve::PickCPs(const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius)
+{
+  const int num_cps= static_cast<int>(m_cps.size());
+
+  for (int i = 0; i < num_cps; ++i)
+  {
+    if (DistRayAndPoint(ray_pos, ray_dir, m_cps[i]) <= cp_radius)
+    {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+
+
+void PlanarCurve::Draw(const EVec4f& color, const float thickness) const
+{
+  if (m_curve.size() == 0) return;
+
+  EVec3f c = EVec3f(color[0], color[1], color[2]);
+  DrawPolyLine(c, thickness, m_curve, false);
+
+  glDisable(GL_LIGHTING);
+  glColor3f(0.0f, 1.0f, 1.0f);
+  glLineWidth(thickness);
+
+  const float normal_length = 1.0f;
+
+  const EVec3f plane_normal = EVec3f(
+    m_plane_xyz == 0 ? 1.0f : 0.0f,
+    m_plane_xyz == 1 ? 1.0f : 0.0f,
+    m_plane_xyz == 2 ? 1.0f : 0.0f
+  );
+
+  glBegin(GL_LINES);
+  for (size_t i = 1; i < m_curve.size() - 1; i += 5)
+  {
+    EVec3f tangent = (m_curve[i + 1] - m_curve[i - 1]).normalized();
+    EVec3f norm = plane_normal.cross(tangent).normalized();
+    if (!m_normal_side) norm = -norm;
+    EVec3f p = m_curve[i] + normal_length * norm;
+    glVertex3fv(m_curve[i].data());
+    glVertex3fv(p.data());
+  }
+  glEnd();
+}
+
+
+void PlanarCurve::DrawCPs(const EVec4f& color, float radius, int select_cp_idx) const
+{
+  if (m_cps.size() == 0) return;
+
+  // color
+  const float COLOR_W[4] = { 1.0f, 1.0f, 1.0f, 0.5f };
+  const float COLOR_SHIN64[1] = { 64 };
+
+  glEnable(GL_LIGHTING);
+
+  const int size = static_cast<int>(m_cps.size());
+  for (int i = 0; i < size; ++i)
+  {
+    TMesh::DrawSphere(m_cps[i], radius, color.data(), color.data(), COLOR_W, COLOR_SHIN64);
+  }
+  glDisable(GL_LIGHTING);
+}
+
+
+
+void PlanarCurve::UpdateCurve()
+{
+  m_curve.clear();
+  if (m_cps.size() < 3) return;
+
+  // convert cps: EVec3f to EVec2f
+  std::vector<EVec2f> cps_2f;
+  for (const auto& cp : m_cps)
+  {
+    if (m_plane_xyz == 0) cps_2f.push_back(EVec2f(cp[1], cp[2]));
+    if (m_plane_xyz == 1) cps_2f.push_back(EVec2f(cp[0], cp[2]));
+    if (m_plane_xyz == 2) cps_2f.push_back(EVec2f(cp[0], cp[1]));
+  }
+
+  std::vector<EVec2f> stroke_2f;
+  stroke_2f = KCurves::CalcKCurvesOpen(cps_2f);
+
+  //failed
+  if (stroke_2f.size() == 0) return;
+
+  m_curve.clear();
+  for (const auto& p : stroke_2f)
+  {
+    EVec3f vec;
+    if (m_plane_xyz == 0) vec << m_plane_pos, p[0], p[1];
+    if (m_plane_xyz == 1) vec << p[0], m_plane_pos, p[1];
+    if (m_plane_xyz == 2) vec << p[0], p[1], m_plane_pos;
+    m_curve.push_back(vec);
+  }
+}
+
+
+
+std::string PlanarCurve::OutputAsText() const
+{
+  std::string text = "";
+
+  for (const auto& cp : m_cps)
+    text += 
+      std::to_string(cp[0]) + " " +  
+      std::to_string(cp[1]) + " " +
+      std::to_string(cp[2]) + "\n";
+  return text;
+}
+
+
+
+void PlanarCurve::InitByCPs(const std::vector<EVec3f> &cps)
+{
+  m_cps = cps;
+
+  if (m_cps.size() >= 2)
+  {
+    m_plane_xyz = (fabsf(m_cps[0][0] - m_cps[1][0]) < 0.001f) ? 0 :
+                  (fabsf(m_cps[0][1] - m_cps[1][1]) < 0.001f) ? 1 : 2;
+    m_plane_pos = m_cps[0][m_plane_xyz];
+  }
+  UpdateCurve();
+}
+
+
+
+
+
+
+
+//old code 
+//const EVec3f color = 
+//  m_is_selected      ? COLOR_R :
+//  m_shared_idx == -1 ? COLOR_Y :
+//  m_is_locked        ? COLOR_G : COLOR_A;
+//static const EVec4f COLOR_R = { 1.0f, 0.0f, 0.0f, 0.5f };
+//static const EVec4f COLOR_Y = { 1.0f, 1.0f, 0.0f, 0.5f };
+//static const EVec4f COLOR_G = { 0.0f, 1.0f, 0.0f, 0.5f };
+//static const EVec4f COLOR_A = { 0.0f, 1.0f, 1.0f, 0.5f };
+
+
+//void Draw() const;
+//void DrawCPs( const;
+
+//curveの色
+// 作業中 --> 赤
+// sharedで操作あり --> 緑
+// sharedで操作なし --> 水色
+// sharedではなくて、操作中じゃない --> 黄色 ※ここでは対象外
+//
+//CPの色 
+// 作業中 & 選択中　--> 赤
+// Shared & 操作あり --> 緑
+// Shared & 操作なし --> 水色
+// それ以外 --> 黄色 
+//
+
+void SharedCurves::Draw(
+    const int frame_idx, 
+    const bool is_on_manip, 
+    const float cp_radius, 
+    const int select_cp_idx)
+{
+  if (frame_idx < 0 || m_curves.size() <= frame_idx) return;
+  
+  static const EVec4f COLOR_R = { 1.0f, 0.0f, 0.0f, 0.5f };
+  static const EVec4f COLOR_G = { 0.0f, 1.0f, 0.0f, 0.5f };
+  static const EVec4f COLOR_C = { 0.0f, 1.0f, 1.0f, 0.5f };
+
+  EVec4f c = is_on_manip        ? COLOR_R : 
+             m_manip[frame_idx] ? COLOR_G :
+                                  COLOR_C ;
+  float lwidth = is_on_manip ? 1.5f * 6 : 1.0f * 6;
+
+  m_curves[frame_idx].Draw(c, lwidth);
+  m_curves[frame_idx].DrawCPs(c, cp_radius, select_cp_idx);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 DeformationStrokes::DeformationStrokes()
 {
   m_strokes.clear();
@@ -700,12 +994,10 @@ void DeformationStrokes::Stroke::UpdateStroke()
 }
 
 
-
 static const EVec3f COLOR_R = { 1.0f, 0.0f, 0.0f };
 static const EVec3f COLOR_Y = { 1.0f, 1.0f, 0.0f };
 static const EVec3f COLOR_G = { 0.0f, 1.0f, 0.0f };
 static const EVec3f COLOR_A = { 0.0f, 1.0f, 1.0f };
-
 void DeformationStrokes::Stroke::DrawStroke(const bool& _is_selected) const
 {
   if (m_stroke.size() == 0) return;

@@ -3,6 +3,84 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include "tmath.h"
+
+
+class PlanarCurve
+{
+private:
+
+  //plane info
+  int   m_plane_xyz = 0; //0: yz, 1:zx, 2:xy
+  float m_plane_pos = 0; //pposition 
+
+  //cp and curve info 
+  std::vector<EVec3f> m_curve = {};
+  std::vector<EVec3f> m_cps   = {};
+  bool m_normal_side = true;
+
+public:
+  PlanarCurve() {}
+
+  inline int GetNumCPs() const { return static_cast<int>(m_cps.size()); }
+  inline int   GetPlaneXYZ() const { return m_plane_xyz; }
+  inline float GetPlanePos() const { return m_plane_pos; }
+  inline void  SetPlaneXYZ(int plane_xyz) { m_plane_xyz = plane_xyz; }
+  inline void  SetPlanePos(float plane_pos) { m_plane_pos = plane_pos; }
+  inline std::vector<EVec3f> GetCurve() const { return m_curve; }
+  inline std::vector<EVec3f> GetCPs  () const { return m_cps;   }
+
+  inline bool GetNormalSide() const { return m_normal_side; }
+  inline void FlipNormal() { m_normal_side = !m_normal_side; }
+
+  //CP manipulation
+  bool AddCP(const EVec3f& pos, int& inserted_idx); // return inserted cp idx
+  void MoveCP(int cpidx, const EVec3f& _pos);
+  void DeleteCP(int cpidx);
+  int  PickCPs(const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius);
+
+
+  void Draw   (const EVec4f& color, const float thickness) const;
+  void DrawCPs(const EVec4f& color, float radius, int select_cp_idx) const;
+
+  std::string OutputAsText() const;
+  void InitByCPs(const std::vector<EVec3f>& cps);
+
+private:
+  void UpdateCurve();
+
+};
+
+
+
+
+class SharedCurves
+{
+  
+private:
+  std::vector<PlanarCurve> m_curves; // frame分のcurve
+  std::vector<bool> m_manip; //Userがf-frameを編集したら m_manip[f] = true
+  
+public:
+  SharedCurves(const int num_frame, const int init_frame, const PlanarCurve &src)
+  {
+    m_curves = std::vector<PlanarCurve>(num_frame, src);
+    m_manip = std::vector<bool>(num_frame, false);
+    m_manip[init_frame] = true;
+  }
+
+  void MoveCP(const int frame_idx, const int cp_idx, const EVec3f &pos) 
+  {
+    if (frame_idx < 0 || m_curves.size() <= frame_idx) return;
+    m_curves[frame_idx].MoveCP(cp_idx, pos);
+  }
+  void Draw(const int frame_idx, const bool is_on_manip, const float cp_radius, const int select_cp_idx);
+};
+
+
+
+
+
 
 
 class DeformationStrokes
