@@ -1103,7 +1103,8 @@ void FormMain::XrTimerTick(System::Object^ sender, System::EventArgs^ e)
   if (!m_is_xr_mode || !xr_program) return;
 
   m_ogl->oglMakeCurrent();
-  const bool ok = xr_program->XrMainFunction();
+  bool vis_frame = FormVisParam::GetInst()->bRendFrame();;
+  const bool ok = xr_program->XrMainFunction(vis_frame);
 
   if (!ok)
   {

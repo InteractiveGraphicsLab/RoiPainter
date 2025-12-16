@@ -304,6 +304,15 @@ void t_drawSlices(
     EVec3f(0,0,cz), EVec3f(cx,0,cz), EVec3f(cx,cy,cz), EVec3f(0,cy,cz)
   };
 
+  std::cout << "DEBUG LOG!!!;\n";
+  for (int i = 0; i < 8; ++i)
+    std::cout << p[i].x() << ", " << p[i].y() << ", " << p[i].z() << "\n";
+
+  std::cout << camP.x() << ", " << camP.y() << ", " << camP.z() << "\n";
+  std::cout << camF.x() << ", " << camF.y() << ", " << camF.z() << "\n";
+
+
+
   const float pDepth[8] = {
     camRay.dot(p[0] - camP), camRay.dot(p[1] - camP), 
     camRay.dot(p[2] - camP), camRay.dot(p[3] - camP),
