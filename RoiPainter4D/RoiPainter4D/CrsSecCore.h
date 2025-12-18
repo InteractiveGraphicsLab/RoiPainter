@@ -42,6 +42,11 @@ public:
   void SetPlanePosYZ(const float& pos_x, const EVec3f& cuboid) { m_plane_yz = pos_x / cuboid[0]; }
   void SetPlanePosZX(const float& pos_y, const EVec3f& cuboid) { m_plane_zx = pos_y / cuboid[1]; }
 
+  void SetPlanePos(CRSSEC_ID id, float pos, const EVec3f& cuboid) {
+    if      (id == CRSSEC_YZ) SetPlanePosYZ(pos, cuboid);
+    else if (id == CRSSEC_ZX) SetPlanePosZX(pos, cuboid);
+    else if (id == CRSSEC_XY) SetPlanePosXY(pos, cuboid);
+  }
 
 private:
   void CreateCurvedCrssec_(

@@ -9,38 +9,25 @@ bool PlanarCurve::AddCP(const EVec3f &pos, int& inserted_idx)
 {
   const int num_cps = static_cast<int>(m_cps.size());
 
-  if (num_cps == 0)
-  {
-    m_cps.push_back(pos);
-    inserted_idx = 0;
-    UpdateCurve();
-    return true;
-  }
-  else if (num_cps == 1)
-  {
-    int xyz = (fabsf(m_cps[0][0] - pos[0]) < 0.001f) ? 0 :
-              (fabsf(m_cps[0][1] - pos[1]) < 0.001f) ? 1 :
-              (fabsf(m_cps[0][2] - pos[2]) < 0.001f) ? 2 : -1;
-    if (xyz == -1) 
-    {
-      std::cout << "strange input at AddCP 1\n";
-      return false;
-    }
+  float tmp = (m_crssec_id == CRSSEC_XY) ? pos[2] :
+              (m_crssec_id == CRSSEC_YZ) ? pos[0] :
+              (m_crssec_id == CRSSEC_ZX) ? pos[1] :
+              0.0f;
 
-    m_cps.push_back(pos);
-    inserted_idx = num_cps;
-    m_plane_xyz = xyz;
-    m_plane_pos = m_cps[0][xyz];
-    UpdateCurve();
-    return true;
-  }
-
-  if (fabsf(m_plane_pos - pos[m_plane_xyz]) > 0.001f) {
-    std::cout << "strange input at AddCP 2\n";
+  if (fabsf(m_crssec_pos - tmp) > 0.001f) 
+  {
+    std::cout << "strange input at AddCP\n";
     return false;
   }
 
-  // 2点以上：端点・中点を見て挿入位置決定 ----
+  if ( num_cps <= 2 )
+  {
+    m_cps.push_back(pos);
+    inserted_idx = num_cps;
+    UpdateCurve();
+    return true;
+  }
+
   float min_dist = std::numeric_limits<float>::max();
   int   best_idx = 0;
 
@@ -71,7 +58,12 @@ bool PlanarCurve::AddCP(const EVec3f &pos, int& inserted_idx)
 void PlanarCurve::MoveCP(int cpidx, const EVec3f& pos)
 {
   if (cpidx < 0 || cpidx >= m_cps.size()) return;
-  if (fabsf(m_plane_pos - pos[m_plane_xyz]) >= 0.001f) return;
+
+  float tmp = (m_crssec_id == CRSSEC_XY) ? pos[2] :
+              (m_crssec_id == CRSSEC_YZ) ? pos[0] :
+              (m_crssec_id == CRSSEC_ZX) ? pos[1] :
+              0.0f;
+  if (fabsf(m_crssec_pos - tmp) > 0.001f) return;
   m_cps[cpidx] = pos;
   UpdateCurve();
 }
@@ -118,9 +110,9 @@ void PlanarCurve::Draw(const EVec4f& color, const float thickness) const
   const float normal_length = 1.0f;
 
   const EVec3f plane_normal = EVec3f(
-    m_plane_xyz == 0 ? 1.0f : 0.0f,
-    m_plane_xyz == 1 ? 1.0f : 0.0f,
-    m_plane_xyz == 2 ? 1.0f : 0.0f
+    m_crssec_id == CRSSEC_YZ ? 1.0f : 0.0f,
+    m_crssec_id == CRSSEC_ZX ? 1.0f : 0.0f,
+    m_crssec_id == CRSSEC_XY ? 1.0f : 0.0f
   );
 
   glBegin(GL_LINES);
@@ -166,9 +158,9 @@ void PlanarCurve::UpdateCurve()
   std::vector<EVec2f> cps_2f;
   for (const auto& cp : m_cps)
   {
-    if (m_plane_xyz == 0) cps_2f.push_back(EVec2f(cp[1], cp[2]));
-    if (m_plane_xyz == 1) cps_2f.push_back(EVec2f(cp[0], cp[2]));
-    if (m_plane_xyz == 2) cps_2f.push_back(EVec2f(cp[0], cp[1]));
+    if      (m_crssec_id == CRSSEC_YZ) cps_2f.push_back(EVec2f(cp[1], cp[2]));
+    else if (m_crssec_id == CRSSEC_ZX) cps_2f.push_back(EVec2f(cp[0], cp[2]));
+    else if (m_crssec_id == CRSSEC_XY) cps_2f.push_back(EVec2f(cp[0], cp[1]));
   }
 
   std::vector<EVec2f> stroke_2f;
@@ -181,14 +173,15 @@ void PlanarCurve::UpdateCurve()
   for (const auto& p : stroke_2f)
   {
     EVec3f vec;
-    if (m_plane_xyz == 0) vec << m_plane_pos, p[0], p[1];
-    if (m_plane_xyz == 1) vec << p[0], m_plane_pos, p[1];
-    if (m_plane_xyz == 2) vec << p[0], p[1], m_plane_pos;
+    if      (m_crssec_id == CRSSEC_YZ) vec << m_crssec_pos, p[0], p[1];
+    else if (m_crssec_id == CRSSEC_ZX) vec << p[0], m_crssec_pos, p[1];
+    else if (m_crssec_id == CRSSEC_XY) vec << p[0], p[1], m_crssec_pos;
     m_curve.push_back(vec);
   }
 }
 
 
+/*
 
 std::string PlanarCurve::OutputAsText() const
 {
@@ -201,8 +194,6 @@ std::string PlanarCurve::OutputAsText() const
       std::to_string(cp[2]) + "\n";
   return text;
 }
-
-
 
 void PlanarCurve::InitByCPs(const std::vector<EVec3f> &cps)
 {
@@ -217,6 +208,7 @@ void PlanarCurve::InitByCPs(const std::vector<EVec3f> &cps)
   UpdateCurve();
 }
 
+*/
 
 
 

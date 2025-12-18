@@ -18,9 +18,6 @@
 #include "FormRefCurveDeform.h"
 #pragma unmanaged
 
-//#define DEBUG_MODE_REF_CURVEDEFORM
-
-
 using namespace RoiPainter4D;
 
 
@@ -32,10 +29,7 @@ ModeRefCurveDeform::ModeRefCurveDeform()
 }
 
 
-ModeRefCurveDeform::~ModeRefCurveDeform()
-{
-
-}
+ModeRefCurveDeform::~ModeRefCurveDeform(){}
 
 
 bool ModeRefCurveDeform::CanEndMode()
@@ -51,22 +45,26 @@ bool ModeRefCurveDeform::CanEndMode()
 void ModeRefCurveDeform::StartMode()
 {
   std::cout << "ModeRefCurveDeform...startMode----------\n";
+  const auto cuboid    = ImageCore::GetInst()->GetCuboidF();
+  const auto num_frame = ImageCore::GetInst()->GetNumFrames();
+
   m_bL = m_bR = m_bM = false;
   m_is_not_saved_state = false;
-
+  
   m_mask_mesh = MaskMeshSequence();
-  auto c = ImageCore::GetInst()->GetCuboidF();
-  m_cp_rate = c[0] * 0.0006f;
+  m_cp_rate = cuboid[0] * 0.0006f;
   m_cp_size = 10;
   m_prev_frame_idx = formVisParam_getframeI();
-  m_strokes = std::vector<DeformationStrokes>(ImageCore::GetInst()->GetNumFrames());
-  m_tmeshes = std::vector<TMesh>(ImageCore::GetInst()->GetNumFrames());
+  m_shared_curves.clear();
+  m_curves = std::vector<std::vector<PlanarCurve>>(num_frame);
+  m_tmeshes = std::vector<TMesh>(num_frame);
   m_laplacian_deformer = std::vector<LaplacianDeformer>();
+
   //for (int i = 0; i < ImageCore::GetInst()->GetNumFrames(); ++i) {
   //  m_laplacian_deformer.push_back(LaplacianDeformer(m_mask_mesh.GetMesh(i)));
   //}
   m_shared_stroke_idxs = std::set<int>();
-  m_histories = std::vector<History>(ImageCore::GetInst()->GetNumFrames());
+  m_histories = std::vector<History>(num_frame);
   m_show_only_selected_stroke = true;
   m_prev_selected_stroke_idx = -1;
   m_draw_surf_trans = true;
@@ -79,72 +77,107 @@ void ModeRefCurveDeform::StartMode()
 }
 
 
+
+
+
+ModeRefCurveDeform::SelectionInfo ModeRefCurveDeform::PickCPatCurrentFrame(
+    const EVec3f& ray_pos, 
+    const EVec3f& ray_dir)
+{
+  const float CP_RAD = m_cp_rate * m_cp_size;
+  const int frame_idx = formVisParam_getframeI();
+  SelectionInfo info;
+  
+  // pick standard curves
+  for (int crv_i = 0; crv_i < (int)m_curves[frame_idx].size(); ++crv_i)
+  {
+    int cpidx = m_curves[frame_idx][crv_i].PickCPs(ray_pos, ray_dir, CP_RAD);
+    if (cpidx == -1) continue;
+
+    EVec3f pos           = m_curves[frame_idx][crv_i].GetCP(cpidx);
+    CRSSEC_ID crssec_id  = m_curves[frame_idx][crv_i].GetCrssecId();
+    float     crssec_pos = m_curves[frame_idx][crv_i].GetCrssecPos();
+    if ( !info.selected || (ray_pos - pos).norm() < (ray_pos - info.pos).norm())
+    info.Set(true, false, crv_i, cpidx, pos, crssec_id, crssec_pos);
+  }
+
+  // pick shared curves
+  for (int crv_i = 0; crv_i < (int)m_shared_curves.size(); ++crv_i)
+  {
+    int cpidx = m_shared_curves[crv_i].PickCPs(frame_idx, ray_pos, ray_dir, CP_RAD);
+    if (cpidx == -1) continue;
+
+    EVec3f pos          = m_shared_curves[crv_i].GetCP(frame_idx, cpidx);
+    CRSSEC_ID crssec_id = m_shared_curves[crv_i].GetCrssecId();
+    float     crssec_pos= m_shared_curves[crv_i].GetCrssecPos();
+    if (!info.selected || (ray_pos - pos).norm() < (ray_pos - info.pos).norm())
+    info.Set(true, true, crv_i, cpidx, pos, crssec_id, crssec_pos);
+  }
+  return info;
+}
+
+
+
 void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
   m_bL = true;
   const int frame_idx = formVisParam_getframeI();
+  const EVec3f cuboid = ImageCore::GetInst()->GetCuboidF();
+
+  EVec3f ray_pos, ray_dir, pos;
+  ogl->GetCursorRay(p, ray_pos, ray_dir);
+
 
   if (IsShiftKeyOn())
   {
-    Do(); //undo,redo処理
-    TMesh& mesh = m_mask_mesh.GetMesh(frame_idx);
-    EVec3f ray_pos, ray_dir, pos;
-    ogl->GetCursorRay(p, ray_pos, ray_dir);
-    const int selected_stroke_idx = m_strokes[frame_idx].PickCPs(ray_pos, ray_dir, m_cp_rate * m_cp_size, false, m_show_only_selected_stroke); //CPを選択してるかチェック
+    Do();
+    auto info = PickCPatCurrentFrame(ray_pos, ray_dir);
 
-    if (selected_stroke_idx == -1)
+    if (info.selected) 
     {
-      DeformationStrokes& dstroke = m_strokes[frame_idx];
-      if (PickCrssec(ray_pos, ray_dir, pos) != CRSSEC_NON)
+      //picking成功 - このcurve/CPを選択状態に(位置に平面を移動)
+      m_select_info = info;
+      CrssecCore::GetInst()->SetPlanePos(info.crssec_id, info.crssec_pos, cuboid);
+    }
+    else
+    {
+      //picking失敗 - 新curve追加 / 新CP追加 / 選択解除
+      CRSSEC_ID crssec_id = PickCrssec(ray_pos, ray_dir, pos);
+      if (crssec_id != CRSSEC_NON)
       {
-        const int nearest_vertex_idx = mesh.GetNearestVertexIdx(pos);
-        const EVec3f nearest_vertex_normal = mesh.m_vNorms[nearest_vertex_idx];
-        if (dstroke.GetSelectedStrokeIdx() == -1)
+        if( !m_select_info.selected)
         {
-          dstroke.AddNewStroke();
+          float crssec_pos = crssec_id == CRSSEC_XY ? pos[2] :
+                             crssec_id == CRSSEC_YZ ? pos[0] : pos[1];
+          m_curves[frame_idx].push_back(PlanarCurve(crssec_id, crssec_pos, pos));
+          int curve_idx = (int)m_curves[frame_idx].size() - 1;
+          m_select_info.Set(true, false, curve_idx, 0, pos, crssec_id, crssec_pos);
         }
-        if (!dstroke.AddCP_SelStroke(pos, nearest_vertex_normal))
+        else if (m_select_info.selected && !m_select_info.is_shared)
         {
-          dstroke.UnselectStroke();
-          m_prev_selected_stroke_idx = -1;
+          int cpidx;
+          if( m_curves[frame_idx][m_select_info.curve_idx].AddCP(pos, cpidx) ) 
+            m_select_info.cp_idx = cpidx;
         }
       }
       else
       {
-        dstroke.UnselectStroke();
-        m_prev_selected_stroke_idx = -1;
-      }
-    }
-    else
-    {
-      m_strokes[frame_idx].PickCPs(ray_pos, ray_dir, m_cp_rate * m_cp_size, true, m_show_only_selected_stroke);
-      const int common_xyz = m_strokes[frame_idx].GetPlaneXyz_SelStroke();
-      const float common_coord = m_strokes[frame_idx].GetPlanePos_SelStroke();
-      const EVec3f cuboid = ImageCore::GetInst()->GetCuboidF();
-      if (common_xyz == 0)
-      {
-        CrssecCore::GetInst()->SetPlanePosYZ(common_coord, cuboid);
-      }
-      else if (common_xyz == 1)
-      {
-        CrssecCore::GetInst()->SetPlanePosZX(common_coord, cuboid);
-      }
-      else if (common_xyz == 2)
-      {
-        CrssecCore::GetInst()->SetPlanePosXY(common_coord, cuboid);
+        //clear selection
+        m_select_info.Set();
       }
     }
   }
   else
   {
-    m_strokes[frame_idx].UnselectStroke();
-    m_prev_selected_stroke_idx = -1;
+    m_select_info.Set();
     ogl->BtnDown_Trans(p);
+    m_prev_selected_stroke_idx = -1;
   }
 
   m_prevpt = m_initpt = p;
   formMain_RedrawMainPanel();
 }
+
 
 
 void ModeRefCurveDeform::LBtnUp(const EVec2i& p, OglForCLI* ogl)

@@ -17,12 +17,60 @@
 //  
 // (*) vol_flg[i]
 // not used
+// 
+// Refacored by Takashi At 2025/12
+// 
 //-----------------------------------------------
 
 
 class ModeRefCurveDeform :
   public ModeInterface
 {
+  // Curves 
+  std::vector<std::vector<PlanarCurve>> m_curves; // [framd_idx][curve_idx]
+  std::vector<SharedCurves> m_shared_curves; // [curve_idx]
+
+  typedef struct
+  {
+    std::vector<std::vector<PlanarCurve>> curves;
+    std::vector<SharedCurves> shared_curves;
+  } SnapShot;
+
+  typedef struct
+  {
+    std::stack<SnapShot> undo;
+    std::stack<SnapShot> redo;
+  } History;
+  std::vector<History> m_histories; // for each frame 
+
+  //Selected CurveCP Info 
+  class SelectionInfo
+  {
+  public: 
+    bool selected = false;
+    bool is_shared = false;
+    int curve_idx = -1;
+    int cp_idx = -1;
+    CRSSEC_ID crssec_id  = CRSSEC_XY;
+    float     crssec_pos = 0.0f;
+    EVec3f pos;
+    SelectionInfo(){ Set(); }
+    void Set(bool _selected = false, bool _shared = false, 
+             int  _curve_id = -1   , int  _cpid   = -1, EVec3f p = EVec3f(0, 0, 0), 
+             CRSSEC_ID _crssec_id = CRSSEC_XY, float _crssec_pos = 0)
+    {
+      selected = _selected;
+      is_shared = _shared;
+      curve_idx = _curve_id;
+      cp_idx = _cpid;
+      pos = p;
+      crssec_id  = _crssec_id;
+      crssec_pos = _crssec_pos;
+    }
+  };
+  
+  SelectionInfo m_select_info;
+
   MaskMeshSequence m_mask_mesh;
 
   int   m_cp_size;
@@ -31,25 +79,13 @@ class ModeRefCurveDeform :
   bool  m_draw_surf_trans;
   bool  m_exist_mesh;
 
-  // Stroke Mode
-  std::vector<DeformationStrokes> m_strokes;
+
   std::vector<TMesh> m_tmeshes;
   std::vector<LaplacianDeformer> m_laplacian_deformer;
   std::set<int> m_shared_stroke_idxs;
   int m_prev_selected_stroke_idx;
   std::vector<Eigen::Vector3f> m_matched_pos;
 
-  typedef struct
-  {
-    DeformationStrokes strokes;
-  } Action;
-
-  typedef struct
-  {
-    std::stack<Action> undo;
-    std::stack<Action> redo;
-  } History;
-  std::vector<History> m_histories;
 
   bool m_show_only_selected_stroke;
 
@@ -120,6 +156,7 @@ private:
   void _Deform(const int);
   void FindClosestPointFromStroke(const int, std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
 
+  ModeRefCurveDeform::SelectionInfo PickCPatCurrentFrame(const EVec3f& ray_pos, const EVec3f& ray_dir);
 
 };
 

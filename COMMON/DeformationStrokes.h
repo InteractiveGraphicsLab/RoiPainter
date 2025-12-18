@@ -11,8 +11,8 @@ class PlanarCurve
 private:
 
   //plane info
-  int   m_plane_xyz = 0; //0: yz, 1:zx, 2:xy
-  float m_plane_pos = 0; //pposition 
+  CRSSEC_ID m_crssec_id ; //xy yz or zx  
+  float     m_crssec_pos; //pposition 
 
   //cp and curve info 
   std::vector<EVec3f> m_curve = {};
@@ -20,15 +20,21 @@ private:
   bool m_normal_side = true;
 
 public:
-  PlanarCurve() {}
+  PlanarCurve(CRSSEC_ID id, float crssec_pos, const EVec3f first_cp) : 
+    m_crssec_id(id), m_crssec_pos(crssec_pos)
+  {
+    m_cps.push_back(first_cp);
+  }
 
   inline int GetNumCPs() const { return static_cast<int>(m_cps.size()); }
-  inline int   GetPlaneXYZ() const { return m_plane_xyz; }
-  inline float GetPlanePos() const { return m_plane_pos; }
-  inline void  SetPlaneXYZ(int plane_xyz) { m_plane_xyz = plane_xyz; }
-  inline void  SetPlanePos(float plane_pos) { m_plane_pos = plane_pos; }
-  inline std::vector<EVec3f> GetCurve() const { return m_curve; }
-  inline std::vector<EVec3f> GetCPs  () const { return m_cps;   }
+  inline CRSSEC_ID GetCrssecId () const { return m_crssec_id; }
+  inline float     GetCrssecPos() const { return m_crssec_pos;}
+  //inline std::vector<EVec3f> GetCurve() const { return m_curve; }
+  //inline std::vector<EVec3f> GetCPs  () const { return m_cps; }
+  inline EVec3f GetCP(int cpidx) const { 
+    if (cpidx < 0 || m_cps.size() <= cpidx) return EVec3f(0, 0, 0); 
+    return m_cps[cpidx]; 
+  }
 
   inline bool GetNormalSide() const { return m_normal_side; }
   inline void FlipNormal() { m_normal_side = !m_normal_side; }
@@ -43,8 +49,8 @@ public:
   void Draw   (const EVec4f& color, const float thickness) const;
   void DrawCPs(const EVec4f& color, float radius, int select_cp_idx) const;
 
-  std::string OutputAsText() const;
-  void InitByCPs(const std::vector<EVec3f>& cps);
+  //std::string OutputAsText() const;
+  //void InitByCPs(const std::vector<EVec3f>& cps);
 
 private:
   void UpdateCurve();
@@ -69,10 +75,32 @@ public:
     m_manip[init_frame] = true;
   }
 
+  int  PickCPs(int framd_idx, const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius)
+  {
+    if (framd_idx < 0 || m_curves.size() <= framd_idx) return -1;
+    return m_curves[framd_idx].PickCPs(ray_pos, ray_dir, cp_radius);
+  }
+
+  EVec3f GetCP(const int frame_idx, const int cp_idx) 
+  {
+    if (frame_idx < 0 || m_curves.size() <= frame_idx) return EVec3f(0,0,0);
+    return m_curves[frame_idx].GetCP(cp_idx);
+  }
+  
+  CRSSEC_ID GetCrssecId() {
+    if (m_curves.size() == 0) return CRSSEC_XY;
+    return m_curves[0].GetCrssecId();
+  }
+  float GetCrssecPos() {
+    if (m_curves.size() == 0) return 0.0f;
+    return m_curves[0].GetCrssecPos();
+  }
+
   void MoveCP(const int frame_idx, const int cp_idx, const EVec3f &pos) 
   {
     if (frame_idx < 0 || m_curves.size() <= frame_idx) return;
     m_curves[frame_idx].MoveCP(cp_idx, pos);
+    m_manip[frame_idx] = true;
   }
   void Draw(const int frame_idx, const bool is_on_manip, const float cp_radius, const int select_cp_idx);
 };
