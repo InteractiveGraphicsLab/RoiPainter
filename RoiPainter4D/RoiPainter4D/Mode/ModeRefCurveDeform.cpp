@@ -66,7 +66,6 @@ void ModeRefCurveDeform::StartMode()
   m_shared_stroke_idxs = std::set<int>();
   m_histories = std::vector<History>(num_frame);
   m_show_only_selected_stroke = true;
-  m_prev_selected_stroke_idx = -1;
   m_draw_surf_trans = true;
   m_exist_mesh = false;
 
@@ -163,18 +162,16 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
       else
       {
         //clear selection
-        m_select_info.Set();
+        m_select_info.Clear();
       }
     }
   }
   else
   {
-    m_select_info.Set();
+    m_select_info.Clear();
     ogl->BtnDown_Trans(p);
-    m_prev_selected_stroke_idx = -1;
   }
 
-  m_prevpt = m_initpt = p;
   formMain_RedrawMainPanel();
 }
 
@@ -185,13 +182,12 @@ void ModeRefCurveDeform::LBtnUp(const EVec2i& p, OglForCLI* ogl)
   m_bL = false;
   const int frame_idx = formVisParam_getframeI();
 
-  if (m_strokes[frame_idx].bSelStrokeShared())
+  if (m_select_info.selected && m_select_info.is_shared )
   {
     UpdateSharedStroke();
   }
 
   ogl->BtnUp();
-
   formMain_RedrawMainPanel();
 }
 
@@ -200,38 +196,47 @@ void ModeRefCurveDeform::RBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
   m_bR = true;
   const int frame_idx = formVisParam_getframeI();
+  
 
   if (IsShiftKeyOn())
   {
     EVec3f ray_pos, ray_dir, pos;
     ogl->GetCursorRay(p, ray_pos, ray_dir);
-    const int selected_stroke_idx = m_strokes[frame_idx].PickCPs(ray_pos, ray_dir, m_cp_rate * m_cp_size, true, m_show_only_selected_stroke);
+    auto info = PickCPatCurrentFrame(ray_pos, ray_dir);
 
-    if (selected_stroke_idx != -1)
+    if ( info.selected && info.is_shared)
     {
-      if (m_strokes[frame_idx].bSelStrokeShared() == true)
+      if (ShowMsgDlgYesNo("All-frame曲線を解除しますか？\n（自動補間された曲線は削除されます）", "Unlock?"))
       {
-        if (ShowMsgDlgYesNo("All-frame曲線を解除しますか？\n（自動補間された曲線は削除されます）", "Unlock?"))
-        {
-          UnshareSelectedStroke();
-        }
+        Do();
+        UnshareSelectedStroke();
+        m_select_info.Clear();
+      }
+    }
+    else if (info.selected && !info.is_shared)
+    {
+      //delete cp
+      Do();
+      std::vector<PlanarCurve> &curves = m_curves[frame_idx];
+      curves[info.curve_idx].DeleteCP(info.cp_idx);
+      if (curves[info.curve_idx].GetNumCPs() == 0)
+      {
+        curves.erase(m_curves[frame_idx].begin() + info.curve_idx);
+        m_select_info.Clear();
       }
       else
-      {
-        m_prev_selected_stroke_idx = selected_stroke_idx;
-        Do();
-        m_strokes[frame_idx].DeleteSelectedCP();
+      { 
+        m_select_info = info;
+        m_select_info.cp_idx = curves[info.curve_idx].GetNumCPs() - 1;
       }
     }
   }
   else
   {
-    m_strokes[frame_idx].UnselectStroke();
-    m_prev_selected_stroke_idx = -1;
+    m_select_info.Clear();
     ogl->BtnDown_Rot(p);
   }
-  
-  m_prevpt = m_initpt = p;
+
   formMain_RedrawMainPanel();
 }
 
@@ -239,9 +244,7 @@ void ModeRefCurveDeform::RBtnDown(const EVec2i& p, OglForCLI* ogl)
 void ModeRefCurveDeform::RBtnUp(const EVec2i& p, OglForCLI* ogl)
 {
   m_bR = false;
-
   ogl->BtnUp();
-
   formMain_RedrawMainPanel();
 }
 
@@ -249,13 +252,8 @@ void ModeRefCurveDeform::RBtnUp(const EVec2i& p, OglForCLI* ogl)
 void ModeRefCurveDeform::MBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
   m_bM = true;
-
-  const int frame_idx = formVisParam_getframeI();
-  m_strokes[frame_idx].UnselectStroke();
-  m_prev_selected_stroke_idx = -1;
-
+  m_select_info.Clear();
   ogl->BtnDown_Zoom(p);
-
   formMain_RedrawMainPanel();
 }
 
@@ -280,7 +278,16 @@ void ModeRefCurveDeform::MouseMove(const EVec2i& p, OglForCLI* ogl)
   {
     if (PickCrssec(ray_pos, ray_dir, pos) != CRSSEC_NON)
     {
-      m_strokes[frame_idx].MoveSelectedCP(pos);
+      int curve_idx = m_select_info.curve_idx;
+      int cp_idx    = m_select_info.cp_idx;
+      if (m_select_info.selected && m_select_info.is_shared)
+      {
+        m_shared_curves[curve_idx].MoveCP(frame_idx, cp_idx, pos);
+      }
+      else if(m_select_info.selected && !m_select_info.is_shared)
+      {
+        m_curves[frame_idx][curve_idx].MoveCP(cp_idx, pos); 
+      }
     }
   }
   else
@@ -288,9 +295,9 @@ void ModeRefCurveDeform::MouseMove(const EVec2i& p, OglForCLI* ogl)
     ogl->MouseMove(p);
   }
 
-  m_prevpt = p;
   formMain_RedrawMainPanel();
 }
+
 
 
 void ModeRefCurveDeform::MouseWheel(

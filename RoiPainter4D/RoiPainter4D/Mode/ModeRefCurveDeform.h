@@ -54,10 +54,9 @@ class ModeRefCurveDeform :
     CRSSEC_ID crssec_id  = CRSSEC_XY;
     float     crssec_pos = 0.0f;
     EVec3f pos;
-    SelectionInfo(){ Set(); }
-    void Set(bool _selected = false, bool _shared = false, 
-             int  _curve_id = -1   , int  _cpid   = -1, EVec3f p = EVec3f(0, 0, 0), 
-             CRSSEC_ID _crssec_id = CRSSEC_XY, float _crssec_pos = 0)
+    SelectionInfo(){ Clear(); }
+    void Set(bool _selected, bool _shared, int  _curve_id, int _cpid, EVec3f p, 
+             CRSSEC_ID _crssec_id, float _crssec_pos)
     {
       selected = _selected;
       is_shared = _shared;
@@ -66,6 +65,9 @@ class ModeRefCurveDeform :
       pos = p;
       crssec_id  = _crssec_id;
       crssec_pos = _crssec_pos;
+    }
+    void Clear(){
+      Set(false, false, -1, -1, EVec3f(0, 0, 0), CRSSEC_XY, 0.0f);
     }
   };
   
@@ -83,14 +85,11 @@ class ModeRefCurveDeform :
   std::vector<TMesh> m_tmeshes;
   std::vector<LaplacianDeformer> m_laplacian_deformer;
   std::set<int> m_shared_stroke_idxs;
-  int m_prev_selected_stroke_idx;
   std::vector<Eigen::Vector3f> m_matched_pos;
 
 
   bool m_show_only_selected_stroke;
 
-  EVec2i m_initpt;
-  EVec2i m_prevpt;
 
   // canEndMode
   bool m_is_not_saved_state;
