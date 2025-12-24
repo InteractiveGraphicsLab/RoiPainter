@@ -1,4 +1,4 @@
-[日本語](README.md) | [English](README_en.md)
+[日本語](RoiPainter4D_README_jp.md) | [English](RoiPainter4D_README_en.md)
 
 # RoiPainter
 
