@@ -123,13 +123,8 @@ void FormRefCurveDeform::LoadState()
   IntPtr mptr = System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(dlg->FileName);
   fpath = static_cast<const char*>(mptr.ToPointer());
 
-  std::set<int> set_frame_idx;
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  for (int i = 0; i < num_frames; ++i)
-  {
-    set_frame_idx.insert(i);
-  }
-  ModeRefCurveDeform::GetInst()->LoadState(fpath, set_frame_idx);
+
+  ModeRefCurveDeform::GetInst()->LoadState(fpath);
 }
 
 
@@ -144,13 +139,7 @@ void FormRefCurveDeform::SaveState()
   IntPtr mptr = System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(dlg->FileName);
   fpath = static_cast<const char*>(mptr.ToPointer());
 
-  std::set<int> set_frame_idx;
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  for (int i = 0; i < num_frames; ++i)
-  {
-    set_frame_idx.insert(i);
-  }
-  ModeRefCurveDeform::GetInst()->SaveState(fpath, set_frame_idx);
+  ModeRefCurveDeform::GetInst()->SaveState(fpath);
 }
 
 

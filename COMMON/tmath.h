@@ -1517,6 +1517,21 @@ inline static void CalcTriangleMatching(
 
 
 
+//空行読み飛ばし付き ReadLine
+inline bool ReadNextLine(std::ifstream& file, std::string& line, std::stringstream& ss)
+{
+  line.clear();
+  while (std::getline(file, line))
+  {
+    if (line.size() != 0) {
+      ss.clear();
+      ss.str(line);
+      return true;
+    }
+  }
+  return false;
+}
+
 
 
 

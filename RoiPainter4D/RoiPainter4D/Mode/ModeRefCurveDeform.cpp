@@ -857,6 +857,104 @@ void ModeRefCurveDeform::MakeSelectedStroke_Unshared()
 }
 
 
+
+void ModeRefCurveDeform::SaveState(
+    const std::string& _fpath)
+{
+  std::ofstream file(_fpath);
+  if (!file)
+  {
+    std::cout << "Failed to save state.\n";
+    return;
+  }
+
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+
+  file << "RefCurveDeform_State\n";
+  file << "NumFrames: " << std::to_string(num_frames) + "\n";
+
+  //normal curves 
+  for (int fi = 0; fi < num_frames; ++fi)
+  {
+    file << "Frame: " << std::to_string(fi) + "\n";
+    file << "num_curves: " << std::to_string(m_curves.size()) << "\n";
+    for( int j = 0; j < m_curves[fi].size(); ++j)
+      m_curves[fi][j].WriteToFile(file);
+  }
+
+  //Shared curve
+  file << "SharedCurves: " << std::to_string(m_shared_curves.size()) << "\n";
+  for (size_t i = 0; i < m_shared_curves.size(); ++i)
+  {
+    m_shared_curves[i].WriteToFile(file);
+  }
+
+  file.close();
+
+  std::cout << "Saved as \"" + _fpath + "\n";
+  m_is_not_saved_state = false;
+  formMain_ActivateMainForm();
+}
+
+void ModeRefCurveDeform::LoadState(const std::string& _fpath)
+{
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+
+  std::ifstream file(_fpath);
+  if (!file) return;
+
+  std::string line, key;
+  std::stringstream ss;
+
+  // RefCurveDeform_State
+  if (!ReadNextLine(file, line, ss) ) return;
+  std::cout << line << "\n"; 
+
+  // NumFrames: n
+  if (!ReadNextLine(file, line, ss) ) return;
+  int _num_frames = 0;
+  ss >> key >> _num_frames;
+  std::cout << key << _num_frames << "\n";
+  
+  if(_num_frames != num_frames) return;
+
+  //normal curves 
+  for (int fi = 0; fi < num_frames; ++fi)
+  {
+    int fidx, num_curves;
+
+    //Frame: fi
+    if (!ReadNextLine(file, line, ss)) return;
+    ss >> key >> fidx;
+    std::cout << key << fidx << "\n";
+
+    //num_curves: n
+    if (!ReadNextLine(file, line, ss)) return;
+    ss >> key >> num_curves;
+    m_curves[fi].clear();
+    std::cout << key << num_curves << "\n";
+    for (int j = 0; j < num_curves; ++j)
+    {
+      PlanarCurve c(file);
+      m_curves[fi].push_back(c);
+    }
+  }
+
+  //SharedCurves: n
+  if (!ReadNextLine(file, line, ss)) return;
+  int num_shared_curves = 0;
+  ss >> key >> num_shared_curves;
+  std::cout << key << num_shared_curves << "\n";
+  m_shared_curves.clear();
+
+  for (int i = 0; i < num_shared_curves; ++i)
+  {
+    SharedCurves sc(file);
+    m_shared_curves.push_back(sc);
+    sc.UpdateNonManipCurves();
+  }
+}
+
 /*
 
 void ModeRefCurveDeform::LockSelectedStroke()
@@ -878,162 +976,6 @@ void ModeRefCurveDeform::UnlockSelectedStroke()
   formMain_RedrawMainPanel();
 }
 */
-
-
-void ModeRefCurveDeform::SaveState(const std::string& _fpath, const std::set<int>& _set_frame_idx)
-{
-  std::ofstream file(_fpath);
-  if (!file)
-  {
-    std::cout << "Failed to save state.\n";
-    return;
-  }
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-
-  for (int i = 0; i < num_frames; ++i)
-  {
-    if (!_set_frame_idx.count(i)) continue;
-
-    file << "Frame:\n";
-    file << std::to_string(i) + "\n\n";
-    file << "Strokes:\n";
-    file << m_strokes[i].OutputAsText();
-    file << "EndStrokes\n\n";
-    file << "EndFrame\n\n\n";
-  }
-  file.close();
-
-  std::cout << "Saved as \"" + _fpath + "\"\n";
-  m_is_not_saved_state = false;
-  formMain_ActivateMainForm();
-}
-
-
-void ModeRefCurveDeform::LoadState(const std::string& _fpath, const std::set<int>& _set_frame_idx)
-{
-  enum class E_State
-  {
-    Init,
-    Frame_init,
-    Frame,
-    Stroke_init,
-    Stroke,
-  };
-
-  std::ifstream file(_fpath);
-  if (!file)
-  {
-    std::cout << "Failed to load state.\n";
-    return;
-  }
-
-  int frame_idx = -1;
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  E_State state = E_State::Init;
-  std::vector<std::vector<EVec3f>> vec_strokes;
-  std::vector<EVec3f> stroke;
-  m_shared_stroke_idxs = std::set<int>();
-  std::vector<int> vec_shared_idxs;
-  int shared_idx;
-
-  while (!file.eof())
-  {
-    char line_char[200];
-    file.getline(line_char, 200);
-    std::string line = std::string(line_char);
-
-    if (state == E_State::Init)
-    {
-      if (line == "Frame:")
-      {
-        state = E_State::Frame_init;
-      }
-    }
-    else if (state == E_State::Frame_init)
-    {
-      int x;
-      if (sscanf_s(line_char, "%d", &x) == 1)
-      {
-        if ((x < 0) || (x >= num_frames))
-        {
-          return;
-        }
-        else if (_set_frame_idx.count(x))
-        {
-          frame_idx = x;
-          state = E_State::Frame;
-        }
-        else
-        {
-          frame_idx = -1;
-          state = E_State::Init;
-        }
-      }
-    }
-    else if (state == E_State::Frame)
-    {
-      if (line == "Strokes:")
-      {
-        vec_shared_idxs = std::vector<int>();
-        vec_strokes = std::vector<std::vector<EVec3f>>();
-        state = E_State::Stroke_init;
-      }
-      else if (line == "EndFrame")
-      {
-        std::cout << "Loaded frame: " + std::to_string(frame_idx) + ".\n";
-        state = E_State::Init;
-      }
-    }
-    else if ((state == E_State::Stroke_init) || (state == E_State::Stroke))
-    {
-      if (state == E_State::Stroke_init)
-      {
-        stroke = std::vector<EVec3f>();
-        state = E_State::Stroke;
-        int x;
-        if (sscanf_s(line_char, "%d", &x) == 1)
-        {
-          shared_idx = x;
-          continue;
-        }
-        else
-        {
-          shared_idx = -1;
-        }
-      }
-
-      float x, y, z;
-      if (sscanf_s(line_char, "%f %f %f", &x, &y, &z) == 3)
-      {
-        EVec3f vec;
-        vec[0] = x;
-        vec[1] = y;
-        vec[2] = z;
-        stroke.push_back(vec);
-      }
-      else if (line == "EndStrokes")
-      {
-        m_strokes[frame_idx].LoadState(vec_shared_idxs, vec_strokes);
-        state = E_State::Frame;
-      }
-      else
-      {
-        if ((shared_idx >= 0) && (m_shared_stroke_idxs.count(shared_idx) == 0))
-        {
-          m_shared_stroke_idxs.insert(shared_idx);
-        }
-        vec_shared_idxs.push_back(shared_idx);
-        vec_strokes.push_back(stroke);
-        state = E_State::Stroke_init;
-      }
-    }
-  }
-
-  file.close();
-  UpdateSharedStroke();
-  formMain_RedrawMainPanel();
-  formMain_ActivateMainForm();
-}
 
 
 

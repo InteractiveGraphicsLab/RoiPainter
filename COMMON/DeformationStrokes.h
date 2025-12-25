@@ -6,6 +6,7 @@
 #include "tmath.h"
 
 
+
 class PlanarCurve
 {
 private:
@@ -25,6 +26,10 @@ public:
   {
     m_cps.push_back(first_cp);
   }
+
+  //save load 
+  PlanarCurve(std::ifstream &file);
+  void WriteToFile(std::ofstream &file);
 
   inline int GetNumCPs() const { return static_cast<int>(m_cps.size()); }
   inline CRSSEC_ID GetCrssecId () const { return m_crssec_id; }
@@ -55,9 +60,6 @@ public:
   void Draw   (const float color[4], const float thickness) const;
   void DrawCPs(const float color[4], float radius, int select_cp_idx) const;
 
-  //std::string OutputAsText() const;
-  //void InitByCPs(const std::vector<EVec3f>& cps);
-
   EVec3f GetCrssecNorm() const {
     if      (m_crssec_id == CRSSEC_XY) return EVec3f(0.0f, 0.0f, 1.0f);
     else if (m_crssec_id == CRSSEC_YZ) return EVec3f(1.0f, 0.0f, 0.0f);
@@ -65,14 +67,10 @@ public:
     std::cout << "Error: PlanarCurve::GetCrssecNorm invalid crssec_id\n";
     return EVec3f(0.0f, 0.0f, 0.0f);
   }
+  
+  
 private:
   void UpdateCurve();
-
-
-
-
-
-
 };
 
 
@@ -92,6 +90,8 @@ public:
     m_manip = std::vector<bool>(num_frame, false);
     m_manip[init_frame] = true;
   }
+  void WriteToFile(std::ofstream& file);
+  SharedCurves(std::ifstream& file);
 
   int  PickCPs(int framd_idx, const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius)
   {

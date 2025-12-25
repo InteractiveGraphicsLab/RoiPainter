@@ -179,6 +179,63 @@ void PlanarCurve::UpdateCurve()
   }
 }
 
+void PlanarCurve::WriteToFile(std::ofstream& file) 
+{
+  file << "CRSSEC_ID "   << static_cast<int>(m_crssec_id) << "\n";
+  file << "CRSSEC_POS "  << m_crssec_pos << "\n";
+  file << "NORMAL_SIDE " << (m_normal_side ? 1 : 0) << "\n";
+  file << "NUM_CPS " << m_cps.size() << "\n";
+  for (const auto& cp : m_cps) 
+  {
+    file << cp[0] << " " << cp[1] << " " << cp[2] << "\n";
+  }
+}
+
+
+PlanarCurve::PlanarCurve(std::ifstream& file)
+{
+  std::string line, key;
+  std::stringstream ss;
+
+  // CRSSEC_ID
+  if (ReadNextLine(file, line, ss)) 
+  {
+    int id_int;
+    ss >> key >> id_int;
+    m_crssec_id = static_cast<CRSSEC_ID>(id_int);
+  }
+
+  // CRSSEC_POS
+  if (ReadNextLine(file, line, ss)) {
+    ss >> key >> m_crssec_pos;
+  }
+
+  // NORMAL_SIDE
+  if (ReadNextLine(file, line, ss)) {
+    int side;
+    ss >> key >> side;
+    m_normal_side = (side != 0);
+  }
+
+  // NUM_CPS とその後の座標データ
+  if (ReadNextLine(file, line, ss)) 
+  {
+    int num_cps;
+    ss >> key >> num_cps;
+    m_cps.resize(num_cps);
+    for (int i = 0; i < num_cps; ++i) 
+    {
+      if (ReadNextLine(file, line, ss)) 
+      {
+        float x,y,z;
+        ss >> x >> y >> z;
+        m_cps[i] = EVec3f(x, y, z); 
+      }
+    }
+  }
+  
+  UpdateCurve();
+}
 
 /*
 
@@ -316,11 +373,62 @@ void SharedCurves::UpdateNonManipCurves()
 
 
 
+void SharedCurves::WriteToFile(std::ofstream& file)
+{
+  file << "num_frames: " << m_curves.size() << "\n";
+
+  file << "manip_flags: " << m_manip.size() << "\n";
+
+  for (size_t i = 0; i < m_manip.size(); ++i) 
+  {
+    file << i << " " << (m_manip[i] ? 1 : 0) << "\n";
+  }
+
+  for (size_t i = 0; i < m_curves.size(); ++i) 
+  {
+    m_curves[i].WriteToFile(file);
+  }
+}
 
 
 
+SharedCurves::SharedCurves(std::ifstream& file)
+{
+  m_manip.clear();
+  m_curves.clear();
 
+  std::string line, key;
+  std::stringstream ss;
 
+  int num_frames = 0;
+  if (ReadNextLine(file, line, ss)) 
+  {
+    ss >> key >> num_frames;
+  }
+
+  if (ReadNextLine(file, line, ss)) 
+  {
+    m_manip.resize(num_frames, false);
+    for (int i = 0; i < num_frames; ++i) 
+    {
+      if (ReadNextLine(file, line, ss)) 
+      {
+        int fidx, val;
+        ss >> fidx >> val;
+        m_manip[i] = (val != 0);
+      }
+    }
+  }
+
+  m_curves.clear();
+  m_curves.reserve(num_frames);
+  for (int i = 0; i < num_frames; ++i) 
+  {
+    m_curves.emplace_back(PlanarCurve(file));
+  }
+
+  UpdateNonManipCurves();
+}
 
 
 

@@ -138,8 +138,8 @@ public:
    void SetShowOnlySelectedStroke();
    void SetCPSize();
 
-   void SaveState(const std::string&, const std::set<int>&);
-   void LoadState(const std::string&, const std::set<int>&);
+   void SaveState(const std::string&);
+   void LoadState(const std::string&);
 
    void FlipSelectedStrokeNormalSide();
    void MakeSelectedStroke_Shared();
