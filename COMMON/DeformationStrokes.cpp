@@ -3,6 +3,7 @@
 #include "TMesh.h"
 #include "kcurves.h"
 #include <fstream>
+#include "Mode/ModeInterface.h"
 
 
 bool PlanarCurve::AddCP(const EVec3f &pos, int& inserted_idx)
@@ -96,7 +97,7 @@ int PlanarCurve::PickCPs(const EVec3f& ray_pos, const EVec3f& ray_dir, const flo
 
 
 
-void PlanarCurve::Draw(const EVec4f& color, const float thickness) const
+void PlanarCurve::Draw(const float color[4], const float thickness) const
 {
   if (m_curve.size() == 0) return;
 
@@ -129,20 +130,18 @@ void PlanarCurve::Draw(const EVec4f& color, const float thickness) const
 }
 
 
-void PlanarCurve::DrawCPs(const EVec4f& color, float radius, int select_cp_idx) const
+void PlanarCurve::DrawCPs(const float color[4], float radius, int select_cp_idx) const
 {
   if (m_cps.size() == 0) return;
 
   // color
-  const float COLOR_W[4] = { 1.0f, 1.0f, 1.0f, 0.5f };
-  const float COLOR_SHIN64[1] = { 64 };
 
   glEnable(GL_LIGHTING);
 
   const int size = static_cast<int>(m_cps.size());
   for (int i = 0; i < size; ++i)
   {
-    TMesh::DrawSphere(m_cps[i], radius, color.data(), color.data(), COLOR_W, COLOR_SHIN64);
+    TMesh::DrawSphere(m_cps[i], radius, color, color, COLOR_W, COLOR_SHIN64);
   }
   glDisable(GL_LIGHTING);
 }
@@ -229,42 +228,90 @@ void PlanarCurve::InitByCPs(const std::vector<EVec3f> &cps)
 //void Draw() const;
 //void DrawCPs( const;
 
-//curveの色
-// 作業中 --> 赤
-// sharedで操作あり --> 緑
-// sharedで操作なし --> 水色
-// sharedではなくて、操作中じゃない --> 黄色 ※ここでは対象外
-//
-//CPの色 
-// 作業中 & 選択中　--> 赤
-// Shared & 操作あり --> 緑
-// Shared & 操作なし --> 水色
-// それ以外 --> 黄色 
-//
+
+
 
 void SharedCurves::Draw(
     const int frame_idx, 
-    const bool is_on_manip, 
-    const float cp_radius, 
-    const int select_cp_idx)
+    const bool is_on_manip)
 {
   if (frame_idx < 0 || m_curves.size() <= frame_idx) return;
-  
-  static const EVec4f COLOR_R = { 1.0f, 0.0f, 0.0f, 0.5f };
-  static const EVec4f COLOR_G = { 0.0f, 1.0f, 0.0f, 0.5f };
-  static const EVec4f COLOR_C = { 0.0f, 1.0f, 1.0f, 0.5f };
 
-  EVec4f c = is_on_manip        ? COLOR_R : 
-             m_manip[frame_idx] ? COLOR_G :
-                                  COLOR_C ;
+  float *c = is_on_manip        ? COLOR_R : 
+             m_manip[frame_idx] ? COLOR_G : COLOR_C ;
   float lwidth = is_on_manip ? 1.5f * 6 : 1.0f * 6;
 
   m_curves[frame_idx].Draw(c, lwidth);
-  m_curves[frame_idx].DrawCPs(c, cp_radius, select_cp_idx);
-
 }
 
 
+void SharedCurves::DrawCPs(const int frame_idx, const bool is_on_manip, const float cp_radius, const int select_cp_idx)
+{
+  float* c = is_on_manip        ? COLOR_R :
+             m_manip[frame_idx] ? COLOR_G : COLOR_C;
+  m_curves[frame_idx].DrawCPs(c, cp_radius, select_cp_idx);
+}
+
+
+
+static std::vector<EVec3f> Interpolation(
+  const std::vector<EVec3f>& v1,
+  const std::vector<EVec3f>& v2,
+  const float rate)
+{
+  if (v1.size() != v2.size()) {
+    std::cout << "Warning: Interpolation input size mismatch\n";
+    return v1;
+  }
+  std::vector<EVec3f> result;
+  for (int i = 0; i < v1.size(); ++i)
+  {
+    EVec3f p = (1.0f - rate) * v1[i] + rate * v2[i];
+    result.push_back(p);
+  }
+  return result;
+}
+
+
+
+void SharedCurves::UpdateNonManipCurves()
+{
+  const size_t num_frames = m_curves.size();
+  
+  // collect key frames
+  std::vector<int> key_frames;
+  for(int i=0; i < num_frames; ++i)
+  {
+    if (m_manip[i]) key_frames.push_back(i);
+  } 
+  if (key_frames.size() == 0) return;
+    
+  for (int i = 0; i < key_frames.front(); ++i)
+  {
+    const std::vector<EVec3f>& cps = m_curves[key_frames.front()].GetCPs();
+    m_curves[i].SetCPs(cps);
+  }
+
+  for (int i = key_frames.back() + 1; i < num_frames; ++i)
+  {
+    const std::vector<EVec3f>& cps = m_curves[key_frames.back()].GetCPs();
+    m_curves[i].SetCPs(cps);
+  }
+
+  for (size_t key_i = 1; key_i < key_frames.size(); ++key_i)
+  {
+    int frame1 = key_frames[key_i - 1];
+    int frame2 = key_frames[key_i    ];
+    const std::vector<EVec3f>& cps1 = m_curves[frame1].GetCPs();
+    const std::vector<EVec3f>& cps2 = m_curves[frame2].GetCPs();
+    
+    for (int i = frame1 + 1; i < frame2; ++i)
+    {
+      float t = (float)(i - frame1) / (float)(frame2 - frame1);
+      m_curves[i].SetCPs(Interpolation(cps1, cps2, t));
+    }
+  }
+}
 
 
 
@@ -986,13 +1033,15 @@ void DeformationStrokes::Stroke::UpdateStroke()
 }
 
 
-static const EVec3f COLOR_R = { 1.0f, 0.0f, 0.0f };
-static const EVec3f COLOR_Y = { 1.0f, 1.0f, 0.0f };
-static const EVec3f COLOR_G = { 0.0f, 1.0f, 0.0f };
-static const EVec3f COLOR_A = { 0.0f, 1.0f, 1.0f };
+
 void DeformationStrokes::Stroke::DrawStroke(const bool& _is_selected) const
 {
   if (m_stroke.size() == 0) return;
+
+  static const EVec3f COLOR_R = { 1.0f, 0.0f, 0.0f };
+  static const EVec3f COLOR_Y = { 1.0f, 1.0f, 0.0f };
+  static const EVec3f COLOR_G = { 0.0f, 1.0f, 0.0f };
+  static const EVec3f COLOR_A = { 0.0f, 1.0f, 1.0f };
 
   const EVec3f color = _is_selected       ? COLOR_R : 
                        m_shared_idx == -1 ? COLOR_Y : 

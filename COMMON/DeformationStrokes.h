@@ -29,11 +29,18 @@ public:
   inline int GetNumCPs() const { return static_cast<int>(m_cps.size()); }
   inline CRSSEC_ID GetCrssecId () const { return m_crssec_id; }
   inline float     GetCrssecPos() const { return m_crssec_pos;}
-  //inline std::vector<EVec3f> GetCurve() const { return m_curve; }
-  //inline std::vector<EVec3f> GetCPs  () const { return m_cps; }
+  inline std::vector<EVec3f> GetCurve() const { return m_curve; }
+  inline std::vector<EVec3f> GetCPs  () const { return m_cps; }
   inline EVec3f GetCP(int cpidx) const { 
     if (cpidx < 0 || m_cps.size() <= cpidx) return EVec3f(0, 0, 0); 
     return m_cps[cpidx]; 
+  }
+
+  void SetCPs(const std::vector<EVec3f>& cps)
+  {
+    if (cps.size() == 0) return;
+    m_cps = cps;
+    UpdateCurve();
   }
 
   inline bool GetNormalSide() const { return m_normal_side; }
@@ -45,15 +52,26 @@ public:
   void DeleteCP(int cpidx);
   int  PickCPs(const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius);
 
-
-  void Draw   (const EVec4f& color, const float thickness) const;
-  void DrawCPs(const EVec4f& color, float radius, int select_cp_idx) const;
+  void Draw   (const float color[4], const float thickness) const;
+  void DrawCPs(const float color[4], float radius, int select_cp_idx) const;
 
   //std::string OutputAsText() const;
   //void InitByCPs(const std::vector<EVec3f>& cps);
 
+  EVec3f GetCrssecNorm() const {
+    if      (m_crssec_id == CRSSEC_XY) return EVec3f(0.0f, 0.0f, 1.0f);
+    else if (m_crssec_id == CRSSEC_YZ) return EVec3f(1.0f, 0.0f, 0.0f);
+    else if (m_crssec_id == CRSSEC_ZX) return EVec3f(0.0f, 1.0f, 0.0f);
+    std::cout << "Error: PlanarCurve::GetCrssecNorm invalid crssec_id\n";
+    return EVec3f(0.0f, 0.0f, 0.0f);
+  }
 private:
   void UpdateCurve();
+
+
+
+
+
 
 };
 
@@ -91,10 +109,30 @@ public:
     if (m_curves.size() == 0) return CRSSEC_XY;
     return m_curves[0].GetCrssecId();
   }
+
   float GetCrssecPos() {
     if (m_curves.size() == 0) return 0.0f;
     return m_curves[0].GetCrssecPos();
   }
+  
+  const PlanarCurve GetCurve(const int frame_idx) 
+  {
+    if (frame_idx < 0 || m_curves.size() <= frame_idx) 
+      throw std::out_of_range("SharedCurves::GetCurve invalid frame_idx");
+    return m_curves[frame_idx];
+  }
+
+  const bool IsManipulated(const int frame_idx){
+    if (frame_idx < 0 || m_curves.size() <= frame_idx) 
+      throw std::out_of_range("SharedCurves::IsManipulated invalid frame_idx");
+    return m_manip[frame_idx];
+  }
+
+  void FlipNormal() 
+  {
+    for (size_t i = 0; i < m_curves.size(); ++i) m_curves[i].FlipNormal();
+  }
+
 
   void MoveCP(const int frame_idx, const int cp_idx, const EVec3f &pos) 
   {
@@ -102,7 +140,11 @@ public:
     m_curves[frame_idx].MoveCP(cp_idx, pos);
     m_manip[frame_idx] = true;
   }
-  void Draw(const int frame_idx, const bool is_on_manip, const float cp_radius, const int select_cp_idx);
+
+  void Draw   (const int frame_idx, const bool is_on_manip);
+  void DrawCPs(const int frame_idx, const bool is_on_manip, const float cp_radius, const int select_cp_idx);
+  
+  void UpdateNonManipCurves();
 };
 
 

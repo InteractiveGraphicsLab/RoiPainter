@@ -32,16 +32,13 @@ class ModeRefCurveDeform :
 
   typedef struct
   {
+    int frame_idx;
     std::vector<std::vector<PlanarCurve>> curves;
     std::vector<SharedCurves> shared_curves;
   } SnapShot;
 
-  typedef struct
-  {
-    std::stack<SnapShot> undo;
-    std::stack<SnapShot> redo;
-  } History;
-  std::vector<History> m_histories; // for each frame 
+  std::stack<SnapShot> m_history; 
+
 
   //Selected CurveCP Info 
   class SelectionInfo
@@ -54,6 +51,7 @@ class ModeRefCurveDeform :
     CRSSEC_ID crssec_id  = CRSSEC_XY;
     float     crssec_pos = 0.0f;
     EVec3f pos;
+
     SelectionInfo(){ Clear(); }
     void Set(bool _selected, bool _shared, int  _curve_id, int _cpid, EVec3f p, 
              CRSSEC_ID _crssec_id, float _crssec_pos)
@@ -128,9 +126,8 @@ public:
   void Deform(const int);
   void DeformAllFrame();
 
-   void Do();
-   void Undo();
-   void Redo();
+   void Do_RecordSnapShot();
+   void Undo_LoadSnapShot();
 
    void ConvertMaskToMesh();
    void ConvertMeshToMask();
@@ -145,11 +142,10 @@ public:
    void LoadState(const std::string&, const std::set<int>&);
 
    void FlipSelectedStrokeNormalSide();
-   void ShareSelectedStroke();
-   void UnshareSelectedStroke();
-   void LockSelectedStroke();
-   void UnlockSelectedStroke();
-   void UpdateSharedStroke();
+   void MakeSelectedStroke_Shared();
+   void MakeSelectedStroke_Unshared();
+   //void LockSelectedStroke();
+   //void UnlockSelectedStroke();
 
 private:
   void _Deform(const int);

@@ -56,13 +56,13 @@ System::Void FormRefCurveDeform::m_btn_deform_Click(System::Object^ sender, Syst
 
 System::Void FormRefCurveDeform::m_btn_undo_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeRefCurveDeform::GetInst()->Undo();
+  ModeRefCurveDeform::GetInst()->Undo_LoadSnapShot();
 }
 
 
 System::Void FormRefCurveDeform::m_btn_redo_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeRefCurveDeform::GetInst()->Redo();
+  //ModeRefCurveDeform::GetInst()->Redo();
 }
 
 
@@ -91,7 +91,7 @@ System::Void FormRefCurveDeform::m_checkbox_showonlyselectedstroke_CheckedChange
 
 System::Void FormRefCurveDeform::m_btn_sharestroke_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeRefCurveDeform::GetInst()->ShareSelectedStroke();
+  ModeRefCurveDeform::GetInst()->MakeSelectedStroke_Shared();
 }
 
 

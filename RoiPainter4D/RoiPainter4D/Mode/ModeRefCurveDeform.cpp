@@ -63,8 +63,9 @@ void ModeRefCurveDeform::StartMode()
   //for (int i = 0; i < ImageCore::GetInst()->GetNumFrames(); ++i) {
   //  m_laplacian_deformer.push_back(LaplacianDeformer(m_mask_mesh.GetMesh(i)));
   //}
-  m_shared_stroke_idxs = std::set<int>();
-  m_histories = std::vector<History>(num_frame);
+
+  m_history = std::stack<SnapShot>();
+
   m_show_only_selected_stroke = true;
   m_draw_surf_trans = true;
   m_exist_mesh = false;
@@ -74,8 +75,6 @@ void ModeRefCurveDeform::StartMode()
   std::cout << "ModeRefCurveDeform...startMode DONE-----\n";
   std::cout << "Debug mode is available (Shift+Ctrl+F12).\n";
 }
-
-
 
 
 
@@ -97,7 +96,7 @@ ModeRefCurveDeform::SelectionInfo ModeRefCurveDeform::PickCPatCurrentFrame(
     CRSSEC_ID crssec_id  = m_curves[frame_idx][crv_i].GetCrssecId();
     float     crssec_pos = m_curves[frame_idx][crv_i].GetCrssecPos();
     if ( !info.selected || (ray_pos - pos).norm() < (ray_pos - info.pos).norm())
-    info.Set(true, false, crv_i, cpidx, pos, crssec_id, crssec_pos);
+      info.Set(true, false, crv_i, cpidx, pos, crssec_id, crssec_pos);
   }
 
   // pick shared curves
@@ -110,7 +109,7 @@ ModeRefCurveDeform::SelectionInfo ModeRefCurveDeform::PickCPatCurrentFrame(
     CRSSEC_ID crssec_id = m_shared_curves[crv_i].GetCrssecId();
     float     crssec_pos= m_shared_curves[crv_i].GetCrssecPos();
     if (!info.selected || (ray_pos - pos).norm() < (ray_pos - info.pos).norm())
-    info.Set(true, true, crv_i, cpidx, pos, crssec_id, crssec_pos);
+      info.Set(true, true, crv_i, cpidx, pos, crssec_id, crssec_pos);
   }
   return info;
 }
@@ -129,7 +128,7 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
 
   if (IsShiftKeyOn())
   {
-    Do();
+    Do_RecordSnapShot();
     auto info = PickCPatCurrentFrame(ray_pos, ray_dir);
 
     if (info.selected) 
@@ -184,7 +183,9 @@ void ModeRefCurveDeform::LBtnUp(const EVec2i& p, OglForCLI* ogl)
 
   if (m_select_info.selected && m_select_info.is_shared )
   {
-    UpdateSharedStroke();
+    int ci = m_select_info.curve_idx;
+    if (0 <= ci && ci <(int)m_shared_curves.size())
+      m_shared_curves[ci].UpdateNonManipCurves();
   }
 
   ogl->BtnUp();
@@ -208,15 +209,16 @@ void ModeRefCurveDeform::RBtnDown(const EVec2i& p, OglForCLI* ogl)
     {
       if (ShowMsgDlgYesNo("All-frame曲線を解除しますか？\n（自動補間された曲線は削除されます）", "Unlock?"))
       {
-        Do();
-        UnshareSelectedStroke();
+        Do_RecordSnapShot();
+        MakeSelectedStroke_Unshared();
         m_select_info.Clear();
       }
     }
     else if (info.selected && !info.is_shared)
     {
       //delete cp
-      Do();
+      Do_RecordSnapShot();
+
       std::vector<PlanarCurve> &curves = m_curves[frame_idx];
       curves[info.curve_idx].DeleteCP(info.cp_idx);
       if (curves[info.curve_idx].GetNumCPs() == 0)
@@ -313,36 +315,34 @@ void ModeRefCurveDeform::MouseWheel(
 }
 
 
-void ModeRefCurveDeform::LBtnDclk(const EVec2i& p, OglForCLI* ogl)
-{
+void ModeRefCurveDeform::MBtnDclk(const EVec2i& p, OglForCLI* ogl) {}
 
-}
-
+void ModeRefCurveDeform::LBtnDclk(const EVec2i& p, OglForCLI* ogl){}
 
 void ModeRefCurveDeform::RBtnDclk(const EVec2i& p, OglForCLI* ogl)
 {
   const int frame_idx = formVisParam_getframeI();
 
-  if (m_prev_selected_stroke_idx != -1)
+  if (m_select_info.selected)
   {
-    m_strokes[frame_idx].SetSelectedStrokeIdx(m_prev_selected_stroke_idx);
-    if (m_strokes[frame_idx].bSelStrokeShared() == true)
+    //選択されたcurveを削除
+    Do_RecordSnapShot();
+
+    if(m_select_info.is_shared)
     {
       if (ShowMsgDlgYesNo("All-frame曲線を解除しますか？\n（自動補間された曲線は削除されます）", "Unlock?"))
       {
-        UnshareSelectedStroke();
+        MakeSelectedStroke_Unshared();
       }
     }
-    else
+    else if( 0 <= m_select_info.curve_idx && m_select_info.curve_idx < m_curves[frame_idx].size())
     {
-      Do();
-      m_strokes[frame_idx].Delete_SelStroke();
+      m_curves[frame_idx].erase( m_curves[frame_idx].begin() + m_select_info.curve_idx );
     }
   }
 }
 
 
-void ModeRefCurveDeform::MBtnDclk(const EVec2i& p, OglForCLI* ogl) {}
 
 
 void ModeRefCurveDeform::KeyDown(int nChar)
@@ -374,23 +374,21 @@ void ModeRefCurveDeform::KeyDown(int nChar)
   }
   else if (nChar == VK_F4)
   {
-    // share selected stroke
-    ShareSelectedStroke();
+    MakeSelectedStroke_Shared();
   }
   else if (nChar == VK_F5)
   {
-    // unshare selected stroke
-    UnshareSelectedStroke();
+    MakeSelectedStroke_Unshared();
   }
   else if (nChar == VK_F6)
   {
     // lock selected stroke
-    LockSelectedStroke();
+    // LockSelectedStroke();
   }
   else if (nChar == VK_F7)
   {
     // unlock selected stroke
-    UnlockSelectedStroke();
+    // UnlockSelectedStroke();
   }
   else if (nChar == VK_F8)
   {
@@ -429,7 +427,6 @@ void ModeRefCurveDeform::KeyDown(int nChar)
   }
 }
 
-
 void ModeRefCurveDeform::KeyUp(int nChar) {}
 
 
@@ -439,7 +436,6 @@ void ModeRefCurveDeform::DrawScene(
     const EVec3f& cam_cnt)
 {
   const int frame_idx = formVisParam_getframeI();
-
   //ImageCore::GetInst()->UpdateImgMaskColor();
 
   ImageCore::GetInst()->BindAllVolumes();
@@ -463,42 +459,66 @@ void ModeRefCurveDeform::DrawScene(
   // draw stroke
   if (!IsSKeyOn())
   {
-    m_strokes[frame_idx].DrawStrokes(m_show_only_selected_stroke);
+    if (     m_select_info.selected && !m_select_info.is_shared)
+    {
+      float thickness = 3.0f;
+      m_curves[frame_idx][m_select_info.curve_idx].Draw(COLOR_Y, thickness);
+      m_curves[frame_idx][m_select_info.curve_idx].DrawCPs(COLOR_Y, m_cp_rate * m_cp_size, m_select_info.cp_idx);
+    }
+    else if (m_select_info.selected && m_select_info.is_shared)
+    {
+      m_shared_curves[m_select_info.curve_idx].Draw(frame_idx, true);
+    }
 
     for (int i = 0; i < m_matched_pos.size(); ++i)
     {
-      static const float COLOR_W[4] = { 1.0f, 1.0f, 1.0f, 0.5f };
-      static const float COLOR_SHIN64[1] = { 64 };
-      static const float COLOR_G[4] = { 0.0f, 1.0f, 0.0f, 0.5f };
-
-      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, COLOR_W);
-      glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, COLOR_SHIN64);
-      glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, COLOR_G);
-      glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, COLOR_G);
-
       glEnable(GL_LIGHTING);
-      TMesh::DrawSphere(m_matched_pos[i], 0.3f);
+      TMesh::DrawSphere(m_matched_pos[i], 0.3f, COLOR_G, COLOR_G, COLOR_W, COLOR_SHIN64);
       glDisable(GL_LIGHTING);
     }
   }
 
-  // draw control points
+  //curveの色
+  // 作業中 --> 赤
+  // sharedで操作あり --> 緑
+  // sharedで操作なし --> 水色
+  // sharedではなくて、操作中じゃない --> 黄色 ※ここでは対象外
+  //
+  //CPの色 
+  // 作業中 & 選択中　--> 赤
+  // Shared & 操作あり --> 緑
+  // Shared & 操作なし --> 水色
+  // それ以外 --> 黄色 
+  //
+  
+  // draw all control points
   if (IsShiftKeyOn())
   {
-    m_strokes[frame_idx].DrawControlPoints(m_cp_rate * m_cp_size, m_show_only_selected_stroke);
+    //normal
+    const float CP_RAD = m_cp_rate * m_cp_size;
+    for (int i = 0; i < m_curves[frame_idx].size(); ++i)
+    {
+      if (m_select_info.selected && !m_select_info.is_shared && m_select_info.curve_idx == i)
+        m_curves[frame_idx][i].DrawCPs(COLOR_Y, CP_RAD, m_select_info.cp_idx);
+      else
+        m_curves[frame_idx][i].DrawCPs(COLOR_Y, CP_RAD, -1);
+    }
+    //shared
+    for (int i = 0; i < m_shared_curves.size(); ++i)
+    {
+      if (m_select_info.selected && m_select_info.is_shared && m_select_info.curve_idx == i)
+        m_shared_curves[i].DrawCPs(frame_idx, true, CP_RAD, m_select_info.cp_idx);
+      else
+        m_shared_curves[i].DrawCPs(frame_idx, false, CP_RAD, -1);
+    }
   }
-
 }
 
 
 void ModeRefCurveDeform::Deform()
 {
-  const int frame_idx = formVisParam_getframeI();
-  _Deform(frame_idx);
-  formMain_RedrawMainPanel();
-  formMain_ActivateMainForm();
+  Deform(formVisParam_getframeI());
 }
-
 
 void ModeRefCurveDeform::Deform(const int _frame_idx)
 {
@@ -511,7 +531,7 @@ void ModeRefCurveDeform::Deform(const int _frame_idx)
 void ModeRefCurveDeform::DeformAllFrame()
 {
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  #pragma omp parallel for
+#pragma omp parallel for
   for (int i = 0; i < num_frames; ++i)
   {
     _Deform(i);
@@ -521,58 +541,43 @@ void ModeRefCurveDeform::DeformAllFrame()
 }
 
 
-void ModeRefCurveDeform::Do()
+// 現在の状態をスナップショットとして history.undo に保存し，history.redo をクリアする
+void ModeRefCurveDeform::Do_RecordSnapShot()
 {
   const int frame_idx = formVisParam_getframeI();
-  Action now = { m_strokes[frame_idx] };
-  History& history = m_histories[frame_idx];
-  if (history.undo.empty() || (now.strokes != history.undo.top().strokes))
-  {
-    history.undo.push(now);
-    history.redo = std::stack<Action>();
-  }
-  formMain_RedrawMainPanel();
+  m_history.push({ frame_idx, m_curves, m_shared_curves });
   m_is_not_saved_state = true;
 }
 
 
-void ModeRefCurveDeform::Undo()
+// Undo：1つ前の状態に戻し，現在の状態を Redo 用に保存する
+void ModeRefCurveDeform::Undo_LoadSnapShot()
 {
   const int frame_idx = formVisParam_getframeI();
-  Action now = { m_strokes[frame_idx] };
-  History& history = m_histories[frame_idx];
-  if (!history.undo.empty())
+  if (m_history.empty())
   {
-    const Action prev = history.undo.top();
-    history.undo.pop();
-    history.redo.push(now);
-    m_strokes[frame_idx] = prev.strokes;
-    std::cout << "UNDO\n";
+    std::cout << "No more undo.\n";
+    return;
   }
+
+  if (m_history.top().frame_idx != frame_idx)
+  {
+    if( !ShowMsgDlgYesNo("undo for different frame", "異なるframeのUndoをしてよいですか？"))
+      return;
+  }
+  
+  const auto snap = m_history.top();
+  m_history.pop();
+  m_curves = snap.curves;
+  m_shared_curves = snap.shared_curves;
+
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
 
 
-void ModeRefCurveDeform::Redo()
-{
-  const int frame_idx = formVisParam_getframeI();
-  Action now = { m_strokes[frame_idx] };
-  History& history = m_histories[frame_idx];
-  if (!history.redo.empty())
-  {
-    const Action next = history.redo.top();
-    history.redo.pop();
-    history.undo.push(now);
-    m_strokes[frame_idx] = next.strokes;
-    std::cout << "REDO\n";
-  }
-  formMain_RedrawMainPanel();
-  formMain_ActivateMainForm();
-}
 
-
-void ModeRefCurveDeform::SetCPSize()
+void ModeRefCurveDeform::SetCPSize() //TODO どこから呼ばれてるか確認（不要に思う）
 {
   const int cp_size = FormRefCurveDeform_GetCPSize();
 
@@ -592,19 +597,18 @@ void ModeRefCurveDeform::SetCPSize()
 
 void ModeRefCurveDeform::ConvertMaskToMesh()
 {
-  const int scale = FormRefCurveDeform_GetMCScale();
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+  const int stride = FormRefCurveDeform_GetMCScale();
 
-  if (!m_mask_mesh.LoadMask(scale))
+  if (!m_mask_mesh.LoadMask(stride)) //TODO refactoring (mask_meshはちょっとおかしいので修正する)
   {
     std::cout << "Failed to load mask." << "\n";
   }
 
-  for (int i = 0; i < ImageCore::GetInst()->GetNumFrames(); ++i) {
-    m_tmeshes[i] = m_mask_mesh.GetMesh(i);
-  }
-
   m_laplacian_deformer = std::vector<LaplacianDeformer>();
-  for (int i = 0; i < ImageCore::GetInst()->GetNumFrames(); ++i) {
+  for (int i = 0; i < num_frames; ++i) 
+  {
+    m_tmeshes[i] = m_mask_mesh.GetMesh(i);
     m_laplacian_deformer.push_back(LaplacianDeformer(m_mask_mesh.GetMesh(i)));
   }
 
@@ -644,14 +648,15 @@ void ModeRefCurveDeform::ReloadMesh(const int _frame_idx)
   formMain_ActivateMainForm();
 }
 
-
+////////////////////////////////////////////////////////////////
+//Curve Modification////////////////////////////////////////////
 void ModeRefCurveDeform::CopyFromPrevFrame()
 {
   const int frame_idx = formVisParam_getframeI();
   if (frame_idx <= 0) return;
-  m_strokes[frame_idx] = m_strokes[frame_idx - 1];
   std::cout << "Copy from previous frame.\n";
-  Do();
+  m_curves[frame_idx] = m_curves[frame_idx - 1];
+  Do_RecordSnapShot();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
@@ -660,17 +665,20 @@ void ModeRefCurveDeform::CopyFromPrevFrame()
 void ModeRefCurveDeform::CopyStrokesToAllFrame()
 {
   const int frame_idx = formVisParam_getframeI();
-  for (int i = 0; i < ImageCore::GetInst()->GetNumFrames(); ++i) {
+  const int mum_frames = ImageCore::GetInst()->GetNumFrames();
+  for (int i = 0; i < mum_frames; ++i)
+  {
     if (i == frame_idx) continue;
-    m_strokes[i] = m_strokes[frame_idx];
+    m_curves[i] = m_curves[frame_idx];
   }
   std::cout << "Copy strokes to all frame.\n";
-  Do();
+  Do_RecordSnapShot();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
 
 
+//TODO 使っていないので削除
 void ModeRefCurveDeform::SetShowOnlySelectedStroke()
 {
   m_show_only_selected_stroke = FormRefCurveDeform_GetShowOnlySelectedStroke();
@@ -685,7 +693,7 @@ void ModeRefCurveDeform::_Deform(const int _frame_idx)
 
   m_mask_mesh.GetMesh(_frame_idx).Set(m_tmeshes[_frame_idx]);
 
-  std::vector<int> fixed_verts_idxs;
+  std::vector<int   > fixed_verts_idxs;
   std::vector<EVec3f> fixed_positions;
   std::vector<EVec3f> src_positions;
 
@@ -694,7 +702,8 @@ void ModeRefCurveDeform::_Deform(const int _frame_idx)
   // Sort by index
   std::vector<std::pair<int, EVec3f>> indexPointPairs;
 
-  for (size_t i = 0; i < fixed_verts_idxs.size(); ++i) {
+  for (size_t i = 0; i < fixed_verts_idxs.size(); ++i) 
+  {
     indexPointPairs.emplace_back(fixed_verts_idxs[i], fixed_positions[i]);
   }
 
@@ -703,7 +712,8 @@ void ModeRefCurveDeform::_Deform(const int _frame_idx)
       return a.first < b.first;
     });
 
-  for (size_t i = 0; i < indexPointPairs.size(); ++i) {
+  for (size_t i = 0; i < indexPointPairs.size(); ++i) 
+  {
     fixed_verts_idxs[i] = indexPointPairs[i].first;
     fixed_positions[i] = indexPointPairs[i].second;
   }
@@ -716,161 +726,158 @@ void ModeRefCurveDeform::_Deform(const int _frame_idx)
 
 
 
-void ModeRefCurveDeform::FindClosestPointFromStroke(const int _frame_idx, std::vector<int>& _idxs, std::vector<EVec3f>& _target_pos, std::vector<EVec3f>& _src_pos)
+void ModeRefCurveDeform::FindClosestPointFromStroke(
+    const int _frame_idx, 
+    std::vector<int   >& _idxs, 
+    std::vector<EVec3f>& _target_pos, 
+    std::vector<EVec3f>& _src_pos)
 {
   if (!m_mask_mesh.is_initialized) return;
 
   TMesh& mesh = m_mask_mesh.GetMesh(_frame_idx);
-
-  auto& strokes = m_strokes[_frame_idx].GetAllStrokeCurves();
-  const int num_stroke = static_cast<int>(strokes.size());
-
-  // for stroke
-  for (int i = 0; i < num_stroke; ++i) 
+  
+  const size_t num_curves = m_curves[_frame_idx].size();
+  const size_t num_shared_curves = m_shared_curves.size();
+  // for curve
+  for (size_t i = 0; i < num_curves + num_shared_curves; ++i)
   {
-    const auto stroke = strokes[i];
-    const int num_p = static_cast<int>(stroke.size());
-    const int commonXYZ = m_strokes[_frame_idx].GetStrokePlaneXYZ(i);
-    const EVec3f vec0 = EVec3f(
-      commonXYZ == 0 ? 1.0f : 0.0f,
-      commonXYZ == 1 ? 1.0f : 0.0f,
-      commonXYZ == 2 ? 1.0f : 0.0f
-    );
-    const bool normals_side = m_strokes[_frame_idx].GetStrokeNormalsSide(i);
-#ifdef DEBUG_MODE_REF_CURVEDEFORM
-    std::cout << "num_p: " << num_p << "\n";
-#endif
+    const PlanarCurve& c = (i < num_curves) ? m_curves[_frame_idx][i] : 
+                                              m_shared_curves[i - num_curves].GetCurve(_frame_idx);
+  
+    const std::vector<EVec3f> &points = c.GetCurve();
+    const bool   normal_side   = c.GetNormalSide();
+    const EVec3f crssec_normal = c.GetCrssecNorm();
 
-    // order by curvature
-    std::vector<std::pair<int, float>> curvature_idxs = std::vector<std::pair<int, float>>();
-    for (int j = 0; j < num_p; ++j)
+    for (size_t idx = 1; idx < points.size() - 1; ++idx)
     {
-
-      const EVec3f& p_prev = j > 0 ? stroke[j - 1] : stroke[0];
-      const EVec3f& p = stroke[j];
-      const EVec3f& p_next = j < num_p - 1 ? stroke[j + 1] : stroke[num_p - 1];
-
-      if (p(0) < 0.0f || p(1) < 0.0f || p(2) < 0.0f)
-      {
-        continue;
-      }
-
-      const EVec3f vec0 = p - p_prev;
-      const EVec3f vec1 = p_next - p;
-      const float  len0 = vec0.norm();
-      const float  len1 = vec1.norm();
-
-      const float curvature = (len0 + len1 > 0.0f) ? (2.0f * vec0.cross(vec1).norm()) / (len0 * len1) : 0.0f;
-
-      curvature_idxs.emplace_back(j, curvature);
-    }
-
-    std::sort(curvature_idxs.begin(), curvature_idxs.end(),
-      [](const std::pair<float, int>& a, const std::pair<float, int>& b) {
-        return a.second > b.second;
-      });
-
-    std::vector<int> sorted_idxs;
-    for (const auto& pair : curvature_idxs) {
-      sorted_idxs.push_back(pair.first);
-    }
-
-    // for points
-    for (int idx : sorted_idxs) {
-      const EVec3f& p_prev = idx > 0 ? stroke[idx - 1] : stroke[0];
-      const EVec3f& p = stroke[idx];
-      const EVec3f& p_next = idx < num_p - 1 ? stroke[idx + 1] : stroke[num_p - 1];
-      const EVec3f vec1 = (p_next - p_prev).normalized();
-      const EVec3f vec2 = vec0.cross(vec1).normalized();
-      EVec3f tangent;
-      if (idx == 0) tangent = stroke[idx + 1] - stroke[idx];
-      else if (idx == stroke.size() - 1) tangent = stroke[idx] - stroke[idx - 1];
-      else tangent = stroke[idx + 1] - stroke[idx - 1];
-      tangent.normalize();
-      EVec3f stroke_normal = vec0.cross(tangent);
-      stroke_normal.normalize();
-      stroke_normal *= (normals_side ? 1.0f : -1.0f);
+      EVec3f pos = points[idx];
+      EVec3f curve_tangent = (points[idx + 1] - points[idx - 1]);
+      if (curve_tangent.norm() < 0.0001f) continue;
+      curve_tangent.normalize();
+      EVec3f curve_normal  = crssec_normal.cross(curve_tangent).normalized();
+      curve_normal *= (normal_side ? 1.0f : -1.0f);
 
       // get nearest vertex idx
-      float dist_max = FLT_MAX;
-      int idx_max = -1;
+      float dist_min = FLT_MAX;
+      int idx_min = -1;
       for (int k = 0; k < mesh.m_vSize; ++k)
       {
-        if (mesh.m_vNorms[k].dot(stroke_normal) <= 0.0f) continue;
-        const EVec3f diff = p - mesh.m_vVerts[k];
-        Eigen::MatrixXf mat =
-            powf(5.0f, 2.0f) * vec0 * vec0.transpose()
-          + powf(1.0f, 2.0f) * vec1 * vec1.transpose()
-          + powf(0.2f, 2.0f) * vec2 * vec2.transpose();
-        const float dist = sqrtf(diff.transpose() * mat * diff);
+        if (mesh.m_vNorms[k].dot(curve_normal) <= 0.0f) continue;
+        const EVec3f diff = pos - mesh.m_vVerts[k];
+        Eigen::Matrix3f mat =
+            powf(5.0f, 2.0f) * crssec_normal * crssec_normal.transpose()
+          + powf(1.0f, 2.0f) * curve_tangent * curve_tangent.transpose()
+          + powf(0.2f, 2.0f) * curve_normal  * curve_normal.transpose();
+        const float dist = diff.transpose() * mat * diff;
 
-        if (dist < dist_max) {
-          dist_max = dist;
-          idx_max = k;
+        if (dist < dist_min) {
+          dist_min = dist;
+          idx_min = k;
         }
       }
+      if (idx_min < 0) continue;
 
-#ifdef DEBUG_MODE_REF_CURVEDEFORM
-      std::cout << idx_max << "\n";
-#endif
-
-      if (idx_max < 0)
-      {
-        continue;
-      }
-
-      const bool found = std::find(_idxs.begin(), _idxs.end(), idx_max) != _idxs.end();
+      const bool found = std::find(_idxs.begin(), _idxs.end(), idx_min) != _idxs.end();
       if (!found)
       {
-        _idxs.push_back(idx_max);
-        _target_pos.push_back(p);
-        _src_pos.push_back(mesh.m_vVerts[idx_max]);
+        _idxs      .push_back(idx_min);
+        _target_pos.push_back(pos);
+        _src_pos   .push_back(mesh.m_vVerts[idx_min]);
       }
     }
   }
 }
 
 
-//inline std::vector<int> dijkstra(const Eigen::Vector3f* vertices, const std::vector<int>* adjacencyList, int numVertices, int start, int end) {
-//  std::vector<float> distances(numVertices, std::numeric_limits<float>::infinity());
-//  std::vector<int> previous(numVertices, -1);
-//  std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>> pq;
-//
-//  distances[start] = 0.0f;
-//  pq.push({ 0.0f, start });
-//
-//  while (!pq.empty()) {
-//    int current = pq.top().second;
-//    pq.pop();
-//
-//    if (current == end) break;
-//
-//    for (int neighbor : adjacencyList[current]) {
-//      float edgeWeight = (vertices[current] - vertices[neighbor]).norm();
-//      float newDist = distances[current] + edgeWeight;
-//
-//      if (newDist < distances[neighbor]) {
-//        distances[neighbor] = newDist;
-//        previous[neighbor] = current;
-//        pq.push({ newDist, neighbor });
-//      }
-//    }
-//  }
-//
-//  std::vector<int> path;
-//  for (int at = end; at != -1; at = previous[at]) {
-//    path.push_back(at);
-//  }
-//  std::reverse(path.begin(), path.end());
-//
-//  if (path.front() != start) {
-//    path.clear();
-//  }
-//
-//  return path;
-//}
 
 
+void ModeRefCurveDeform::FlipSelectedStrokeNormalSide()
+{
+  const int frame_idx = formVisParam_getframeI();
+  const int cidx = m_select_info.curve_idx;
+
+  if (m_select_info.selected && m_select_info.is_shared && cidx != -1)
+  {
+    m_shared_curves[cidx].FlipNormal();
+  }
+  if (m_select_info.selected && !m_select_info.is_shared && cidx != -1)
+  {
+    m_curves[frame_idx][cidx].FlipNormal();
+  }
+  formMain_RedrawMainPanel();
+  formMain_ActivateMainForm();
+}
+
+
+
+void ModeRefCurveDeform::MakeSelectedStroke_Shared()
+{
+  const int frame_idx = formVisParam_getframeI();
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+
+  bool tf = !m_select_info.selected      || 
+             m_select_info.is_shared     || 
+             m_select_info.curve_idx < 0 || 
+             m_curves[frame_idx].size() <= m_select_info.curve_idx;
+  if (tf) return;
+
+  std::vector<PlanarCurve>& curves = m_curves[frame_idx];
+  PlanarCurve src = curves[m_select_info.curve_idx];
+  curves.erase(curves.begin() + m_select_info.curve_idx);
+  m_shared_curves.push_back(SharedCurves(num_frames, frame_idx, src));
+
+  formMain_RedrawMainPanel();
+  formMain_ActivateMainForm();
+}
+
+
+
+void ModeRefCurveDeform::MakeSelectedStroke_Unshared()
+{
+  const int frame_idx = formVisParam_getframeI();
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+
+  bool tf = !m_select_info.selected  || 
+            !m_select_info.is_shared ||
+             m_select_info.curve_idx < 0 ||
+             m_shared_curves.size() <= m_select_info.curve_idx;
+  
+  for( int fi = 0; fi < num_frames; ++fi )
+  {
+    if (m_shared_curves[m_select_info.curve_idx].IsManipulated(fi) )
+    {
+      PlanarCurve c = m_shared_curves[m_select_info.curve_idx].GetCurve(fi);
+      m_curves[fi].push_back(c);
+    }
+  }
+
+  m_shared_curves.erase(m_shared_curves.begin() + m_select_info.curve_idx);
+  formMain_RedrawMainPanel();
+  formMain_ActivateMainForm();
+}
+
+
+/*
+
+void ModeRefCurveDeform::LockSelectedStroke()
+{
+  const int frame_idx = formVisParam_getframeI();
+  DeformationStrokes& dstrokes = m_strokes[frame_idx];
+  dstrokes.Lock_SelStroke();
+  UpdateSharedStroke();
+  formMain_RedrawMainPanel();
+}
+
+
+void ModeRefCurveDeform::UnlockSelectedStroke()
+{
+  const int frame_idx = formVisParam_getframeI();
+  DeformationStrokes& dstrokes = m_strokes[frame_idx];
+  dstrokes.Unlock_SelStroke();
+  UpdateSharedStroke();
+  formMain_RedrawMainPanel();
+}
+*/
 
 
 void ModeRefCurveDeform::SaveState(const std::string& _fpath, const std::set<int>& _set_frame_idx)
@@ -1030,138 +1037,41 @@ void ModeRefCurveDeform::LoadState(const std::string& _fpath, const std::set<int
 
 
 
-void ModeRefCurveDeform::FlipSelectedStrokeNormalSide()
-{
-  const int frame_idx = formVisParam_getframeI();
-  DeformationStrokes& dstrokes = m_strokes[frame_idx];
-  dstrokes.FlipSelNormals();
-  formMain_RedrawMainPanel();
-  formMain_ActivateMainForm();
-}
-
-
-
-void ModeRefCurveDeform::ShareSelectedStroke()
-{
-  const int frame_idx = formVisParam_getframeI();
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  DeformationStrokes& dstrokes = m_strokes[frame_idx];
-
-  if (dstrokes.GetSelectedStrokeIdx() == -1) return;
-
-  int newid;
-  const int MAX_IDX = 1000;
-  for (newid = 0; newid < MAX_IDX; ++newid)
-  {
-    if (m_shared_stroke_idxs.count(newid) == 0) break;
-  }
-
-  if (newid == MAX_IDX)
-  {
-    std::cout << "Could not share.\n";
-    return;
-  }
-
-  m_shared_stroke_idxs.insert(newid);
-  dstrokes.MakeShare_SelStroke(newid);
-  const auto& cps = dstrokes.GetCPs_SelStroke();
-  const int   p_xyz = dstrokes.GetPlaneXyz_SelStroke();
-  const float p_pos = dstrokes.GetPlanePos_SelStroke();
-
-  for (int i = 0; i < num_frames; ++i)
-  {
-    m_strokes[i].AddNewSharedStroke(newid, p_xyz, p_pos, cps, false);
-  }
-  formMain_RedrawMainPanel();
-  formMain_ActivateMainForm();
-}
-
-
-void ModeRefCurveDeform::UnshareSelectedStroke()
-{
-  const int frame_idx = formVisParam_getframeI();
-  DeformationStrokes& dstrokes = m_strokes[frame_idx];
-  const int shared_idx = dstrokes.GetShareIdx_SelStroke();
-
-  if (m_shared_stroke_idxs.count(shared_idx) == 0) return;
-
-  for (auto& stroke : m_strokes)
-  {
-    stroke.UnsharedStroke(shared_idx);
-  }
-
-  m_shared_stroke_idxs.erase(shared_idx);
-  formMain_RedrawMainPanel();
-}
-
-
-void ModeRefCurveDeform::LockSelectedStroke()
-{
-  const int frame_idx = formVisParam_getframeI();
-  DeformationStrokes& dstrokes = m_strokes[frame_idx];
-  dstrokes.Lock_SelStroke();
-  UpdateSharedStroke();
-  formMain_RedrawMainPanel();
-}
-
-
-void ModeRefCurveDeform::UnlockSelectedStroke()
-{
-  const int frame_idx = formVisParam_getframeI();
-  DeformationStrokes& dstrokes = m_strokes[frame_idx];
-  dstrokes.Unlock_SelStroke();
-  UpdateSharedStroke();
-  formMain_RedrawMainPanel();
-}
-
-
-void ModeRefCurveDeform::UpdateSharedStroke()
-{
-  const int frame_idx = formVisParam_getframeI();
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  for (const auto& shared_idx : m_shared_stroke_idxs)
-  {
-    for (int frame_i = 0; frame_i < num_frames; ++frame_i)
-    {
-      DeformationStrokes& dstrokes = m_strokes[frame_i];
-
-      int framei_left, framei_right;
-      bool left_found = false;
-      bool right_found = false;
-      std::vector<EVec3f> cps1, cps2;
-
-      for (framei_left = frame_i; framei_left >= 0; --framei_left)
-      {
-        if(m_strokes[framei_left].GetCpsOfLockedSharedStroke(shared_idx, cps1))
-        {
-          left_found = true;
-          break;
-        }
-      }
-
-      for (framei_right = frame_i + 1; framei_right < num_frames; ++framei_right)
-      {
-        if( m_strokes[framei_right].GetCpsOfLockedSharedStroke(shared_idx, cps2) )
-        {
-          right_found = true;
-          break;
-        }
-      }
-
-      if (left_found && right_found)
-      {
-        float rate = (float)(frame_i - framei_left) / (framei_right - framei_left);
-        dstrokes.UpdateSharedStroke(shared_idx, cps1, cps2, rate);
-      }
-      else if (left_found)
-      {
-        dstrokes.UpdateSharedStroke(shared_idx, cps1);
-      }
-      else if (right_found)
-      {
-        dstrokes.UpdateSharedStroke(shared_idx, cps2);
-      }
-    }
-  }
-  formMain_RedrawMainPanel();
-}
+//inline std::vector<int> dijkstra(const Eigen::Vector3f* vertices, const std::vector<int>* adjacencyList, int numVertices, int start, int end) {
+//  std::vector<float> distances(numVertices, std::numeric_limits<float>::infinity());
+//  std::vector<int> previous(numVertices, -1);
+//  std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>> pq;
+//
+//  distances[start] = 0.0f;
+//  pq.push({ 0.0f, start });
+//
+//  while (!pq.empty()) {
+//    int current = pq.top().second;
+//    pq.pop();
+//
+//    if (current == end) break;
+//
+//    for (int neighbor : adjacencyList[current]) {
+//      float edgeWeight = (vertices[current] - vertices[neighbor]).norm();
+//      float newDist = distances[current] + edgeWeight;
+//
+//      if (newDist < distances[neighbor]) {
+//        distances[neighbor] = newDist;
+//        previous[neighbor] = current;
+//        pq.push({ newDist, neighbor });
+//      }
+//    }
+//  }
+//
+//  std::vector<int> path;
+//  for (int at = end; at != -1; at = previous[at]) {
+//    path.push_back(at);
+//  }
+//  std::reverse(path.begin(), path.end());
+//
+//  if (path.front() != start) {
+//    path.clear();
+//  }
+//
+//  return path;
+//}
