@@ -44,7 +44,7 @@ System::Void FormRefCurveDeform::m_btn_convert_mask_mesh_Click(System::Object^ s
 
 System::Void FormRefCurveDeform::m_btn_reload_mesh_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeRefCurveDeform::GetInst()->ReloadMesh();
+  ModeRefCurveDeform::GetInst()->ReloadOrigMeshCurrentFrame();
 }
 
 
@@ -84,10 +84,21 @@ System::Void FormRefCurveDeform::m_btn_copy_stroke_all_frame_Click(System::Objec
 }
 
 
-System::Void FormRefCurveDeform::m_checkbox_showonlyselectedstroke_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
+System::Void FormRefCurveDeform::m_checkbox_showonlyselectedstroke_CheckedChanged(
+  System::Object^ sender, System::EventArgs^ e)
 {
-  ModeRefCurveDeform::GetInst()->SetShowOnlySelectedStroke();
+  FormMain::GetInst()->RedrawMainPanel();
 }
+
+System::Void FormRefCurveDeform::m_numbox_cpsize_ValueChanged(
+  System::Object^ sender, System::EventArgs^ e)
+{
+  FormMain::GetInst()->RedrawMainPanel();
+
+}
+
+
+
 
 System::Void FormRefCurveDeform::m_btn_sharestroke_Click(System::Object^ sender, System::EventArgs^ e)
 {
@@ -128,6 +139,7 @@ void FormRefCurveDeform::LoadState()
 }
 
 
+
 void FormRefCurveDeform::SaveState()
 {
   std::string fpath;
@@ -161,7 +173,3 @@ int FormRefCurveDeform::GetMCScale()
 }
 
 
-System::Void FormRefCurveDeform::m_numbox_cpsize_ValueChanged(System::Object^ sender, System::EventArgs^ e)
-{
-  ModeRefCurveDeform::GetInst()->SetCPSize();
-}

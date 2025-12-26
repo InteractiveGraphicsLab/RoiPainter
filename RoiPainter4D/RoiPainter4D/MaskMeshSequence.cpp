@@ -4,7 +4,7 @@
 #include "tmarchingcubes.h"
 #include "./Mode/GlslShader.h"
 
-
+/*
 const std::string MaskMeshSequence::m_vtxshader_fname = std::string("shader/cagemeshVtx.glsl");
 const std::string MaskMeshSequence::m_frgshader_fname = std::string("shader/cagemeshFrg.glsl");
 GLuint MaskMeshSequence::m_gl2Program = -1;
@@ -21,7 +21,6 @@ MaskMeshSequence::~MaskMeshSequence()
 {
 
 }
-
 
 
 bool MaskMeshSequence::LoadMask(const int _scale = 1)
@@ -45,7 +44,9 @@ bool MaskMeshSequence::LoadMask(const int _scale = 1)
   std::cout << "m_num_voxels: " << m_num_voxels << "\n";
   std::cout << "m_reso: " << m_reso << "\n";
 
-  m_meshes = std::vector<TMesh>(m_num_frames);
+  m_meshes_orig = std::vector<TMesh>(m_num_frames);
+  m_meshes_def  = std::vector<TMesh>(m_num_frames);
+
   #pragma omp parallel for
   for (int frame_idx = 0; frame_idx < m_num_frames; ++frame_idx)
   {
@@ -73,7 +74,8 @@ bool MaskMeshSequence::LoadMask(const int _scale = 1)
     marchingcubes::MarchingCubes(m_reso / _scale, m_pitch, v.get(), 128, 0, 0, mesh);
     mesh.Scale(static_cast<float>(_scale));
     mesh.Smoothing(3);
-    m_meshes[frame_idx] = mesh;
+    m_meshes_orig[frame_idx] = mesh;
+    m_meshes_def[frame_idx] = mesh;
     v.reset();
   }
 
@@ -100,7 +102,7 @@ void MaskMeshSequence::UpdateMask()
     byte* mask = ImageCore::GetInst()->m_mask4d[frame_idx];
     std::unique_ptr<byte[]> img = std::make_unique<byte[]>(m_num_voxels);
 
-    m_meshes[frame_idx].GenBinaryVolume(m_reso, m_pitch, img.get());
+    m_meshes_def[frame_idx].GenBinaryVolume(m_reso, m_pitch, img.get());
 
     for (int i = 0; i < m_num_voxels; ++i)
     {
@@ -123,11 +125,6 @@ void MaskMeshSequence::UpdateMask()
   }
 }
 
-
-TMesh& MaskMeshSequence::GetMesh(const int _frame_idx)
-{
-  return m_meshes[_frame_idx];
-}
 
 
 bool MaskMeshSequence::DrawMesh(const int _frame_idx)
@@ -156,3 +153,5 @@ bool MaskMeshSequence::DrawMesh(const int _frame_idx)
 
   return true;
 }
+
+*/

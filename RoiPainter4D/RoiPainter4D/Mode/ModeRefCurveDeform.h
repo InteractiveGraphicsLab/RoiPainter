@@ -70,24 +70,12 @@ class ModeRefCurveDeform :
   };
   
   SelectionInfo m_select_info;
-
-  MaskMeshSequence m_mask_mesh;
-
-  int   m_cp_size;
   float m_cp_rate;
-  int   m_prev_frame_idx;
-  bool  m_draw_surf_trans;
-  bool  m_exist_mesh;
 
-
-  std::vector<TMesh> m_tmeshes;
+  std::vector<TMesh> m_meshes_def ;
+  std::vector<TMesh> m_meshes_orig;
   std::vector<LaplacianDeformer> m_laplacian_deformer;
-  std::set<int> m_shared_stroke_idxs;
-  std::vector<Eigen::Vector3f> m_matched_pos;
-
-
-  bool m_show_only_selected_stroke;
-
+  std::vector<Eigen::Vector3f>   m_matched_pos;
 
   // canEndMode
   bool m_is_not_saved_state;
@@ -131,12 +119,9 @@ public:
 
    void ConvertMaskToMesh();
    void ConvertMeshToMask();
-   void ReloadMesh();
-   void ReloadMesh(const int);
+   void ReloadOrigMeshCurrentFrame();
    void CopyFromPrevFrame();
    void CopyStrokesToAllFrame();
-   void SetShowOnlySelectedStroke();
-   void SetCPSize();
 
    void SaveState(const std::string&);
    void LoadState(const std::string&);

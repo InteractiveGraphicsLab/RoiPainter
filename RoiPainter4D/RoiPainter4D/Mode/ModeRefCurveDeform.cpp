@@ -10,6 +10,7 @@
 #include "LaplacianSurfaceEditing.h"
 #include <fstream>
 #include <queue>
+#include "./Mode/GlslShader.h"
 
 #pragma managed
 #include "CliMessageBox.h"
@@ -17,6 +18,8 @@
 #include "FormVisParam.h" // 右上のダイアログ
 #include "FormRefCurveDeform.h"
 #pragma unmanaged
+
+#include "tmarchingcubes.h"
 
 using namespace RoiPainter4D;
 
@@ -51,13 +54,9 @@ void ModeRefCurveDeform::StartMode()
   m_bL = m_bR = m_bM = false;
   m_is_not_saved_state = false;
   
-  m_mask_mesh = MaskMeshSequence();
   m_cp_rate = cuboid[0] * 0.0006f;
-  m_cp_size = 10;
-  m_prev_frame_idx = formVisParam_getframeI();
   m_shared_curves.clear();
   m_curves = std::vector<std::vector<PlanarCurve>>(num_frame);
-  m_tmeshes = std::vector<TMesh>(num_frame);
   m_laplacian_deformer = std::vector<LaplacianDeformer>();
 
   //for (int i = 0; i < ImageCore::GetInst()->GetNumFrames(); ++i) {
@@ -65,10 +64,6 @@ void ModeRefCurveDeform::StartMode()
   //}
 
   m_history = std::stack<SnapShot>();
-
-  m_show_only_selected_stroke = true;
-  m_draw_surf_trans = true;
-  m_exist_mesh = false;
 
   FormRefCurveDeform_InitAllItems();
   FormRefCurveDeform_Show();
@@ -82,7 +77,7 @@ ModeRefCurveDeform::SelectionInfo ModeRefCurveDeform::PickCPatCurrentFrame(
     const EVec3f& ray_pos, 
     const EVec3f& ray_dir)
 {
-  const float CP_RAD = m_cp_rate * m_cp_size;
+  const float CP_RAD = m_cp_rate * FormRefCurveDeform_GetCPSize();
   const int frame_idx = formVisParam_getframeI();
   SelectionInfo info;
   
@@ -365,12 +360,12 @@ void ModeRefCurveDeform::KeyDown(int nChar)
   }
   else if (nChar == VK_F3)
   {
-    // deform all frame
     const int num_frames = ImageCore::GetInst()->GetNumFrames();
     for (int i = 0; i < num_frames; ++i)
     {
-      ReloadMesh(i);
+      m_meshes_def[i] = m_meshes_orig[i];
     }
+    
   }
   else if (nChar == VK_F4)
   {
@@ -430,11 +425,22 @@ void ModeRefCurveDeform::KeyDown(int nChar)
 void ModeRefCurveDeform::KeyUp(int nChar) {}
 
 
+static const std::string vtxshader_fname = std::string("shader/cagemeshVtx.glsl");
+static const std::string frgshader_fname = std::string("shader/cagemeshFrg.glsl");
+static GLuint gl2Program = -1;
+
 
 void ModeRefCurveDeform::DrawScene(
     const EVec3f& cam_pos,
     const EVec3f& cam_cnt)
 {
+  if (gl2Program == -1)
+  {
+    t_InitializeShader(vtxshader_fname.c_str(),  
+                       frgshader_fname.c_str(), gl2Program);
+  }
+
+  const float CP_RAD  = m_cp_rate * (float) FormRefCurveDeform_GetCPSize();
   const int frame_idx = formVisParam_getframeI();
   //ImageCore::GetInst()->UpdateImgMaskColor();
 
@@ -451,9 +457,11 @@ void ModeRefCurveDeform::DrawScene(
   glEnable(GL_CULL_FACE);
 
   // draw mesh
-  if (!IsSpaceKeyOn())
+  if (!IsSpaceKeyOn() && 0 <= frame_idx && frame_idx < (int)m_meshes_def.size())
   {
-    m_mask_mesh.DrawMesh(frame_idx);
+    glUseProgram(gl2Program);
+    m_meshes_def[frame_idx].Draw();
+    glUseProgram(0);
   }
 
   // draw stroke
@@ -463,7 +471,7 @@ void ModeRefCurveDeform::DrawScene(
     {
       float thickness = 3.0f;
       m_curves[frame_idx][m_select_info.curve_idx].Draw(COLOR_Y, thickness);
-      m_curves[frame_idx][m_select_info.curve_idx].DrawCPs(COLOR_Y, m_cp_rate * m_cp_size, m_select_info.cp_idx);
+      m_curves[frame_idx][m_select_info.curve_idx].DrawCPs(COLOR_Y, CP_RAD, m_select_info.cp_idx);
     }
     else if (m_select_info.selected && m_select_info.is_shared)
     {
@@ -495,7 +503,6 @@ void ModeRefCurveDeform::DrawScene(
   if (IsShiftKeyOn())
   {
     //normal
-    const float CP_RAD = m_cp_rate * m_cp_size;
     for (int i = 0; i < m_curves[frame_idx].size(); ++i)
     {
       if (m_select_info.selected && !m_select_info.is_shared && m_select_info.curve_idx == i)
@@ -577,51 +584,104 @@ void ModeRefCurveDeform::Undo_LoadSnapShot()
 
 
 
-void ModeRefCurveDeform::SetCPSize() //TODO どこから呼ばれてるか確認（不要に思う）
-{
-  const int cp_size = FormRefCurveDeform_GetCPSize();
-
-  if (cp_size <= 0)
-  {
-    std::cout << "1以上の整数値を入力してください.\n";
-    return;
-  }
-
-  m_cp_size = cp_size;
-
-  std::cout << "Change CP size: " << m_cp_size << std::endl;
-  formMain_RedrawMainPanel();
-  formMain_ActivateMainForm();
-}
-
-
 void ModeRefCurveDeform::ConvertMaskToMesh()
 {
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
   const int stride = FormRefCurveDeform_GetMCScale();
+  const int scale_num = (int)pow(stride, 3);
+  const int active_maskid = ImageCore::GetInst()->GetSelectMaskIdx();
+  const std::vector<MaskData>& mask_data = ImageCore::GetInst()->GetMaskData();
 
-  if (!m_mask_mesh.LoadMask(stride)) //TODO refactoring (mask_meshはちょっとおかしいので修正する)
+  if (active_maskid < 0 || mask_data.size() <= active_maskid) return;
+
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+  const int num_voxels = ImageCore::GetInst()->GetNumVoxels();
+  const EVec3i reso    = ImageCore::GetInst()->GetReso();
+  const EVec3f pitch   = ImageCore::GetInst()->GetPitch();
+
+  const int w = reso[0] / stride;
+  const int h = reso[1] / stride;
+  const int d = reso[2] / stride;
+  std::cout << "m_num_voxels: " << num_voxels << " m_reso: " << reso << "\n";
+
+  m_meshes_orig = std::vector<TMesh>(num_frames);
+  m_meshes_def  = std::vector<TMesh>(num_frames);
+
+#pragma omp parallel for
+  for (int frame_idx = 0; frame_idx < num_frames; ++frame_idx)
   {
-    std::cout << "Failed to load mask." << "\n";
+    const byte* mask = ImageCore::GetInst()->m_mask4d[frame_idx];
+    std::unique_ptr<short[]> v = std::make_unique<short[]>(num_voxels / scale_num);
+    for (int z = 0; z < d; ++z) {
+      for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+          float ave = 0;
+          for (int c = 0; c < stride; ++c) {
+            for (int b = 0; b < stride; ++b) {
+              for (int a = 0; a < stride; ++a) {
+                const int idx = ((z * stride + c) * reso[1] * reso[0]) + ((y * stride + b) * reso[0]) + (x * stride + a);
+                ave += (mask[idx] == active_maskid) ? 1.0f : 0.0f;
+              }
+            }
+          }
+          ave /= powf(static_cast<float>(stride), 3.0f);
+          v[z * h * w + y * w + x] = ave >= 0.49f ? 255 : 0;
+        }
+      }
+    }
+
+    TMesh mesh;
+    marchingcubes::MarchingCubes(reso / stride, pitch, v.get(), 128, 0, 0, mesh);
+    mesh.Scale(static_cast<float>(stride));
+    mesh.Smoothing(3);
+    m_meshes_orig[frame_idx] = mesh;
+    m_meshes_def[frame_idx] = mesh;
+    v.reset();
   }
 
   m_laplacian_deformer = std::vector<LaplacianDeformer>();
   for (int i = 0; i < num_frames; ++i) 
   {
-    m_tmeshes[i] = m_mask_mesh.GetMesh(i);
-    m_laplacian_deformer.push_back(LaplacianDeformer(m_mask_mesh.GetMesh(i)));
+    m_laplacian_deformer.push_back(LaplacianDeformer(m_meshes_orig[i]));
   }
-
-  m_exist_mesh = true;
 
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
 
-
+//TODO 後で変える（FinishModeに移動）
 void ModeRefCurveDeform::ConvertMeshToMask()
 {
-  m_mask_mesh.UpdateMask();
+  const int num_frames    = ImageCore::GetInst()->GetNumFrames();
+  const int active_maskid = ImageCore::GetInst()->GetSelectMaskIdx();
+  const auto&  mask_data  = ImageCore::GetInst()->GetMaskData();
+  const int num_voxels    = ImageCore::GetInst()->GetNumVoxels();
+  const EVec3i reso       = ImageCore::GetInst()->GetReso();
+  const EVec3f pitch      = ImageCore::GetInst()->GetPitch();
+
+  byte mask_locked[256] = {};
+  for (int i = 0; i < (int)mask_data.size(); ++i)
+  {
+    mask_locked[i] = mask_data[i].lock ? 1 : 0;
+  }
+  mask_locked[active_maskid] = 0;
+
+#pragma omp parallel for
+  for (int frame_idx = 0; frame_idx < num_frames; ++frame_idx)
+  {
+    byte* mask = ImageCore::GetInst()->m_mask4d[frame_idx];
+    std::unique_ptr<byte[]> img = std::make_unique<byte[]>(num_voxels);
+
+    m_meshes_def[frame_idx].GenBinaryVolume(reso, pitch, img.get());
+
+    for (int i = 0; i < num_voxels; ++i)
+    {
+      if (mask_locked[mask[i]]) continue;
+      if ( img[i] ) mask[i] = active_maskid;
+      if ( !img[i] && mask[i] == active_maskid) mask[i] = 0;
+    }
+    img.reset();
+  }
+
   UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
@@ -629,24 +689,18 @@ void ModeRefCurveDeform::ConvertMeshToMask()
 }
 
 
-void ModeRefCurveDeform::ReloadMesh()
+void ModeRefCurveDeform::ReloadOrigMeshCurrentFrame()
 {
+  if (m_meshes_orig.size() == 0 || m_meshes_orig.front().m_vSize == 0) return;
+
   const int frame_idx = formVisParam_getframeI();
-  ReloadMesh(frame_idx);
-}
-
-
-void ModeRefCurveDeform::ReloadMesh(const int _frame_idx)
-{
-  if (!m_exist_mesh || !m_mask_mesh.is_initialized) return;
-
-  m_mask_mesh.GetMesh(_frame_idx).Set(m_tmeshes[_frame_idx]);
-
-  std::cout << "Mesh reloaded.\n";
+  m_meshes_def[frame_idx] = m_meshes_def[frame_idx];
 
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
+
+ 
 
 ////////////////////////////////////////////////////////////////
 //Curve Modification////////////////////////////////////////////
@@ -678,20 +732,12 @@ void ModeRefCurveDeform::CopyStrokesToAllFrame()
 }
 
 
-//TODO 使っていないので削除
-void ModeRefCurveDeform::SetShowOnlySelectedStroke()
-{
-  m_show_only_selected_stroke = FormRefCurveDeform_GetShowOnlySelectedStroke();
-  formMain_RedrawMainPanel();
-  formMain_ActivateMainForm();
-}
-
 
 void ModeRefCurveDeform::_Deform(const int _frame_idx)
 {
-  if (!m_exist_mesh || !m_mask_mesh.is_initialized) return;
+  if (m_meshes_orig.size() == 0 || m_meshes_orig.front().m_vSize == 0) return;
 
-  m_mask_mesh.GetMesh(_frame_idx).Set(m_tmeshes[_frame_idx]);
+  m_meshes_def[_frame_idx] = m_meshes_orig[_frame_idx];
 
   std::vector<int   > fixed_verts_idxs;
   std::vector<EVec3f> fixed_positions;
@@ -732,9 +778,9 @@ void ModeRefCurveDeform::FindClosestPointFromStroke(
     std::vector<EVec3f>& _target_pos, 
     std::vector<EVec3f>& _src_pos)
 {
-  if (!m_mask_mesh.is_initialized) return;
+  if (m_meshes_orig.size() == 0 || m_meshes_orig.front().m_vSize == 0) return;
 
-  TMesh& mesh = m_mask_mesh.GetMesh(_frame_idx);
+  TMesh& mesh = m_meshes_def[_frame_idx];
   
   const size_t num_curves = m_curves[_frame_idx].size();
   const size_t num_shared_curves = m_shared_curves.size();
