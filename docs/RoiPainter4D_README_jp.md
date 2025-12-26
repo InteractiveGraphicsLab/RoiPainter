@@ -20,7 +20,7 @@
 
 * [**Open 4DCT**](ModeVisNormal.md): 4DCT画像の読込・表示 (.dcm, .mha, .traw3d_ub)
 * [**Load Mask**](ModeVisMask.md): マスク画像の読込・表示 (.msk4, .mha, .traw3d_ub)
-* [**Export**](DataExport.md): データの出力・保存
+* [**Export・Save**](DataExport.md): データの出力・保存
                                      4DCT画像保存（.traw_ss, .mha）マスク画像保存（.msk4, .mha, .traw3d_ub）のほか，関心領域の重心や固有値のCSVエクスポートが可能です．
 
 ### セグメンテーション・編集モード
