@@ -1,10 +1,21 @@
-[日本語](RoiPainter4D_README_jp.md) | [English](RoiPainter4D_README_en.md)
+[English](RoiPainter4D_README_en.md)
 
 # RoiPainter4D
+
+[RoiPainter4D](RoiPainter4D_README_jp.md) [I/O]() [Visualization]() [Segmentation]()
 
 <!-- teaser.png -->
 ![teaser](https://github.com/user-attachments/assets/192d0330-7498-45b4-a484-5511ec20487f)
 
+## 概要
+RoiPainter4Dは，X線CTやMRI装置で撮影された4次元グレースケール画像を観察・領域分割するためのソフトウエアです． 
+井尻敬（芝浦工大）が主体となり，芝浦工大・立命館大・慶応大の学生や，研究機関・医療機関の医師・技師・研究者の協力のもと開発しています．
+2018年11月より，C++/CLIベースの開発に切り替え，オープンソース化しました．
+
+本ソフトウエアは研究のためのプロトタイプです．
+開発者，開発協力者，及び，開発者所属機関は，本ソフトウエアを利用して起きた損害に関し責任を負いません．
+
+各ツールの利用方法は現在作成中です．
 
 ## 導入方法
 [こちら](https://github.com/InteractiveGraphicsLab/RoiPainter/releases)より，最新のRoiPainter4Dをダウンロードできます．
@@ -20,8 +31,7 @@
 
 * [**Open 4DCT**](ModeVisNormal.md): 4DCT画像の読込・表示 (.dcm, .mha, .traw3d_ub)
 * [**Load Mask**](ModeVisMask.md): マスク画像の読込・表示 (.msk4, .mha, .traw3d_ub)
-* [**Export・Save**](DataExport.md): データの出力・保存
-                                     4DCT画像保存（.traw_ss, .mha）マスク画像保存（.msk4, .mha, .traw3d_ub）のほか，関心領域の重心や固有値のCSVエクスポートが可能です．
+* [**Export・Save**](DataExport.md): データの出力・保存．4DCT画像保存（.traw_ss, .mha），マスク画像保存（.msk4, .mha, .traw3d_ub）のほか，関心領域の重心や固有値のCSVエクスポートが可能です．
 
 ### セグメンテーション・編集モード
 目的や部位に応じて，多様なセグメンテーション手法を切り替えて使用します．
