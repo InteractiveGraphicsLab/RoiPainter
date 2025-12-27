@@ -18,7 +18,7 @@ void FormRefCurveDeform::InitAllItems()
 {
   m_numbox_cpsize->Value = 10;
   m_cb_only_select_curve->Checked = true;
-  m_trackbar_mcscale->Value = 2;
+  m_trackbar_mcstride->Value = 2;
 
   FormSelectMskId^ modal = gcnew FormSelectMskId();
   if (modal->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
@@ -41,48 +41,40 @@ System::Void FormRefCurveDeform::m_btn_genmesh_Click(System::Object^ sender, Sys
   ModeRefCurveDeform::GetInst()->ConvertMaskToMesh();
 }
 
-
 System::Void FormRefCurveDeform::m_btn_reload_mesh_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->ReloadOrigMeshCurrentFrame();
 }
-
 
 System::Void FormRefCurveDeform::m_btn_deform_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->Deform();
 }
 
-
 System::Void FormRefCurveDeform::m_btn_undo_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->Undo_LoadSnapShot();
 }
-
 
 System::Void FormRefCurveDeform::m_btn_redo_Click(System::Object^ sender, System::EventArgs^ e)
 {
   //ModeRefCurveDeform::GetInst()->Redo();
 }
 
-
 System::Void FormRefCurveDeform::m_btn_copy_from_preframe_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->CopyFromPrevFrame();
 }
-
 
 System::Void FormRefCurveDeform::m_btn_calc_mask_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->ConvertMeshToMask();
 }
 
-
 System::Void FormRefCurveDeform::m_btn_copy_to_allframe_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->CopyStrokesToAllFrame();
 }
-
 
 System::Void FormRefCurveDeform::m_cb_onlyselectedcurve_CheckedChanged(
   System::Object^ sender, System::EventArgs^ e)
@@ -97,13 +89,17 @@ System::Void FormRefCurveDeform::m_numbox_cpsize_ValueChanged(
 
 }
 
-
-
-
 System::Void FormRefCurveDeform::m_btn_sharestroke_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->MakeSelectedStroke_Shared();
 }
+
+
+System::Void FormRefCurveDeform::m_btn_flipnormal_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->FlipSelectedStrokeNormalSide();
+}
+
 
 
 System::Void FormRefCurveDeform::m_btn_loadstate_Click(System::Object^ sender, System::EventArgs^ e)
@@ -136,23 +132,5 @@ System::Void FormRefCurveDeform::m_btn_savestate_Click(System::Object^ sender, S
   ModeRefCurveDeform::GetInst()->SaveState(fpath);
 }
 
-
-System::Void FormRefCurveDeform::m_btn_flipnormal_Click(System::Object^ sender, System::EventArgs^ e)
-{
-  ModeRefCurveDeform::GetInst()->FlipSelectedStrokeNormalSide();
-}
-
-
-
-bool FormRefCurveDeform::GetShowOnlySelectedStroke()
-{
-  return static_cast<bool>(m_cb_only_select_curve->Checked);
-}
-
-
-int FormRefCurveDeform::GetMCScale()
-{
-  return static_cast<int>(m_trackbar_mcscale->Value);
-}
 
 

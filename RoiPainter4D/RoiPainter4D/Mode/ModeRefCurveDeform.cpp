@@ -77,7 +77,7 @@ ModeRefCurveDeform::SelectionInfo ModeRefCurveDeform::PickCPatCurrentFrame(
     const EVec3f& ray_pos, 
     const EVec3f& ray_dir)
 {
-  const float CP_RAD = m_cp_rate * FormRefCurveDeform_GetCPSize();
+  const float CP_RAD = m_cp_rate * FormRefCurveDeform_GetCpSize();
   const int frame_idx = formVisParam_getframeI();
   SelectionInfo info;
   
@@ -440,7 +440,7 @@ void ModeRefCurveDeform::DrawScene(
                        frgshader_fname.c_str(), gl2Program);
   }
 
-  const float CP_RAD  = m_cp_rate * (float) FormRefCurveDeform_GetCPSize();
+  const float CP_RAD  = m_cp_rate * (float) FormRefCurveDeform_GetCpSize();
   const int frame_idx = formVisParam_getframeI();
   //ImageCore::GetInst()->UpdateImgMaskColor();
 
@@ -586,7 +586,7 @@ void ModeRefCurveDeform::Undo_LoadSnapShot()
 
 void ModeRefCurveDeform::ConvertMaskToMesh()
 {
-  const int stride = FormRefCurveDeform_GetMCScale();
+  const int stride = FormRefCurveDeform_GetMcStride();
   const int scale_num = (int)pow(stride, 3);
   const int active_maskid = ImageCore::GetInst()->GetSelectMaskIdx();
   const std::vector<MaskData>& mask_data = ImageCore::GetInst()->GetMaskData();
