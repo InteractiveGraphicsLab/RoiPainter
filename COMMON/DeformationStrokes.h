@@ -55,7 +55,7 @@ public:
   bool AddCP(const EVec3f& pos, int& inserted_idx); // return inserted cp idx
   void MoveCP(int cpidx, const EVec3f& _pos);
   void DeleteCP(int cpidx);
-  int  PickCPs(const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius);
+  bool PickCPs(const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius, int& cpidx, EVec3f& cp_pos) const;
 
   void Draw   (const float color[4], const float thickness) const;
   void DrawCPs(const float color[4], float radius, int select_cp_idx) const;
@@ -93,10 +93,14 @@ public:
   void WriteToFile(std::ofstream& file);
   SharedCurves(std::ifstream& file);
 
-  int  PickCPs(int framd_idx, const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius)
+  bool PickCPs(int framd_idx, 
+               const EVec3f& ray_pos, 
+               const EVec3f& ray_dir, 
+               const float cp_radius,
+               int &cp_idx, EVec3f &cp_pos) const
   {
     if (framd_idx < 0 || m_curves.size() <= framd_idx) return -1;
-    return m_curves[framd_idx].PickCPs(ray_pos, ray_dir, cp_radius);
+    return m_curves[framd_idx].PickCPs(ray_pos, ray_dir, cp_radius, cp_idx, cp_pos);
   }
 
   EVec3f GetCP(const int frame_idx, const int cp_idx) 

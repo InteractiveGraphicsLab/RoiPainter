@@ -3,9 +3,9 @@
 #include "ModeRefCurveDeform.h"
 #include "ModeCommonTools.h"
 
-#include "OglForCLI.h"   // openGLを利用するためのクラス
-#include "ImageCore.h"   // 画像データを保持しているクラス 　
-#include "CrsSecCore.h"  // 切断面描画や、切断面への操作を管理
+#include "OglForCLI.h"   
+#include "ImageCore.h"   
+#include "CrsSecCore.h"  
 #include "LaplacianSurfaceEditing.h"
 #include <fstream>
 #include <queue>
@@ -22,6 +22,7 @@
 
 using namespace RoiPainter4D;
 
+ModeRefCurveDeform::~ModeRefCurveDeform() {}
 
 ModeRefCurveDeform::ModeRefCurveDeform()
 {
@@ -29,9 +30,6 @@ ModeRefCurveDeform::ModeRefCurveDeform()
   m_bL = m_bR = m_bM = false;
   std::cout << "ModeRefCurveDeform done\n";
 }
-
-
-ModeRefCurveDeform::~ModeRefCurveDeform(){}
 
 
 bool ModeRefCurveDeform::CanEndMode()
@@ -58,10 +56,6 @@ void ModeRefCurveDeform::StartMode()
   m_curves = std::vector<std::vector<PlanarCurve>>(num_frame);
   m_laplacian_deformer = std::vector<LaplacianDeformer>();
 
-  //for (int i = 0; i < ImageCore::GetInst()->GetNumFrames(); ++i) {
-  //  m_laplacian_deformer.push_back(LaplacianDeformer(m_mask_mesh.GetMesh(i)));
-  //}
-
   m_history = std::stack<SnapShot>();
 
   FormRefCurveDeform_InitAllItems();
@@ -71,39 +65,41 @@ void ModeRefCurveDeform::StartMode()
 }
 
 
+static float Dist(const EVec3f &p0, const EVec3f &p1)
+{
+  return (p0 - p1).norm();
+}
 
-ModeRefCurveDeform::SelectionInfo ModeRefCurveDeform::PickCPatCurrentFrame(
+
+ModeRefCurveDeform::SelectionInfo ModeRefCurveDeform::PickCpAtCurrentFrame(
     const EVec3f& ray_pos, 
     const EVec3f& ray_dir)
 {
   const float CP_RAD = m_cp_rate * FormRefCurveDeform_GetCpSize();
   const int frame_idx = formVisParam_getframeI();
-  SelectionInfo info;
-  
-  // pick standard curves
-  for (int crv_i = 0; crv_i < (int)m_curves[frame_idx].size(); ++crv_i)
-  {
-    int cpidx = m_curves[frame_idx][crv_i].PickCPs(ray_pos, ray_dir, CP_RAD);
-    if (cpidx == -1) continue;
 
-    EVec3f pos           = m_curves[frame_idx][crv_i].GetCP(cpidx);
-    CRSSEC_ID crssec_id  = m_curves[frame_idx][crv_i].GetCrssecId();
-    float     crssec_pos = m_curves[frame_idx][crv_i].GetCrssecPos();
-    if ( !info.selected || (ray_pos - pos).norm() < (ray_pos - info.pos).norm())
-      info.Set(true, false, crv_i, cpidx, pos, crssec_id, crssec_pos);
+  SelectionInfo info;
+  int cp_idx;
+  EVec3f cp_pos;
+
+  // pick standard curves
+  for (int i = 0; i < (int)m_curves[frame_idx].size(); ++i)
+  {
+    const PlanarCurve& c = m_curves[frame_idx][i];
+    if (!c.PickCPs(ray_pos, ray_dir, CP_RAD, cp_idx, cp_pos)) continue;
+
+    if ( !info.selected || Dist(ray_pos, cp_pos) < Dist(ray_pos, info.pos) )
+      info.Set(true, false, i, cp_idx, cp_pos, c.GetCrssecId(), c.GetCrssecPos());
   }
 
   // pick shared curves
-  for (int crv_i = 0; crv_i < (int)m_shared_curves.size(); ++crv_i)
+  for (int i = 0; i < (int)m_shared_curves.size(); ++i)
   {
-    int cpidx = m_shared_curves[crv_i].PickCPs(frame_idx, ray_pos, ray_dir, CP_RAD);
-    if (cpidx == -1) continue;
+    SharedCurves& sc = m_shared_curves[i];
+    if (!sc.PickCPs(frame_idx, ray_pos, ray_dir, CP_RAD, cp_idx, cp_pos)) continue;
 
-    EVec3f pos          = m_shared_curves[crv_i].GetCP(frame_idx, cpidx);
-    CRSSEC_ID crssec_id = m_shared_curves[crv_i].GetCrssecId();
-    float     crssec_pos= m_shared_curves[crv_i].GetCrssecPos();
-    if (!info.selected || (ray_pos - pos).norm() < (ray_pos - info.pos).norm())
-      info.Set(true, true, crv_i, cpidx, pos, crssec_id, crssec_pos);
+    if (!info.selected || Dist(ray_pos, cp_pos) < Dist(ray_pos, info.pos))
+      info.Set(true, true, i, cp_idx, cp_pos, sc.GetCrssecId(), sc.GetCrssecPos());
   }
   return info;
 }
@@ -123,7 +119,7 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
   if (IsShiftKeyOn())
   {
     Do_RecordSnapShot();
-    auto info = PickCPatCurrentFrame(ray_pos, ray_dir);
+    auto info = PickCpAtCurrentFrame(ray_pos, ray_dir);
 
     if (info.selected) 
     {
@@ -197,7 +193,7 @@ void ModeRefCurveDeform::RBtnDown(const EVec2i& p, OglForCLI* ogl)
   {
     EVec3f ray_pos, ray_dir, pos;
     ogl->GetCursorRay(p, ray_pos, ray_dir);
-    auto info = PickCPatCurrentFrame(ray_pos, ray_dir);
+    auto info = PickCpAtCurrentFrame(ray_pos, ray_dir);
 
     if ( info.selected && info.is_shared)
     {
@@ -342,11 +338,12 @@ void ModeRefCurveDeform::RBtnDclk(const EVec2i& p, OglForCLI* ogl)
 void ModeRefCurveDeform::KeyDown(int nChar)
 {
   static bool debug = false;
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+  const int frame_idx = formVisParam_getframeI();
 
   if (nChar == VK_F1)
   {
     // show stroke matching
-    const int frame_idx = formVisParam_getframeI();
     std::vector<int> fixed_verts_idxs;
     m_matched_pos = std::vector<Eigen::Vector3f>();
     std::vector<EVec3f> target_pos = std::vector<Eigen::Vector3f>();
@@ -359,12 +356,10 @@ void ModeRefCurveDeform::KeyDown(int nChar)
   }
   else if (nChar == VK_F3)
   {
-    const int num_frames = ImageCore::GetInst()->GetNumFrames();
     for (int i = 0; i < num_frames; ++i)
     {
       m_meshes_def[i] = m_meshes_orig[i];
     }
-    
   }
   else if (nChar == VK_F4)
   {
@@ -384,22 +379,10 @@ void ModeRefCurveDeform::KeyDown(int nChar)
     // unlock selected stroke
     // UnlockSelectedStroke();
   }
-  else if (nChar == VK_F8)
-  {
-
-  }
-  else if (nChar == VK_F9)
-  {
-
-  }
-  else if (nChar == VK_F10)
-  {
-
-  }
-  else if (nChar == VK_F11)
-  {
-
-  }
+  else if (nChar == VK_F8){}
+  else if (nChar == VK_F9){}
+  else if (nChar == VK_F10){}
+  else if (nChar == VK_F11){}
   else if (nChar == VK_F12)
   {
     if (IsShiftKeyOn()&& IsCtrKeyOn())
@@ -1021,44 +1004,3 @@ void ModeRefCurveDeform::UnlockSelectedStroke()
   formMain_RedrawMainPanel();
 }
 */
-
-
-
-//inline std::vector<int> dijkstra(const Eigen::Vector3f* vertices, const std::vector<int>* adjacencyList, int numVertices, int start, int end) {
-//  std::vector<float> distances(numVertices, std::numeric_limits<float>::infinity());
-//  std::vector<int> previous(numVertices, -1);
-//  std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>> pq;
-//
-//  distances[start] = 0.0f;
-//  pq.push({ 0.0f, start });
-//
-//  while (!pq.empty()) {
-//    int current = pq.top().second;
-//    pq.pop();
-//
-//    if (current == end) break;
-//
-//    for (int neighbor : adjacencyList[current]) {
-//      float edgeWeight = (vertices[current] - vertices[neighbor]).norm();
-//      float newDist = distances[current] + edgeWeight;
-//
-//      if (newDist < distances[neighbor]) {
-//        distances[neighbor] = newDist;
-//        previous[neighbor] = current;
-//        pq.push({ newDist, neighbor });
-//      }
-//    }
-//  }
-//
-//  std::vector<int> path;
-//  for (int at = end; at != -1; at = previous[at]) {
-//    path.push_back(at);
-//  }
-//  std::reverse(path.begin(), path.end());
-//
-//  if (path.front() != start) {
-//    path.clear();
-//  }
-//
-//  return path;
-//}

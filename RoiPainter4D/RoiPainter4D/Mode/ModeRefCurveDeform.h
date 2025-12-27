@@ -135,7 +135,7 @@ private:
   void _Deform(const int);
   void FindClosestPointFromStroke(const int, std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
 
-  ModeRefCurveDeform::SelectionInfo PickCPatCurrentFrame(const EVec3f& ray_pos, const EVec3f& ray_dir);
+  ModeRefCurveDeform::SelectionInfo PickCpAtCurrentFrame(const EVec3f& ray_pos, const EVec3f& ray_dir);
 
 };
 

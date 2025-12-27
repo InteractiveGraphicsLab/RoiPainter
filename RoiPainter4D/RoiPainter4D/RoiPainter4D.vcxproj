@@ -188,7 +188,6 @@
     <ClCompile Include="FormVisParam.cpp" />
     <ClCompile Include="GeneralizedCylinder.cpp" />
     <ClCompile Include="ImageCore.cpp" />
-    <ClCompile Include="MaskMeshSequence.cpp" />
     <ClCompile Include="ModeCore.cpp" />
     <ClCompile Include="Mode\GlslShader.cpp" />
     <ClCompile Include="Mode\ModeCommonTools.cpp" />
@@ -292,7 +291,6 @@
     </ClInclude>
     <ClInclude Include="GeneralizedCylinder.h" />
     <ClInclude Include="ImageCore.h" />
-    <ClInclude Include="MaskMeshSequence.h" />
     <ClInclude Include="ModeCore.h" />
     <ClInclude Include="Mode\GlslShader.h" />
     <ClInclude Include="Mode\ModeCommonTools.h" />

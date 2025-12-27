@@ -79,8 +79,12 @@ void PlanarCurve::DeleteCP(int cpidx)
 }
 
 
-
-int PlanarCurve::PickCPs(const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius)
+bool PlanarCurve::PickCPs(
+    const EVec3f& ray_pos, 
+    const EVec3f& ray_dir, 
+    const float cp_radius, 
+    int& cpidx, 
+    EVec3f& cp_pos) const
 {
   const int num_cps= static_cast<int>(m_cps.size());
 
@@ -88,11 +92,13 @@ int PlanarCurve::PickCPs(const EVec3f& ray_pos, const EVec3f& ray_dir, const flo
   {
     if (DistRayAndPoint(ray_pos, ray_dir, m_cps[i]) <= cp_radius)
     {
-      return i;
+      cpidx = i;
+      cp_pos = m_cps[i];
+      return true;
     }
   }
 
-  return -1;
+  return false;
 }
 
 
