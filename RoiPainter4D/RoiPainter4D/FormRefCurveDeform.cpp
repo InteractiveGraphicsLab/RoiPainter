@@ -108,22 +108,6 @@ System::Void FormRefCurveDeform::m_btn_sharestroke_Click(System::Object^ sender,
 
 System::Void FormRefCurveDeform::m_btn_loadstate_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  LoadState();
-}
-
-
-System::Void FormRefCurveDeform::m_btn_savestate_Click(System::Object^ sender, System::EventArgs^ e)
-{
-  SaveState();
-}
-
-System::Void FormRefCurveDeform::m_btn_flipnormal_Click(System::Object^ sender, System::EventArgs^ e)
-{
-  ModeRefCurveDeform::GetInst()->FlipSelectedStrokeNormalSide();
-}
-
-void FormRefCurveDeform::LoadState()
-{
   std::string fpath;
 
   OpenFileDialog^ dlg = gcnew OpenFileDialog();
@@ -134,13 +118,11 @@ void FormRefCurveDeform::LoadState()
   IntPtr mptr = System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(dlg->FileName);
   fpath = static_cast<const char*>(mptr.ToPointer());
 
-
   ModeRefCurveDeform::GetInst()->LoadState(fpath);
 }
 
 
-
-void FormRefCurveDeform::SaveState()
+System::Void FormRefCurveDeform::m_btn_savestate_Click(System::Object^ sender, System::EventArgs^ e)
 {
   std::string fpath;
 
@@ -155,10 +137,11 @@ void FormRefCurveDeform::SaveState()
 }
 
 
-int FormRefCurveDeform::GetCPSize()
+System::Void FormRefCurveDeform::m_btn_flipnormal_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  return static_cast<int>(m_numbox_cpsize->Value);
+  ModeRefCurveDeform::GetInst()->FlipSelectedStrokeNormalSide();
 }
+
 
 
 bool FormRefCurveDeform::GetShowOnlySelectedStroke()

@@ -44,7 +44,7 @@ namespace RoiPainter4D {
 			}
 		}
 	private: System::Windows::Forms::NumericUpDown^ m_numbox_cpsize;
-	private: System::Windows::Forms::TrackBar^ m_trackbar_mcscale;
+	private: System::Windows::Forms::TrackBar^ m_trackbar_mcstride;
 
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::Label^ label2;
@@ -90,7 +90,7 @@ namespace RoiPainter4D {
 		  this->m_numbox_cpsize = (gcnew System::Windows::Forms::NumericUpDown());
 		  this->m_cb_only_select_curve = (gcnew System::Windows::Forms::CheckBox());
 		  this->m_btn_compute_mask = (gcnew System::Windows::Forms::Button());
-		  this->m_trackbar_mcscale = (gcnew System::Windows::Forms::TrackBar());
+		  this->m_trackbar_mcstride = (gcnew System::Windows::Forms::TrackBar());
 		  this->label1 = (gcnew System::Windows::Forms::Label());
 		  this->label2 = (gcnew System::Windows::Forms::Label());
 		  this->label3 = (gcnew System::Windows::Forms::Label());
@@ -102,7 +102,7 @@ namespace RoiPainter4D {
 		  this->m_btn_savestate = (gcnew System::Windows::Forms::Button());
 		  this->m_btn_flipnormal = (gcnew System::Windows::Forms::Button());
 		  (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_numbox_cpsize))->BeginInit();
-		  (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackbar_mcscale))->BeginInit();
+		  (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackbar_mcstride))->BeginInit();
 		  this->SuspendLayout();
 		  // 
 		  // m_btn_convert_mask_mesh
@@ -216,14 +216,14 @@ namespace RoiPainter4D {
 		  // 
 		  // m_trackbar_mcscale
 		  // 
-		  this->m_trackbar_mcscale->LargeChange = 1;
-		  this->m_trackbar_mcscale->Location = System::Drawing::Point(147, 10);
-		  this->m_trackbar_mcscale->Maximum = 4;
-		  this->m_trackbar_mcscale->Minimum = 1;
-		  this->m_trackbar_mcscale->Name = L"m_trackbar_mcscale";
-		  this->m_trackbar_mcscale->Size = System::Drawing::Size(139, 45);
-		  this->m_trackbar_mcscale->TabIndex = 28;
-		  this->m_trackbar_mcscale->Value = 2;
+		  this->m_trackbar_mcstride->LargeChange = 1;
+		  this->m_trackbar_mcstride->Location = System::Drawing::Point(147, 10);
+		  this->m_trackbar_mcstride->Maximum = 4;
+		  this->m_trackbar_mcstride->Minimum = 1;
+		  this->m_trackbar_mcstride->Name = L"m_trackbar_mcscale";
+		  this->m_trackbar_mcstride->Size = System::Drawing::Size(139, 45);
+		  this->m_trackbar_mcstride->TabIndex = 28;
+		  this->m_trackbar_mcstride->Value = 2;
 		  // 
 		  // label1
 		  // 
@@ -323,7 +323,7 @@ namespace RoiPainter4D {
 		  this->Controls->Add(this->label3);
 		  this->Controls->Add(this->label2);
 		  this->Controls->Add(this->label1);
-		  this->Controls->Add(this->m_trackbar_mcscale);
+		  this->Controls->Add(this->m_trackbar_mcstride);
 		  this->Controls->Add(this->m_cb_only_select_curve);
 		  this->Controls->Add(this->label4);
 		  this->Controls->Add(this->m_numbox_cpsize);
@@ -341,7 +341,7 @@ namespace RoiPainter4D {
 		  this->Name = L"FormRefCurveDeform";
 		  this->Text = L"RefCurveDeform";
 		  (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_numbox_cpsize))->EndInit();
-		  (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackbar_mcscale))->EndInit();
+		  (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackbar_mcstride))->EndInit();
 		  this->ResumeLayout(false);
 		  this->PerformLayout();
 
@@ -363,20 +363,19 @@ namespace RoiPainter4D {
 		System::Void m_btn_sharestroke_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_cb_onlyselectedcurve_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
 	public:
-		void LoadState();
-		void SaveState();
-		int GetCPSize();
-		bool GetShowOnlySelectedStroke();
-		int GetMCScale();
+		int  GetCpSize (){ return static_cast<int>(m_numbox_cpsize->Value); }
+		int  GetMcStride(){ return static_cast<int>(m_trackbar_mcstride->Value);}
+		bool bVisOnlySelectedCurve(){
+			return static_cast<bool>(m_cb_only_select_curve->Checked);
+		}
 };
 
 	inline void FormRefCurveDeform_Show() { FormRefCurveDeform::GetInst()->Show(); }
   inline void FormRefCurveDeform_Hide() { FormRefCurveDeform::GetInst()->Hide(); }
   inline void FormRefCurveDeform_InitAllItems() { FormRefCurveDeform::GetInst()->InitAllItems(); }
-	inline void FormRefCurveDeform_LoadState() { FormRefCurveDeform::GetInst()->LoadState(); }
-	inline void FormRefCurveDeform_SaveState() { FormRefCurveDeform::GetInst()->SaveState(); }
-	inline int  FormRefCurveDeform_GetCPSize() { return FormRefCurveDeform::GetInst()->GetCPSize(); }
-	inline bool FormRefCurveDeform_GetShowOnlySelectedStroke() { return FormRefCurveDeform::GetInst()->GetShowOnlySelectedStroke(); }
-	inline int FormRefCurveDeform_GetMCScale() { return FormRefCurveDeform::GetInst()->GetMCScale(); }
+
+	inline int  FormRefCurveDeform_GetCpSize()       { return FormRefCurveDeform::GetInst()->GetCpSize(); }
+	inline bool FormRefCurveDeform_VisOnlySelCurve() { return FormRefCurveDeform::GetInst()->bVisOnlySelectedCurve(); }
+	inline int  FormRefCurveDeform_GetMcStride()     { return FormRefCurveDeform::GetInst()->GetMcStride(); }
 	
 }
