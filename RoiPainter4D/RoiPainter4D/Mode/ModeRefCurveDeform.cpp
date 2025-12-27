@@ -6,7 +6,6 @@
 #include "OglForCLI.h"   // openGLを利用するためのクラス
 #include "ImageCore.h"   // 画像データを保持しているクラス 　
 #include "CrsSecCore.h"  // 切断面描画や、切断面への操作を管理
-#include "MaskMeshSequence.h"
 #include "LaplacianSurfaceEditing.h"
 #include <fstream>
 #include <queue>

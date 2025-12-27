@@ -4,7 +4,6 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "MaskMeshSequence.h"
 #include <vector>
 #include <stack>
 #include "DeformationStrokes.h"
