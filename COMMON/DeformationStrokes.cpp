@@ -296,23 +296,20 @@ void PlanarCurve::InitByCPs(const std::vector<EVec3f> &cps)
 
 void SharedCurves::Draw(
     const int frame_idx, 
-    const bool is_on_manip)
+    const float color[4],
+    const float thickness) const
 {
   if (frame_idx < 0 || m_curves.size() <= frame_idx) return;
-
-  float *c = is_on_manip        ? COLOR_R : 
-             m_manip[frame_idx] ? COLOR_G : COLOR_C ;
-  float lwidth = is_on_manip ? 1.5f * 6 : 1.0f * 6;
-
-  m_curves[frame_idx].Draw(c, lwidth);
+  m_curves[frame_idx].Draw(color, thickness);
 }
 
-
-void SharedCurves::DrawCPs(const int frame_idx, const bool is_on_manip, const float cp_radius, const int select_cp_idx)
+void SharedCurves::DrawCPs(
+  const int frame_idx,
+  const float color[4],
+  const float cp_radius,
+  const int select_cp_idx) const
 {
-  float* c = is_on_manip        ? COLOR_R :
-             m_manip[frame_idx] ? COLOR_G : COLOR_C;
-  m_curves[frame_idx].DrawCPs(c, cp_radius, select_cp_idx);
+  m_curves[frame_idx].DrawCPs(color, cp_radius, select_cp_idx);
 }
 
 

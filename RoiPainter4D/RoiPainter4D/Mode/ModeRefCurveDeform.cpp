@@ -22,6 +22,20 @@
 
 using namespace RoiPainter4D;
 
+
+//TODO 
+// UI周りのチェック 
+// 　　VisOnlySelectedStroke対応
+// 　　ShareStroke対応
+// 　　Curveの色設定対応
+// MaskIDの取り扱いを確認
+// ConvertMeshToMaskはFinishModeへ移動
+// Strideの使い方は修正したい
+// State SaveLoadは動作確認が必要
+
+
+
+
 ModeRefCurveDeform::~ModeRefCurveDeform() {}
 
 ModeRefCurveDeform::ModeRefCurveDeform()
@@ -62,12 +76,6 @@ void ModeRefCurveDeform::StartMode()
   FormRefCurveDeform_Show();
   std::cout << "ModeRefCurveDeform...startMode DONE-----\n";
   std::cout << "Debug mode is available (Shift+Ctrl+F12).\n";
-}
-
-
-static float Dist(const EVec3f &p0, const EVec3f &p1)
-{
-  return (p0 - p1).norm();
 }
 
 
@@ -429,7 +437,7 @@ void ModeRefCurveDeform::DrawScene(
   ImageCore::GetInst()->BindAllVolumes();
   DrawCrossSectionsNormal();
 
-  if (IsMKeyOn() && formVisParam_bRendVol())
+  if (IsMKeyOn())
   {
     DrawVolumeVisMask(!IsShiftKeyOn(), cam_pos, cam_cnt);
   }
@@ -446,61 +454,51 @@ void ModeRefCurveDeform::DrawScene(
     glUseProgram(0);
   }
 
-  // draw stroke
-  if (!IsSKeyOn())
-  {
-    if (     m_select_info.selected && !m_select_info.is_shared)
-    {
-      float thickness = 3.0f;
-      m_curves[frame_idx][m_select_info.curve_idx].Draw(COLOR_Y, thickness);
-      m_curves[frame_idx][m_select_info.curve_idx].DrawCPs(COLOR_Y, CP_RAD, m_select_info.cp_idx);
-    }
-    else if (m_select_info.selected && m_select_info.is_shared)
-    {
-      m_shared_curves[m_select_info.curve_idx].Draw(frame_idx, true);
-    }
+  // draw stroke //
+  // standard curve
+  // selected     --> curve 赤, 作業中cp 赤、作業中以外CP 黄色
+  // non selected --> curve 黄, CP 黄
+  // Share Curve 
+  // selected        --> curve 赤緑, 作業中cp 赤、作業中以外CP 黄色
+  // shared(manip)   --> curve 緑    CP 黄
+  // shared(no manip)--> curve 水色  CP 黄
 
-    for (int i = 0; i < m_matched_pos.size(); ++i)
-    {
-      glEnable(GL_LIGHTING);
-      TMesh::DrawSphere(m_matched_pos[i], 0.3f, COLOR_G, COLOR_G, COLOR_W, COLOR_SHIN64);
-      glDisable(GL_LIGHTING);
-    }
-  }
+  const std::vector<PlanarCurve> &curves = m_curves[frame_idx];
+  const bool VIS_CP = IsShiftKeyOn();
+  const bool VIS_ONLY_SEL = FormRefCurveDeform_VisOnlySelCurve();
+  const float STD_THICK = 2.0f;
+  const float SEL_THICK = 5.0f;
 
-  //curveの色
-  // 作業中 --> 赤
-  // sharedで操作あり --> 緑
-  // sharedで操作なし --> 水色
-  // sharedではなくて、操作中じゃない --> 黄色 ※ここでは対象外
-  //
-  //CPの色 
-  // 作業中 & 選択中　--> 赤
-  // Shared & 操作あり --> 緑
-  // Shared & 操作なし --> 水色
-  // それ以外 --> 黄色 
-  //
-  
-  // draw all control points
-  if (IsShiftKeyOn())
+  for (int i = 0; i < curves.size(); ++i)
   {
-    //normal
-    for (int i = 0; i < m_curves[frame_idx].size(); ++i)
+    const PlanarCurve& c = curves[i];
+    if (m_select_info.IsStdCurveSelect(i))
     {
-      if (m_select_info.selected && !m_select_info.is_shared && m_select_info.curve_idx == i)
-        m_curves[frame_idx][i].DrawCPs(COLOR_Y, CP_RAD, m_select_info.cp_idx);
-      else
-        m_curves[frame_idx][i].DrawCPs(COLOR_Y, CP_RAD, -1);
+      c.Draw(COLOR_R, SEL_THICK);
+      if (VIS_CP) c.DrawCPs(COLOR_Y, CP_RAD, m_select_info.cp_idx);
+      continue;
     }
-    //shared
-    for (int i = 0; i < m_shared_curves.size(); ++i)
+    if (VIS_ONLY_SEL) continue;
+
+    c.Draw(COLOR_Y, STD_THICK);
+    if (VIS_CP) c.DrawCPs(COLOR_Y, CP_RAD, -1);
+  } 
+
+  for (int i = 0; i < m_shared_curves.size(); ++i)
+  {
+    const SharedCurves& sc = m_shared_curves[i];
+    if (m_select_info.IsSharedCurveSelect(i))
     {
-      if (m_select_info.selected && m_select_info.is_shared && m_select_info.curve_idx == i)
-        m_shared_curves[i].DrawCPs(frame_idx, true, CP_RAD, m_select_info.cp_idx);
-      else
-        m_shared_curves[i].DrawCPs(frame_idx, false, CP_RAD, -1);
+      sc.Draw(frame_idx, COLOR_R, SEL_THICK);
+      if (VIS_CP) sc.DrawCPs(frame_idx, COLOR_G, CP_RAD, m_select_info.cp_idx);
+      continue;
     }
-  }
+    if (VIS_ONLY_SEL) continue;
+    const bool is_manip = sc.IsManipulated(frame_idx);
+    const float *color  = is_manip ? COLOR_G : COLOR_C;
+    sc.Draw(frame_idx, color, STD_THICK);
+    if (VIS_CP ) sc.DrawCPs(frame_idx, color, CP_RAD, -1);
+  }  
 }
 
 
@@ -630,7 +628,8 @@ void ModeRefCurveDeform::ConvertMaskToMesh()
   formMain_ActivateMainForm();
 }
 
-//TODO 後で変える（FinishModeに移動）
+
+
 void ModeRefCurveDeform::ConvertMeshToMask()
 {
   const int num_frames    = ImageCore::GetInst()->GetNumFrames();

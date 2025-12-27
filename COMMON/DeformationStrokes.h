@@ -99,7 +99,7 @@ public:
                const float cp_radius,
                int &cp_idx, EVec3f &cp_pos) const
   {
-    if (framd_idx < 0 || m_curves.size() <= framd_idx) return -1;
+    if (framd_idx < 0 || m_curves.size() <= framd_idx) return false;
     return m_curves[framd_idx].PickCPs(ray_pos, ray_dir, cp_radius, cp_idx, cp_pos);
   }
 
@@ -126,7 +126,7 @@ public:
     return m_curves[frame_idx];
   }
 
-  const bool IsManipulated(const int frame_idx){
+  bool IsManipulated(const int frame_idx) const{
     if (frame_idx < 0 || m_curves.size() <= frame_idx) 
       throw std::out_of_range("SharedCurves::IsManipulated invalid frame_idx");
     return m_manip[frame_idx];
@@ -145,9 +145,9 @@ public:
     m_manip[frame_idx] = true;
   }
 
-  void Draw   (const int frame_idx, const bool is_on_manip);
-  void DrawCPs(const int frame_idx, const bool is_on_manip, const float cp_radius, const int select_cp_idx);
-  
+  void Draw   (const int frame_idx, const float color[4], const float thickness) const;
+  void DrawCPs(const int frame_idx, const float color[4], const float cp_radius, const int select_cp_idx) const;
+
   void UpdateNonManipCurves();
 };
 

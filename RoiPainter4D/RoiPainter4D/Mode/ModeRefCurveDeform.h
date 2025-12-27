@@ -66,6 +66,12 @@ class ModeRefCurveDeform :
     void Clear(){
       Set(false, false, -1, -1, EVec3f(0, 0, 0), CRSSEC_XY, 0.0f);
     }
+    bool IsStdCurveSelect(int _curve_idx){
+      return selected && !is_shared && curve_idx == _curve_idx;  
+    }
+    bool IsSharedCurveSelect(int _curve_idx){
+      return selected && is_shared && curve_idx == _curve_idx;  
+    }
   };
   
   SelectionInfo m_select_info;
