@@ -17,7 +17,7 @@ using namespace RoiPainter4D;
 void FormRefCurveDeform::InitAllItems()
 {
   m_numbox_cpsize->Value = 10;
-  m_checkbox_showonlyselectedstroke->Checked = true;
+  m_cb_only_select_curve->Checked = true;
   m_trackbar_mcscale->Value = 2;
 
   FormSelectMskId^ modal = gcnew FormSelectMskId();
@@ -36,7 +36,7 @@ void FormRefCurveDeform::InitAllItems()
 }
 
 
-System::Void FormRefCurveDeform::m_btn_convert_mask_mesh_Click(System::Object^ sender, System::EventArgs^ e)
+System::Void FormRefCurveDeform::m_btn_genmesh_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->ConvertMaskToMesh();
 }
@@ -66,25 +66,25 @@ System::Void FormRefCurveDeform::m_btn_redo_Click(System::Object^ sender, System
 }
 
 
-System::Void FormRefCurveDeform::m_copy_from_prev_frame_Click(System::Object^ sender, System::EventArgs^ e)
+System::Void FormRefCurveDeform::m_btn_copy_from_preframe_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->CopyFromPrevFrame();
 }
 
 
-System::Void FormRefCurveDeform::m_btn_convert_mesh_mask_Click(System::Object^ sender, System::EventArgs^ e)
+System::Void FormRefCurveDeform::m_btn_calc_mask_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->ConvertMeshToMask();
 }
 
 
-System::Void FormRefCurveDeform::m_btn_copy_stroke_all_frame_Click(System::Object^ sender, System::EventArgs^ e)
+System::Void FormRefCurveDeform::m_btn_copy_to_allframe_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->CopyStrokesToAllFrame();
 }
 
 
-System::Void FormRefCurveDeform::m_checkbox_showonlyselectedstroke_CheckedChanged(
+System::Void FormRefCurveDeform::m_cb_onlyselectedcurve_CheckedChanged(
   System::Object^ sender, System::EventArgs^ e)
 {
   FormMain::GetInst()->RedrawMainPanel();
@@ -117,7 +117,7 @@ System::Void FormRefCurveDeform::m_btn_savestate_Click(System::Object^ sender, S
   SaveState();
 }
 
-System::Void FormRefCurveDeform::m_btn_flip_normals_Click(System::Object^ sender, System::EventArgs^ e)
+System::Void FormRefCurveDeform::m_btn_flipnormal_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->FlipSelectedStrokeNormalSide();
 }
@@ -163,7 +163,7 @@ int FormRefCurveDeform::GetCPSize()
 
 bool FormRefCurveDeform::GetShowOnlySelectedStroke()
 {
-  return static_cast<bool>(m_checkbox_showonlyselectedstroke->Checked);
+  return static_cast<bool>(m_cb_only_select_curve->Checked);
 }
 
 

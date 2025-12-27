@@ -32,7 +32,6 @@ namespace RoiPainter4D {
 
     void InitAllItems();
 
-
 	protected:
 		/// <summary>
 		/// 使用中のリソースをすべてクリーンアップします。
@@ -44,41 +43,30 @@ namespace RoiPainter4D {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::Button^ m_btn_convert_mask_mesh;
-	private: System::Windows::Forms::Button^ m_btn_deform;
-	private: System::Windows::Forms::Button^ m_btn_undo;
-	private: System::Windows::Forms::Button^ m_btn_redo;
-	private: System::Windows::Forms::Button^ m_copy_from_prev_frame;
-	private: System::Windows::Forms::Button^ m_btn_copy_stroke_all_frame;
 	private: System::Windows::Forms::NumericUpDown^ m_numbox_cpsize;
-	private: System::Windows::Forms::Label^ label4;
-	private: System::Windows::Forms::CheckBox^ m_checkbox_showonlyselectedstroke;
-	private: System::Windows::Forms::Button^ m_btn_convert_mesh_mask;
 	private: System::Windows::Forms::TrackBar^ m_trackbar_mcscale;
 
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::Label^ label2;
 	private: System::Windows::Forms::Label^ label3;
+	private: System::Windows::Forms::Label^ label4;
 	private: System::Windows::Forms::Label^ label5;
-
-
-
-
-
 
 	private: System::Windows::Forms::Button^ m_btn_reload_mesh;
 	private: System::Windows::Forms::Button^ m_btn_sharestroke;
 	private: System::Windows::Forms::Button^ m_btn_loadstate;
 	private: System::Windows::Forms::Button^ m_btn_savestate;
-	private: System::Windows::Forms::Button^ m_btn_flip_normals;
+	private: System::Windows::Forms::Button^ m_btn_flipnormal;
+	private: System::Windows::Forms::Button^ m_btn_genmesh;
+	private: System::Windows::Forms::Button^ m_btn_deform;
+	private: System::Windows::Forms::Button^ m_btn_undo;
+	private: System::Windows::Forms::Button^ m_btn_redo;
+	private: System::Windows::Forms::Button^ m_btn_copy_from_preframe;
+	private: System::Windows::Forms::Button^ m_btn_copy_to_allframe;
+	private: System::Windows::Forms::Button^ m_btn_compute_mask;
+	private: System::Windows::Forms::CheckBox^ m_cb_only_select_curve;
 
 
-
-	protected:
-
-	protected:
-
-	protected:
 
 	private:
 		/// <summary>
@@ -93,41 +81,41 @@ namespace RoiPainter4D {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-		  this->m_btn_convert_mask_mesh = (gcnew System::Windows::Forms::Button());
+		  this->m_btn_genmesh = (gcnew System::Windows::Forms::Button());
 		  this->m_btn_deform = (gcnew System::Windows::Forms::Button());
 		  this->m_btn_undo = (gcnew System::Windows::Forms::Button());
 		  this->m_btn_redo = (gcnew System::Windows::Forms::Button());
-		  this->m_copy_from_prev_frame = (gcnew System::Windows::Forms::Button());
-		  this->m_btn_copy_stroke_all_frame = (gcnew System::Windows::Forms::Button());
+		  this->m_btn_copy_from_preframe = (gcnew System::Windows::Forms::Button());
+		  this->m_btn_copy_to_allframe = (gcnew System::Windows::Forms::Button());
 		  this->m_numbox_cpsize = (gcnew System::Windows::Forms::NumericUpDown());
-		  this->label4 = (gcnew System::Windows::Forms::Label());
-		  this->m_checkbox_showonlyselectedstroke = (gcnew System::Windows::Forms::CheckBox());
-		  this->m_btn_convert_mesh_mask = (gcnew System::Windows::Forms::Button());
+		  this->m_cb_only_select_curve = (gcnew System::Windows::Forms::CheckBox());
+		  this->m_btn_compute_mask = (gcnew System::Windows::Forms::Button());
 		  this->m_trackbar_mcscale = (gcnew System::Windows::Forms::TrackBar());
 		  this->label1 = (gcnew System::Windows::Forms::Label());
 		  this->label2 = (gcnew System::Windows::Forms::Label());
 		  this->label3 = (gcnew System::Windows::Forms::Label());
-		  this->label5 = (gcnew System::Windows::Forms::Label());
+			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->label5 = (gcnew System::Windows::Forms::Label());
 		  this->m_btn_reload_mesh = (gcnew System::Windows::Forms::Button());
 		  this->m_btn_sharestroke = (gcnew System::Windows::Forms::Button());
 		  this->m_btn_loadstate = (gcnew System::Windows::Forms::Button());
 		  this->m_btn_savestate = (gcnew System::Windows::Forms::Button());
-		  this->m_btn_flip_normals = (gcnew System::Windows::Forms::Button());
+		  this->m_btn_flipnormal = (gcnew System::Windows::Forms::Button());
 		  (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_numbox_cpsize))->BeginInit();
 		  (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackbar_mcscale))->BeginInit();
 		  this->SuspendLayout();
 		  // 
 		  // m_btn_convert_mask_mesh
 		  // 
-		  this->m_btn_convert_mask_mesh->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+		  this->m_btn_genmesh->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 			static_cast<System::Byte>(128)));
-		  this->m_btn_convert_mask_mesh->Location = System::Drawing::Point(8, 10);
-		  this->m_btn_convert_mask_mesh->Name = L"m_btn_convert_mask_mesh";
-		  this->m_btn_convert_mask_mesh->Size = System::Drawing::Size(135, 23);
-		  this->m_btn_convert_mask_mesh->TabIndex = 0;
-		  this->m_btn_convert_mask_mesh->Text = L"Convert mask -> mesh";
-		  this->m_btn_convert_mask_mesh->UseVisualStyleBackColor = true;
-		  this->m_btn_convert_mask_mesh->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_convert_mask_mesh_Click);
+		  this->m_btn_genmesh->Location = System::Drawing::Point(8, 10);
+		  this->m_btn_genmesh->Name = L"m_btn_convert_mask_mesh";
+		  this->m_btn_genmesh->Size = System::Drawing::Size(135, 23);
+		  this->m_btn_genmesh->TabIndex = 0;
+		  this->m_btn_genmesh->Text = L"Convert mask -> mesh";
+		  this->m_btn_genmesh->UseVisualStyleBackColor = true;
+		  this->m_btn_genmesh->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_genmesh_Click);
 		  // 
 		  // m_btn_deform
 		  // 
@@ -161,23 +149,23 @@ namespace RoiPainter4D {
 		  // 
 		  // m_copy_from_prev_frame
 		  // 
-		  this->m_copy_from_prev_frame->Location = System::Drawing::Point(149, 145);
-		  this->m_copy_from_prev_frame->Name = L"m_copy_from_prev_frame";
-		  this->m_copy_from_prev_frame->Size = System::Drawing::Size(144, 23);
-		  this->m_copy_from_prev_frame->TabIndex = 1;
-		  this->m_copy_from_prev_frame->Text = L"Copy from prev frame";
-		  this->m_copy_from_prev_frame->UseVisualStyleBackColor = true;
-		  this->m_copy_from_prev_frame->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_copy_from_prev_frame_Click);
+		  this->m_btn_copy_from_preframe->Location = System::Drawing::Point(149, 145);
+		  this->m_btn_copy_from_preframe->Name = L"m_copy_from_prev_frame";
+		  this->m_btn_copy_from_preframe->Size = System::Drawing::Size(144, 23);
+		  this->m_btn_copy_from_preframe->TabIndex = 1;
+		  this->m_btn_copy_from_preframe->Text = L"Copy from prev frame";
+		  this->m_btn_copy_from_preframe->UseVisualStyleBackColor = true;
+		  this->m_btn_copy_from_preframe->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_copy_from_preframe_Click);
 		  // 
 		  // m_btn_copy_stroke_all_frame
 		  // 
-		  this->m_btn_copy_stroke_all_frame->Location = System::Drawing::Point(149, 174);
-		  this->m_btn_copy_stroke_all_frame->Name = L"m_btn_copy_stroke_all_frame";
-		  this->m_btn_copy_stroke_all_frame->Size = System::Drawing::Size(144, 23);
-		  this->m_btn_copy_stroke_all_frame->TabIndex = 1;
-		  this->m_btn_copy_stroke_all_frame->Text = L"Copy strokes to all frame";
-		  this->m_btn_copy_stroke_all_frame->UseVisualStyleBackColor = true;
-		  this->m_btn_copy_stroke_all_frame->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_copy_stroke_all_frame_Click);
+		  this->m_btn_copy_to_allframe->Location = System::Drawing::Point(149, 174);
+		  this->m_btn_copy_to_allframe->Name = L"m_btn_copy_stroke_all_frame";
+		  this->m_btn_copy_to_allframe->Size = System::Drawing::Size(144, 23);
+		  this->m_btn_copy_to_allframe->TabIndex = 1;
+		  this->m_btn_copy_to_allframe->Text = L"Copy strokes to all frame";
+		  this->m_btn_copy_to_allframe->UseVisualStyleBackColor = true;
+		  this->m_btn_copy_to_allframe->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_copy_to_allframe_Click);
 		  // 
 		  // m_numbox_cpsize
 		  // 
@@ -202,29 +190,29 @@ namespace RoiPainter4D {
 		  // 
 		  // m_checkbox_showonlyselectedstroke
 		  // 
-		  this->m_checkbox_showonlyselectedstroke->AutoSize = true;
-		  this->m_checkbox_showonlyselectedstroke->Checked = true;
-		  this->m_checkbox_showonlyselectedstroke->CheckState = System::Windows::Forms::CheckState::Checked;
-		  this->m_checkbox_showonlyselectedstroke->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 8));
-		  this->m_checkbox_showonlyselectedstroke->Location = System::Drawing::Point(149, 250);
-		  this->m_checkbox_showonlyselectedstroke->Name = L"m_checkbox_showonlyselectedstroke";
-		  this->m_checkbox_showonlyselectedstroke->Size = System::Drawing::Size(148, 15);
-		  this->m_checkbox_showonlyselectedstroke->TabIndex = 27;
-		  this->m_checkbox_showonlyselectedstroke->Text = L"Show only selected stroke";
-		  this->m_checkbox_showonlyselectedstroke->UseVisualStyleBackColor = true;
-		  this->m_checkbox_showonlyselectedstroke->CheckedChanged += gcnew System::EventHandler(this, &FormRefCurveDeform::m_checkbox_showonlyselectedstroke_CheckedChanged);
+		  this->m_cb_only_select_curve->AutoSize = true;
+		  this->m_cb_only_select_curve->Checked = true;
+		  this->m_cb_only_select_curve->CheckState = System::Windows::Forms::CheckState::Checked;
+		  this->m_cb_only_select_curve->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 8));
+		  this->m_cb_only_select_curve->Location = System::Drawing::Point(149, 250);
+		  this->m_cb_only_select_curve->Name = L"m_checkbox_showonlyselectedstroke";
+		  this->m_cb_only_select_curve->Size = System::Drawing::Size(148, 15);
+		  this->m_cb_only_select_curve->TabIndex = 27;
+		  this->m_cb_only_select_curve->Text = L"Show only selected stroke";
+		  this->m_cb_only_select_curve->UseVisualStyleBackColor = true;
+		  this->m_cb_only_select_curve->CheckedChanged += gcnew System::EventHandler(this, &FormRefCurveDeform::m_cb_onlyselectedcurve_CheckedChanged);
 		  // 
 		  // m_btn_convert_mesh_mask
 		  // 
-		  this->m_btn_convert_mesh_mask->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+		  this->m_btn_compute_mask->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 			static_cast<System::Byte>(128)));
-		  this->m_btn_convert_mesh_mask->Location = System::Drawing::Point(8, 245);
-		  this->m_btn_convert_mesh_mask->Name = L"m_btn_convert_mesh_mask";
-		  this->m_btn_convert_mesh_mask->Size = System::Drawing::Size(135, 23);
-		  this->m_btn_convert_mesh_mask->TabIndex = 0;
-		  this->m_btn_convert_mesh_mask->Text = L"Convert mesh -> mask";
-		  this->m_btn_convert_mesh_mask->UseVisualStyleBackColor = true;
-		  this->m_btn_convert_mesh_mask->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_convert_mesh_mask_Click);
+		  this->m_btn_compute_mask->Location = System::Drawing::Point(8, 245);
+		  this->m_btn_compute_mask->Name = L"m_btn_convert_mesh_mask";
+		  this->m_btn_compute_mask->Size = System::Drawing::Size(135, 23);
+		  this->m_btn_compute_mask->TabIndex = 0;
+		  this->m_btn_compute_mask->Text = L"Convert mesh -> mask";
+		  this->m_btn_compute_mask->UseVisualStyleBackColor = true;
+		  this->m_btn_compute_mask->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_calc_mask_Click);
 		  // 
 		  // m_trackbar_mcscale
 		  // 
@@ -317,39 +305,39 @@ namespace RoiPainter4D {
 		  // 
 		  // m_btn_flip_normals
 		  // 
-		  this->m_btn_flip_normals->Location = System::Drawing::Point(8, 54);
-		  this->m_btn_flip_normals->Name = L"m_btn_flip_normals";
-		  this->m_btn_flip_normals->Size = System::Drawing::Size(133, 23);
-		  this->m_btn_flip_normals->TabIndex = 30;
-		  this->m_btn_flip_normals->Text = L"flip normals";
-		  this->m_btn_flip_normals->UseVisualStyleBackColor = true;
-		  this->m_btn_flip_normals->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_flip_normals_Click);
+		  this->m_btn_flipnormal->Location = System::Drawing::Point(8, 54);
+		  this->m_btn_flipnormal->Name = L"m_btn_flip_normals";
+		  this->m_btn_flipnormal->Size = System::Drawing::Size(133, 23);
+		  this->m_btn_flipnormal->TabIndex = 30;
+		  this->m_btn_flipnormal->Text = L"flip normals";
+		  this->m_btn_flipnormal->UseVisualStyleBackColor = true;
+		  this->m_btn_flipnormal->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_flipnormal_Click);
 		  // 
 		  // FormRefCurveDeform
 		  // 
 		  this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 		  this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 		  this->ClientSize = System::Drawing::Size(300, 316);
-		  this->Controls->Add(this->m_btn_flip_normals);
+		  this->Controls->Add(this->m_btn_flipnormal);
 		  this->Controls->Add(this->label5);
 		  this->Controls->Add(this->label3);
 		  this->Controls->Add(this->label2);
 		  this->Controls->Add(this->label1);
 		  this->Controls->Add(this->m_trackbar_mcscale);
-		  this->Controls->Add(this->m_checkbox_showonlyselectedstroke);
+		  this->Controls->Add(this->m_cb_only_select_curve);
 		  this->Controls->Add(this->label4);
 		  this->Controls->Add(this->m_numbox_cpsize);
 		  this->Controls->Add(this->m_btn_redo);
 		  this->Controls->Add(this->m_btn_undo);
-		  this->Controls->Add(this->m_btn_copy_stroke_all_frame);
+		  this->Controls->Add(this->m_btn_copy_to_allframe);
 		  this->Controls->Add(this->m_btn_sharestroke);
 		  this->Controls->Add(this->m_btn_savestate);
 		  this->Controls->Add(this->m_btn_loadstate);
-		  this->Controls->Add(this->m_copy_from_prev_frame);
+		  this->Controls->Add(this->m_btn_copy_from_preframe);
 		  this->Controls->Add(this->m_btn_deform);
-		  this->Controls->Add(this->m_btn_convert_mesh_mask);
+		  this->Controls->Add(this->m_btn_compute_mask);
 		  this->Controls->Add(this->m_btn_reload_mesh);
-		  this->Controls->Add(this->m_btn_convert_mask_mesh);
+		  this->Controls->Add(this->m_btn_genmesh);
 		  this->Name = L"FormRefCurveDeform";
 		  this->Text = L"RefCurveDeform";
 		  (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_numbox_cpsize))->EndInit();
@@ -361,19 +349,19 @@ namespace RoiPainter4D {
 #pragma endregion
 	private:
 		System::Void m_numbox_cpsize_ValueChanged(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_convert_mask_mesh_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_genmesh_Click    (System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_reload_mesh_Click(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_deform_Click(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_undo_Click(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_redo_Click(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_copy_from_prev_frame_Click(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_convert_mesh_mask_Click(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_copy_stroke_all_frame_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_deform_Click     (System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_undo_Click       (System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_redo_Click       (System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_loadstate_Click  (System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_savestate_Click  (System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_flipnormal_Click (System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_copy_from_preframe_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_copy_to_allframe_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_calc_mask_Click  (System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_sharestroke_Click(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_loadstate_Click(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_savestate_Click(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_checkbox_showonlyselectedstroke_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_flip_normals_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void m_cb_onlyselectedcurve_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
 	public:
 		void LoadState();
 		void SaveState();
