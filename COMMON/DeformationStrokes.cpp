@@ -3,7 +3,6 @@
 #include "TMesh.h"
 #include "kcurves.h"
 #include <fstream>
-#include "Mode/ModeInterface.h"
 
 
 bool PlanarCurve::AddCP(const EVec3f &pos, int& inserted_idx)
@@ -106,11 +105,11 @@ bool PlanarCurve::PickCPs(
 void PlanarCurve::Draw(const float color[4], const float thickness) const
 {
   if (m_curve.size() == 0) return;
+  glDisable(GL_LIGHTING);
 
   EVec3f c = EVec3f(color[0], color[1], color[2]);
   DrawPolyLine(c, thickness, m_curve, false);
 
-  glDisable(GL_LIGHTING);
   glColor3f(0.0f, 1.0f, 1.0f);
   glLineWidth(thickness);
 
@@ -134,20 +133,23 @@ void PlanarCurve::Draw(const float color[4], const float thickness) const
   }
   glEnd();
 }
+  
 
 
 void PlanarCurve::DrawCPs(const float color[4], float radius, int select_cp_idx) const
 {
   if (m_cps.size() == 0) return;
 
-  // color
+  static float COLOR_W[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  static float COLOR_SHIN64[1] = { 64.0f };
+  static float COLOR_R[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
   glEnable(GL_LIGHTING);
-
   const int size = static_cast<int>(m_cps.size());
   for (int i = 0; i < size; ++i)
   {
-    TMesh::DrawSphere(m_cps[i], radius, color, color, COLOR_W, COLOR_SHIN64);
+    const float* c = (i == select_cp_idx) ? COLOR_R : color;
+    TMesh::DrawSphere(m_cps[i], radius, c, c, COLOR_W, COLOR_SHIN64);
   }
   glDisable(GL_LIGHTING);
 }

@@ -25,10 +25,10 @@ using namespace RoiPainter4D;
 
 //TODO 
 // UI周りのチェック 
-// 　　VisOnlySelectedStroke対応
-// 　　ShareStroke対応
-// 　　Curveの色設定対応
-// MaskIDの取り扱いを確認
+// 　　VisOnlySelectedStroke対応 OK
+// 　　ShareStroke対応           OK
+// 　　Curveの色設定対応         OK
+// MaskIDの取り扱いを確認 このクラスで持つべき
 // ConvertMeshToMaskはFinishModeへ移動
 // Strideの使い方は修正したい
 // State SaveLoadは動作確認が必要
@@ -83,8 +83,9 @@ ModeRefCurveDeform::SelectionInfo ModeRefCurveDeform::PickCpAtCurrentFrame(
     const EVec3f& ray_pos, 
     const EVec3f& ray_dir)
 {
-  const float CP_RAD = m_cp_rate * FormRefCurveDeform_GetCpSize();
   const int frame_idx = formVisParam_getframeI();
+  const float CP_RAD = m_cp_rate * FormRefCurveDeform_GetCpSize();
+  const bool  ONLY_SELECTED = FormRefCurveDeform_VisOnlySelCurve();
 
   SelectionInfo info;
   int cp_idx;
@@ -94,6 +95,8 @@ ModeRefCurveDeform::SelectionInfo ModeRefCurveDeform::PickCpAtCurrentFrame(
   for (int i = 0; i < (int)m_curves[frame_idx].size(); ++i)
   {
     const PlanarCurve& c = m_curves[frame_idx][i];
+
+    if (ONLY_SELECTED && !m_select_info.IsStdCurveSelect(i) ) continue;
     if (!c.PickCPs(ray_pos, ray_dir, CP_RAD, cp_idx, cp_pos)) continue;
 
     if ( !info.selected || Dist(ray_pos, cp_pos) < Dist(ray_pos, info.pos) )
@@ -104,6 +107,7 @@ ModeRefCurveDeform::SelectionInfo ModeRefCurveDeform::PickCpAtCurrentFrame(
   for (int i = 0; i < (int)m_shared_curves.size(); ++i)
   {
     SharedCurves& sc = m_shared_curves[i];
+    if (ONLY_SELECTED && !m_select_info.IsSharedCurveSelect(i)) continue;
     if (!sc.PickCPs(frame_idx, ray_pos, ray_dir, CP_RAD, cp_idx, cp_pos)) continue;
 
     if (!info.selected || Dist(ray_pos, cp_pos) < Dist(ray_pos, info.pos))
@@ -165,7 +169,6 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
   }
   else
   {
-    m_select_info.Clear();
     ogl->BtnDown_Trans(p);
   }
 
@@ -233,7 +236,6 @@ void ModeRefCurveDeform::RBtnDown(const EVec2i& p, OglForCLI* ogl)
   }
   else
   {
-    m_select_info.Clear();
     ogl->BtnDown_Rot(p);
   }
 
@@ -252,7 +254,6 @@ void ModeRefCurveDeform::RBtnUp(const EVec2i& p, OglForCLI* ogl)
 void ModeRefCurveDeform::MBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
   m_bM = true;
-  m_select_info.Clear();
   ogl->BtnDown_Zoom(p);
   formMain_RedrawMainPanel();
 }
@@ -445,6 +446,7 @@ void ModeRefCurveDeform::DrawScene(
   glDepthMask(true);
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
+  glEnable(GL_LIGHTING);
 
   // draw mesh
   if (!IsSpaceKeyOn() && 0 <= frame_idx && frame_idx < (int)m_meshes_def.size())
@@ -471,33 +473,30 @@ void ModeRefCurveDeform::DrawScene(
 
   for (int i = 0; i < curves.size(); ++i)
   {
-    const PlanarCurve& c = curves[i];
-    if (m_select_info.IsStdCurveSelect(i))
-    {
-      c.Draw(COLOR_R, SEL_THICK);
-      if (VIS_CP) c.DrawCPs(COLOR_Y, CP_RAD, m_select_info.cp_idx);
-      continue;
-    }
-    if (VIS_ONLY_SEL) continue;
+    bool is_selected = m_select_info.IsStdCurveSelect(i);
+    if (VIS_ONLY_SEL && !is_selected) continue;
 
-    c.Draw(COLOR_Y, STD_THICK);
-    if (VIS_CP) c.DrawCPs(COLOR_Y, CP_RAD, -1);
+    const PlanarCurve& c = curves[i];
+    float* color = is_selected ? COLOR_R   : COLOR_Y;
+    float  thick = is_selected ? SEL_THICK : STD_THICK;
+    int   cp_idx = is_selected ? m_select_info.cp_idx : -1;
+    c.Draw(color, thick);
+    if (VIS_CP) c.DrawCPs(COLOR_Y, CP_RAD, cp_idx);
   } 
+
 
   for (int i = 0; i < m_shared_curves.size(); ++i)
   {
+    const bool is_selected = m_select_info.IsSharedCurveSelect(i);
+    if (VIS_ONLY_SEL && !is_selected) continue;
+
     const SharedCurves& sc = m_shared_curves[i];
-    if (m_select_info.IsSharedCurveSelect(i))
-    {
-      sc.Draw(frame_idx, COLOR_R, SEL_THICK);
-      if (VIS_CP) sc.DrawCPs(frame_idx, COLOR_G, CP_RAD, m_select_info.cp_idx);
-      continue;
-    }
-    if (VIS_ONLY_SEL) continue;
-    const bool is_manip = sc.IsManipulated(frame_idx);
-    const float *color  = is_manip ? COLOR_G : COLOR_C;
-    sc.Draw(frame_idx, color, STD_THICK);
-    if (VIS_CP ) sc.DrawCPs(frame_idx, color, CP_RAD, -1);
+    float* color  = sc.IsManipulated(frame_idx) ? COLOR_G : COLOR_C;
+    float  thick  = is_selected ? SEL_THICK : STD_THICK;
+    int    cp_idx = is_selected ? m_select_info.cp_idx : -1;
+
+    sc.Draw(frame_idx, color, thick);
+    if (VIS_CP) sc.DrawCPs(frame_idx, color, CP_RAD, cp_idx);
   }  
 }
 
