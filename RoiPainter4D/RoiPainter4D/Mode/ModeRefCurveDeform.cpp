@@ -32,6 +32,7 @@ using namespace RoiPainter4D;
 // ConvertMeshToMaskはFinishModeへ移動
 // Strideの使い方は修正したい
 // State SaveLoadは動作確認が必要
+// Deformの確認
 
 
 

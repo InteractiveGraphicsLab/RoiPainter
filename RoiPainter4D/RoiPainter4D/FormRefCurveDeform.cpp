@@ -17,7 +17,7 @@ using namespace RoiPainter4D;
 void FormRefCurveDeform::InitAllItems()
 {
   m_numbox_cpsize->Value = 10;
-  m_cb_only_select_curve->Checked = true;
+  m_cb_only_select_curve->Checked = false;
   m_trackbar_mcstride->Value = 2;
 
   FormSelectMskId^ modal = gcnew FormSelectMskId();
