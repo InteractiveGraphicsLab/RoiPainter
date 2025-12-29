@@ -869,6 +869,8 @@ System::Void FormMain::file_export4dct_mha_Click(
 
 System::Void FormMain::exportMaskCentroidcsvToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
 {
+  // TODO refactoring needed : maskidをSetしてImageCoreに任せる実装は微妙。
+
   // select mask
   FormSelectMskId^ modal = gcnew FormSelectMskId();
   if (modal->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
@@ -894,6 +896,8 @@ System::Void FormMain::exportMaskCentroidcsvToolStripMenuItem_Click(System::Obje
 
 System::Void FormMain::exportMaskEigenvaluecsvToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
 {
+  // TODO refactoring needed : maskidをSetしてImageCoreに任せる実装は微妙。
+
   // select mask
   FormSelectMskId^ modal = gcnew FormSelectMskId();
   if (modal->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;

@@ -10,12 +10,14 @@
 #include <fstream>
 #include <queue>
 #include "./Mode/GlslShader.h"
+#include "./ModeCore.h"
 
 #pragma managed
 #include "CliMessageBox.h"
 #include "FormMain.h"     // Main Window
 #include "FormVisParam.h" // 右上のダイアログ
 #include "FormRefCurveDeform.h"
+#include "FormSelectMskId.h"
 #pragma unmanaged
 
 #include "tmarchingcubes.h"
@@ -28,9 +30,9 @@ using namespace RoiPainter4D;
 // 　　VisOnlySelectedStroke対応 OK
 // 　　ShareStroke対応           OK
 // 　　Curveの色設定対応         OK
-// MaskIDの取り扱いを確認 このクラスで持つべき
-// ConvertMeshToMaskはFinishModeへ移動
-// Strideの使い方は修正したい
+// MaskIDの取り扱いを確認 このクラスで持つべき OK 
+// ConvertMeshToMaskはFinishModeへ移動 OK
+// Strideの使い方は修正したい          
 // State SaveLoadは動作確認が必要
 // Deformの確認
 
@@ -60,6 +62,23 @@ bool ModeRefCurveDeform::CanEndMode()
 void ModeRefCurveDeform::StartMode()
 {
   std::cout << "ModeRefCurveDeform...startMode----------\n";
+
+  const std::vector<MaskData>& mask_data = ImageCore::GetInst()->GetMaskData();
+  m_target_mask_id = formSelectMasdskID_showModalDialog();
+
+  if (m_target_mask_id < 0 || mask_data.size() <= m_target_mask_id )
+  {
+    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
+    return;
+  }
+
+  if (m_target_mask_id == 0)
+  {
+    ShowMsgDlg_OK("0th region (background) cannot be trimmed", "caution");
+    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
+    return;
+  }
+
   const auto cuboid    = ImageCore::GetInst()->GetCuboidF();
   const auto num_frame = ImageCore::GetInst()->GetNumFrames();
 
@@ -502,16 +521,9 @@ void ModeRefCurveDeform::DrawScene(
 }
 
 
-void ModeRefCurveDeform::Deform()
+void ModeRefCurveDeform::DeformCurrentFrame()
 {
-  Deform(formVisParam_getframeI());
-}
-
-void ModeRefCurveDeform::Deform(const int _frame_idx)
-{
-  _Deform(_frame_idx);
-  formMain_RedrawMainPanel();
-  formMain_ActivateMainForm();
+  _Deform(formVisParam_getframeI());
 }
 
 
@@ -568,10 +580,8 @@ void ModeRefCurveDeform::ConvertMaskToMesh()
 {
   const int stride = FormRefCurveDeform_GetMcStride();
   const int scale_num = (int)pow(stride, 3);
-  const int active_maskid = ImageCore::GetInst()->GetSelectMaskIdx();
   const std::vector<MaskData>& mask_data = ImageCore::GetInst()->GetMaskData();
-
-  if (active_maskid < 0 || mask_data.size() <= active_maskid) return;
+  if (m_target_mask_id <= 0 || mask_data.size() <= m_target_mask_id) return;
 
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
   const int num_voxels = ImageCore::GetInst()->GetNumVoxels();
@@ -599,7 +609,7 @@ void ModeRefCurveDeform::ConvertMaskToMesh()
             for (int b = 0; b < stride; ++b) {
               for (int a = 0; a < stride; ++a) {
                 const int idx = ((z * stride + c) * reso[1] * reso[0]) + ((y * stride + b) * reso[0]) + (x * stride + a);
-                ave += (mask[idx] == active_maskid) ? 1.0f : 0.0f;
+                ave += (mask[idx] == m_target_mask_id) ? 1.0f : 0.0f;
               }
             }
           }
@@ -629,36 +639,47 @@ void ModeRefCurveDeform::ConvertMaskToMesh()
 }
 
 
-
-void ModeRefCurveDeform::ConvertMeshToMask()
+void ModeRefCurveDeform::CancelSegmentation()
 {
-  const int num_frames    = ImageCore::GetInst()->GetNumFrames();
-  const int active_maskid = ImageCore::GetInst()->GetSelectMaskIdx();
+  if (ShowMsgDlgYesNo("Cancel segmentation? 分割結果を破棄して良いですか?", "Cancel Segmentation?")) 
+  {
+    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
+  }
+}
+
+
+void ModeRefCurveDeform::FinishSegmentation()
+{
+  const int    num_frames = ImageCore::GetInst()->GetNumFrames();
   const auto&  mask_data  = ImageCore::GetInst()->GetMaskData();
-  const int num_voxels    = ImageCore::GetInst()->GetNumVoxels();
+  const int    num_voxels = ImageCore::GetInst()->GetNumVoxels();
   const EVec3i reso       = ImageCore::GetInst()->GetReso();
   const EVec3f pitch      = ImageCore::GetInst()->GetPitch();
+
+  if (m_target_mask_id <= 0 || mask_data.size() <= m_target_mask_id) return;
 
   byte mask_locked[256] = {};
   for (int i = 0; i < (int)mask_data.size(); ++i)
   {
     mask_locked[i] = mask_data[i].lock ? 1 : 0;
   }
-  mask_locked[active_maskid] = 0;
+  mask_locked[m_target_mask_id] = 0;
 
 #pragma omp parallel for
-  for (int frame_idx = 0; frame_idx < num_frames; ++frame_idx)
+  for (int fi = 0; fi < num_frames; ++fi)
   {
-    byte* mask = ImageCore::GetInst()->m_mask4d[frame_idx];
-    std::unique_ptr<byte[]> img = std::make_unique<byte[]>(num_voxels);
+    if (m_curves[fi].size() + m_shared_curves.size() == 0) continue; //変化無し
 
-    m_meshes_def[frame_idx].GenBinaryVolume(reso, pitch, img.get());
+    byte* mask = ImageCore::GetInst()->m_mask4d[fi];
+
+    std::unique_ptr<byte[]> img = std::make_unique<byte[]>(num_voxels);
+    m_meshes_def[fi].GenBinaryVolume(reso, pitch, img.get());
 
     for (int i = 0; i < num_voxels; ++i)
     {
       if (mask_locked[mask[i]]) continue;
-      if ( img[i] ) mask[i] = active_maskid;
-      if ( !img[i] && mask[i] == active_maskid) mask[i] = 0;
+      if ( img[i] ) mask[i] = m_target_mask_id;
+      if (!img[i] && mask[i] == m_target_mask_id) mask[i] = 0;
     }
     img.reset();
   }
@@ -667,6 +688,7 @@ void ModeRefCurveDeform::ConvertMeshToMask()
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
   m_is_not_saved_state = false;
+
 }
 
 
@@ -711,6 +733,10 @@ void ModeRefCurveDeform::CopyStrokesToAllFrame()
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
+
+
+
+
 
 
 

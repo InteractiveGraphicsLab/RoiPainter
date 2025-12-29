@@ -60,11 +60,16 @@ namespace RoiPainter4D {
 	private: System::Windows::Forms::Button^ m_btn_genmesh;
 	private: System::Windows::Forms::Button^ m_btn_deform;
 	private: System::Windows::Forms::Button^ m_btn_undo;
-	private: System::Windows::Forms::Button^ m_btn_redo;
+
 	private: System::Windows::Forms::Button^ m_btn_copy_from_preframe;
 	private: System::Windows::Forms::Button^ m_btn_copy_to_allframe;
-	private: System::Windows::Forms::Button^ m_btn_compute_mask;
+
 	private: System::Windows::Forms::CheckBox^ m_cb_only_select_curve;
+	private: System::Windows::Forms::Button^ m_btn_deform_all;
+	private: System::Windows::Forms::Button^ m_cancel;
+	private: System::Windows::Forms::Button^ m_finish;
+
+
 
 
 
@@ -84,12 +89,10 @@ namespace RoiPainter4D {
 			this->m_btn_genmesh = (gcnew System::Windows::Forms::Button());
 			this->m_btn_deform = (gcnew System::Windows::Forms::Button());
 			this->m_btn_undo = (gcnew System::Windows::Forms::Button());
-			this->m_btn_redo = (gcnew System::Windows::Forms::Button());
 			this->m_btn_copy_from_preframe = (gcnew System::Windows::Forms::Button());
 			this->m_btn_copy_to_allframe = (gcnew System::Windows::Forms::Button());
 			this->m_numbox_cpsize = (gcnew System::Windows::Forms::NumericUpDown());
 			this->m_cb_only_select_curve = (gcnew System::Windows::Forms::CheckBox());
-			this->m_btn_compute_mask = (gcnew System::Windows::Forms::Button());
 			this->m_trackbar_mcstride = (gcnew System::Windows::Forms::TrackBar());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
@@ -101,6 +104,9 @@ namespace RoiPainter4D {
 			this->m_btn_loadstate = (gcnew System::Windows::Forms::Button());
 			this->m_btn_savestate = (gcnew System::Windows::Forms::Button());
 			this->m_btn_flipnormal = (gcnew System::Windows::Forms::Button());
+			this->m_btn_deform_all = (gcnew System::Windows::Forms::Button());
+			this->m_cancel = (gcnew System::Windows::Forms::Button());
+			this->m_finish = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_numbox_cpsize))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackbar_mcstride))->BeginInit();
 			this->SuspendLayout();
@@ -113,64 +119,54 @@ namespace RoiPainter4D {
 			this->m_btn_genmesh->Name = L"m_btn_genmesh";
 			this->m_btn_genmesh->Size = System::Drawing::Size(135, 23);
 			this->m_btn_genmesh->TabIndex = 0;
-			this->m_btn_genmesh->Text = L"Convert mask -> mesh";
+			this->m_btn_genmesh->Text = L"Create Mesh Models";
 			this->m_btn_genmesh->UseVisualStyleBackColor = true;
 			this->m_btn_genmesh->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_genmesh_Click);
 			// 
 			// m_btn_deform
 			// 
-			this->m_btn_deform->Location = System::Drawing::Point(8, 83);
+			this->m_btn_deform->Location = System::Drawing::Point(4, 252);
 			this->m_btn_deform->Name = L"m_btn_deform";
-			this->m_btn_deform->Size = System::Drawing::Size(135, 23);
+			this->m_btn_deform->Size = System::Drawing::Size(135, 32);
 			this->m_btn_deform->TabIndex = 1;
-			this->m_btn_deform->Text = L"Deform";
+			this->m_btn_deform->Text = L"Deform Current Frame";
 			this->m_btn_deform->UseVisualStyleBackColor = true;
 			this->m_btn_deform->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_deform_Click);
 			// 
 			// m_btn_undo
 			// 
-			this->m_btn_undo->Location = System::Drawing::Point(8, 145);
+			this->m_btn_undo->Location = System::Drawing::Point(28, 187);
 			this->m_btn_undo->Name = L"m_btn_undo";
-			this->m_btn_undo->Size = System::Drawing::Size(65, 23);
+			this->m_btn_undo->Size = System::Drawing::Size(89, 23);
 			this->m_btn_undo->TabIndex = 2;
 			this->m_btn_undo->Text = L"UNDO";
 			this->m_btn_undo->UseVisualStyleBackColor = true;
 			this->m_btn_undo->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_undo_Click);
 			// 
-			// m_btn_redo
-			// 
-			this->m_btn_redo->Location = System::Drawing::Point(80, 145);
-			this->m_btn_redo->Name = L"m_btn_redo";
-			this->m_btn_redo->Size = System::Drawing::Size(63, 23);
-			this->m_btn_redo->TabIndex = 2;
-			this->m_btn_redo->Text = L"REDO";
-			this->m_btn_redo->UseVisualStyleBackColor = true;
-			this->m_btn_redo->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_redo_Click);
-			// 
 			// m_btn_copy_from_preframe
 			// 
-			this->m_btn_copy_from_preframe->Location = System::Drawing::Point(149, 145);
+			this->m_btn_copy_from_preframe->Location = System::Drawing::Point(153, 118);
 			this->m_btn_copy_from_preframe->Name = L"m_btn_copy_from_preframe";
-			this->m_btn_copy_from_preframe->Size = System::Drawing::Size(144, 23);
+			this->m_btn_copy_from_preframe->Size = System::Drawing::Size(142, 36);
 			this->m_btn_copy_from_preframe->TabIndex = 1;
-			this->m_btn_copy_from_preframe->Text = L"Copy from prev frame";
+			this->m_btn_copy_from_preframe->Text = L"Copy curves from prev frame";
 			this->m_btn_copy_from_preframe->UseVisualStyleBackColor = true;
 			this->m_btn_copy_from_preframe->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_copy_from_preframe_Click);
 			// 
 			// m_btn_copy_to_allframe
 			// 
-			this->m_btn_copy_to_allframe->Location = System::Drawing::Point(149, 174);
+			this->m_btn_copy_to_allframe->Location = System::Drawing::Point(153, 160);
 			this->m_btn_copy_to_allframe->Name = L"m_btn_copy_to_allframe";
-			this->m_btn_copy_to_allframe->Size = System::Drawing::Size(144, 23);
+			this->m_btn_copy_to_allframe->Size = System::Drawing::Size(142, 36);
 			this->m_btn_copy_to_allframe->TabIndex = 1;
-			this->m_btn_copy_to_allframe->Text = L"Copy strokes to all frame";
+			this->m_btn_copy_to_allframe->Text = L"Copy curves in this fame to all frame";
 			this->m_btn_copy_to_allframe->UseVisualStyleBackColor = true;
 			this->m_btn_copy_to_allframe->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_copy_to_allframe_Click);
 			// 
 			// m_numbox_cpsize
 			// 
 			this->m_numbox_cpsize->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 11.5F));
-			this->m_numbox_cpsize->Location = System::Drawing::Point(233, 221);
+			this->m_numbox_cpsize->Location = System::Drawing::Point(69, 81);
 			this->m_numbox_cpsize->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
 			this->m_numbox_cpsize->Name = L"m_numbox_cpsize";
 			this->m_numbox_cpsize->Size = System::Drawing::Size(57, 23);
@@ -183,25 +179,13 @@ namespace RoiPainter4D {
 			// 
 			this->m_cb_only_select_curve->AutoSize = true;
 			this->m_cb_only_select_curve->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 8));
-			this->m_cb_only_select_curve->Location = System::Drawing::Point(149, 250);
+			this->m_cb_only_select_curve->Location = System::Drawing::Point(147, 85);
 			this->m_cb_only_select_curve->Name = L"m_cb_only_select_curve";
 			this->m_cb_only_select_curve->Size = System::Drawing::Size(148, 15);
 			this->m_cb_only_select_curve->TabIndex = 27;
 			this->m_cb_only_select_curve->Text = L"Show only selected stroke";
 			this->m_cb_only_select_curve->UseVisualStyleBackColor = true;
 			this->m_cb_only_select_curve->CheckedChanged += gcnew System::EventHandler(this, &FormRefCurveDeform::m_cb_onlyselectedcurve_CheckedChanged);
-			// 
-			// m_btn_compute_mask
-			// 
-			this->m_btn_compute_mask->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(128)));
-			this->m_btn_compute_mask->Location = System::Drawing::Point(8, 245);
-			this->m_btn_compute_mask->Name = L"m_btn_compute_mask";
-			this->m_btn_compute_mask->Size = System::Drawing::Size(135, 23);
-			this->m_btn_compute_mask->TabIndex = 0;
-			this->m_btn_compute_mask->Text = L"Convert mesh -> mask";
-			this->m_btn_compute_mask->UseVisualStyleBackColor = true;
-			this->m_btn_compute_mask->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_calc_mask_Click);
 			// 
 			// m_trackbar_mcstride
 			// 
@@ -244,7 +228,7 @@ namespace RoiPainter4D {
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(181, 226);
+			this->label4->Location = System::Drawing::Point(17, 85);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(46, 12);
 			this->label4->TabIndex = 26;
@@ -263,7 +247,7 @@ namespace RoiPainter4D {
 			// 
 			this->m_btn_reload_mesh->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(128)));
-			this->m_btn_reload_mesh->Location = System::Drawing::Point(8, 112);
+			this->m_btn_reload_mesh->Location = System::Drawing::Point(8, 38);
 			this->m_btn_reload_mesh->Name = L"m_btn_reload_mesh";
 			this->m_btn_reload_mesh->Size = System::Drawing::Size(135, 23);
 			this->m_btn_reload_mesh->TabIndex = 0;
@@ -273,9 +257,9 @@ namespace RoiPainter4D {
 			// 
 			// m_btn_sharestroke
 			// 
-			this->m_btn_sharestroke->Location = System::Drawing::Point(8, 174);
+			this->m_btn_sharestroke->Location = System::Drawing::Point(6, 129);
 			this->m_btn_sharestroke->Name = L"m_btn_sharestroke";
-			this->m_btn_sharestroke->Size = System::Drawing::Size(135, 23);
+			this->m_btn_sharestroke->Size = System::Drawing::Size(133, 23);
 			this->m_btn_sharestroke->TabIndex = 1;
 			this->m_btn_sharestroke->Text = L"Set as all frame curve";
 			this->m_btn_sharestroke->UseVisualStyleBackColor = true;
@@ -283,9 +267,9 @@ namespace RoiPainter4D {
 			// 
 			// m_btn_loadstate
 			// 
-			this->m_btn_loadstate->Location = System::Drawing::Point(149, 83);
+			this->m_btn_loadstate->Location = System::Drawing::Point(153, 202);
 			this->m_btn_loadstate->Name = L"m_btn_loadstate";
-			this->m_btn_loadstate->Size = System::Drawing::Size(144, 23);
+			this->m_btn_loadstate->Size = System::Drawing::Size(68, 32);
 			this->m_btn_loadstate->TabIndex = 1;
 			this->m_btn_loadstate->Text = L"Load state";
 			this->m_btn_loadstate->UseVisualStyleBackColor = true;
@@ -293,9 +277,9 @@ namespace RoiPainter4D {
 			// 
 			// m_btn_savestate
 			// 
-			this->m_btn_savestate->Location = System::Drawing::Point(149, 112);
+			this->m_btn_savestate->Location = System::Drawing::Point(227, 202);
 			this->m_btn_savestate->Name = L"m_btn_savestate";
-			this->m_btn_savestate->Size = System::Drawing::Size(144, 23);
+			this->m_btn_savestate->Size = System::Drawing::Size(68, 32);
 			this->m_btn_savestate->TabIndex = 1;
 			this->m_btn_savestate->Text = L"Save state";
 			this->m_btn_savestate->UseVisualStyleBackColor = true;
@@ -303,7 +287,7 @@ namespace RoiPainter4D {
 			// 
 			// m_btn_flipnormal
 			// 
-			this->m_btn_flipnormal->Location = System::Drawing::Point(8, 54);
+			this->m_btn_flipnormal->Location = System::Drawing::Point(6, 158);
 			this->m_btn_flipnormal->Name = L"m_btn_flipnormal";
 			this->m_btn_flipnormal->Size = System::Drawing::Size(133, 23);
 			this->m_btn_flipnormal->TabIndex = 30;
@@ -311,11 +295,44 @@ namespace RoiPainter4D {
 			this->m_btn_flipnormal->UseVisualStyleBackColor = true;
 			this->m_btn_flipnormal->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_flipnormal_Click);
 			// 
+			// m_btn_deform_all
+			// 
+			this->m_btn_deform_all->Location = System::Drawing::Point(154, 252);
+			this->m_btn_deform_all->Name = L"m_btn_deform_all";
+			this->m_btn_deform_all->Size = System::Drawing::Size(135, 32);
+			this->m_btn_deform_all->TabIndex = 31;
+			this->m_btn_deform_all->Text = L"Deform All Frame";
+			this->m_btn_deform_all->UseVisualStyleBackColor = true;
+			this->m_btn_deform_all->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_deform_all_Click);
+			// 
+			// m_cancel
+			// 
+			this->m_cancel->Location = System::Drawing::Point(46, 309);
+			this->m_cancel->Name = L"m_cancel";
+			this->m_cancel->Size = System::Drawing::Size(93, 32);
+			this->m_cancel->TabIndex = 32;
+			this->m_cancel->Text = L"Cancel";
+			this->m_cancel->UseVisualStyleBackColor = true;
+			this->m_cancel->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_cancel_Click);
+			// 
+			// m_finish
+			// 
+			this->m_finish->Location = System::Drawing::Point(154, 309);
+			this->m_finish->Name = L"m_finish";
+			this->m_finish->Size = System::Drawing::Size(135, 32);
+			this->m_finish->TabIndex = 33;
+			this->m_finish->Text = L"Finish Segmentation";
+			this->m_finish->UseVisualStyleBackColor = true;
+			this->m_finish->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_finish_Click);
+			// 
 			// FormRefCurveDeform
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(300, 316);
+			this->ClientSize = System::Drawing::Size(300, 397);
+			this->Controls->Add(this->m_finish);
+			this->Controls->Add(this->m_cancel);
+			this->Controls->Add(this->m_btn_deform_all);
 			this->Controls->Add(this->m_btn_flipnormal);
 			this->Controls->Add(this->label5);
 			this->Controls->Add(this->label3);
@@ -325,7 +342,6 @@ namespace RoiPainter4D {
 			this->Controls->Add(this->m_cb_only_select_curve);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->m_numbox_cpsize);
-			this->Controls->Add(this->m_btn_redo);
 			this->Controls->Add(this->m_btn_undo);
 			this->Controls->Add(this->m_btn_copy_to_allframe);
 			this->Controls->Add(this->m_btn_sharestroke);
@@ -333,7 +349,6 @@ namespace RoiPainter4D {
 			this->Controls->Add(this->m_btn_loadstate);
 			this->Controls->Add(this->m_btn_copy_from_preframe);
 			this->Controls->Add(this->m_btn_deform);
-			this->Controls->Add(this->m_btn_compute_mask);
 			this->Controls->Add(this->m_btn_reload_mesh);
 			this->Controls->Add(this->m_btn_genmesh);
 			this->Name = L"FormRefCurveDeform";
@@ -347,17 +362,18 @@ namespace RoiPainter4D {
 #pragma endregion
 	private:
 		System::Void m_numbox_cpsize_ValueChanged(System::Object^ sender, System::EventArgs^ e);
+		System::Void m_cancel_Click         (System::Object^ sender, System::EventArgs^ e);
+		System::Void m_finish_Click         (System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_genmesh_Click    (System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_reload_mesh_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_deform_Click     (System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_undo_Click       (System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_redo_Click       (System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_deform_all_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_loadstate_Click  (System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_savestate_Click  (System::Object^ sender, System::EventArgs^ e);
+		System::Void m_btn_undo_Click       (System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_flipnormal_Click (System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_copy_from_preframe_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_copy_to_allframe_Click(System::Object^ sender, System::EventArgs^ e);
-		System::Void m_btn_calc_mask_Click  (System::Object^ sender, System::EventArgs^ e);
 		System::Void m_btn_sharestroke_Click(System::Object^ sender, System::EventArgs^ e);
 		System::Void m_cb_onlyselectedcurve_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
 	public:
@@ -377,3 +393,5 @@ namespace RoiPainter4D {
 	inline int  FormRefCurveDeform_GetMcStride()     { return FormRefCurveDeform::GetInst()->GetMcStride(); }
 	
 }
+
+

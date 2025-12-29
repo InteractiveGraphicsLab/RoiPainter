@@ -76,7 +76,7 @@ class ModeRefCurveDeform :
   
   SelectionInfo m_select_info;
   float m_cp_rate;
-
+  int m_target_mask_id;
   std::vector<TMesh> m_meshes_def ;
   std::vector<TMesh> m_meshes_orig;
   std::vector<LaplacianDeformer> m_laplacian_deformer;
@@ -114,16 +114,17 @@ public:
   void StartMode();
   void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt);
   // -----------------------------------------------------------------
+  
+  void FinishSegmentation();
+  void CancelSegmentation();
 
-  void Deform();
-  void Deform(const int);
+  void DeformCurrentFrame();
   void DeformAllFrame();
 
    void Do_RecordSnapShot();
    void Undo_LoadSnapShot();
 
    void ConvertMaskToMesh();
-   void ConvertMeshToMask();
    void ReloadOrigMeshCurrentFrame();
    void CopyFromPrevFrame();
    void CopyStrokesToAllFrame();
@@ -136,6 +137,8 @@ public:
    void MakeSelectedStroke_Unshared();
    //void LockSelectedStroke();
    //void UnlockSelectedStroke();
+
+
 
 private:
   void _Deform(const int);

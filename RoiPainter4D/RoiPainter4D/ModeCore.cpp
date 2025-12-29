@@ -66,15 +66,15 @@ void ModeCore::ModeSwitch(MODE_ID m)
   else if (m == MODE_SEG_RIGIDICP)  m_mode = ModeSegRigidICP::GetInst();
   //else if (m == MODE_SEG_PARACONT) 
   //  m_mode = ModeSegParaConts::getInst();
-  else if (m == MODE_SEG_LCLRGROW)  m_mode = ModeSegLocalRGrow::GetInst();
-  else if (m == MODE_SEG_BOLUS)     m_mode = ModeSegBolus::getInst();
-  else if (m == MODE_SEG_SWALLOW)   m_mode = ModeSegSwallowOrgans::GetInst();
-  else if (m == MODE_REF_STRKTRIM)  m_mode = ModeRefStrokeTrim::GetInst();
-  else if (m == MODE_SEG_JTRACKER)  m_mode = ModeSegJointTracker::GetInst();
-  else if (m == MODE_SEG_STROKEFFD) m_mode = ModeSegStrokeFfd::GetInst();
-  else if (m == MODE_SEG_BRONCHI )  m_mode = ModeSegBronchi::GetInst();
-  else if (m == MODE_PLC_CPS)       m_mode = ModePlaceCPs  ::GetInst();
-  else if (m == MODE_REF_CURVEDEFORM)       m_mode = ModeRefCurveDeform::GetInst();
+  else if (m == MODE_SEG_LCLRGROW)   m_mode = ModeSegLocalRGrow::GetInst();
+  else if (m == MODE_SEG_BOLUS)      m_mode = ModeSegBolus::getInst();
+  else if (m == MODE_SEG_SWALLOW)    m_mode = ModeSegSwallowOrgans::GetInst();
+  else if (m == MODE_REF_STRKTRIM)   m_mode = ModeRefStrokeTrim::GetInst();
+  else if (m == MODE_SEG_JTRACKER)   m_mode = ModeSegJointTracker::GetInst();
+  else if (m == MODE_SEG_STROKEFFD)  m_mode = ModeSegStrokeFfd::GetInst();
+  else if (m == MODE_SEG_BRONCHI )   m_mode = ModeSegBronchi::GetInst();
+  else if (m == MODE_PLC_CPS)        m_mode = ModePlaceCPs  ::GetInst();
+  else if (m == MODE_REF_CURVEDEFORM)m_mode = ModeRefCurveDeform::GetInst();
   else
     m_mode = ModeVizNormal ::GetInst();
 

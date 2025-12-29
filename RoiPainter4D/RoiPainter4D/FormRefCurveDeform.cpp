@@ -1,7 +1,6 @@
 #pragma managed
 #include "FormRefCurveDeform.h"
 #include "FormMain.h"
-#include "FormSelectMskId.h"
 #include "CliMessageBox.h"
 
 #pragma unmanaged
@@ -17,23 +16,10 @@ using namespace RoiPainter4D;
 void FormRefCurveDeform::InitAllItems()
 {
   m_numbox_cpsize->Value = 10;
-  m_cb_only_select_curve->Checked = false;
   m_trackbar_mcstride->Value = 2;
-
-  FormSelectMskId^ modal = gcnew FormSelectMskId();
-  if (modal->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
-
-  int trgtId = modal->getTrgtID();
-  if (trgtId == 0)
-  {
-    ShowMsgDlg_OK("0th region (background) cannot be deformed", "caution");
-    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
-    return;
-  }
-  modal->Close();
-
-  ImageCore::GetInst()->SetSelectMaskId(trgtId);
+  m_cb_only_select_curve->Checked = false;
 }
+
 
 
 System::Void FormRefCurveDeform::m_btn_genmesh_Click(System::Object^ sender, System::EventArgs^ e)
@@ -46,9 +32,23 @@ System::Void FormRefCurveDeform::m_btn_reload_mesh_Click(System::Object^ sender,
   ModeRefCurveDeform::GetInst()->ReloadOrigMeshCurrentFrame();
 }
 
+System::Void FormRefCurveDeform::m_cancel_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->CancelSegmentation();
+}
+
+System::Void FormRefCurveDeform::m_finish_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->FinishSegmentation();
+}
+
 System::Void FormRefCurveDeform::m_btn_deform_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->Deform();
+}
+System::Void FormRefCurveDeform::m_btn_deform_all_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->DeformAllFrame();
 }
 
 System::Void FormRefCurveDeform::m_btn_undo_Click(System::Object^ sender, System::EventArgs^ e)
@@ -56,19 +56,9 @@ System::Void FormRefCurveDeform::m_btn_undo_Click(System::Object^ sender, System
   ModeRefCurveDeform::GetInst()->Undo_LoadSnapShot();
 }
 
-System::Void FormRefCurveDeform::m_btn_redo_Click(System::Object^ sender, System::EventArgs^ e)
-{
-  //ModeRefCurveDeform::GetInst()->Redo();
-}
-
 System::Void FormRefCurveDeform::m_btn_copy_from_preframe_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->CopyFromPrevFrame();
-}
-
-System::Void FormRefCurveDeform::m_btn_calc_mask_Click(System::Object^ sender, System::EventArgs^ e)
-{
-  ModeRefCurveDeform::GetInst()->ConvertMeshToMask();
 }
 
 System::Void FormRefCurveDeform::m_btn_copy_to_allframe_Click(System::Object^ sender, System::EventArgs^ e)
