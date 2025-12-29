@@ -79,7 +79,6 @@ class ModeRefCurveDeform :
   int m_target_mask_id;
   std::vector<TMesh> m_meshes_def ;
   std::vector<TMesh> m_meshes_orig;
-  std::vector<LaplacianDeformer> m_laplacian_deformer;
 
   std::vector<std::vector<int>   > m_debug_matched_vids;
   std::vector<std::vector<EVec3f>> m_debug_matched_trgtpos;

@@ -83,7 +83,6 @@ void ModeRefCurveDeform::StartMode()
   m_cp_rate = cuboid[0] * 0.0006f;
   m_shared_curves.clear();
   m_curves = std::vector<std::vector<PlanarCurve>>(num_frame);
-  m_laplacian_deformer = std::vector<LaplacianDeformer>();
 
   m_history = std::stack<SnapShot>();
 
@@ -557,12 +556,6 @@ void ModeRefCurveDeform::ConvertMaskToMesh()
     v.reset();
   }
 
-  m_laplacian_deformer = std::vector<LaplacianDeformer>();
-  for (int i = 0; i < num_frames; ++i) 
-  {
-    m_laplacian_deformer.push_back(LaplacianDeformer(m_meshes_orig[i]));
-  }
-
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
@@ -782,7 +775,8 @@ void ModeRefCurveDeform::_Deform(const int _frame_idx)
   if (const_vids.size() == 0) return;
 
   // Deform
-  m_laplacian_deformer[_frame_idx].Deform(const_vids, const_trgtpos);
+  LaplacianDeformer deformer;
+  deformer.Deform(m_meshes_def[_frame_idx], const_vids, const_trgtpos);
 }
 
 
