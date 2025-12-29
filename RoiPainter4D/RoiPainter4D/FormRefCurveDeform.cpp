@@ -44,7 +44,7 @@ System::Void FormRefCurveDeform::m_finish_Click(System::Object^ sender, System::
 
 System::Void FormRefCurveDeform::m_btn_deform_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeRefCurveDeform::GetInst()->Deform();
+  ModeRefCurveDeform::GetInst()->DeformAllFrame();
 }
 System::Void FormRefCurveDeform::m_btn_deform_all_Click(System::Object^ sender, System::EventArgs^ e)
 {

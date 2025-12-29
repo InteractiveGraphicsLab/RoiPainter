@@ -82,9 +82,6 @@ class ModeRefCurveDeform :
   std::vector<LaplacianDeformer> m_laplacian_deformer;
   std::vector<Eigen::Vector3f>   m_matched_pos;
 
-  // canEndMode
-  bool m_is_not_saved_state;
-
   ModeRefCurveDeform();
 
 public:
@@ -137,8 +134,6 @@ public:
    void MakeSelectedStroke_Unshared();
    //void LockSelectedStroke();
    //void UnlockSelectedStroke();
-
-
 
 private:
   void _Deform(const int);

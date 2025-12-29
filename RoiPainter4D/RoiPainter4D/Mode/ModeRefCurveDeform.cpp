@@ -51,11 +51,7 @@ ModeRefCurveDeform::ModeRefCurveDeform()
 
 bool ModeRefCurveDeform::CanEndMode()
 {
-  if (m_is_not_saved_state)
-  {
-    return ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Do you want to leave without saving curves?");
-  }
-  return true;
+  return ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Do you want to leave without saving curves?");
 }
 
 
@@ -83,7 +79,6 @@ void ModeRefCurveDeform::StartMode()
   const auto num_frame = ImageCore::GetInst()->GetNumFrames();
 
   m_bL = m_bR = m_bM = false;
-  m_is_not_saved_state = false;
   
   m_cp_rate = cuboid[0] * 0.0006f;
   m_shared_curves.clear();
@@ -521,23 +516,6 @@ void ModeRefCurveDeform::DrawScene(
 }
 
 
-void ModeRefCurveDeform::DeformCurrentFrame()
-{
-  _Deform(formVisParam_getframeI());
-}
-
-
-void ModeRefCurveDeform::DeformAllFrame()
-{
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-#pragma omp parallel for
-  for (int i = 0; i < num_frames; ++i)
-  {
-    _Deform(i);
-  }
-  formMain_RedrawMainPanel();
-  formMain_ActivateMainForm();
-}
 
 
 // 現在の状態をスナップショットとして history.undo に保存し，history.redo をクリアする
@@ -545,7 +523,6 @@ void ModeRefCurveDeform::Do_RecordSnapShot()
 {
   const int frame_idx = formVisParam_getframeI();
   m_history.push({ frame_idx, m_curves, m_shared_curves });
-  m_is_not_saved_state = true;
 }
 
 
@@ -687,8 +664,6 @@ void ModeRefCurveDeform::FinishSegmentation()
   UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
-  m_is_not_saved_state = false;
-
 }
 
 
@@ -841,6 +816,26 @@ void ModeRefCurveDeform::FindClosestPointFromStroke(
   }
 }
 
+void ModeRefCurveDeform::DeformCurrentFrame()
+{
+  _Deform(formVisParam_getframeI());
+  formMain_RedrawMainPanel();
+  formMain_ActivateMainForm();
+}
+
+
+void ModeRefCurveDeform::DeformAllFrame()
+{
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+#pragma omp parallel for
+  for (int i = 0; i < num_frames; ++i)
+  {
+    _Deform(i);
+  }
+  formMain_RedrawMainPanel();
+  formMain_ActivateMainForm();
+}
+
 
 
 
@@ -945,7 +940,6 @@ void ModeRefCurveDeform::SaveState(
   file.close();
 
   std::cout << "Saved as \"" + _fpath + "\n";
-  m_is_not_saved_state = false;
   formMain_ActivateMainForm();
 }
 
