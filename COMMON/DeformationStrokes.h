@@ -119,7 +119,7 @@ public:
     return m_curves[0].GetCrssecPos();
   }
   
-  const PlanarCurve GetCurve(const int frame_idx) 
+  const PlanarCurve GetCurve(const int frame_idx) const 
   {
     if (frame_idx < 0 || m_curves.size() <= frame_idx) 
       throw std::out_of_range("SharedCurves::GetCurve invalid frame_idx");

@@ -87,6 +87,11 @@ void ModeRefCurveDeform::StartMode()
 
   m_history = std::stack<SnapShot>();
 
+  m_debug_matched_vids.clear();
+  m_debug_matched_trgtpos.clear();
+  m_debug_matched_vids.resize(num_frame);
+  m_debug_matched_trgtpos.resize(num_frame);
+
   FormRefCurveDeform_InitAllItems();
   FormRefCurveDeform_Show();
   std::cout << "ModeRefCurveDeform...startMode DONE-----\n";
@@ -359,76 +364,6 @@ void ModeRefCurveDeform::RBtnDclk(const EVec2i& p, OglForCLI* ogl)
 
 
 
-void ModeRefCurveDeform::KeyDown(int nChar)
-{
-  static bool debug = false;
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  const int frame_idx = formVisParam_getframeI();
-
-  if (nChar == VK_F1)
-  {
-    // show stroke matching
-    std::vector<int> fixed_verts_idxs;
-    m_matched_pos = std::vector<Eigen::Vector3f>();
-    std::vector<EVec3f> target_pos = std::vector<Eigen::Vector3f>();
-    FindClosestPointFromStroke(frame_idx, fixed_verts_idxs, target_pos, m_matched_pos);
-  }
-  else if (nChar == VK_F2)
-  {
-    // deform all frame
-    DeformAllFrame();
-  }
-  else if (nChar == VK_F3)
-  {
-    for (int i = 0; i < num_frames; ++i)
-    {
-      m_meshes_def[i] = m_meshes_orig[i];
-    }
-  }
-  else if (nChar == VK_F4)
-  {
-    MakeSelectedStroke_Shared();
-  }
-  else if (nChar == VK_F5)
-  {
-    MakeSelectedStroke_Unshared();
-  }
-  else if (nChar == VK_F6)
-  {
-    // lock selected stroke
-    // LockSelectedStroke();
-  }
-  else if (nChar == VK_F7)
-  {
-    // unlock selected stroke
-    // UnlockSelectedStroke();
-  }
-  else if (nChar == VK_F8){}
-  else if (nChar == VK_F9){}
-  else if (nChar == VK_F10){}
-  else if (nChar == VK_F11){}
-  else if (nChar == VK_F12)
-  {
-    if (IsShiftKeyOn()&& IsCtrKeyOn())
-    {
-      debug = !debug;
-      std::cout << "debug mode: " << (debug ? "ON" : "OFF") << "\n";
-      if (debug)
-      {
-        std::cout << "[F1]  Show matching between strokes and mesh" << "\n";
-        std::cout << "[F2]  Deform mesh all frame" << "\n";
-        std::cout << "[F3]  Reload mesh all frame" << "\n";
-        std::cout << "[F4]  Share selected stroke" << "\n";
-        std::cout << "[F5]  Unshare selected stroke" << "\n";
-        std::cout << "[F6]  Lock selected stroke" << "\n";
-        std::cout << "[F7]  Unlock selected stroke" << "\n";
-        std::cout << "[F12] Switch debug mode (Shift+Ctrl+F12)" << "\n";
-      }
-    }
-  }
-}
-
-void ModeRefCurveDeform::KeyUp(int nChar) {}
 
 
 static const std::string vtxshader_fname = std::string("shader/cagemeshVtx.glsl");
@@ -512,7 +447,24 @@ void ModeRefCurveDeform::DrawScene(
 
     sc.Draw(frame_idx, color, thick);
     if (VIS_CP) sc.DrawCPs(frame_idx, color, CP_RAD, cp_idx);
-  }  
+  }
+
+  if (IsSpaceKeyOn())
+  {
+    const TMesh &m = m_meshes_orig[frame_idx];
+    const std::vector<int>    &vids = m_debug_matched_vids[frame_idx];
+    const std::vector<EVec3f> &trgtpos = m_debug_matched_trgtpos[frame_idx];
+    //debug
+    glDisable(GL_LIGHTING);
+    glBegin(GL_LINES);
+    glColor3f(1.0f, 0.0f, 1.0f);  
+    for (size_t i = 0; i < vids.size(); ++i)
+    {
+      glVertex3fv(m.m_vVerts[vids[i]].data());
+      glVertex3fv(trgtpos[i].data());
+    }
+    glEnd();
+  }
 }
 
 
@@ -711,110 +663,128 @@ void ModeRefCurveDeform::CopyStrokesToAllFrame()
 
 
 
-
-
-
-
-void ModeRefCurveDeform::_Deform(const int _frame_idx)
+static bool FindNearestVertex(
+  const EVec3f&   pos,
+  const TMesh& mesh,
+  const EVec3f& crssec_normal,
+  const EVec3f& curve_tangent,
+  const EVec3f& curve_normal ,
+  int&  min_idx,
+  float& min_dist)
 {
-  if (m_meshes_orig.size() == 0 || m_meshes_orig.front().m_vSize == 0) return;
-
-  m_meshes_def[_frame_idx] = m_meshes_orig[_frame_idx];
-
-  std::vector<int   > fixed_verts_idxs;
-  std::vector<EVec3f> fixed_positions;
-  std::vector<EVec3f> src_positions;
-
-  FindClosestPointFromStroke(_frame_idx, fixed_verts_idxs, fixed_positions, src_positions);
-
-  // Sort by index
-  std::vector<std::pair<int, EVec3f>> indexPointPairs;
-
-  for (size_t i = 0; i < fixed_verts_idxs.size(); ++i) 
+  min_dist = FLT_MAX;
+  min_idx = -1;
+  
+  for (int k = 0; k < mesh.m_vSize; ++k)
   {
-    indexPointPairs.emplace_back(fixed_verts_idxs[i], fixed_positions[i]);
+    if (mesh.m_vNorms[k].dot(curve_normal) <= 0.0f) continue;
+
+    const EVec3f diff = pos - mesh.m_vVerts[k];
+    Eigen::Matrix3f mat = 
+        powf(5.0f, 2.0f) * crssec_normal * crssec_normal.transpose()
+      + powf(1.0f, 2.0f) * curve_tangent * curve_tangent.transpose()
+      + powf(0.2f, 2.0f) * curve_normal  * curve_normal.transpose();
+    float d = diff.transpose() * mat * diff;
+
+    if (d < min_dist)
+    {
+      min_dist = d;
+      min_idx = k;
+    }
   }
-
-  std::sort(indexPointPairs.begin(), indexPointPairs.end(),
-    [](const std::pair<int, EVec3f>& a, const std::pair<int, EVec3f>& b) {
-      return a.first < b.first;
-    });
-
-  for (size_t i = 0; i < indexPointPairs.size(); ++i) 
-  {
-    fixed_verts_idxs[i] = indexPointPairs[i].first;
-    fixed_positions[i] = indexPointPairs[i].second;
-  }
-
-  if (fixed_verts_idxs.size() == 0) return;
-
-  // Deform
-  m_laplacian_deformer[_frame_idx].Deform(fixed_verts_idxs, fixed_positions);
+  return (min_idx >= 0);
 }
 
 
-
-void ModeRefCurveDeform::FindClosestPointFromStroke(
-    const int _frame_idx, 
-    std::vector<int   >& _idxs, 
-    std::vector<EVec3f>& _target_pos, 
-    std::vector<EVec3f>& _src_pos)
+static void FindPullOrientation(
+  const int _frame_idx,
+  const TMesh& mesh,
+  const std::vector<PlanarCurve>& curves,
+  const std::vector<SharedCurves>& shared_curves,
+  std::vector<int>&    const_vids,
+  std::vector<EVec3f>& const_trgtpos) 
 {
-  if (m_meshes_orig.size() == 0 || m_meshes_orig.front().m_vSize == 0) return;
+  std::vector<float>  vert_mindist  (mesh.m_vSize, FLT_MAX);
+  std::vector<EVec3f> vert_targetpos(mesh.m_vSize, EVec3f(0.0f, 0.0f, 0.0f));
 
-  TMesh& mesh = m_meshes_def[_frame_idx];
-  
-  const size_t num_curves = m_curves[_frame_idx].size();
-  const size_t num_shared_curves = m_shared_curves.size();
-  // for curve
-  for (size_t i = 0; i < num_curves + num_shared_curves; ++i)
+  const size_t num_curves = curves.size();
+  const size_t num_shared_curves = shared_curves.size();
+
+  for (size_t crv_i = 0; crv_i < num_curves + num_shared_curves; ++crv_i)
   {
-    const PlanarCurve& c = (i < num_curves) ? m_curves[_frame_idx][i] : 
-                                              m_shared_curves[i - num_curves].GetCurve(_frame_idx);
-  
-    const std::vector<EVec3f> &points = c.GetCurve();
+    const PlanarCurve& c = (crv_i < num_curves) ? curves[crv_i] :
+      shared_curves[crv_i - num_curves].GetCurve(_frame_idx);
+
+    const auto&  points        = c.GetCurve();
     const bool   normal_side   = c.GetNormalSide();
     const EVec3f crssec_normal = c.GetCrssecNorm();
 
     for (size_t idx = 1; idx < points.size() - 1; ++idx)
     {
-      EVec3f pos = points[idx];
       EVec3f curve_tangent = (points[idx + 1] - points[idx - 1]);
       if (curve_tangent.norm() < 0.0001f) continue;
       curve_tangent.normalize();
-      EVec3f curve_normal  = crssec_normal.cross(curve_tangent).normalized();
+
+      EVec3f curve_normal = crssec_normal.cross(curve_tangent).normalized();
       curve_normal *= (normal_side ? 1.0f : -1.0f);
 
       // get nearest vertex idx
-      float dist_min = FLT_MAX;
-      int idx_min = -1;
-      for (int k = 0; k < mesh.m_vSize; ++k)
+      float min_dist = FLT_MAX;
+      int   min_idx  = -1;
+      bool tf = FindNearestVertex( points[idx], mesh,
+                                   crssec_normal, curve_tangent, curve_normal,
+                                   min_idx, min_dist);
+      if (!tf) continue;
+      //mesh vertex側からみて、より近い点なら更新
+      if (min_dist < vert_mindist[min_idx])
       {
-        if (mesh.m_vNorms[k].dot(curve_normal) <= 0.0f) continue;
-        const EVec3f diff = pos - mesh.m_vVerts[k];
-        Eigen::Matrix3f mat =
-            powf(5.0f, 2.0f) * crssec_normal * crssec_normal.transpose()
-          + powf(1.0f, 2.0f) * curve_tangent * curve_tangent.transpose()
-          + powf(0.2f, 2.0f) * curve_normal  * curve_normal.transpose();
-        const float dist = diff.transpose() * mat * diff;
-
-        if (dist < dist_min) {
-          dist_min = dist;
-          idx_min = k;
-        }
-      }
-      if (idx_min < 0) continue;
-
-      const bool found = std::find(_idxs.begin(), _idxs.end(), idx_min) != _idxs.end();
-      if (!found)
-      {
-        _idxs      .push_back(idx_min);
-        _target_pos.push_back(pos);
-        _src_pos   .push_back(mesh.m_vVerts[idx_min]);
+        vert_mindist[min_idx] = min_dist;
+        vert_targetpos[min_idx] = points[idx];
       }
     }
   }
+  
+  const_vids.clear();
+  const_trgtpos.clear();
+
+  for (int vi = 0; vi < mesh.m_vSize; ++vi)
+  {
+    if (vert_mindist[vi] < FLT_MAX)
+    {
+      const_vids.push_back(vi);
+      const_trgtpos.push_back(vert_targetpos[vi]);
+    }
+  }
 }
+
+
+void ModeRefCurveDeform::_Deform(const int _frame_idx)
+{
+  if (m_meshes_orig.size() == 0 || m_meshes_orig.front().m_vSize == 0) return;
+  if (m_curves[_frame_idx].size() + m_shared_curves.size() == 0) return;
+
+  std::cout << "_Deform : " << _frame_idx << "\n";
+
+  m_meshes_def[_frame_idx] = m_meshes_orig[_frame_idx];
+
+  std::vector<int>    const_vids;
+  std::vector<EVec3f> const_trgtpos;
+  FindPullOrientation(
+    _frame_idx, 
+    m_meshes_def[_frame_idx],
+    m_curves[_frame_idx],
+    m_shared_curves,
+    const_vids, const_trgtpos);
+  
+  m_debug_matched_vids[_frame_idx] = const_vids;
+  m_debug_matched_trgtpos[_frame_idx] = const_trgtpos;
+
+  if (const_vids.size() == 0) return;
+
+  // Deform
+  m_laplacian_deformer[_frame_idx].Deform(const_vids, const_trgtpos);
+}
+
 
 void ModeRefCurveDeform::DeformCurrentFrame()
 {
@@ -822,7 +792,6 @@ void ModeRefCurveDeform::DeformCurrentFrame()
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
-
 
 void ModeRefCurveDeform::DeformAllFrame()
 {
@@ -1002,6 +971,92 @@ void ModeRefCurveDeform::LoadState(const std::string& _fpath)
   }
 }
 
+
+
+void ModeRefCurveDeform::KeyDown(int nChar)
+{
+  static bool debug = false;
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+  const int frame_idx = formVisParam_getframeI();
+
+  if (nChar == VK_F1)
+  {
+    std::cout << "COMPUTE Matching\n";
+    const TMesh& mesh = m_meshes_orig[frame_idx];
+    m_debug_matched_vids   [frame_idx].clear();
+    m_debug_matched_trgtpos[frame_idx].clear();
+    std::vector<int>    const_vids;
+    std::vector<EVec3f> const_trgt;
+    FindPullOrientation( frame_idx, mesh, 
+                         m_curves[frame_idx], m_shared_curves,
+                         const_vids, const_trgt);
+
+    for (size_t i = 0; i < const_vids.size(); ++i)
+    {
+      EVec3f pos = mesh.m_vVerts[ const_vids[i] ];
+      m_debug_matched_vids   [frame_idx].push_back(const_vids[i]);
+      m_debug_matched_trgtpos[frame_idx].push_back(const_trgt[i]);
+    }
+  }
+  else if (nChar == VK_F2)
+  {
+    // deform all frame
+    DeformAllFrame();
+  }
+  else if (nChar == VK_F3)
+  {
+    for (int i = 0; i < num_frames; ++i)
+    {
+      m_meshes_def[i] = m_meshes_orig[i];
+    }
+  }
+  else if (nChar == VK_F4)
+  {
+    MakeSelectedStroke_Shared();
+  }
+  else if (nChar == VK_F5)
+  {
+    MakeSelectedStroke_Unshared();
+  }
+  else if (nChar == VK_F6)
+  {
+    // lock selected stroke
+    // LockSelectedStroke();
+  }
+  else if (nChar == VK_F7)
+  {
+    // unlock selected stroke
+    // UnlockSelectedStroke();
+  }
+  else if (nChar == VK_F8) {}
+  else if (nChar == VK_F9) {}
+  else if (nChar == VK_F10) {}
+  else if (nChar == VK_F11) {}
+  else if (nChar == VK_F12)
+  {
+    if (IsShiftKeyOn() && IsCtrKeyOn())
+    {
+      debug = !debug;
+      std::cout << "debug mode: " << (debug ? "ON" : "OFF") << "\n";
+      if (debug)
+      {
+        std::cout << "[F1]  Show matching between strokes and mesh" << "\n";
+        std::cout << "[F2]  Deform mesh all frame" << "\n";
+        std::cout << "[F3]  Reload mesh all frame" << "\n";
+        std::cout << "[F4]  Share selected stroke" << "\n";
+        std::cout << "[F5]  Unshare selected stroke" << "\n";
+        std::cout << "[F6]  Lock selected stroke" << "\n";
+        std::cout << "[F7]  Unlock selected stroke" << "\n";
+        std::cout << "[F12] Switch debug mode (Shift+Ctrl+F12)" << "\n";
+      }
+    }
+  }
+}
+
+void ModeRefCurveDeform::KeyUp(int nChar) {}
+
+
+
 /*
 
 void ModeRefCurveDeform::LockSelectedStroke()
@@ -1021,5 +1076,71 @@ void ModeRefCurveDeform::UnlockSelectedStroke()
   dstrokes.Unlock_SelStroke();
   UpdateSharedStroke();
   formMain_RedrawMainPanel();
+}
+*/
+
+
+
+/*
+void ModeRefCurveDeform::FindClosestPointFromStroke(
+    const int _frame_idx,
+    std::vector<int   >& _idxs,
+    std::vector<EVec3f>& _target_pos,
+    std::vector<EVec3f>& _src_pos)
+{
+  if (m_meshes_orig.size() == 0 || m_meshes_orig.front().m_vSize == 0) return;
+
+  TMesh& mesh = m_meshes_def[_frame_idx];
+
+  const size_t num_curves = m_curves[_frame_idx].size();
+  const size_t num_shared_curves = m_shared_curves.size();
+  // for curve
+  for (size_t i = 0; i < num_curves + num_shared_curves; ++i)
+  {
+    const PlanarCurve& c = (i < num_curves) ? m_curves[_frame_idx][i] :
+                                              m_shared_curves[i - num_curves].GetCurve(_frame_idx);
+
+    const std::vector<EVec3f> &points = c.GetCurve();
+    const bool   normal_side   = c.GetNormalSide();
+    const EVec3f crssec_normal = c.GetCrssecNorm();
+
+    for (size_t idx = 1; idx < points.size() - 1; ++idx)
+    {
+      EVec3f pos = points[idx];
+      EVec3f curve_tangent = (points[idx + 1] - points[idx - 1]);
+      if (curve_tangent.norm() < 0.0001f) continue;
+      curve_tangent.normalize();
+      EVec3f curve_normal  = crssec_normal.cross(curve_tangent).normalized();
+      curve_normal *= (normal_side ? 1.0f : -1.0f);
+
+      // get nearest vertex idx
+      float dist_min = FLT_MAX;
+      int idx_min = -1;
+      for (int k = 0; k < mesh.m_vSize; ++k)
+      {
+        if (mesh.m_vNorms[k].dot(curve_normal) <= 0.0f) continue;
+        const EVec3f diff = pos - mesh.m_vVerts[k];
+        Eigen::Matrix3f mat =
+            powf(5.0f, 2.0f) * crssec_normal * crssec_normal.transpose()
+          + powf(1.0f, 2.0f) * curve_tangent * curve_tangent.transpose()
+          + powf(0.2f, 2.0f) * curve_normal  * curve_normal.transpose();
+        const float dist = diff.transpose() * mat * diff;
+
+        if (dist < dist_min) {
+          dist_min = dist;
+          idx_min = k;
+        }
+      }
+      if (idx_min < 0) continue;
+
+      const bool found = std::find(_idxs.begin(), _idxs.end(), idx_min) != _idxs.end();
+      if (!found)
+      {
+        _idxs      .push_back(idx_min);
+        _target_pos.push_back(pos);
+        _src_pos   .push_back(mesh.m_vVerts[idx_min]);
+      }
+    }
+  }
 }
 */

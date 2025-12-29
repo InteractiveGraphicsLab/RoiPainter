@@ -80,7 +80,9 @@ class ModeRefCurveDeform :
   std::vector<TMesh> m_meshes_def ;
   std::vector<TMesh> m_meshes_orig;
   std::vector<LaplacianDeformer> m_laplacian_deformer;
-  std::vector<Eigen::Vector3f>   m_matched_pos;
+
+  std::vector<std::vector<int>   > m_debug_matched_vids;
+  std::vector<std::vector<EVec3f>> m_debug_matched_trgtpos;
 
   ModeRefCurveDeform();
 
@@ -137,7 +139,7 @@ public:
 
 private:
   void _Deform(const int);
-  void FindClosestPointFromStroke(const int, std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
+  //void FindClosestPointFromStroke(const int, std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
 
   ModeRefCurveDeform::SelectionInfo PickCpAtCurrentFrame(const EVec3f& ray_pos, const EVec3f& ray_dir);
 
