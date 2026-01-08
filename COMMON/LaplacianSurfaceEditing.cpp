@@ -4,7 +4,7 @@
 
 
 static const float COEF_FIXED = 1.0f;
-static const float COEF_WEAK = 0.0001f;
+static const float COEF_WEAK  = 0.0001f;
 
 
 

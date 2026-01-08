@@ -24,21 +24,6 @@
 
 using namespace RoiPainter4D;
 
-
-//TODO 
-// UI周りのチェック 
-// 　　VisOnlySelectedStroke対応 OK
-// 　　ShareStroke対応           OK
-// 　　Curveの色設定対応         OK
-// MaskIDの取り扱いを確認 このクラスで持つべき OK 
-// ConvertMeshToMaskはFinishModeへ移動 OK
-// Strideの使い方は修正したい          
-// State SaveLoadは動作確認が必要
-// Deformの確認
-
-
-
-
 ModeRefCurveDeform::~ModeRefCurveDeform() {}
 
 ModeRefCurveDeform::ModeRefCurveDeform()
@@ -333,48 +318,21 @@ void ModeRefCurveDeform::MouseWheel(
 }
 
 
-void ModeRefCurveDeform::MBtnDclk(const EVec2i& p, OglForCLI* ogl) {}
-
+void ModeRefCurveDeform::MBtnDclk(const EVec2i& p, OglForCLI* ogl){}
 void ModeRefCurveDeform::LBtnDclk(const EVec2i& p, OglForCLI* ogl){}
-
-void ModeRefCurveDeform::RBtnDclk(const EVec2i& p, OglForCLI* ogl)
-{
-  const int frame_idx = formVisParam_getframeI();
-
-  if (m_select_info.selected)
-  {
-    //選択されたcurveを削除
-    Do_RecordSnapShot();
-
-    if(m_select_info.is_shared)
-    {
-      if (ShowMsgDlgYesNo("All-frame曲線を解除しますか？\n（自動補間された曲線は削除されます）", "Unlock?"))
-      {
-        MakeSelectedStroke_Unshared();
-      }
-    }
-    else if( 0 <= m_select_info.curve_idx && m_select_info.curve_idx < m_curves[frame_idx].size())
-    {
-      m_curves[frame_idx].erase( m_curves[frame_idx].begin() + m_select_info.curve_idx );
-    }
-  }
-}
-
-
-
-
+void ModeRefCurveDeform::RBtnDclk(const EVec2i& p, OglForCLI* ogl){}
 
 
 static const std::string vtxshader_fname = std::string("shader/cagemeshVtx.glsl");
 static const std::string frgshader_fname = std::string("shader/cagemeshFrg.glsl");
-static GLuint gl2Program = -1;
+static GLuint gl2Program = 0;
 
 
 void ModeRefCurveDeform::DrawScene(
     const EVec3f& cam_pos,
     const EVec3f& cam_cnt)
 {
-  if (gl2Program == -1)
+  if (gl2Program == 0)
   {
     t_InitializeShader(vtxshader_fname.c_str(),  
                        frgshader_fname.c_str(), gl2Program);
@@ -532,6 +490,7 @@ void ModeRefCurveDeform::ConvertMaskToMesh()
     for (int z = 0; z < d; ++z) {
       for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
+
           float ave = 0;
           for (int c = 0; c < stride; ++c) {
             for (int b = 0; b < stride; ++b) {
@@ -609,6 +568,7 @@ void ModeRefCurveDeform::FinishSegmentation()
   UpdateImageCoreVisVolumes();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
 }
 
 
@@ -617,7 +577,7 @@ void ModeRefCurveDeform::ReloadOrigMeshCurrentFrame()
   if (m_meshes_orig.size() == 0 || m_meshes_orig.front().m_vSize == 0) return;
 
   const int frame_idx = formVisParam_getframeI();
-  m_meshes_def[frame_idx] = m_meshes_def[frame_idx];
+  m_meshes_def[frame_idx] = m_meshes_orig[frame_idx];
 
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
@@ -700,10 +660,10 @@ static void FindPullOrientation(
   std::vector<float>  vert_mindist  (mesh.m_vSize, FLT_MAX);
   std::vector<EVec3f> vert_targetpos(mesh.m_vSize, EVec3f(0.0f, 0.0f, 0.0f));
 
-  const size_t num_curves = curves.size();
-  const size_t num_shared_curves = shared_curves.size();
+  const int num_curves = (int) curves.size();
+  const int num_shared_curves = (int) shared_curves.size();
 
-  for (size_t crv_i = 0; crv_i < num_curves + num_shared_curves; ++crv_i)
+  for (int crv_i = 0; crv_i < num_curves + num_shared_curves; ++crv_i)
   {
     const PlanarCurve& c = (crv_i < num_curves) ? curves[crv_i] :
       shared_curves[crv_i - num_curves].GetCurve(_frame_idx);
@@ -712,7 +672,7 @@ static void FindPullOrientation(
     const bool   normal_side   = c.GetNormalSide();
     const EVec3f crssec_normal = c.GetCrssecNorm();
 
-    for (size_t idx = 1; idx < points.size() - 1; ++idx)
+    for (int idx = 1; idx < (int)points.size() - 1; ++idx)
     {
       EVec3f curve_tangent = (points[idx + 1] - points[idx - 1]);
       if (curve_tangent.norm() < 0.0001f) continue;
@@ -888,7 +848,7 @@ void ModeRefCurveDeform::SaveState(
   for (int fi = 0; fi < num_frames; ++fi)
   {
     file << "Frame: " << std::to_string(fi) + "\n";
-    file << "num_curves: " << std::to_string(m_curves.size()) << "\n";
+    file << "num_curves: " << std::to_string(m_curves[fi].size()) << "\n";
     for( int j = 0; j < m_curves[fi].size(); ++j)
       m_curves[fi][j].WriteToFile(file);
   }
@@ -902,7 +862,7 @@ void ModeRefCurveDeform::SaveState(
 
   file.close();
 
-  std::cout << "Saved as \"" + _fpath + "\n";
+  std::cout << "Save as: " + _fpath + "\n";
   formMain_ActivateMainForm();
 }
 
@@ -1022,7 +982,14 @@ void ModeRefCurveDeform::KeyDown(int nChar)
     // unlock selected stroke
     // UnlockSelectedStroke();
   }
-  else if (nChar == VK_F8) {}
+  else if (nChar == VK_F8) 
+  {
+    for (int fi = 0; fi < num_frames; ++fi)
+    {
+      std::cout << "Frame " << fi << " : num curves = " << m_curves[fi].size() << "\n"; 
+    }
+    std::cout << "num shared curves = " << m_shared_curves.size() << "\n";
+  }
   else if (nChar == VK_F9) {}
   else if (nChar == VK_F10) {}
   else if (nChar == VK_F11) {}
@@ -1048,93 +1015,3 @@ void ModeRefCurveDeform::KeyDown(int nChar)
 }
 
 void ModeRefCurveDeform::KeyUp(int nChar) {}
-
-
-
-/*
-
-void ModeRefCurveDeform::LockSelectedStroke()
-{
-  const int frame_idx = formVisParam_getframeI();
-  DeformationStrokes& dstrokes = m_strokes[frame_idx];
-  dstrokes.Lock_SelStroke();
-  UpdateSharedStroke();
-  formMain_RedrawMainPanel();
-}
-
-
-void ModeRefCurveDeform::UnlockSelectedStroke()
-{
-  const int frame_idx = formVisParam_getframeI();
-  DeformationStrokes& dstrokes = m_strokes[frame_idx];
-  dstrokes.Unlock_SelStroke();
-  UpdateSharedStroke();
-  formMain_RedrawMainPanel();
-}
-*/
-
-
-
-/*
-void ModeRefCurveDeform::FindClosestPointFromStroke(
-    const int _frame_idx,
-    std::vector<int   >& _idxs,
-    std::vector<EVec3f>& _target_pos,
-    std::vector<EVec3f>& _src_pos)
-{
-  if (m_meshes_orig.size() == 0 || m_meshes_orig.front().m_vSize == 0) return;
-
-  TMesh& mesh = m_meshes_def[_frame_idx];
-
-  const size_t num_curves = m_curves[_frame_idx].size();
-  const size_t num_shared_curves = m_shared_curves.size();
-  // for curve
-  for (size_t i = 0; i < num_curves + num_shared_curves; ++i)
-  {
-    const PlanarCurve& c = (i < num_curves) ? m_curves[_frame_idx][i] :
-                                              m_shared_curves[i - num_curves].GetCurve(_frame_idx);
-
-    const std::vector<EVec3f> &points = c.GetCurve();
-    const bool   normal_side   = c.GetNormalSide();
-    const EVec3f crssec_normal = c.GetCrssecNorm();
-
-    for (size_t idx = 1; idx < points.size() - 1; ++idx)
-    {
-      EVec3f pos = points[idx];
-      EVec3f curve_tangent = (points[idx + 1] - points[idx - 1]);
-      if (curve_tangent.norm() < 0.0001f) continue;
-      curve_tangent.normalize();
-      EVec3f curve_normal  = crssec_normal.cross(curve_tangent).normalized();
-      curve_normal *= (normal_side ? 1.0f : -1.0f);
-
-      // get nearest vertex idx
-      float dist_min = FLT_MAX;
-      int idx_min = -1;
-      for (int k = 0; k < mesh.m_vSize; ++k)
-      {
-        if (mesh.m_vNorms[k].dot(curve_normal) <= 0.0f) continue;
-        const EVec3f diff = pos - mesh.m_vVerts[k];
-        Eigen::Matrix3f mat =
-            powf(5.0f, 2.0f) * crssec_normal * crssec_normal.transpose()
-          + powf(1.0f, 2.0f) * curve_tangent * curve_tangent.transpose()
-          + powf(0.2f, 2.0f) * curve_normal  * curve_normal.transpose();
-        const float dist = diff.transpose() * mat * diff;
-
-        if (dist < dist_min) {
-          dist_min = dist;
-          idx_min = k;
-        }
-      }
-      if (idx_min < 0) continue;
-
-      const bool found = std::find(_idxs.begin(), _idxs.end(), idx_min) != _idxs.end();
-      if (!found)
-      {
-        _idxs      .push_back(idx_min);
-        _target_pos.push_back(pos);
-        _src_pos   .push_back(mesh.m_vVerts[idx_min]);
-      }
-    }
-  }
-}
-*/
