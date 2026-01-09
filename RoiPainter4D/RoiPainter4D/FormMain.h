@@ -1,6 +1,9 @@
 #pragma once
 
-class OglForCLI;
+#pragma unmanaged
+#include "OglForCLI.h"
+#include "SonyXR/xrprogram.hpp"
+#pragma managed
 
 namespace RoiPainter4D {
 
@@ -10,6 +13,46 @@ namespace RoiPainter4D {
   using namespace System::Windows::Forms;
   using namespace System::Data;
   using namespace System::Drawing;
+
+
+
+
+  public ref class OverlayForm : public Form
+  {
+  public:
+    OverlayForm()
+    {
+      this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
+      this->TopMost = true;
+      this->ShowInTaskbar = false;
+      this->StartPosition = FormStartPosition::Manual;
+      this->DoubleBuffered = true;
+      this->BackColor = Color::Black;
+      this->Opacity = 0.01;  // ← 1%不透明。完全透明(0)だとマウス拾えない
+      this->Cursor = Cursors::Cross; // optional
+
+      // イベント登録
+      this->MouseMove += gcnew MouseEventHandler(this, &OverlayForm::OnMouseMoveSR1);
+      this->MouseDown += gcnew MouseEventHandler(this, &OverlayForm::OnMouseDownSR1);
+      this->MouseUp += gcnew MouseEventHandler(this, &OverlayForm::OnMouseUpSR1);
+    }
+
+    void PlaceOnScreen(Screen^ screen)
+    {
+      this->Bounds = screen->Bounds;
+      this->Show();
+      this->BringToFront();
+    }
+
+  private:
+    void OnMouseUpSR1(Object^ sender, MouseEventArgs^ e);
+    void OnMouseMoveSR1(Object^ sender, MouseEventArgs^ e);
+    void OnMouseDownSR1(Object^ sender, MouseEventArgs^ e);
+  };
+
+
+
+
 
   /// <summary>
   /// FormMain の概要
@@ -64,8 +107,8 @@ namespace RoiPainter4D {
     System::Windows::Forms::ToolStripSeparator^ toolStripSeparator4;
     System::Windows::Forms::ToolStripSeparator^ toolStripSeparator5;
     System::Windows::Forms::ToolStripSeparator^ toolStripSeparator6;
-  private: System::Windows::Forms::ToolStripMenuItem^ exportMaskCentroidcsvToolStripMenuItem;
-  private: System::Windows::Forms::ToolStripMenuItem^ exportMaskEigenvaluecsvToolStripMenuItem;
+    System::Windows::Forms::ToolStripMenuItem^ exportMaskCentroidcsvToolStripMenuItem;
+    System::Windows::Forms::ToolStripMenuItem^ exportMaskEigenvaluecsvToolStripMenuItem;
 
 
   private:
@@ -80,6 +123,15 @@ namespace RoiPainter4D {
     }
 
   private:
+
+    //added for SonyXR by Takashi
+    OverlayForm^ m_overlay = nullptr; //イベント取得のための透明なform
+    bool m_is_xr_mode = false;
+    System::Windows::Forms::Timer^ xrTimer;
+    XrProgram* xr_program = nullptr;
+    void CloseXrProgram(System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e);
+    void XrTimerTick(System::Object^ sender, System::EventArgs^ e);
+
     // functions 
     int  m_prevKeyID;
     void InitializeSingletons();
@@ -95,6 +147,11 @@ namespace RoiPainter4D {
     void SetCursorNESW();
     void SetCursorDefault();
     void SetProgressValue(float value0to1);
+
+    void XrMouseMove(MouseEventArgs^ e);
+    void XrLBtnDown(MouseEventArgs^ e);
+    void XrLBtnUp(MouseEventArgs^ e);
+
 
   protected:
     /// <summary>

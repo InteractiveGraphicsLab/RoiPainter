@@ -13,6 +13,10 @@
 #include <list>
 #include <deque>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 typedef Eigen::Vector2i EVec2i;
 typedef Eigen::Vector2d EVec2d;
 typedef Eigen::Vector2f EVec2f;

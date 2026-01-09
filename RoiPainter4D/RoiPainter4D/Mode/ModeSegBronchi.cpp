@@ -19,7 +19,13 @@
 #include <iomanip>
 
 #include <time.h>
+
 #include <windows.h>
+// windows.h have min max functions 
+#undef min
+#undef max
+
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 

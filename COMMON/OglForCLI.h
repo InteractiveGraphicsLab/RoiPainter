@@ -2,6 +2,7 @@
 #define COMMON_OGLFORCLI_H_
 #pragma unmanaged
 
+#define NOMINMAX
 #include <windows.h> 
 // windows.h have min max functions 
 #undef min
@@ -116,6 +117,10 @@ private:
 
 
 public:
+
+  HDC   GetHDC  (){ return m_hdc;   }
+  HGLRC GetHGLRC(){ return m_hglrc; }
+
 
   ~OglForCLI() {}
 
@@ -467,6 +472,7 @@ inline void DrawPolyLine(
   for (int i = 0; i < N; ++i) idx[i] = i;
   if (b_closed) idx[N - 1] = 0;
 
+
   glColor3d(color[0], color[1], color[2]);
   glLineWidth(width);
 
@@ -493,7 +499,6 @@ inline void DrawPolyLine(
   int* idx = new int[N];
   for (int i = 0; i < N; ++i) idx[i] = i;
   if (b_closed) idx[N - 1] = 0;
-
   glColor3d(color[0], color[1], color[2]);
   glLineWidth(width);
 

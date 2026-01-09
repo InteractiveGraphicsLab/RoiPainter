@@ -352,19 +352,27 @@ void DeformationStrokes::FlipSelNormals()
 
 
 
-void DeformationStrokes::DrawStrokes(const bool& _only_selected_stroke) const
+void DeformationStrokes::DrawStrokes(bool _only_selected_stroke, bool vis_normal) const
 {
   const int size = static_cast<int>(m_strokes.size());
-  for (int i = 0; i < size; ++i)
+  if (_only_selected_stroke)
   {
-    if (_only_selected_stroke && (m_selected_stroke_idx != -1) && (m_selected_stroke_idx != i)) continue;
-
-    const bool flag = (m_selected_stroke_idx == i);
-    m_strokes[i].DrawStroke(flag);
+    if ( 0 <= m_selected_stroke_idx && m_selected_stroke_idx < size)
+    { 
+      m_strokes[m_selected_stroke_idx].DrawStroke(true, vis_normal);
+    }
+  }
+  else 
+  {
+    for (int i = 0; i < size; ++i)
+    {
+      m_strokes[i].DrawStroke((m_selected_stroke_idx == i), vis_normal);
+    }
   }
 }
 
 
+//TODO if分の分岐が期待ないので整理する必要あり
 void DeformationStrokes::DrawControlPoints(const float& _cp_radius, const bool& _only_selected_stroke) const
 {
   const int strokes_size = static_cast<int>(m_strokes.size());
@@ -706,7 +714,7 @@ static const EVec3f COLOR_Y = { 1.0f, 1.0f, 0.0f };
 static const EVec3f COLOR_G = { 0.0f, 1.0f, 0.0f };
 static const EVec3f COLOR_A = { 0.0f, 1.0f, 1.0f };
 
-void DeformationStrokes::Stroke::DrawStroke(const bool& _is_selected) const
+void DeformationStrokes::Stroke::DrawStroke(bool _is_selected, bool _vis_normal) const
 {
   if (m_stroke.size() == 0) return;
 
@@ -714,44 +722,30 @@ void DeformationStrokes::Stroke::DrawStroke(const bool& _is_selected) const
                        m_shared_idx == -1 ? COLOR_Y : 
                        m_is_locked        ? COLOR_G : COLOR_A;
 
-  DrawPolyLine(color, _is_selected ? 1.5f * 6 : 1.0f * 6, m_stroke, false);
+  const float LINE_WIDTH = _is_selected ? 1.5f * 6 : 1.0f * 6;
+  const float NORMAL_LENGTH = 1.0f;
+
+  DrawPolyLine(color, LINE_WIDTH, m_stroke, false);
+
+  if (!_vis_normal) return;
 
   glDisable(GL_LIGHTING);
   glColor3f(0.0f, 1.0f, 1.0f);
-  glLineWidth(_is_selected ? 1.5f * 6 : 1.0f * 6);
+  glLineWidth(LINE_WIDTH);
 
-  const float normal_length = 1.0f;
-
-  EVec3f previous_draw_normal = EVec3f(0.0f, 0.0f, 0.0f);
-
-  const EVec3f plane_normal = EVec3f(
-    m_plane_xyz == 0 ? 1.0f : 0.0f,
-    m_plane_xyz == 1 ? 1.0f : 0.0f,
-    m_plane_xyz == 2 ? 1.0f : 0.0f
-  );
+  EVec3f plane_normal;
+  if (m_plane_xyz == 0) plane_normal << 1.0f, 0.0f, 0.0f;
+  if (m_plane_xyz == 1) plane_normal << 0.0f, 1.0f, 0.0f;
+  if (m_plane_xyz == 2) plane_normal << 0.0f, 0.0f, 1.0f;
 
   glBegin(GL_LINES);
-  for (size_t i = 0; i < m_stroke.size(); ++i)
+  for (size_t i = 1; i < m_stroke.size()-1; i += 3)
   {
-    EVec3f tangent;
-    if (i == 0) tangent = m_stroke[i + 1] - m_stroke[i];
-    else if (i == m_stroke.size() - 1) tangent = m_stroke[i] - m_stroke[i - 1];
-    else tangent = m_stroke[i + 1] - m_stroke[i - 1];
-    tangent.normalize();
-
-    EVec3f draw_normal = plane_normal.cross(tangent);
-    draw_normal.normalize();
-
-    if (i == 0) previous_draw_normal = draw_normal;
-    else
-    {
-      if (previous_draw_normal.dot(draw_normal) < 0.0f) draw_normal = -draw_normal;
-      previous_draw_normal = draw_normal;
-    }
-
+    EVec3f tangent = (m_stroke[i + 1] - m_stroke[i - 1]).normalized();
+    EVec3f norm = plane_normal.cross(tangent).normalized();
+    EVec3f p = m_stroke[i] + (m_normal_side ? 1.0f : -1.0f) * NORMAL_LENGTH* norm;
     glVertex3fv(m_stroke[i].data());
-    const EVec3f normal_end = m_stroke[i] + draw_normal * normal_length * (m_normal_side ? 1.0f : -1.0f);
-    glVertex3fv(normal_end.data());
+    glVertex3fv(p.data());
   }
   glEnd();
 }

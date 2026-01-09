@@ -22,6 +22,9 @@
     <Filter Include="3rdparty">
       <UniqueIdentifier>{673eae79-7c6a-4c92-9f57-930ed2f250b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SonySR">
+      <UniqueIdentifier>{47741d82-2d3d-4e8a-9891-996fb2312e1e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FormMain.cpp">
@@ -185,6 +188,36 @@
     </ClCompile>
     <ClCompile Include="..\..\COMMON\LaplacianSurfaceEditing.cpp">
       <Filter>COMMON</Filter>
+    </ClCompile>
+    <ClCompile Include="SonyXR\xrprogram.cpp">
+      <Filter>SonySR</Filter>
+    </ClCompile>
+    <ClCompile Include="SonyXR\xr-runtime\src\load_library_utility.cc">
+      <Filter>SonySR</Filter>
+    </ClCompile>
+    <ClCompile Include="SonyXR\xr-runtime\src\xr_api_wrapper.cc">
+      <Filter>SonySR</Filter>
+    </ClCompile>
+    <ClCompile Include="SonyXR\xr-runtime\src\xr_api_wrapper_utility.cpp">
+      <Filter>SonySR</Filter>
+    </ClCompile>
+    <ClCompile Include="SonyXR\srd-openxr\src\srd_openxr_api_wrapper.cc">
+      <Filter>SonySR</Filter>
+    </ClCompile>
+    <ClCompile Include="SonyXR\srd-openxr\src\srd_openxr_library_loader.cpp">
+      <Filter>SonySR</Filter>
+    </ClCompile>
+    <ClCompile Include="SonyXR\srd-api\src\misc_util_wrapper.cpp">
+      <Filter>SonySR</Filter>
+    </ClCompile>
+    <ClCompile Include="SonyXR\srd-api\src\xr_basic_api_wrapper.cpp">
+      <Filter>SonySR</Filter>
+    </ClCompile>
+    <ClCompile Include="SonyXR\sony_xr_common\src\registry_utility.cpp">
+      <Filter>SonySR</Filter>
+    </ClCompile>
+    <ClCompile Include="SonyXR\sony_xr_common\src\string_utility.cpp">
+      <Filter>SonySR</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -374,6 +407,9 @@
     <ClInclude Include="..\..\COMMON\LaplacianSurfaceEditing.h">
       <Filter>COMMON</Filter>
     </ClInclude>
+    <ClInclude Include="SonyXR\xrprogram.hpp">
+      <Filter>SonySR</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FormMain.resx">
@@ -386,9 +422,6 @@
       <Filter>リソース ファイル</Filter>
     </EmbeddedResource>
     <EmbeddedResource Include="FormLoadFrameIdx.resx">
-      <Filter>リソース ファイル</Filter>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormSegClosestPix.resx">
       <Filter>リソース ファイル</Filter>
     </EmbeddedResource>
     <EmbeddedResource Include="FormSegRigidICP.resx">

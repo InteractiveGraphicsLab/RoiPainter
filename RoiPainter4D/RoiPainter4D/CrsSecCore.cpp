@@ -21,6 +21,10 @@ CrssecCore::~CrssecCore()
 //!!NOTE!! shader will be unbinded in this function
 void CrssecCore::DrawCrssec_(bool bXY, bool bYZ, bool bZX, const EVec3f &C)
 {
+  glEnable(GL_DEPTH_TEST);
+  glDepthMask(GL_TRUE);
+  glDepthFunc(GL_LEQUAL);
+
   glLineWidth(2);
   glColor3d(1, 1, 1);
 
@@ -299,6 +303,15 @@ void t_drawSlices(
     EVec3f(0,0,0), EVec3f(cx,0,0), EVec3f(cx,cy, 0), EVec3f(0,cy,0),
     EVec3f(0,0,cz), EVec3f(cx,0,cz), EVec3f(cx,cy,cz), EVec3f(0,cy,cz)
   };
+
+  std::cout << "DEBUG LOG!!!;\n";
+  for (int i = 0; i < 8; ++i)
+    std::cout << p[i].x() << ", " << p[i].y() << ", " << p[i].z() << "\n";
+
+  std::cout << camP.x() << ", " << camP.y() << ", " << camP.z() << "\n";
+  std::cout << camF.x() << ", " << camF.y() << ", " << camF.z() << "\n";
+
+
 
   const float pDepth[8] = {
     camRay.dot(p[0] - camP), camRay.dot(p[1] - camP), 
