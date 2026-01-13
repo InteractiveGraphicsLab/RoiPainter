@@ -159,7 +159,6 @@ void PlanarCurve::DrawCPs(const float color[4], float radius, int select_cp_idx)
 void PlanarCurve::UpdateCurve()
 {
   m_curve.clear();
-  if (m_cps.size() < 3) return;
 
   // convert cps: EVec3f to EVec2f
   std::vector<EVec2f> cps_2f;
@@ -170,14 +169,14 @@ void PlanarCurve::UpdateCurve()
     else if (m_crssec_id == CRSSEC_XY) cps_2f.push_back(EVec2f(cp[0], cp[1]));
   }
 
-  std::vector<EVec2f> stroke_2f;
-  stroke_2f = KCurves::CalcKCurvesOpen(cps_2f);
+  std::vector<EVec2f> out_cps, out_points;
+  KCurves::compute_kCurves_open(cps_2f, 50, out_cps, out_points);
 
   //failed
-  if (stroke_2f.size() == 0) return;
+  if (out_points.size() == 0) return;
 
   m_curve.clear();
-  for (const auto& p : stroke_2f)
+  for (const auto& p : out_points)
   {
     EVec3f vec;
     if      (m_crssec_id == CRSSEC_YZ) vec << m_crssec_pos, p[0], p[1];
@@ -1126,15 +1125,15 @@ void DeformationStrokes::Stroke::UpdateStroke()
     if (m_plane_xyz == 2) cps_2f.push_back(EVec2f(cp[0], cp[1]));
   }
 
-  std::vector<EVec2f> stroke_2f;
-  stroke_2f = KCurves::CalcKCurvesOpen(cps_2f);
+  std::vector<EVec2f> out_cps, out_points;
+  KCurves::compute_kCurves_open(cps_2f, 50, out_cps, out_points);
 
   //failed
-  if (stroke_2f.size() == 0) return;
+  if (out_points.size() == 0) return;
 
   // convert stroke: EVec2f to EVec3f
   m_stroke.clear();
-  for (const auto& p : stroke_2f)
+  for (const auto& p : out_points)
   {
 
     EVec3f vec;
