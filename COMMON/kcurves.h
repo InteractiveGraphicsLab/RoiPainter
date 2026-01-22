@@ -27,6 +27,7 @@ namespace KCurves
 	}
 
 
+	/*
 	//実数解を一つ返す
 	//solve x^3 + a x^2 + b x + c
 	inline float SolveCubicFunction
@@ -49,6 +50,40 @@ namespace KCurves
 
 		return -a / 3.0f + m + n;
 	}
+	*/	
+
+
+	inline float SolveCubic01(float a, float b, float c)
+	{
+		auto f = [&](float x)
+			{
+				return x * x * x + a * x * x + b * x + c;
+			};
+
+		// Appendix A により符号反転は保証されている
+		float left = 0.0f, f_left = f(left);
+		float right = 1.0f, f_right = f(right);
+		if (f_left * f_right >= 0.0f) return 0.5;
+
+		for (int i = 0; i < 20; ++i)
+		{
+			float mid = 0.5f * (left + right);
+			float f_mid = f(mid);
+
+			if (f_left * f_mid <= 0)
+			{
+				right = mid;
+				f_right = f_mid;
+			}
+			else
+			{
+				left = mid;
+				f_left = f_mid;
+			}
+		}
+		return 0.5f * (left + right);
+	}
+
 
 
 	inline float TriangleArea(
@@ -128,7 +163,7 @@ namespace KCurves
 				float c = (3 * Ci0[i] - 2 * cps[i] - Ci2[i]).dot(Ci0_pi);
 				float d = -Ci0_pi.squaredNorm();
 
-				ti[i] = (a == 0) ? 0.5f : SolveCubicFunction(b / a, c / a, d / a);
+				ti[i] = (a == 0) ? 0.5f : SolveCubic01(b / a, c / a, d / a);
 			}
 
 			//4. update C1
@@ -326,7 +361,7 @@ namespace KCurves
 				float b = 3 * Ci2_Ci0.dot(Ci0_pi);
 				float c = (3 * Ci0[i] - 2 * cps[i] - Ci2[i]).dot(Ci0_pi);
 				float d = -Ci0_pi.squaredNorm();
-				ti[i] = (a == 0) ? 0.5f : SolveCubicFunction(b / a, c / a, d / a);
+				ti[i] = (a == 0) ? 0.5f : SolveCubic01(b / a, c / a, d / a);
 				if (std::isnan(ti[i])) ti[i] = 0.5f;
 				ti[i] = std::max(1e-5f, std::min(1.0f - 1e-5f, ti[i]));
 			}
