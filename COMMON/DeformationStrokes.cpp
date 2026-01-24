@@ -5,6 +5,451 @@
 #include <fstream>
 
 
+bool PlanarCurve::AddCP(const EVec3f &pos, int& inserted_idx)
+{
+  const int num_cps = static_cast<int>(m_cps.size());
+
+  float tmp = (m_crssec_id == CRSSEC_XY) ? pos[2] :
+              (m_crssec_id == CRSSEC_YZ) ? pos[0] :
+              (m_crssec_id == CRSSEC_ZX) ? pos[1] :
+              0.0f;
+
+  if (fabsf(m_crssec_pos - tmp) > 0.001f) 
+  {
+    std::cout << "strange input at AddCP\n";
+    return false;
+  }
+
+  if ( num_cps <= 2 )
+  {
+    m_cps.push_back(pos);
+    inserted_idx = num_cps;
+    UpdateCurve();
+    return true;
+  }
+
+  float min_dist = std::numeric_limits<float>::max();
+  int   best_idx = 0;
+
+  for (int i = 0; i <= num_cps; ++i)
+  {
+    EVec3f trgt = (i == 0      ) ? m_cps.front() :
+                  (i == num_cps) ? m_cps.back()  :
+                                   0.5f * (m_cps[i - 1] + m_cps[i]);
+    const float  dist = (pos - trgt).norm();
+
+    if (dist < min_dist)
+    {
+      min_dist = dist;
+      best_idx = i;
+    }
+  }
+
+  m_cps.insert(m_cps.begin() + best_idx, pos);
+  inserted_idx = best_idx;
+
+  UpdateCurve();
+
+  return true;
+}
+
+
+
+void PlanarCurve::MoveCP(int cpidx, const EVec3f& pos)
+{
+  if (cpidx < 0 || cpidx >= m_cps.size()) return;
+
+  float tmp = (m_crssec_id == CRSSEC_XY) ? pos[2] :
+              (m_crssec_id == CRSSEC_YZ) ? pos[0] :
+              (m_crssec_id == CRSSEC_ZX) ? pos[1] :
+              0.0f;
+  if (fabsf(m_crssec_pos - tmp) > 0.001f) return;
+  m_cps[cpidx] = pos;
+  UpdateCurve();
+}
+
+
+
+void PlanarCurve::DeleteCP(int cpidx)
+{
+  if (cpidx < 0 || cpidx >= m_cps.size()) return;
+  m_cps.erase(m_cps.begin() + cpidx);
+  UpdateCurve();
+}
+
+
+bool PlanarCurve::PickCPs(
+    const EVec3f& ray_pos, 
+    const EVec3f& ray_dir, 
+    const float cp_radius, 
+    int& cpidx, 
+    EVec3f& cp_pos) const
+{
+  const int num_cps= static_cast<int>(m_cps.size());
+
+  for (int i = 0; i < num_cps; ++i)
+  {
+    if (DistRayAndPoint(ray_pos, ray_dir, m_cps[i]) <= cp_radius)
+    {
+      cpidx = i;
+      cp_pos = m_cps[i];
+      return true;
+    }
+  }
+
+  return false;
+}
+
+
+
+void PlanarCurve::Draw(const float color[4], const float thickness) const
+{
+  if (m_curve.size() == 0) return;
+  glDisable(GL_LIGHTING);
+
+  EVec3f c = EVec3f(color[0], color[1], color[2]);
+  DrawPolyLine(c, thickness, m_curve, false);
+
+  glColor3f(0.0f, 1.0f, 1.0f);
+  glLineWidth(thickness);
+
+  const float normal_length = 1.0f;
+
+  const EVec3f plane_normal = EVec3f(
+    m_crssec_id == CRSSEC_YZ ? 1.0f : 0.0f,
+    m_crssec_id == CRSSEC_ZX ? 1.0f : 0.0f,
+    m_crssec_id == CRSSEC_XY ? 1.0f : 0.0f
+  );
+
+  glBegin(GL_LINES);
+  for (size_t i = 1; i < m_curve.size() - 1; i += 5)
+  {
+    EVec3f tangent = (m_curve[i + 1] - m_curve[i - 1]).normalized();
+    EVec3f norm = plane_normal.cross(tangent).normalized();
+    if (!m_normal_side) norm = -norm;
+    EVec3f p = m_curve[i] + normal_length * norm;
+    glVertex3fv(m_curve[i].data());
+    glVertex3fv(p.data());
+  }
+  glEnd();
+}
+  
+
+
+void PlanarCurve::DrawCPs(const float color[4], float radius, int select_cp_idx) const
+{
+  if (m_cps.size() == 0) return;
+
+  static float COLOR_W[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  static float COLOR_SHIN64[1] = { 64.0f };
+  static float COLOR_R[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+  glEnable(GL_LIGHTING);
+  const int size = static_cast<int>(m_cps.size());
+  for (int i = 0; i < size; ++i)
+  {
+    const float* c = (i == select_cp_idx) ? COLOR_R : color;
+    TMesh::DrawSphere(m_cps[i], radius, c, c, COLOR_W, COLOR_SHIN64);
+  }
+  glDisable(GL_LIGHTING);
+}
+
+
+
+void PlanarCurve::UpdateCurve()
+{
+  m_curve.clear();
+
+  // convert cps: EVec3f to EVec2f
+  std::vector<EVec2f> cps_2f;
+  for (const auto& cp : m_cps)
+  {
+    if      (m_crssec_id == CRSSEC_YZ) cps_2f.push_back(EVec2f(cp[1], cp[2]));
+    else if (m_crssec_id == CRSSEC_ZX) cps_2f.push_back(EVec2f(cp[0], cp[2]));
+    else if (m_crssec_id == CRSSEC_XY) cps_2f.push_back(EVec2f(cp[0], cp[1]));
+  }
+
+  std::vector<EVec2f> out_cps, out_points;
+  KCurves::compute_kCurves_open(cps_2f, 50, out_cps, out_points);
+
+  //failed
+  if (out_points.size() == 0) return;
+
+  m_curve.clear();
+  for (const auto& p : out_points)
+  {
+    EVec3f vec;
+    if      (m_crssec_id == CRSSEC_YZ) vec << m_crssec_pos, p[0], p[1];
+    else if (m_crssec_id == CRSSEC_ZX) vec << p[0], m_crssec_pos, p[1];
+    else if (m_crssec_id == CRSSEC_XY) vec << p[0], p[1], m_crssec_pos;
+    m_curve.push_back(vec);
+  }
+}
+
+void PlanarCurve::WriteToFile(std::ofstream& file) 
+{
+  file << "CRSSEC_ID "   << static_cast<int>(m_crssec_id) << "\n";
+  file << "CRSSEC_POS "  << m_crssec_pos << "\n";
+  file << "NORMAL_SIDE " << (m_normal_side ? 1 : 0) << "\n";
+  file << "NUM_CPS " << m_cps.size() << "\n";
+  for (const auto& cp : m_cps) 
+  {
+    file << cp[0] << " " << cp[1] << " " << cp[2] << "\n";
+  }
+}
+
+
+PlanarCurve::PlanarCurve(std::ifstream& file)
+{
+  std::string line, key;
+  std::stringstream ss;
+
+  // CRSSEC_ID
+  if (ReadNextLine(file, line, ss)) 
+  {
+    int id_int;
+    ss >> key >> id_int;
+    m_crssec_id = static_cast<CRSSEC_ID>(id_int);
+  }
+
+  // CRSSEC_POS
+  if (ReadNextLine(file, line, ss)) {
+    ss >> key >> m_crssec_pos;
+  }
+
+  // NORMAL_SIDE
+  if (ReadNextLine(file, line, ss)) {
+    int side;
+    ss >> key >> side;
+    m_normal_side = (side != 0);
+  }
+
+  // NUM_CPS とその後の座標データ
+  if (ReadNextLine(file, line, ss)) 
+  {
+    int num_cps;
+    ss >> key >> num_cps;
+    m_cps.resize(num_cps);
+    for (int i = 0; i < num_cps; ++i) 
+    {
+      if (ReadNextLine(file, line, ss)) 
+      {
+        float x,y,z;
+        ss >> x >> y >> z;
+        m_cps[i] = EVec3f(x, y, z); 
+      }
+    }
+  }
+  
+  UpdateCurve();
+}
+
+/*
+
+std::string PlanarCurve::OutputAsText() const
+{
+  std::string text = "";
+
+  for (const auto& cp : m_cps)
+    text += 
+      std::to_string(cp[0]) + " " +  
+      std::to_string(cp[1]) + " " +
+      std::to_string(cp[2]) + "\n";
+  return text;
+}
+
+void PlanarCurve::InitByCPs(const std::vector<EVec3f> &cps)
+{
+  m_cps = cps;
+
+  if (m_cps.size() >= 2)
+  {
+    m_plane_xyz = (fabsf(m_cps[0][0] - m_cps[1][0]) < 0.001f) ? 0 :
+                  (fabsf(m_cps[0][1] - m_cps[1][1]) < 0.001f) ? 1 : 2;
+    m_plane_pos = m_cps[0][m_plane_xyz];
+  }
+  UpdateCurve();
+}
+
+*/
+
+
+
+
+
+
+//old code 
+//const EVec3f color = 
+//  m_is_selected      ? COLOR_R :
+//  m_shared_idx == -1 ? COLOR_Y :
+//  m_is_locked        ? COLOR_G : COLOR_A;
+//static const EVec4f COLOR_R = { 1.0f, 0.0f, 0.0f, 0.5f };
+//static const EVec4f COLOR_Y = { 1.0f, 1.0f, 0.0f, 0.5f };
+//static const EVec4f COLOR_G = { 0.0f, 1.0f, 0.0f, 0.5f };
+//static const EVec4f COLOR_A = { 0.0f, 1.0f, 1.0f, 0.5f };
+
+
+//void Draw() const;
+//void DrawCPs( const;
+
+
+
+
+void SharedCurves::Draw(
+    const int frame_idx, 
+    const float color[4],
+    const float thickness) const
+{
+  if (frame_idx < 0 || m_curves.size() <= frame_idx) return;
+  m_curves[frame_idx].Draw(color, thickness);
+}
+
+void SharedCurves::DrawCPs(
+  const int frame_idx,
+  const float color[4],
+  const float cp_radius,
+  const int select_cp_idx) const
+{
+  m_curves[frame_idx].DrawCPs(color, cp_radius, select_cp_idx);
+}
+
+
+
+static std::vector<EVec3f> Interpolation(
+  const std::vector<EVec3f>& v1,
+  const std::vector<EVec3f>& v2,
+  const float rate)
+{
+  if (v1.size() != v2.size()) {
+    std::cout << "Warning: Interpolation input size mismatch\n";
+    return v1;
+  }
+  std::vector<EVec3f> result;
+  for (int i = 0; i < v1.size(); ++i)
+  {
+    EVec3f p = (1.0f - rate) * v1[i] + rate * v2[i];
+    result.push_back(p);
+  }
+  return result;
+}
+
+
+
+void SharedCurves::UpdateNonManipCurves()
+{
+  const size_t num_frames = m_curves.size();
+  
+  // collect key frames
+  std::vector<int> key_frames;
+  for(int i=0; i < num_frames; ++i)
+  {
+    if (m_manip[i]) key_frames.push_back(i);
+  } 
+  if (key_frames.size() == 0) return;
+    
+  for (int i = 0; i < key_frames.front(); ++i)
+  {
+    const std::vector<EVec3f>& cps = m_curves[key_frames.front()].GetCPs();
+    m_curves[i].SetCPs(cps);
+  }
+
+  for (int i = key_frames.back() + 1; i < num_frames; ++i)
+  {
+    const std::vector<EVec3f>& cps = m_curves[key_frames.back()].GetCPs();
+    m_curves[i].SetCPs(cps);
+  }
+
+  for (size_t key_i = 1; key_i < key_frames.size(); ++key_i)
+  {
+    int frame1 = key_frames[key_i - 1];
+    int frame2 = key_frames[key_i    ];
+    const std::vector<EVec3f>& cps1 = m_curves[frame1].GetCPs();
+    const std::vector<EVec3f>& cps2 = m_curves[frame2].GetCPs();
+    
+    for (int i = frame1 + 1; i < frame2; ++i)
+    {
+      float t = (float)(i - frame1) / (float)(frame2 - frame1);
+      m_curves[i].SetCPs(Interpolation(cps1, cps2, t));
+    }
+  }
+}
+
+
+
+
+void SharedCurves::WriteToFile(std::ofstream& file)
+{
+  file << "num_frames: " << m_curves.size() << "\n";
+
+  file << "manip_flags: " << m_manip.size() << "\n";
+
+  for (size_t i = 0; i < m_manip.size(); ++i) 
+  {
+    file << i << " " << (m_manip[i] ? 1 : 0) << "\n";
+  }
+
+  for (size_t i = 0; i < m_curves.size(); ++i) 
+  {
+    m_curves[i].WriteToFile(file);
+  }
+}
+
+
+
+SharedCurves::SharedCurves(std::ifstream& file)
+{
+  m_manip.clear();
+  m_curves.clear();
+
+  std::string line, key;
+  std::stringstream ss;
+
+  int num_frames = 0;
+  if (ReadNextLine(file, line, ss)) 
+  {
+    ss >> key >> num_frames;
+  }
+
+  if (ReadNextLine(file, line, ss)) 
+  {
+    m_manip.resize(num_frames, false);
+    for (int i = 0; i < num_frames; ++i) 
+    {
+      if (ReadNextLine(file, line, ss)) 
+      {
+        int fidx, val;
+        ss >> fidx >> val;
+        m_manip[i] = (val != 0);
+      }
+    }
+  }
+
+  m_curves.clear();
+  m_curves.reserve(num_frames);
+  for (int i = 0; i < num_frames; ++i) 
+  {
+    m_curves.emplace_back(PlanarCurve(file));
+  }
+
+  UpdateNonManipCurves();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 DeformationStrokes::DeformationStrokes()
 {
   m_strokes.clear();
@@ -680,15 +1125,15 @@ void DeformationStrokes::Stroke::UpdateStroke()
     if (m_plane_xyz == 2) cps_2f.push_back(EVec2f(cp[0], cp[1]));
   }
 
-  std::vector<EVec2f> stroke_2f;
-  stroke_2f = KCurves::CalcKCurvesOpen(cps_2f);
+  std::vector<EVec2f> out_cps, out_points;
+  KCurves::compute_kCurves_open(cps_2f, 50, out_cps, out_points);
 
   //failed
-  if (stroke_2f.size() == 0) return;
+  if (out_points.size() == 0) return;
 
   // convert stroke: EVec2f to EVec3f
   m_stroke.clear();
-  for (const auto& p : stroke_2f)
+  for (const auto& p : out_points)
   {
 
     EVec3f vec;
@@ -701,14 +1146,14 @@ void DeformationStrokes::Stroke::UpdateStroke()
 
 
 
-static const EVec3f COLOR_R = { 1.0f, 0.0f, 0.0f };
-static const EVec3f COLOR_Y = { 1.0f, 1.0f, 0.0f };
-static const EVec3f COLOR_G = { 0.0f, 1.0f, 0.0f };
-static const EVec3f COLOR_A = { 0.0f, 1.0f, 1.0f };
-
 void DeformationStrokes::Stroke::DrawStroke(const bool& _is_selected) const
 {
   if (m_stroke.size() == 0) return;
+
+  static const EVec3f COLOR_R = { 1.0f, 0.0f, 0.0f };
+  static const EVec3f COLOR_Y = { 1.0f, 1.0f, 0.0f };
+  static const EVec3f COLOR_G = { 0.0f, 1.0f, 0.0f };
+  static const EVec3f COLOR_A = { 0.0f, 1.0f, 1.0f };
 
   const EVec3f color = _is_selected       ? COLOR_R : 
                        m_shared_idx == -1 ? COLOR_Y : 

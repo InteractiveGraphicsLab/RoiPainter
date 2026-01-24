@@ -1,7 +1,6 @@
 #pragma managed
 #include "FormRefCurveDeform.h"
 #include "FormMain.h"
-#include "FormSelectMskId.h"
 #include "CliMessageBox.h"
 
 #pragma unmanaged
@@ -17,101 +16,83 @@ using namespace RoiPainter4D;
 void FormRefCurveDeform::InitAllItems()
 {
   m_numbox_cpsize->Value = 10;
-  m_checkbox_showonlyselectedstroke->Checked = true;
-  m_trackbar_mcscale->Value = 2;
-
-  FormSelectMskId^ modal = gcnew FormSelectMskId();
-  if (modal->ShowDialog() == System::Windows::Forms::DialogResult::Cancel) return;
-
-  int trgtId = modal->getTrgtID();
-  if (trgtId == 0)
-  {
-    ShowMsgDlg_OK("0th region (background) cannot be deformed", "caution");
-    ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
-    return;
-  }
-  modal->Close();
-
-  ImageCore::GetInst()->SetSelectMaskId(trgtId);
+  m_trackbar_mcstride->Value = 2;
+  m_cb_only_select_curve->Checked = false;
 }
 
 
-System::Void FormRefCurveDeform::m_btn_convert_mask_mesh_Click(System::Object^ sender, System::EventArgs^ e)
+
+System::Void FormRefCurveDeform::m_btn_genmesh_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->ConvertMaskToMesh();
 }
 
-
 System::Void FormRefCurveDeform::m_btn_reload_mesh_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeRefCurveDeform::GetInst()->ReloadMesh();
+  ModeRefCurveDeform::GetInst()->ReloadOrigMeshCurrentFrame();
 }
 
+System::Void FormRefCurveDeform::m_cancel_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->CancelSegmentation();
+}
+
+System::Void FormRefCurveDeform::m_finish_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->FinishSegmentation();
+}
 
 System::Void FormRefCurveDeform::m_btn_deform_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeRefCurveDeform::GetInst()->Deform();
+  ModeRefCurveDeform::GetInst()->DeformAllFrame();
 }
-
+System::Void FormRefCurveDeform::m_btn_deform_all_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->DeformAllFrame();
+}
 
 System::Void FormRefCurveDeform::m_btn_undo_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeRefCurveDeform::GetInst()->Undo();
+  ModeRefCurveDeform::GetInst()->Undo_LoadSnapShot();
 }
 
-
-System::Void FormRefCurveDeform::m_btn_redo_Click(System::Object^ sender, System::EventArgs^ e)
-{
-  ModeRefCurveDeform::GetInst()->Redo();
-}
-
-
-System::Void FormRefCurveDeform::m_copy_from_prev_frame_Click(System::Object^ sender, System::EventArgs^ e)
+System::Void FormRefCurveDeform::m_btn_copy_from_preframe_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->CopyFromPrevFrame();
 }
 
-
-System::Void FormRefCurveDeform::m_btn_convert_mesh_mask_Click(System::Object^ sender, System::EventArgs^ e)
-{
-  ModeRefCurveDeform::GetInst()->ConvertMeshToMask();
-}
-
-
-System::Void FormRefCurveDeform::m_btn_copy_stroke_all_frame_Click(System::Object^ sender, System::EventArgs^ e)
+System::Void FormRefCurveDeform::m_btn_copy_to_allframe_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->CopyStrokesToAllFrame();
 }
 
-
-System::Void FormRefCurveDeform::m_checkbox_showonlyselectedstroke_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
+System::Void FormRefCurveDeform::m_cb_onlyselectedcurve_CheckedChanged(
+  System::Object^ sender, System::EventArgs^ e)
 {
-  ModeRefCurveDeform::GetInst()->SetShowOnlySelectedStroke();
+  FormMain::GetInst()->RedrawMainPanel();
+}
+
+System::Void FormRefCurveDeform::m_numbox_cpsize_ValueChanged(
+  System::Object^ sender, System::EventArgs^ e)
+{
+  FormMain::GetInst()->RedrawMainPanel();
+
 }
 
 System::Void FormRefCurveDeform::m_btn_sharestroke_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeRefCurveDeform::GetInst()->ShareSelectedStroke();
+  ModeRefCurveDeform::GetInst()->MakeSelectedStroke_Shared();
 }
 
 
-System::Void FormRefCurveDeform::m_btn_loadstate_Click(System::Object^ sender, System::EventArgs^ e)
-{
-  LoadState();
-}
-
-
-System::Void FormRefCurveDeform::m_btn_savestate_Click(System::Object^ sender, System::EventArgs^ e)
-{
-  SaveState();
-}
-
-System::Void FormRefCurveDeform::m_btn_flip_normals_Click(System::Object^ sender, System::EventArgs^ e)
+System::Void FormRefCurveDeform::m_btn_flipnormal_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeRefCurveDeform::GetInst()->FlipSelectedStrokeNormalSide();
 }
 
-void FormRefCurveDeform::LoadState()
+
+
+System::Void FormRefCurveDeform::m_btn_loadstate_Click(System::Object^ sender, System::EventArgs^ e)
 {
   std::string fpath;
 
@@ -123,17 +104,11 @@ void FormRefCurveDeform::LoadState()
   IntPtr mptr = System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(dlg->FileName);
   fpath = static_cast<const char*>(mptr.ToPointer());
 
-  std::set<int> set_frame_idx;
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  for (int i = 0; i < num_frames; ++i)
-  {
-    set_frame_idx.insert(i);
-  }
-  ModeRefCurveDeform::GetInst()->LoadState(fpath, set_frame_idx);
+  ModeRefCurveDeform::GetInst()->LoadState(fpath);
 }
 
 
-void FormRefCurveDeform::SaveState()
+System::Void FormRefCurveDeform::m_btn_savestate_Click(System::Object^ sender, System::EventArgs^ e)
 {
   std::string fpath;
 
@@ -144,35 +119,8 @@ void FormRefCurveDeform::SaveState()
   IntPtr mptr = System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(dlg->FileName);
   fpath = static_cast<const char*>(mptr.ToPointer());
 
-  std::set<int> set_frame_idx;
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  for (int i = 0; i < num_frames; ++i)
-  {
-    set_frame_idx.insert(i);
-  }
-  ModeRefCurveDeform::GetInst()->SaveState(fpath, set_frame_idx);
+  ModeRefCurveDeform::GetInst()->SaveState(fpath);
 }
 
 
-int FormRefCurveDeform::GetCPSize()
-{
-  return static_cast<int>(m_numbox_cpsize->Value);
-}
 
-
-bool FormRefCurveDeform::GetShowOnlySelectedStroke()
-{
-  return static_cast<bool>(m_checkbox_showonlyselectedstroke->Checked);
-}
-
-
-int FormRefCurveDeform::GetMCScale()
-{
-  return static_cast<int>(m_trackbar_mcscale->Value);
-}
-
-
-System::Void FormRefCurveDeform::m_numbox_cpsize_ValueChanged(System::Object^ sender, System::EventArgs^ e)
-{
-  ModeRefCurveDeform::GetInst()->SetCPSize();
-}

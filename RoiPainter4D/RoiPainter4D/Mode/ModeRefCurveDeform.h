@@ -4,7 +4,6 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "MaskMeshSequence.h"
 #include <vector>
 #include <stack>
 #include "DeformationStrokes.h"
@@ -17,47 +16,72 @@
 //  
 // (*) vol_flg[i]
 // not used
+// 
+// Refacored by Takashi At 2025/12
+// 
 //-----------------------------------------------
 
 
 class ModeRefCurveDeform :
   public ModeInterface
 {
-  MaskMeshSequence m_mask_mesh;
+  // Curves 
+  std::vector<std::vector<PlanarCurve>> m_curves; // [framd_idx][curve_idx]
+  std::vector<SharedCurves> m_shared_curves; // [curve_idx]
 
-  int   m_cp_size;
+  typedef struct
+  {
+    int frame_idx;
+    std::vector<std::vector<PlanarCurve>> curves;
+    std::vector<SharedCurves> shared_curves;
+  } SnapShot;
+
+  std::stack<SnapShot> m_history; 
+
+
+  //Selected CurveCP Info 
+  class SelectionInfo
+  {
+  public: 
+    bool selected = false;
+    bool is_shared = false;
+    int curve_idx = -1;
+    int cp_idx = -1;
+    CRSSEC_ID crssec_id  = CRSSEC_XY;
+    float     crssec_pos = 0.0f;
+    EVec3f pos;
+
+    SelectionInfo(){ Clear(); }
+    void Set(bool _selected, bool _shared, int  _curve_id, int _cpid, EVec3f p, 
+             CRSSEC_ID _crssec_id, float _crssec_pos)
+    {
+      selected = _selected;
+      is_shared = _shared;
+      curve_idx = _curve_id;
+      cp_idx = _cpid;
+      pos = p;
+      crssec_id  = _crssec_id;
+      crssec_pos = _crssec_pos;
+    }
+    void Clear(){
+      Set(false, false, -1, -1, EVec3f(0, 0, 0), CRSSEC_XY, 0.0f);
+    }
+    bool IsStdCurveSelect(int _curve_idx){
+      return selected && !is_shared && curve_idx == _curve_idx;  
+    }
+    bool IsSharedCurveSelect(int _curve_idx){
+      return selected && is_shared && curve_idx == _curve_idx;  
+    }
+  };
+  
+  SelectionInfo m_select_info;
   float m_cp_rate;
-  int   m_prev_frame_idx;
-  bool  m_draw_surf_trans;
-  bool  m_exist_mesh;
+  int m_target_mask_id;
+  std::vector<TMesh> m_meshes_def ;
+  std::vector<TMesh> m_meshes_orig;
 
-  // Stroke Mode
-  std::vector<DeformationStrokes> m_strokes;
-  std::vector<TMesh> m_tmeshes;
-  std::vector<LaplacianDeformer> m_laplacian_deformer;
-  std::set<int> m_shared_stroke_idxs;
-  int m_prev_selected_stroke_idx;
-  std::vector<Eigen::Vector3f> m_matched_pos;
-
-  typedef struct
-  {
-    DeformationStrokes strokes;
-  } Action;
-
-  typedef struct
-  {
-    std::stack<Action> undo;
-    std::stack<Action> redo;
-  } History;
-  std::vector<History> m_histories;
-
-  bool m_show_only_selected_stroke;
-
-  EVec2i m_initpt;
-  EVec2i m_prevpt;
-
-  // canEndMode
-  bool m_is_not_saved_state;
+  std::vector<std::vector<int>   > m_debug_matched_vids;
+  std::vector<std::vector<EVec3f>> m_debug_matched_trgtpos;
 
   ModeRefCurveDeform();
 
@@ -88,38 +112,35 @@ public:
   void StartMode();
   void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt);
   // -----------------------------------------------------------------
+  
+  void FinishSegmentation();
+  void CancelSegmentation();
 
-  void Deform();
-  void Deform(const int);
+  void DeformCurrentFrame();
   void DeformAllFrame();
 
-   void Do();
-   void Undo();
-   void Redo();
+   void Do_RecordSnapShot();
+   void Undo_LoadSnapShot();
 
    void ConvertMaskToMesh();
-   void ConvertMeshToMask();
-   void ReloadMesh();
-   void ReloadMesh(const int);
+   void ReloadOrigMeshCurrentFrame();
    void CopyFromPrevFrame();
    void CopyStrokesToAllFrame();
-   void SetShowOnlySelectedStroke();
-   void SetCPSize();
 
-   void SaveState(const std::string&, const std::set<int>&);
-   void LoadState(const std::string&, const std::set<int>&);
+   void SaveState(const std::string&);
+   void LoadState(const std::string&);
 
    void FlipSelectedStrokeNormalSide();
-   void ShareSelectedStroke();
-   void UnshareSelectedStroke();
-   void LockSelectedStroke();
-   void UnlockSelectedStroke();
-   void UpdateSharedStroke();
+   void MakeSelectedStroke_Shared();
+   void MakeSelectedStroke_Unshared();
+   //void LockSelectedStroke();
+   //void UnlockSelectedStroke();
 
 private:
   void _Deform(const int);
-  void FindClosestPointFromStroke(const int, std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
+  //void FindClosestPointFromStroke(const int, std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
 
+  ModeRefCurveDeform::SelectionInfo PickCpAtCurrentFrame(const EVec3f& ray_pos, const EVec3f& ray_dir);
 
 };
 

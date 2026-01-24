@@ -3,6 +3,158 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include "tmath.h"
+
+
+
+class PlanarCurve
+{
+private:
+
+  //plane info
+  CRSSEC_ID m_crssec_id ; //xy yz or zx  
+  float     m_crssec_pos; //pposition 
+
+  //cp and curve info 
+  std::vector<EVec3f> m_curve = {};
+  std::vector<EVec3f> m_cps   = {};
+  bool m_normal_side = true;
+
+public:
+  PlanarCurve(CRSSEC_ID id, float crssec_pos, const EVec3f first_cp) : 
+    m_crssec_id(id), m_crssec_pos(crssec_pos)
+  {
+    m_cps.push_back(first_cp);
+  }
+
+  //save load 
+  PlanarCurve(std::ifstream &file);
+  void WriteToFile(std::ofstream &file);
+
+  inline int GetNumCPs() const { return static_cast<int>(m_cps.size()); }
+  inline CRSSEC_ID GetCrssecId () const { return m_crssec_id; }
+  inline float     GetCrssecPos() const { return m_crssec_pos;}
+  inline std::vector<EVec3f> GetCurve() const { return m_curve; }
+  inline std::vector<EVec3f> GetCPs  () const { return m_cps; }
+  inline EVec3f GetCP(int cpidx) const { 
+    if (cpidx < 0 || m_cps.size() <= cpidx) return EVec3f(0, 0, 0); 
+    return m_cps[cpidx]; 
+  }
+
+  void SetCPs(const std::vector<EVec3f>& cps)
+  {
+    if (cps.size() == 0) return;
+    m_cps = cps;
+    UpdateCurve();
+  }
+
+  inline bool GetNormalSide() const { return m_normal_side; }
+  inline void FlipNormal() { m_normal_side = !m_normal_side; }
+
+  //CP manipulation
+  bool AddCP(const EVec3f& pos, int& inserted_idx); // return inserted cp idx
+  void MoveCP(int cpidx, const EVec3f& _pos);
+  void DeleteCP(int cpidx);
+  bool PickCPs(const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius, int& cpidx, EVec3f& cp_pos) const;
+
+  void Draw   (const float color[4], const float thickness) const;
+  void DrawCPs(const float color[4], float radius, int select_cp_idx) const;
+
+  EVec3f GetCrssecNorm() const {
+    if      (m_crssec_id == CRSSEC_XY) return EVec3f(0.0f, 0.0f, 1.0f);
+    else if (m_crssec_id == CRSSEC_YZ) return EVec3f(1.0f, 0.0f, 0.0f);
+    else if (m_crssec_id == CRSSEC_ZX) return EVec3f(0.0f, 1.0f, 0.0f);
+    std::cout << "Error: PlanarCurve::GetCrssecNorm invalid crssec_id\n";
+    return EVec3f(0.0f, 0.0f, 0.0f);
+  }
+  
+  
+private:
+  void UpdateCurve();
+};
+
+
+
+
+class SharedCurves
+{
+  
+private:
+  std::vector<PlanarCurve> m_curves; // frame分のcurve
+  std::vector<bool> m_manip; //Userがf-frameを編集したら m_manip[f] = true
+  
+public:
+  SharedCurves(const int num_frame, const int init_frame, const PlanarCurve &src)
+  {
+    m_curves = std::vector<PlanarCurve>(num_frame, src);
+    m_manip = std::vector<bool>(num_frame, false);
+    m_manip[init_frame] = true;
+  }
+  void WriteToFile(std::ofstream& file);
+  SharedCurves(std::ifstream& file);
+
+  bool PickCPs(int framd_idx, 
+               const EVec3f& ray_pos, 
+               const EVec3f& ray_dir, 
+               const float cp_radius,
+               int &cp_idx, EVec3f &cp_pos) const
+  {
+    if (framd_idx < 0 || m_curves.size() <= framd_idx) return false;
+    return m_curves[framd_idx].PickCPs(ray_pos, ray_dir, cp_radius, cp_idx, cp_pos);
+  }
+
+  EVec3f GetCP(const int frame_idx, const int cp_idx) 
+  {
+    if (frame_idx < 0 || m_curves.size() <= frame_idx) return EVec3f(0,0,0);
+    return m_curves[frame_idx].GetCP(cp_idx);
+  }
+  
+  CRSSEC_ID GetCrssecId() {
+    if (m_curves.size() == 0) return CRSSEC_XY;
+    return m_curves[0].GetCrssecId();
+  }
+
+  float GetCrssecPos() {
+    if (m_curves.size() == 0) return 0.0f;
+    return m_curves[0].GetCrssecPos();
+  }
+  
+  const PlanarCurve GetCurve(const int frame_idx) const 
+  {
+    if (frame_idx < 0 || m_curves.size() <= frame_idx) 
+      throw std::out_of_range("SharedCurves::GetCurve invalid frame_idx");
+    return m_curves[frame_idx];
+  }
+
+  bool IsManipulated(const int frame_idx) const{
+    if (frame_idx < 0 || m_curves.size() <= frame_idx) 
+      throw std::out_of_range("SharedCurves::IsManipulated invalid frame_idx");
+    return m_manip[frame_idx];
+  }
+
+  void FlipNormal() 
+  {
+    for (size_t i = 0; i < m_curves.size(); ++i) m_curves[i].FlipNormal();
+  }
+
+
+  void MoveCP(const int frame_idx, const int cp_idx, const EVec3f &pos) 
+  {
+    if (frame_idx < 0 || m_curves.size() <= frame_idx) return;
+    m_curves[frame_idx].MoveCP(cp_idx, pos);
+    m_manip[frame_idx] = true;
+  }
+
+  void Draw   (const int frame_idx, const float color[4], const float thickness) const;
+  void DrawCPs(const int frame_idx, const float color[4], const float cp_radius, const int select_cp_idx) const;
+
+  void UpdateNonManipCurves();
+};
+
+
+
+
+
 
 
 class DeformationStrokes

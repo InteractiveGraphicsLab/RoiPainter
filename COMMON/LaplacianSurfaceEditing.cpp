@@ -1,166 +1,115 @@
-#include "LaplacianSurfaceEditing.h"
+﻿#include "LaplacianSurfaceEditing.h"
 
 //#define DEBUG_LAPLACIAN_DEFORMER
 
 
-LaplacianDeformer::LaplacianDeformer(
-  TMesh& _mesh) :
-  m_mesh(_mesh),
-  m_num_verts(_mesh.m_vSize),
-  m_is_set_solver(false)
-{
-
-}
+static const float COEF_FIXED = 1.0f;
+static const float COEF_WEAK  = 0.0001f;
 
 
-void LaplacianDeformer::Initialize(
-  TMesh& _mesh)
-{
-  m_mesh = _mesh;
-  m_num_verts = _mesh.m_vSize;
-  m_is_set_solver = false;
-}
 
 
-void LaplacianDeformer::Deform(
-  const std::vector<int>& _fixed_verts_idxs,
-  const std::vector<Eigen::Vector3f>& _fixed_positions)
-{
-  std::cout << "start deform...\n";
 
-  SetSolver(_fixed_verts_idxs);
-  Solve(_fixed_positions);
-
-  std::cout << "deformed...\n";
-}
-
-
-void LaplacianDeformer::SetSolver(
-  const std::vector<int>& _fixed_verts_idxs)
-{
-  #ifdef DEBUG_LAPLACIAN_DEFORMER
-    std::cout << "start SetSolver.\n";
-  #endif
-
-  m_coef = 1.0f;
-  m_coef_weak = 0.0001f;
-
-  m_fixed_verts_idxs = _fixed_verts_idxs;
-  m_num_fixed_verts = static_cast<int>(m_fixed_verts_idxs.size());
-  m_num_free_verts = m_num_verts - m_num_fixed_verts;
-
-  m_verts = Eigen::MatrixXf(m_num_verts, 3);
-  for (int i = 0; i < m_num_verts; ++i)
-  {
-    m_verts.row(i) = m_mesh.m_vVerts[i].transpose();
-  }
-
-  // laplacian
-  m_laplacian = Eigen::SparseMatrix<float>(m_num_verts, m_num_verts);
-  std::vector<Eigen::Triplet<float>> laplacian_triplets = std::vector<Eigen::Triplet<float>>();
-  ConstructLaplacian(laplacian_triplets);
-  m_laplacian.setFromTriplets(laplacian_triplets.begin(), laplacian_triplets.end());
-  m_laplacian.makeCompressed();
-
-  m_laplacian_transpose = m_laplacian.transpose();
-  m_laplacian_transpose.makeCompressed();
-
-  // delta
-  m_delta = m_laplacian * m_verts;
-
-  // matA
-  Eigen::SparseMatrix<float> matA = m_laplacian_transpose * m_laplacian;
-  int count = 0;
-  for (int i = 0; i < m_num_verts; ++i)
-  {
-    if (i == m_fixed_verts_idxs[count])
-    {
-      matA.coeffRef(i, i) += m_coef;
-      ++count;
-    }
-    else
-    {
-      matA.coeffRef(i, i) += m_coef_weak;
-    }
-  }
-  matA.makeCompressed();
-
-  // set solver
-#ifdef DEBUG_LAPLACIAN_DEFORMER
-  std::cout << "start compute.\n";
-#endif
-  m_solver = std::make_unique<Eigen::SimplicialLLT<Eigen::SparseMatrix<float>>>();
-  m_solver->compute(matA);
-
-  #ifdef DEBUG_LAPLACIAN_DEFORMER
-    std::cout << "solver set.\n";
-  #endif
-
-  m_is_set_solver = true;
-}
-
-
-void LaplacianDeformer::Solve(
-  const std::vector<Eigen::Vector3f>& _fixed_positions)
-{
-  if (!m_is_set_solver) {
-    std::cout << "solver is not set.\n";
-    return;
-  }
-
-  #ifdef DEBUG_LAPLACIAN_DEFORMER
-    std::cout << "start Solve.\n";
-  #endif
-
-  // vecb
-  Eigen::MatrixXf vecb = m_laplacian_transpose * m_delta;
-  int count = 0;
-  for (int i = 0; i < m_num_verts; ++i)
-  {
-    if (i == m_fixed_verts_idxs[count])
-    {
-      vecb.row(i) += m_coef * _fixed_positions[count].transpose();
-      ++count;
-    }
-    else
-    {
-      vecb.row(i) += m_coef_weak * m_verts.row(i);
-    }
-  }
-
-  // solve
-  const Eigen::MatrixXf result = m_solver->solve(vecb);
-
-#ifdef DEBUG_LAPLACIAN_DEFORMER
-  std::cout << "solver info: " << m_solver->info() << "\n";
-#endif
-
-  // update mesh
-  for (int i = 0; i < m_num_verts; ++i)
-  {
-    m_mesh.m_vVerts[i] = result.row(i).transpose();
-  }
-  m_mesh.UpdateNormal();
-
-  #ifdef DEBUG_LAPLACIAN_DEFORMER
-    std::cout << "solved.\n";
-  #endif
-}
-
-
-void LaplacianDeformer::ConstructLaplacian(
+// Extrat {i, j, coef}
+static void ConstructLaplacian(
+  const TMesh& mesh,
   std::vector<Eigen::Triplet<float>>& _triplets)
 {
-  #ifdef DEBUG_LAPLACIAN_DEFORMER
-    std::cout << "start ConstructLaplacian.\n";
-  #endif
-
-  for (int i = 0; i < m_num_verts; ++i) {
-    const std::vector<int>& neighbors = m_mesh.m_vRingVs[i];
+  for (int i = 0; i < mesh.m_vSize; ++i) 
+  {
+    const std::vector<int>& neighbors = mesh.m_vRingVs[i];
     const int degree = static_cast<int>(neighbors.size());
-    for (int neighbor : neighbors) {
+    if (degree == 0) continue;
+
+    for (int neighbor : neighbors) 
+    {
       _triplets.emplace_back(i, neighbor, -1.0f / static_cast<float>(degree));
     }
     _triplets.emplace_back(i, i, 1.0f);
   }
 }
+
+
+
+void LaplacianDeformer::Deform(
+  TMesh& mesh,
+  const std::vector<int>& const_vids,
+  const std::vector<Eigen::Vector3f>& const_trgtpos)
+{
+  if ( const_vids.size() != const_trgtpos.size() ) return;
+
+
+  std::cout << "STEP 1 CONSTRUCT LAPLACIAN MATRIX ..\n";
+  const int num_verts = mesh.m_vSize;
+
+  std::vector<bool  > verts_fixed(num_verts, false);
+  std::vector<EVec3f> verts_trgt (num_verts, EVec3f());
+
+  for (size_t i = 0; i < const_vids.size(); ++i)
+  {
+    if (const_vids[i] >= num_verts) 
+    {
+      std::cout << "WARNING: Deform\n";
+      continue;
+    }
+    verts_fixed[const_vids[i]] = true;
+    verts_trgt [const_vids[i]] = const_trgtpos[i];
+  }
+
+  //Create Laplacian Matrix
+  Eigen::SparseMatrix<float> laplacian, laplacian_transpose;
+  laplacian = Eigen::SparseMatrix<float>(num_verts, num_verts);
+  std::vector<Eigen::Triplet<float>> laplacian_triplets = std::vector<Eigen::Triplet<float>>();
+  ConstructLaplacian(mesh, laplacian_triplets);
+  laplacian.setFromTriplets(laplacian_triplets.begin(), laplacian_triplets.end());
+  laplacian.makeCompressed();
+  laplacian_transpose = laplacian.transpose();
+  laplacian_transpose.makeCompressed();
+
+  // matA
+  Eigen::SparseMatrix<float> matA = laplacian_transpose * laplacian;
+  for (int i = 0; i < num_verts; ++i)
+  {
+    matA.coeffRef(i, i) += (verts_fixed[i]) ? COEF_FIXED : COEF_WEAK;
+  }
+
+  matA.makeCompressed();
+
+  std::cout << "STEP 2 PREPARE ORIGINAL LAPLACIAN------------------\n";
+
+  // verts & original laplacian vectors を Nx3 行列にまとめる
+  Eigen::MatrixXf verts = Eigen::MatrixXf(num_verts, 3);
+  for (int i = 0; i < num_verts; ++i)
+    verts.row(i) = mesh.m_vVerts[i].transpose();
+
+  Eigen::MatrixXf delta = laplacian * verts;
+
+
+  std::cout << "STEP 4 PREPARE Solver------------------\n";
+  std::unique_ptr<Eigen::SimplicialLLT<Eigen::SparseMatrix<float>>> solver;
+  solver = std::make_unique<Eigen::SimplicialLLT<Eigen::SparseMatrix<float>>>();
+  solver->compute(matA);
+
+
+  std::cout << "STEP 5 SOLVE Ax = b -------------------\n";
+  Eigen::MatrixXf b = laplacian_transpose * delta;
+  
+  for (int i = 0; i < num_verts; ++i)
+  {
+    if (verts_fixed[i]) b.row(i) += COEF_FIXED * verts_trgt[i].transpose();
+    else b.row(i) += COEF_WEAK * verts.row(i);
+  }
+
+  // solve
+  const Eigen::MatrixXf result = solver->solve(b);
+
+  // update mesh
+  for (int i = 0; i < num_verts; ++i)
+  {
+    mesh.m_vVerts[i] = result.row(i).transpose();
+  }
+  mesh.UpdateNormal();
+
+  std::cout << "deformed...\n";
+}
+
