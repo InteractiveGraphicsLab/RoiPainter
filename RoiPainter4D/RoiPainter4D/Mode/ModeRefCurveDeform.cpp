@@ -83,7 +83,7 @@ void ModeRefCurveDeform::StartMode()
 }
 
 
-ModeRefCurveDeform::SelectionInfo ModeRefCurveDeform::PickCpAtCurrentFrame(
+PlanarCurveSelectionInfo ModeRefCurveDeform::PickCpAtCurrentFrame(
     const EVec3f& ray_pos, 
     const EVec3f& ray_dir)
 {
@@ -91,7 +91,7 @@ ModeRefCurveDeform::SelectionInfo ModeRefCurveDeform::PickCpAtCurrentFrame(
   const float CP_RAD = m_cp_rate * FormRefCurveDeform_GetCpSize();
   const bool  ONLY_SELECTED = FormRefCurveDeform_VisOnlySelCurve();
 
-  SelectionInfo info;
+  PlanarCurveSelectionInfo info;
   int cp_idx;
   EVec3f cp_pos;
 

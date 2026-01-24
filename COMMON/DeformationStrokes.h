@@ -155,6 +155,47 @@ public:
 
 
 
+//Selected CurveCP Info 
+class PlanarCurveSelectionInfo
+{
+public:
+  bool selected = false;
+  bool is_shared = false;
+  int curve_idx = -1;
+  int cp_idx = -1;
+  CRSSEC_ID crssec_id = CRSSEC_XY;
+  float     crssec_pos = 0.0f;
+  EVec3f pos;
+
+  PlanarCurveSelectionInfo() { Clear(); }
+  void Set(bool _selected, bool _shared, int  _curve_id, int _cpid, EVec3f p,
+    CRSSEC_ID _crssec_id, float _crssec_pos)
+  {
+    selected = _selected;
+    is_shared = _shared;
+    curve_idx = _curve_id;
+    cp_idx = _cpid;
+    pos = p;
+    crssec_id = _crssec_id;
+    crssec_pos = _crssec_pos;
+  }
+  void Clear() {
+    Set(false, false, -1, -1, EVec3f(0, 0, 0), CRSSEC_XY, 0.0f);
+  }
+  bool IsStdCurveSelect(int _curve_idx) {
+    return selected && !is_shared && curve_idx == _curve_idx;
+  }
+  bool IsSharedCurveSelect(int _curve_idx) {
+    return selected && is_shared && curve_idx == _curve_idx;
+  }
+};
+
+
+
+
+
+
+
 
 
 class DeformationStrokes
