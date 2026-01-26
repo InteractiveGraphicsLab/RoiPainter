@@ -50,7 +50,6 @@ void ModeSegStrokeFfd::StartMode()
   m_bL = m_bR = m_bM = false;
   m_b_draw_selectionrect = false;
   m_draghandle_id = OHDL_NON;
-  m_debug = false;
 
   m_cp_size    = cube[0] * 0.0006f * 10;
   m_handle_len = cube[0] * 0.06f * 3;
@@ -243,7 +242,6 @@ void ModeSegStrokeFfd::LBtnDown(const EVec2i& p, OglForCLI* ogl)
 
 
 
-
 void ModeSegStrokeFfd::LBtnUp(const EVec2i& p, OglForCLI* ogl)
 {
   const int frame_idx = formVisParam_getframeI();
@@ -274,40 +272,53 @@ void ModeSegStrokeFfd::LBtnUp(const EVec2i& p, OglForCLI* ogl)
 void ModeSegStrokeFfd::RBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
   m_bR = true;
-  const int frame_idx = formVisParam_getframeI();
-  const SFFD_MODE mode = FormSegStrokeFfd_GetDeformMode();
+  const int       frame_idx  = formVisParam_getframeI();
+  const SFFD_MODE mode       = FormSegStrokeFfd_GetDeformMode();
   const bool vis_selstr_only = FormSegStrokeFfd_GetShowOnlySelectedStroke();
   EVec3f ray_pos, ray_dir, pos;
   ogl->GetCursorRay(p, ray_pos, ray_dir);
 
   if (mode == SFFD_STROKE && IsShiftKeyOn())
   {
-    const int pick_str_idx = m_strokes[frame_idx].PickCPs(ray_pos, ray_dir, m_cp_size, true, vis_selstr_only);
+    //pickしたCPの削除（sharedならshared解除、非sharedならcp削除）
+    auto info = PickCpAtCurrentFrame(ray_pos, ray_dir);
 
-    if (pick_str_idx != -1)
+    if (info.selected && info.is_shared)
     {
-      if (m_strokes[frame_idx].bSelStrokeShared() == true)
+      if (ShowMsgDlgYesNo("All-frame曲線を解除しますか？\n（自動補間された曲線は削除されます）", "Unlock?"))
       {
-        if (ShowMsgDlgYesNo("All-frame曲線を解除しますか？\n（自動補間された曲線は削除されます）", "Unlock?"))
-          UnshareSelectedStroke();
+        Do_RecordSnapShot();
+        MakeSelectedStroke_Unshared();
+        m_select_info.Clear();
+      }
+    }
+    else if (info.selected && !info.is_shared)
+    {
+      Do_RecordSnapShot();
+      std::vector<PlanarCurve>& curves = m_curves[frame_idx];
+      curves[info.curve_idx].DeleteCP(info.cp_idx);
+      if (curves[info.curve_idx].GetNumCPs() == 0)
+      {
+        curves.erase(curves.begin() + info.curve_idx);
+        m_select_info.Clear();
       }
       else
       {
-        Do();
-        m_strokes[frame_idx].DeleteSelectedCP();
+        m_select_info = info;
+        m_select_info.cp_idx = curves[info.curve_idx].GetNumCPs() - 1;
       }
     }
   }
   else if (mode == SFFD_STROKE && !IsShiftKeyOn())
   {
-    m_strokes[frame_idx].UnselectStroke();
+    m_select_info.Clear();
     ogl->BtnDown_Rot(p);
   }
   else if (mode == SFFD_CAGE)
   {
     if (IsShiftKeyOn() && m_meshseq.IsInitialized() && !m_bL)
     {
-      //pick to add
+      //pick to remove selection
       m_meshseq.SelectCageVtxByPick(frame_idx, ray_pos, ray_dir, 0);
       m_b_draw_selectionrect = true;
       for (int i = 0; i < 4; ++i) m_selectrect[i] = EVec3f(0, 0, 0);
@@ -327,9 +338,8 @@ void ModeSegStrokeFfd::RBtnDown(const EVec2i& p, OglForCLI* ogl)
 void ModeSegStrokeFfd::RBtnUp(const EVec2i& p, OglForCLI* ogl)
 {
   const int frame_idx = formVisParam_getframeI();
-  const SFFD_MODE mode = FormSegStrokeFfd_GetDeformMode();
 
-  if (mode == SFFD_CAGE)
+  if (FormSegStrokeFfd_GetDeformMode() == SFFD_CAGE)
   {
     if (m_b_draw_selectionrect && m_meshseq.IsInitialized())
       m_meshseq.SelectCageVtxByRect(frame_idx, m_initpt, p, ogl, 0);
@@ -348,16 +358,6 @@ void ModeSegStrokeFfd::MBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
   m_bM = true;
   ogl->BtnDown_Zoom(p);
-
-  const SFFD_MODE mode = FormSegStrokeFfd_GetDeformMode();
-  const int frame_idx  = formVisParam_getframeI();
-
-  if (mode == SFFD_STROKE)
-  {
-    m_strokes[frame_idx].UnselectStroke();
-  }
-
-  formMain_RedrawMainPanel();
 }
 
 
@@ -373,9 +373,8 @@ void ModeSegStrokeFfd::MouseMove(const EVec2i& p, OglForCLI* ogl)
 {
   if (!m_bL && !m_bR && !m_bM) return;
 
-  const int frame_idx  = formVisParam_getframeI();
+  const int  frame_idx = formVisParam_getframeI();
   const SFFD_MODE mode = FormSegStrokeFfd_GetDeformMode();
-  const int mode_trs = FormSegStrokeFfd_GetModeTransRotScale();
   
   if (mode == SFFD_STROKE && IsShiftKeyOn() && m_bL)
   {
@@ -384,32 +383,41 @@ void ModeSegStrokeFfd::MouseMove(const EVec2i& p, OglForCLI* ogl)
 
     if (PickCrssec(ray_pos, ray_dir, pos) != CRSSEC_NON)
     {
-      m_strokes[frame_idx].MoveSelectedCP(pos);
+      int curve_idx = m_select_info.curve_idx;
+      int cp_idx = m_select_info.cp_idx;
+      if (m_select_info.selected && m_select_info.is_shared)
+      {
+        m_shared_curves[curve_idx].MoveCP(frame_idx, cp_idx, pos);
+      }
+      else if (m_select_info.selected && !m_select_info.is_shared)
+      {
+        m_curves[frame_idx][curve_idx].MoveCP(cp_idx, pos);
+      }
     }
+  }
+  else if (mode == SFFD_CAGE && m_b_draw_selectionrect)
+  {
+    //rect points
+    int x = m_initpt[0], y = m_initpt[1];
+    auto ray0 = ogl->GetCursorRay1(std::min(p[0], x), std::min(p[1], y));
+    auto ray1 = ogl->GetCursorRay1(std::min(p[0], x), std::max(p[1], y));
+    auto ray2 = ogl->GetCursorRay1(std::max(p[0], x), std::max(p[1], y));
+    auto ray3 = ogl->GetCursorRay1(std::max(p[0], x), std::min(p[1], y));
+    m_selectrect[0] = std::get<0>(ray0) + 0.1f * std::get<1>(ray0);
+    m_selectrect[0] = std::get<0>(ray1) + 0.1f * std::get<1>(ray1);
+    m_selectrect[0] = std::get<0>(ray2) + 0.1f * std::get<1>(ray2);
+    m_selectrect[0] = std::get<0>(ray3) + 0.1f * std::get<1>(ray3);
   }
   else if (m_draghandle_id != OHDL_NON)
   {
+    const int mode_trs = FormSegStrokeFfd_GetModeTransRotScale();
+
     if (mode_trs == 0)
       m_meshseq.TranslateSelectedVerts(frame_idx, m_prevpt, p, m_draghandle_id, ogl);
     else if (mode_trs == 1)
       m_meshseq.RotateSelectedVerts   (frame_idx, m_prevpt, p, m_draghandle_id, m_handle_len, ogl);
     else if (mode_trs == 2)
       m_meshseq.ScaleSelectedVerts    (frame_idx, m_prevpt, p, ogl);
-  }
-  else if (mode == SFFD_CAGE && m_b_draw_selectionrect)
-  {
-    //draw selecting rect
-    EVec2i rectpt[4] = {
-      EVec2i(std::min(p[0],m_initpt[0]), std::min(p[1],m_initpt[1])),
-      EVec2i(std::min(p[0],m_initpt[0]), std::max(p[1],m_initpt[1])),
-      EVec2i(std::max(p[0],m_initpt[0]), std::max(p[1],m_initpt[1])),
-      EVec2i(std::max(p[0],m_initpt[0]), std::min(p[1],m_initpt[1])) };
-
-    for (int i = 0; i < 4; ++i)
-    {
-      auto ray = ogl->GetCursorRay1(rectpt[i]);
-      m_selectrect[i] = std::get<0>(ray) + 0.1f * std::get<1>(ray);
-    }
   }
   else
   {
@@ -452,16 +460,7 @@ void ModeSegStrokeFfd::RBtnDclk(const EVec2i& p, OglForCLI* ogl)
 {
   const SFFD_MODE mode = FormSegStrokeFfd_GetDeformMode();
 
-  if ( mode == SFFD_STROKE)
-  {
-    const int frame_idx = formVisParam_getframeI();
-    if (IsShiftKeyOn())
-    {
-      Do();
-      m_strokes[frame_idx].Delete_SelStroke();
-    }
-  }
-  else if (mode == SFFD_CAGE && m_meshseq.IsInitialized())
+  if (mode == SFFD_CAGE && m_meshseq.IsInitialized())
   {
     m_meshseq.ClearSelectedVtx();
   }
@@ -471,108 +470,64 @@ void ModeSegStrokeFfd::RBtnDclk(const EVec2i& p, OglForCLI* ogl)
 void ModeSegStrokeFfd::MBtnDclk(const EVec2i& p, OglForCLI* ogl) {}
 
 
+void ModeSegStrokeFfd::KeyUp(int nChar) {}
+
+
 void ModeSegStrokeFfd::KeyDown(int nChar)
 {
-  const SFFD_MODE mode = FormSegStrokeFfd_GetDeformMode();
-
-  if ((mode == SFFD_STROKE) && IsCtrKeyOn() && m_meshseq.IsInitialized())
+  if (nChar == VK_F1)
   {
-    const int n = m_meshseq.GetNumCageVertex();
-    std::set<int> ids;
-    for (int i = 0; i < n; ++i)
-    {
-      ids.insert(i);
-    }
-    m_meshseq.SetCageVtxSelected(ids);
+    FormSegStrokeFfd_SwitchUiModeNext();
   }
-
-  // for debug (Shift+Ctrl+F12)
-  if ((nChar == VK_F12) && (m_debug || (IsShiftKeyOn() && IsCtrKeyOn())))
+  else if (nChar == VK_F2)
   {
-    m_debug = !m_debug;
-    std::cout << "\ndebug mode: " << (m_debug ? "ON" : "OFF") << std::endl;
+    FormSegStrokeFfd_SwithDeformMode();
   }
-  if (m_debug)
+  else if (nChar == VK_F3)
   {
-    if (nChar == VK_F1)
-    {
-      FormSegStrokeFfd_SwitchUiModeNext();
-    }
-    else if (nChar == VK_F2)
-    {
-      FormSegStrokeFfd_SwithDeformMode();
-    }
-    else if (nChar == VK_F3)
-    {
-      Undo();
-    }
-    else if (nChar == VK_F4)
-    {
-      Redo();
-    }
-    else if (nChar == VK_F5)
-    {
-      Deform();
-    }
-    else if (nChar == VK_F6)
-    {
-      Do();
-      CopyFromPrevFrame();
-    }
-    else if (nChar == VK_F7)
-    {
-      Do();
-      const int frame_idx = formVisParam_getframeI();
-      m_strokes[frame_idx].ClearAllStrokes();
-    }
-    else if (nChar == VK_F8)
-    {
-      ShareSelectedStroke();
-    }
-    else if (nChar == VK_F9)
-    {
-      UnshareSelectedStroke();
-    }
-    else if (nChar == VK_F10)
-    {
-      LockSelectedStroke();
-    }
-    else if (nChar == VK_F11)
-    {
-      UnlockSelectedStroke();
-    }
-    else if (nChar == VK_F12)
-    {
-      std::cout
-        << "[F1]  Change deform mode\n"
-        << "[F2]  Switch between stroke mode and cage mode\n"
-        << "[F3]  UNDO\n"
-        << "[F4]  REDO\n"
-        << "[F5]  Deform by strokes\n"
-        << "[F6]  Copy strokes from previous frame\n"
-        << "[F7]  Clear all strokes in this frame\n"
-        << "[F8]  Share selected stroke\n"
-        << "[F9]  Unshare selected stroke\n"
-        << "[F10] Lock selected stroke\n"
-        << "[F11] Unlock selected stroke\n"
-        << "[F12] Off debug mode\n"
-        << std::endl;
-    }
+    Deform();
+  }
+  else if (nChar == VK_F4){}
+  else if (nChar == VK_F5){}
+  else if (nChar == VK_F6){}
+  else if (nChar == VK_F7){}
+  else if (nChar == VK_F8){}
+  else if (nChar == VK_F9){}
+  else if (nChar == VK_F10){}
+  else if (nChar == VK_F11){}
+  else if (nChar == VK_F12)
+  {
+    std::cout
+      << "[F1]  Change deform mode\n"
+      << "[F2]  Switch between stroke mode and cage mode\n"
+      << "[F3]  Deform by strokes\n"
+      << std::endl;
   }
 }
+// 木村くんオリジナルの実装 : Ctrキーを押したら全選択（なんで必要なんだろう？）
+//const SFFD_MODE mode = FormSegStrokeFfd_GetDeformMode();
+
+//if (mode == SFFD_STROKE && IsCtrKeyOn() && m_meshseq.IsInitialized())
+//{
+//  const int n = m_meshseq.GetNumCageVertex();
+//  std::set<int> ids;
+//  for (int i = 0; i < n; ++i)
+//  {
+//    ids.insert(i);
+//  }
+//  m_meshseq.SetCageVtxSelected(ids);
+//}
 
 
-void ModeSegStrokeFfd::KeyUp(int nChar) {}
+
 
 
 void ModeSegStrokeFfd::DrawScene(
   const EVec3f& cam_pos,
   const EVec3f& cam_cnt)
 {
-  const EVec3f cuboid = ImageCore::GetCuboid();
   const int frame_idx = formVisParam_getframeI();
-  const int mode_trs  = FormSegStrokeFfd_GetModeTransRotScale();
-  const bool vis_activestroke_only = FormSegStrokeFfd_GetShowOnlySelectedStroke();
+  const EVec3f cuboid = ImageCore::GetCuboid();
 
   // bind volumes 
   ImageCore::GetInst()->BindAllVolumes();
@@ -583,28 +538,21 @@ void ModeSegStrokeFfd::DrawScene(
     DrawVolumeVisMask(!IsShiftKeyOn(), cam_pos, cam_cnt);
   }
 
-  // draw cage & mesh 
-  const bool draw_bound = 1;
-  //const bool draw_surf_trans = 1;
 
+  //Draw Cross Section (Highlight at mesh intersection)
   glDisable(GL_CULL_FACE);
   glDepthMask(false);
   glEnable(GL_BLEND);
-
-  const bool b_xy = formVisParam_bPlaneXY();
-  const bool b_yz = formVisParam_bPlaneYZ();
-  const bool b_zx = formVisParam_bPlaneZX();
-  float planexy = b_xy ? CrssecCore::GetInst()->GetPlanePosXY() : -1;
-  float planeyz = b_yz ? CrssecCore::GetInst()->GetPlanePosYZ() : -1;
-  float planezx = b_zx ? CrssecCore::GetInst()->GetPlanePosZX() : -1;
-  if (!draw_bound)
-  {
-    planexy = planeyz = planezx = -1;
-  }
-
+  
   if (!IsSpaceKeyOn())
   {
-    //float opacity = m_draw_surf_trans ? (float)0.4 : (float)0;
+    const bool b_xy = formVisParam_bPlaneXY();
+    const bool b_yz = formVisParam_bPlaneYZ();
+    const bool b_zx = formVisParam_bPlaneZX();
+    float planexy = b_xy ? CrssecCore::GetInst()->GetPlanePosXY() : -1;
+    float planeyz = b_yz ? CrssecCore::GetInst()->GetPlanePosYZ() : -1;
+    float planezx = b_zx ? CrssecCore::GetInst()->GetPlanePosZX() : -1;
+
     float opacity = IsSKeyOn() ? (float)1 : (float)0.4;
     const auto &m = m_meshseq.GetMesh(frame_idx);
     DrawMeshWithCrossecHL(m, planeyz, planezx, planexy, opacity, cuboid);
@@ -615,6 +563,7 @@ void ModeSegStrokeFfd::DrawScene(
   glEnable(GL_CULL_FACE);
 
   const SFFD_MODE mode = FormSegStrokeFfd_GetDeformMode();
+  const int  mode_trs = FormSegStrokeFfd_GetModeTransRotScale();
 
   if (mode == SFFD_STROKE)
   {
@@ -625,18 +574,14 @@ void ModeSegStrokeFfd::DrawScene(
       DrawCageWithCPs(c, true, m_cp_size, m_meshseq.GetSelectedCageVtxVec());
     }
 
-    // draw stroke
-    if (!IsSKeyOn())
-    {
-      m_strokes[frame_idx].DrawStrokes(vis_activestroke_only);
-    }
-
-    if (IsShiftKeyOn())
-    {
-      // draw control points
-      m_strokes[frame_idx].DrawControlPoints(m_cp_size, vis_activestroke_only);
-    }
-    else if (IsCtrKeyOn() && m_meshseq.GetNumSelectedVtx() > 0)
+    const bool VIS_CP = IsShiftKeyOn();
+    const bool VIS_ONLY_SEL = FormSegStrokeFfd_GetShowOnlySelectedStroke();
+    DrawPlanerCurvesAndSharedCurves(
+      frame_idx, m_select_info,
+      VIS_ONLY_SEL, VIS_CP, m_cp_size,
+      m_curves[frame_idx], m_shared_curves);
+  
+    if (IsCtrKeyOn() && m_meshseq.GetNumSelectedVtx() > 0)
     {
       // draw handle
       const EVec3f center = m_meshseq.GetSelectedVtxCentroid(frame_idx);
@@ -645,19 +590,17 @@ void ModeSegStrokeFfd::DrawScene(
   }
   else if (mode == SFFD_CAGE)
   {
+    const auto&   cage = m_meshseq.GetCage(frame_idx);
+    const EVec3f& cntr = m_meshseq.GetSelectedVtxCentroid(frame_idx);
+
     if (IsShiftKeyOn())
     {
-      const auto& c = m_meshseq.GetCage(frame_idx);
-      DrawCageWithCPs(c, true, m_cp_size, m_meshseq.GetSelectedCageVtxVec());
+      DrawCageWithCPs(cage, true, m_cp_size, m_meshseq.GetSelectedCageVtxVec());
     }
     else if (IsCtrKeyOn() && m_meshseq.GetNumSelectedVtx() > 0)
     {
-      const auto& c = m_meshseq.GetCage(frame_idx);
-      DrawCageWithCPs(c, true, m_cp_size, m_meshseq.GetSelectedCageVtxVec());
-
-      // draw handle
-      const EVec3f center = m_meshseq.GetSelectedVtxCentroid(frame_idx);
-      DrawHandle(center, m_handle_len, m_handle_wid, mode_trs);
+      DrawCageWithCPs(cage, true, m_cp_size, m_meshseq.GetSelectedCageVtxVec());
+      DrawHandle(cntr, m_handle_len, m_handle_wid, mode_trs);
     }
 
     // draw selection rect

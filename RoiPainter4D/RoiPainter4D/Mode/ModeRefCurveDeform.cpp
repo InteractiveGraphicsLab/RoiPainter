@@ -363,48 +363,15 @@ void ModeRefCurveDeform::DrawScene(
     glUseProgram(0);
   }
 
-  // draw stroke //
-  // standard curve
-  // selected     --> curve 赤, 作業中cp 赤、作業中以外CP 黄色
-  // non selected --> curve 黄, CP 黄
-  // Share Curve 
-  // selected        --> curve 赤緑, 作業中cp 赤、作業中以外CP 黄色
-  // shared(manip)   --> curve 緑    CP 黄
-  // shared(no manip)--> curve 水色  CP 黄
-
-  const std::vector<PlanarCurve> &curves = m_curves[frame_idx];
+  //DrawCurves
   const bool VIS_CP = IsShiftKeyOn();
   const bool VIS_ONLY_SEL = FormRefCurveDeform_VisOnlySelCurve();
-  const float STD_THICK = 2.0f;
-  const float SEL_THICK = 5.0f;
 
-  for (int i = 0; i < curves.size(); ++i)
-  {
-    bool is_selected = m_select_info.IsStdCurveSelect(i);
-    if (VIS_ONLY_SEL && !is_selected) continue;
+  DrawPlanerCurvesAndSharedCurves(
+    frame_idx, m_select_info, 
+    VIS_ONLY_SEL, VIS_CP, CP_RAD, 
+    m_curves[frame_idx], m_shared_curves);
 
-    const PlanarCurve& c = curves[i];
-    float* color = is_selected ? COLOR_R   : COLOR_Y;
-    float  thick = is_selected ? SEL_THICK : STD_THICK;
-    int   cp_idx = is_selected ? m_select_info.cp_idx : -1;
-    c.Draw(color, thick);
-    if (VIS_CP) c.DrawCPs(COLOR_Y, CP_RAD, cp_idx);
-  } 
-
-
-  for (int i = 0; i < m_shared_curves.size(); ++i)
-  {
-    const bool is_selected = m_select_info.IsSharedCurveSelect(i);
-    if (VIS_ONLY_SEL && !is_selected) continue;
-
-    const SharedCurves& sc = m_shared_curves[i];
-    float* color  = sc.IsManipulated(frame_idx) ? COLOR_G : COLOR_C;
-    float  thick  = is_selected ? SEL_THICK : STD_THICK;
-    int    cp_idx = is_selected ? m_select_info.cp_idx : -1;
-
-    sc.Draw(frame_idx, color, thick);
-    if (VIS_CP) sc.DrawCPs(frame_idx, color, CP_RAD, cp_idx);
-  }
 
   if (IsSpaceKeyOn())
   {
@@ -929,7 +896,6 @@ void ModeRefCurveDeform::LoadState(const std::string& _fpath)
 
 void ModeRefCurveDeform::KeyDown(int nChar)
 {
-  static bool debug = false;
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
   const int frame_idx = formVisParam_getframeI();
 
@@ -990,27 +956,19 @@ void ModeRefCurveDeform::KeyDown(int nChar)
     }
     std::cout << "num shared curves = " << m_shared_curves.size() << "\n";
   }
-  else if (nChar == VK_F9) {}
+  else if (nChar == VK_F9 ) {}
   else if (nChar == VK_F10) {}
   else if (nChar == VK_F11) {}
   else if (nChar == VK_F12)
   {
-    if (IsShiftKeyOn() && IsCtrKeyOn())
-    {
-      debug = !debug;
-      std::cout << "debug mode: " << (debug ? "ON" : "OFF") << "\n";
-      if (debug)
-      {
-        std::cout << "[F1]  Show matching between strokes and mesh" << "\n";
-        std::cout << "[F2]  Deform mesh all frame" << "\n";
-        std::cout << "[F3]  Reload mesh all frame" << "\n";
-        std::cout << "[F4]  Share selected stroke" << "\n";
-        std::cout << "[F5]  Unshare selected stroke" << "\n";
-        std::cout << "[F6]  Lock selected stroke" << "\n";
-        std::cout << "[F7]  Unlock selected stroke" << "\n";
-        std::cout << "[F12] Switch debug mode (Shift+Ctrl+F12)" << "\n";
-      }
-    }
+      std::cout << "[F1]  Show matching between strokes and mesh" << "\n";
+      std::cout << "[F2]  Deform mesh all frame" << "\n";
+      std::cout << "[F3]  Reload mesh all frame" << "\n";
+      std::cout << "[F4]  Share selected stroke" << "\n";
+      std::cout << "[F5]  Unshare selected stroke" << "\n";
+      //std::cout << "[F6]  Lock selected stroke" << "\n";
+      //std::cout << "[F7]  Unlock selected stroke" << "\n";
+      std::cout << "[F8]  Show Num of curves" << "\n";
   }
 }
 

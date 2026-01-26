@@ -395,7 +395,12 @@ public:
     GetCursorRay(pt[0], pt[1], ray_pos, ray_dir);
     return std::forward_as_tuple( ray_pos, ray_dir ) ;
   }
-
+  std::tuple<EVec3f, EVec3f> GetCursorRay1(int cx, int cy)
+  {
+    EVec3f ray_pos, ray_dir;
+    GetCursorRay(cx, cy, ray_pos, ray_dir);
+    return std::forward_as_tuple(ray_pos, ray_dir);
+  }
 
 private:
 

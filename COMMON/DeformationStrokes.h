@@ -182,13 +182,67 @@ public:
   void Clear() {
     Set(false, false, -1, -1, EVec3f(0, 0, 0), CRSSEC_XY, 0.0f);
   }
-  bool IsStdCurveSelect(int _curve_idx) {
+  bool IsStdCurveSelect(int _curve_idx) const {
     return selected && !is_shared && curve_idx == _curve_idx;
   }
-  bool IsSharedCurveSelect(int _curve_idx) {
+  bool IsSharedCurveSelect(int _curve_idx) const {
     return selected && is_shared && curve_idx == _curve_idx;
   }
 };
+
+
+// draw stroke //
+// standard curve
+// selected     --> curve 赤, 作業中cp 赤、作業中以外CP 黄色
+// non selected --> curve 黄, CP 黄
+// Share Curve 
+// selected        --> curve 赤緑, 作業中cp 赤、作業中以外CP 黄色
+// shared(manip)   --> curve 緑    CP 黄
+// shared(no manip)--> curve 水色  CP 黄
+
+inline void DrawPlanerCurvesAndSharedCurves
+(
+  const int frame_idx,
+  const PlanarCurveSelectionInfo &select_info,
+  const bool VIS_ONLY_SEL,
+  const bool VIS_CP,
+  const float CP_RAD,
+  const std::vector<PlanarCurve> &curves,
+  const std::vector<SharedCurves>&shared_curves
+)
+{
+  const float STD_THICK = 2.0f;
+  const float SEL_THICK = 5.0f;
+
+  for (int i = 0; i < curves.size(); ++i)
+  {
+    bool is_selected = select_info.IsStdCurveSelect(i);
+    if (VIS_ONLY_SEL && !is_selected) continue;
+
+    const PlanarCurve& c = curves[i];
+    float* color = is_selected ? COLOR_R : COLOR_Y;
+    float  thick = is_selected ? SEL_THICK : STD_THICK;
+    int   cp_idx = is_selected ? select_info.cp_idx : -1;
+    c.Draw(color, thick);
+    if (VIS_CP) c.DrawCPs(COLOR_Y, CP_RAD, cp_idx);
+  }
+
+  for (int i = 0; i < shared_curves.size(); ++i)
+  {
+    const bool is_selected = select_info.IsSharedCurveSelect(i);
+    if (VIS_ONLY_SEL && !is_selected) continue;
+
+    const SharedCurves& sc = shared_curves[i];
+    float* color  = sc.IsManipulated(frame_idx) ? COLOR_G : COLOR_C;
+    float  thick  = is_selected ? SEL_THICK : STD_THICK;
+    int    cp_idx = is_selected ? select_info.cp_idx : -1;
+
+    sc.Draw(frame_idx, color, thick);
+    if (VIS_CP) sc.DrawCPs(frame_idx, color, CP_RAD, cp_idx);
+  }
+
+}
+
 
 
 

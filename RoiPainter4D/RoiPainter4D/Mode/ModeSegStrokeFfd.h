@@ -53,7 +53,6 @@ class ModeSegStrokeFfd : public ModeInterface
   EVec2i m_initpt; //drag開始位置
   EVec2i m_prevpt; //dragの直前位置
 
-  bool m_debug;
 
   ModeSegStrokeFfd();
 
