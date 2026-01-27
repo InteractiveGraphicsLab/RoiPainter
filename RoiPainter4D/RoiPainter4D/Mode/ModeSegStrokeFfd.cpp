@@ -614,18 +614,16 @@ void ModeSegStrokeFfd::DrawScene(
 
 void ModeSegStrokeFfd::Deform()
 {
-  float alpha;
-  float beta;
-  float gamma;
+  float alpha, beta, gamma;
   try
   {
     alpha = std::stof(FormSegStrokeFfd_GetAlpha());
-    beta = std::stof(FormSegStrokeFfd_GetBeta());
+    beta  = std::stof(FormSegStrokeFfd_GetBeta());
     gamma = std::stof(FormSegStrokeFfd_GetGamma());
   }
   catch (...)
   {
-    std::cout << "0以上の実数値を入力してください.\n";
+    std::cout << "αβγに0以上の実数値を入力してください.\n";
     return;
   }
 
@@ -633,10 +631,22 @@ void ModeSegStrokeFfd::Deform()
   if (m_meshseq.IsInitialized())
   {
     std::cout << "Deforming...\n";
-    Do();
+    
+    std::vector<std::vector<EVec3f>> curves;
+    for (const auto& c : m_curves[frame_idx]) 
+    {
+      curves.push_back(c.GetCurve());
+    }
+    for (const auto& sc : m_shared_curves)
+    {
+      curves.push_back(sc.GetCurve(frame_idx).GetCurve());
+    }
+
+
+    Do_RecordSnapShot();
     for (int i = 0; i < 20; ++i)
     {
-      DeformByStroke::Deform(m_meshseq, m_strokes[frame_idx].GetAllStrokeCurves(), frame_idx, alpha, beta, gamma);
+      DeformByStroke::Deform(m_meshseq, curves, frame_idx, alpha, beta, gamma);
       formMain_RedrawMainPanel();
     }
     std::cout << "Deformed.\n";
@@ -645,28 +655,28 @@ void ModeSegStrokeFfd::Deform()
 }
 
 
-void ModeSegStrokeFfd::LoadMeshAndCage(const std::string& _fpath_mesh, const std::string& _fpath_cage)
+void ModeSegStrokeFfd::LoadMeshAndCage(const std::string& fpath_mesh, const std::string& fpath_cage)
 {
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  const EVec3f cuboid = ImageCore::GetInst()->GetCuboidF();
+  const EVec3f cuboid  = ImageCore::GetInst()->GetCuboidF();
   m_meshseq.Clear();
-  m_meshseq.Initialize(num_frames, cuboid, _fpath_mesh, _fpath_cage);
-  std::cout << "Loaded mesh and cage.\n";
+  m_meshseq.Initialize(num_frames, cuboid, fpath_mesh, fpath_cage);
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
 
 
-void ModeSegStrokeFfd::SaveMeshAndCage(const std::string& _fpath_mesh, const std::string& _fpath_cage)
+void ModeSegStrokeFfd::SaveMeshAndCage(const std::string& fpath_mesh, const std::string& fpath_cage)
 {
-  m_meshseq.ExportCageMeshSequenceAsObj(_fpath_mesh, false);
-  m_meshseq.ExportCageMeshSequenceAsObj(_fpath_cage, true);
+  m_meshseq.ExportCageMeshSequenceAsObj(fpath_mesh, false);
+  m_meshseq.ExportCageMeshSequenceAsObj(fpath_cage, true);
   std::cout << "Saved mesh and cage.\n";
   formMain_ActivateMainForm();
 }
 
 
-void ModeSegStrokeFfd::SaveState(const std::string& _fpath, const std::set<int>& _set_frame_idx)
+
+void ModeSegStrokeFfd::SaveState(const std::string& _fpath)
 {
   std::ofstream file(_fpath);
   if (!file)
@@ -674,179 +684,130 @@ void ModeSegStrokeFfd::SaveState(const std::string& _fpath, const std::set<int>&
     std::cout << "Failed to save state.\n";
     return;
   }
+
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
 
-  for (int i = 0; i < num_frames; ++i)
-  {
-    if (!_set_frame_idx.count(i)) continue;
+  file << "ModeSegStrokeFfd_State\n";
+  file << "NumFrames: " << std::to_string(num_frames) + "\n";
 
-    file << "Frame:\n";
-    file << std::to_string(i) + "\n\n";
-    file << "Strokes:\n";
-    file << m_strokes[i].OutputAsText();
-    file << "EndStrokes\n\n";
-    file << "Cage:\n";
-    std::vector<EVec3f>& cage_vertices = m_meshseq.GetCageVertices(i);
-    for (const auto& vec : cage_vertices)
+  //normal curves 
+  for (int fi = 0; fi < num_frames; ++fi)
+  {
+    file << "Frame: " << std::to_string(fi) + "\n";
+    file << "num_curves: " << std::to_string(m_curves[fi].size()) << "\n";
+    for (int j = 0; j < m_curves[fi].size(); ++j)
+      m_curves[fi][j].WriteToFile(file);
+  }
+
+  //Shared curve
+  file << "SharedCurves: " << std::to_string(m_shared_curves.size()) << "\n";
+  for (size_t i = 0; i < m_shared_curves.size(); ++i)
+  {
+    m_shared_curves[i].WriteToFile(file);
+  }
+
+  //cage vertex
+  file << "CageVerts: " << std::to_string(num_frames) + "\n";
+  for (int fi = 0; fi < num_frames; ++fi)
+  {
+    std::vector<EVec3f>& verts = m_meshseq.GetCageVertices(fi);
+    file << "Num_Verts: " << std::to_string(verts.size()) + "\n";
+    for (const auto& v : verts)
     {
-      for (int i = 0; i < 3; ++i)
-      {
-        file << std::to_string(vec[i]) + " ";
-      }
-      file << "\n";
+      file << std::to_string(v[0]) + " " 
+            + std::to_string(v[1]) + " "
+            + std::to_string(v[2]) + "\n";
     }
-    file << "EndCage\n";
-    file << "EndFrame\n\n\n";
   }
   file.close();
 
-  std::cout << "Saved as \"" + _fpath + "\"\n";
+  std::cout << "Save as: " + _fpath + "\n";
   formMain_ActivateMainForm();
 }
 
 
-void ModeSegStrokeFfd::LoadState(const std::string& _fpath, const std::set<int>& _set_frame_idx)
+// TODO 使いまわしがあるので後で一部関数化
+void ModeSegStrokeFfd::LoadState(const std::string& fpath)
 {
-  enum class E_State
-  {
-    Init,
-    Frame_init,
-    Frame,
-    Stroke_init,
-    Stroke,
-    Cage,
-  };
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
 
-  std::ifstream file(_fpath);
-  if (!file)
+  std::ifstream file(fpath);
+  if (!file) return;
+
+  std::string line, key;
+  std::stringstream ss;
+
+  // ModeSegStrokeFfd_State
+  if (!ReadNextLine(file, line, ss)) return;
+  std::cout << line << "\n";
+
+  // NumFrames: n
+  if (!ReadNextLine(file, line, ss)) return;
+  int _num_frames = 0;
+  ss >> key >> _num_frames;
+  std::cout << key << _num_frames << "\n";
+
+  if (_num_frames != num_frames) return;
+
+  //normal curves 
+  for (int fi = 0; fi < num_frames; ++fi)
   {
-    std::cout << "Failed to load state.\n";
-    return;
+    int fidx, num_curves;
+
+    //Frame: fi
+    if (!ReadNextLine(file, line, ss)) return;
+    ss >> key >> fidx;
+    std::cout << key << fidx << "\n";
+
+    //num_curves: n
+    if (!ReadNextLine(file, line, ss)) return;
+    ss >> key >> num_curves;
+    m_curves[fi].clear();
+    std::cout << key << num_curves << "\n";
+    for (int j = 0; j < num_curves; ++j)
+    {
+      PlanarCurve c(file);
+      m_curves[fi].push_back(c);
+    }
   }
 
-  int frame_idx = -1;
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  E_State state = E_State::Init;
-  std::vector<EVec3f> cage_vertices;
-  std::vector<std::vector<EVec3f>> vec_strokes;
-  std::vector<EVec3f> stroke;
-  m_shared_stroke_idxs = std::set<int>();
-  std::vector<int> vec_shared_idxs;
-  int shared_idx;
+  //SharedCurves: n
+  if (!ReadNextLine(file, line, ss)) return;
+  int num_shared_curves = 0;
+  ss >> key >> num_shared_curves;
+  std::cout << key << num_shared_curves << "\n";
+  m_shared_curves.clear();
 
-  while (!file.eof())
+  for (int i = 0; i < num_shared_curves; ++i)
   {
-    char line_char[200];
-    file.getline(line_char, 200);
-    std::string line = std::string(line_char);
+    SharedCurves sc(file);
+    m_shared_curves.push_back(sc);
+    sc.UpdateNonManipCurves();
+  }
 
-    if (state == E_State::Init)
-    {
-      if (line == "Frame:")
-      {
-        state = E_State::Frame_init;
-      }
-    }
-    else if (state == E_State::Frame_init)
-    {
-      int x;
-      if (sscanf_s(line_char, "%d", &x) == 1)
-      {
-        if ((x < 0) || (x >= num_frames))
-        {
-          return;
-        }
-        else if (_set_frame_idx.count(x))
-        {
-          frame_idx = x;
-          state = E_State::Frame;
-        }
-        else
-        {
-          frame_idx = -1;
-          state = E_State::Init;
-        }
-      }
-    }
-    else if (state == E_State::Frame)
-    {
-      if (line == "Strokes:")
-      {
-        vec_shared_idxs = std::vector<int>();
-        vec_strokes = std::vector<std::vector<EVec3f>>();
-        state = E_State::Stroke_init;
-      }
-      else if (line == "Cage:")
-      {
-        cage_vertices = std::vector<EVec3f>();
-        state = E_State::Cage;
-      }
-      else if (line == "EndFrame")
-      {
-        std::cout << "Loaded frame: " + std::to_string(frame_idx) + ".\n";
-        state = E_State::Init;
-      }
-    }
-    else if ((state == E_State::Stroke_init) || (state == E_State::Stroke))
-    {
-      if (state == E_State::Stroke_init)
-      {
-        stroke = std::vector<EVec3f>();
-        state = E_State::Stroke;
-        int x;
-        if (sscanf_s(line_char, "%d", &x) == 1)
-        {
-          shared_idx = x;
-          continue;
-        }
-        else
-        {
-          shared_idx = -1;
-        }
-      }
 
-      float x, y, z;
-      if (sscanf_s(line_char, "%f %f %f", &x, &y, &z) == 3)
-      {
-        EVec3f vec;
-        vec[0] = x;
-        vec[1] = y;
-        vec[2] = z;
-        stroke.push_back(vec);
-      }
-      else if (line == "EndStrokes")
-      {
-        m_strokes[frame_idx].LoadState(vec_shared_idxs, vec_strokes);
-        state = E_State::Frame;
-      }
-      else
-      {
-        if ((shared_idx >= 0) && (m_shared_stroke_idxs.count(shared_idx) == 0))
-        {
-          m_shared_stroke_idxs.insert(shared_idx);
-        }
-        vec_shared_idxs.push_back(shared_idx);
-        vec_strokes.push_back(stroke);
-        state = E_State::Stroke_init;
-      }
-    }
-    else if (state == E_State::Cage)
+  //CageVerts: n
+  if (!ReadNextLine(file, line, ss)) return;
+  int _num_frames1 = 0;
+  ss >> key >> _num_frames1;
+  std::cout << key << _num_frames1 << "\n";
+  if (_num_frames1 != num_frames) return;
+
+  for (int fi = 0; fi < num_frames; ++fi)
+  {
+    int num_verts = 0;
+    if (!ReadNextLine(file, line, ss)) return;
+    ss >> key >> num_verts;
+    std::vector<EVec3f> verts;
+    for (int j = 0; j < num_verts; ++j)
     {
+      if (!ReadNextLine(file, line, ss)) return;
       float x, y, z;
-      if (sscanf_s(line_char, "%f %f %f", &x, &y, &z) == 3)
-      {
-        EVec3f vec;
-        vec[0] = x;
-        vec[1] = y;
-        vec[2] = z;
-        cage_vertices.push_back(vec);
-      }
-      else if (line == "EndCage")
-      {
-        m_meshseq.SetCageVertices(frame_idx, cage_vertices, true);
-        state = E_State::Frame;
-      }
+      ss >> x >> y >> z;
+      verts.push_back(EVec3f(x, y, z));
     }
+    
+    m_meshseq.SetCageVertices(fi, verts);
   }
 
   file.close();
@@ -854,9 +815,6 @@ void ModeSegStrokeFfd::LoadState(const std::string& _fpath, const std::set<int>&
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
-
-
-
 
 
 

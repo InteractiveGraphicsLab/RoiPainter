@@ -89,8 +89,8 @@ public:
 
   void LoadMeshAndCage(const std::string&, const std::string&);
   void SaveMeshAndCage(const std::string&, const std::string&);
-  void SaveState(const std::string&, const std::set<int>&);
-  void LoadState(const std::string&, const std::set<int>&);
+  void SaveState(const std::string& fname);
+  void LoadState(const std::string& fname);
 
 
   void CopyFromPrevFrame();

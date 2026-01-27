@@ -92,8 +92,8 @@ public:
    void CopyFromPrevFrame();
    void CopyStrokesToAllFrame();
 
-   void SaveState(const std::string&);
-   void LoadState(const std::string&);
+   void SaveState(const std::string& fname);
+   void LoadState(const std::string& fname);
 
    void FlipSelectedStrokeNormalSide();
    void MakeSelectedStroke_Shared();

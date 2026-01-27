@@ -78,13 +78,8 @@ System::Void FormSegStrokeFfd::m_btn_loadstate_Click(System::Object^ sender, Sys
   IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
   fpath = static_cast<const char*>(mptr.ToPointer());
 
-  std::set<int> set_frame_idx;
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  for (int i = 0; i < num_frames; ++i)
-  {
-    set_frame_idx.insert(i);
-  }
-  ModeSegStrokeFfd::GetInst()->LoadState(fpath, set_frame_idx);
+
+  ModeSegStrokeFfd::GetInst()->LoadState(fpath);
 }
 
 
@@ -99,13 +94,8 @@ System::Void FormSegStrokeFfd::m_btn_savestate_Click(System::Object^ sender, Sys
   IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
   fpath = static_cast<const char*>(mptr.ToPointer());
 
-  std::set<int> set_frame_idx;
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  for (int i = 0; i < num_frames; ++i)
-  {
-    set_frame_idx.insert(i);
-  }
-  ModeSegStrokeFfd::GetInst()->SaveState(fpath, set_frame_idx);
+
+  ModeSegStrokeFfd::GetInst()->SaveState(fpath);
 }
 
 
@@ -117,13 +107,12 @@ System::Void FormSegStrokeFfd::m_btn_deform_Click(System::Object^ sender, System
 
 System::Void FormSegStrokeFfd::m_btn_undo_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeSegStrokeFfd::GetInst()->Undo();
+  ModeSegStrokeFfd::GetInst()->Undo_LoadSnapShot();
 }
 
 
 System::Void FormSegStrokeFfd::m_btn_redo_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeSegStrokeFfd::GetInst()->Redo();
 }
 
 
