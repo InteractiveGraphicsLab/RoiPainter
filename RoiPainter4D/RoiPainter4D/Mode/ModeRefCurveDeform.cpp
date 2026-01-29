@@ -558,9 +558,9 @@ void ModeRefCurveDeform::CopyFromPrevFrame()
 {
   const int frame_idx = formVisParam_getframeI();
   if (frame_idx <= 0) return;
+  Do_RecordSnapShot();
   std::cout << "Copy from previous frame.\n";
   m_curves[frame_idx] = m_curves[frame_idx - 1];
-  Do_RecordSnapShot();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
@@ -570,13 +570,13 @@ void ModeRefCurveDeform::CopyStrokesToAllFrame()
 {
   const int frame_idx = formVisParam_getframeI();
   const int mum_frames = ImageCore::GetInst()->GetNumFrames();
+  Do_RecordSnapShot();
   for (int i = 0; i < mum_frames; ++i)
   {
     if (i == frame_idx) continue;
     m_curves[i] = m_curves[frame_idx];
   }
   std::cout << "Copy strokes to all frame.\n";
-  Do_RecordSnapShot();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
@@ -890,6 +890,9 @@ void ModeRefCurveDeform::LoadState(const std::string& _fpath)
     m_shared_curves.push_back(sc);
     sc.UpdateNonManipCurves();
   }
+  file.close();
+  formMain_RedrawMainPanel();
+
 }
 
 

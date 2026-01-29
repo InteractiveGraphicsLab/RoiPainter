@@ -5,8 +5,6 @@
 #include <set>
 #include "tmath.h"
 
-
-
 class PlanarCurve
 {
 private:

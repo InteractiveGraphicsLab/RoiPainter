@@ -1,5 +1,6 @@
 #pragma managed
 #include "FormSegStrokeFfd.h"
+#include "FormMain.h"
 //#include "CliMessageBox.h"
 
 #pragma unmanaged
@@ -14,7 +15,7 @@ using namespace RoiPainter4D;
 void FormSegStrokeFfd::InitAllItems()
 {
   m_textbox_alpha->Text = "1.0";
-  m_textbox_beta->Text = "1.0";
+  m_textbox_beta->Text  = "1.0";
   m_textbox_gamma->Text = "5.0";
   m_radiobtn_stroke->Checked = true;
   m_radiobtn_movement->Checked = true;
@@ -78,7 +79,6 @@ System::Void FormSegStrokeFfd::m_btn_loadstate_Click(System::Object^ sender, Sys
   IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
   fpath = static_cast<const char*>(mptr.ToPointer());
 
-
   ModeSegStrokeFfd::GetInst()->LoadState(fpath);
 }
 
@@ -94,7 +94,6 @@ System::Void FormSegStrokeFfd::m_btn_savestate_Click(System::Object^ sender, Sys
   IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
   fpath = static_cast<const char*>(mptr.ToPointer());
 
-
   ModeSegStrokeFfd::GetInst()->SaveState(fpath);
 }
 
@@ -104,29 +103,20 @@ System::Void FormSegStrokeFfd::m_btn_deform_Click(System::Object^ sender, System
   ModeSegStrokeFfd::GetInst()->Deform();
 }
 
-
 System::Void FormSegStrokeFfd::m_btn_undo_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeSegStrokeFfd::GetInst()->Undo_LoadSnapShot();
 }
-
-
-System::Void FormSegStrokeFfd::m_btn_redo_Click(System::Object^ sender, System::EventArgs^ e)
-{
-}
-
 
 System::Void FormSegStrokeFfd::m_btn_copyfromprevframe_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeSegStrokeFfd::GetInst()->CopyFromPrevFrame();
 }
 
-
 System::Void FormSegStrokeFfd::m_btn_sharestroke_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeSegStrokeFfd::GetInst()->ShareSelectedStroke();
+  ModeSegStrokeFfd::GetInst()->MakeSelectedStroke_Shared();
 }
-
 
 System::Void FormSegStrokeFfd::m_btn_copycagetoallframes_Click(System::Object^ sender, System::EventArgs^ e)
 {
@@ -137,8 +127,6 @@ System::Void FormSegStrokeFfd::m_btn_finish_segmentation_Click(System::Object^ s
 {
   ModeSegStrokeFfd::GetInst()->FinishSegmentation();
 }
-
-
 
 std::string FormSegStrokeFfd::GetAlpha()
 {
@@ -171,9 +159,9 @@ int FormSegStrokeFfd::GetDeformMode()
 
 int FormSegStrokeFfd::GetMode_TransRotScale()
 {
-  if      (m_radiobtn_movement->Checked) return 0;
-  else if (m_radiobtn_rotation->Checked) return 1;
-  else return 2; //m_radiobtn_scaling->Checked;
+  if (m_radiobtn_movement->Checked) return 0;
+  if (m_radiobtn_rotation->Checked) return 1;
+  return 2; //m_radiobtn_scaling->Checked;
 }
 
 
@@ -202,23 +190,17 @@ void FormSegStrokeFfd::SwitchUiModeNext()
   int trs = (GetMode_TransRotScale() + 1) % 3;
 
   if (trs == 0)
-  {
     m_radiobtn_movement->Checked = true;
-  }
   else if (trs == 1)
-  {
     m_radiobtn_rotation->Checked = true;
-  }
   else if (trs == 2)
-  {
     m_radiobtn_scaling->Checked = true;
-  }
 }
 
 
 void FormSegStrokeFfd::FrameChanged()
 {
-  ModeSegStrokeFfd::GetInst()->ClearSelectedStrokes();
+  ModeSegStrokeFfd::GetInst()->ClearSelectionInfo();
 }
 
 
@@ -227,12 +209,15 @@ System::Void FormSegStrokeFfd::m_radiobtn_cage_CheckedChanged(System::Object^ se
 System::Void FormSegStrokeFfd::m_radiobtn_movement_CheckedChanged(System::Object^ sender, System::EventArgs^ e){}
 System::Void FormSegStrokeFfd::m_radiobtn_rotation_CheckedChanged(System::Object^ sender, System::EventArgs^ e){}
 System::Void FormSegStrokeFfd::m_radiobtn_scaling_CheckedChanged(System::Object^ sender, System::EventArgs^ e){}
-System::Void FormSegStrokeFfd::m_checkbox_showonlyselectedstroke_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {}
 
+System::Void FormSegStrokeFfd::m_checkbox_showonlyselectedstroke_CheckedChanged(System::Object^ sender, System::EventArgs^ e) 
+{
+  formMain_RedrawMainPanel();
+}
 
 System::Void FormSegStrokeFfd::m_numbox_cpsize_ValueChanged(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeSegStrokeFfd::GetInst()->SetCPSize(static_cast<int>(m_numbox_cpsize->Value));
+  formMain_RedrawMainPanel();
 }
 
 

@@ -23,7 +23,7 @@
 
 class ModeSegStrokeFfd : public ModeInterface
 {
-  float m_cp_size;
+  float m_cp_rate;
   float m_handle_len;
   float m_handle_wid;
 
@@ -92,20 +92,14 @@ public:
   void SaveState(const std::string& fname);
   void LoadState(const std::string& fname);
 
-
   void CopyFromPrevFrame();
   void CopyCageToAllFrames();
-  void ShareSelectedStroke();
-  void UnshareSelectedStroke();
-  void LockSelectedStroke();
-  void UnlockSelectedStroke();
-  void UpdateSharedStroke();
-  void SetCPSize(int size);
-  void ClearSelectedStrokes();
+  void MakeSelectedStroke_Shared();
+  void MakeSelectedStroke_Unshared();
+
+  void ClearSelectionInfo();
 
   void FinishSegmentation();
-
-
   void Do_RecordSnapShot();
   void Undo_LoadSnapShot();
 
@@ -113,6 +107,10 @@ public:
     PlanarCurveSelectionInfo PickCpAtCurrentFrame(const EVec3f& ray_pos, const EVec3f& ray_dir);
 };
 
+
+//void LockSelectedStroke();
+//void UnlockSelectedStroke();
+//void UpdateSharedStroke();
 
 
 #endif
