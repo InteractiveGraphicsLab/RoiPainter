@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include "tmath.h"
+#include "tcolor.h"
 
 class PlanarCurve
 {
