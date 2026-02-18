@@ -8,13 +8,12 @@
 #include <vector>
 #include <stack>
 
-#include "DeformationStrokes.h" // 曲線制約によるモデル変形
+#include "DeformationStrokes.h"
 
 //-----------------------------------------------
 // By YUKI KIMURA published in PLoS ONE 
-// 
+// Refactored by Takashi (かなり大幅に変更を実施 : 2026 Jan)
 // (*) User Interface 
-// TODO 木村くんのコードを読んで確認
 //
 // (*) vol_flg[i]
 // not used
@@ -24,39 +23,36 @@
 
 class ModeSegStrokeFfd : public ModeInterface
 {
+  float m_cp_rate;
+  float m_handle_len;
+  float m_handle_wid;
+
   CagedMeshSequence m_meshseq;
 
-  typedef struct
-  {
-    DeformationStrokes strokes;
-    std::vector<EVec3f> verts;
-  } Action;
+  // Curve Mode
+  std::vector<std::vector<PlanarCurve>> m_curves       ; // [framd_idx][curve_idx]
+  std::vector<SharedCurves>             m_shared_curves; // [curve_idx]
 
-  typedef struct
-  {
-    std::stack<Action> undo;
-    std::stack<Action> redo;
-  } History;
-
-  std::vector<History> m_histories;
-
-  float m_cp_size;
-  float m_handle_len, m_handle_wid;
-
-  // Stroke Mode
-  std::vector<DeformationStrokes> m_strokes;
-  std::set<int> m_shared_stroke_idxs;
+  PlanarCurveSelectionInfo m_select_info;
 
   // Cage Mode
   ORTHO_HANDLE_ID m_draghandle_id;
-
-  bool   m_b_draw_selectionrect;
+  bool   m_b_draw_selectionrect; 
   EVec3f m_selectrect[4];
 
-  EVec2i m_initpt;
-  EVec2i m_prevpt;
+  typedef struct
+  {
+    int frame_idx;
+    std::vector<std::vector<PlanarCurve>> curves;
+    std::vector<SharedCurves> shared_curves;
+    std::vector<EVec3f> cage_verts;
+  } SnapShot;
 
-  bool m_debug;
+  std::stack<SnapShot> m_history;
+  
+  EVec2i m_initpt; //drag開始位置
+  EVec2i m_prevpt; //dragの直前位置
+
 
   ModeSegStrokeFfd();
 
@@ -93,26 +89,49 @@ public:
 
   void LoadMeshAndCage(const std::string&, const std::string&);
   void SaveMeshAndCage(const std::string&, const std::string&);
-  void SaveState(const std::string&, const std::set<int>&);
-  void LoadState(const std::string&, const std::set<int>&);
-
-  void Do();
-  void Undo();
-  void Redo();
+  void SaveState(const std::string& fname);
+  void LoadState(const std::string& fname);
 
   void CopyFromPrevFrame();
   void CopyCageToAllFrames();
-  void ShareSelectedStroke();
-  void UnshareSelectedStroke();
-  void LockSelectedStroke();
-  void UnlockSelectedStroke();
-  void UpdateSharedStroke();
-  void SetCPSize(int size);
-  void ClearSelectedStrokes();
+  void MakeSelectedStroke_Shared();
+  void MakeSelectedStroke_Unshared();
+
+  void ClearSelectionInfo();
 
   void FinishSegmentation();
+  void Do_RecordSnapShot();
+  void Undo_LoadSnapShot();
+
+  private:
+    PlanarCurveSelectionInfo PickCpAtCurrentFrame(const EVec3f& ray_pos, const EVec3f& ray_dir);
 };
 
 
+//void LockSelectedStroke();
+//void UnlockSelectedStroke();
+//void UpdateSharedStroke();
+
 
 #endif
+
+
+
+/*
+typedef struct
+{
+  DeformationStrokes strokes;
+  std::vector<EVec3f> verts;
+} Action;
+
+typedef struct
+{
+  std::stack<Action> undo;
+  std::stack<Action> redo;
+} History;
+
+std::vector<History> m_histories;
+std::vector<DeformationStrokes> m_strokes;
+std::set<int> m_shared_stroke_idxs;
+
+*/

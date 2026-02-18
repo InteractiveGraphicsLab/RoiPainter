@@ -39,42 +39,7 @@ class ModeRefCurveDeform :
   std::stack<SnapShot> m_history; 
 
 
-  //Selected CurveCP Info 
-  class SelectionInfo
-  {
-  public: 
-    bool selected = false;
-    bool is_shared = false;
-    int curve_idx = -1;
-    int cp_idx = -1;
-    CRSSEC_ID crssec_id  = CRSSEC_XY;
-    float     crssec_pos = 0.0f;
-    EVec3f pos;
-
-    SelectionInfo(){ Clear(); }
-    void Set(bool _selected, bool _shared, int  _curve_id, int _cpid, EVec3f p, 
-             CRSSEC_ID _crssec_id, float _crssec_pos)
-    {
-      selected = _selected;
-      is_shared = _shared;
-      curve_idx = _curve_id;
-      cp_idx = _cpid;
-      pos = p;
-      crssec_id  = _crssec_id;
-      crssec_pos = _crssec_pos;
-    }
-    void Clear(){
-      Set(false, false, -1, -1, EVec3f(0, 0, 0), CRSSEC_XY, 0.0f);
-    }
-    bool IsStdCurveSelect(int _curve_idx){
-      return selected && !is_shared && curve_idx == _curve_idx;  
-    }
-    bool IsSharedCurveSelect(int _curve_idx){
-      return selected && is_shared && curve_idx == _curve_idx;  
-    }
-  };
-  
-  SelectionInfo m_select_info;
+  PlanarCurveSelectionInfo m_select_info;
   float m_cp_rate;
   int m_target_mask_id;
   std::vector<TMesh> m_meshes_def ;
@@ -127,8 +92,8 @@ public:
    void CopyFromPrevFrame();
    void CopyStrokesToAllFrame();
 
-   void SaveState(const std::string&);
-   void LoadState(const std::string&);
+   void SaveState(const std::string& fname);
+   void LoadState(const std::string& fname);
 
    void FlipSelectedStrokeNormalSide();
    void MakeSelectedStroke_Shared();
@@ -140,7 +105,7 @@ private:
   void _Deform(const int);
   //void FindClosestPointFromStroke(const int, std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
 
-  ModeRefCurveDeform::SelectionInfo PickCpAtCurrentFrame(const EVec3f& ray_pos, const EVec3f& ray_dir);
+  PlanarCurveSelectionInfo PickCpAtCurrentFrame(const EVec3f& ray_pos, const EVec3f& ray_dir);
 
 };
 
