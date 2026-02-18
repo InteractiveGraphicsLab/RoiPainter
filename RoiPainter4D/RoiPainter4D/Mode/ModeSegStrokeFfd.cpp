@@ -404,9 +404,9 @@ void ModeSegStrokeFfd::MouseMove(const EVec2i& p, OglForCLI* ogl)
     auto ray2 = ogl->GetCursorRay1(std::max(p[0], x), std::max(p[1], y));
     auto ray3 = ogl->GetCursorRay1(std::max(p[0], x), std::min(p[1], y));
     m_selectrect[0] = std::get<0>(ray0) + 0.1f * std::get<1>(ray0);
-    m_selectrect[0] = std::get<0>(ray1) + 0.1f * std::get<1>(ray1);
-    m_selectrect[0] = std::get<0>(ray2) + 0.1f * std::get<1>(ray2);
-    m_selectrect[0] = std::get<0>(ray3) + 0.1f * std::get<1>(ray3);
+    m_selectrect[1] = std::get<0>(ray1) + 0.1f * std::get<1>(ray1);
+    m_selectrect[2] = std::get<0>(ray2) + 0.1f * std::get<1>(ray2);
+    m_selectrect[3] = std::get<0>(ray3) + 0.1f * std::get<1>(ray3);
   }
   else if (m_draghandle_id != OHDL_NON)
   {

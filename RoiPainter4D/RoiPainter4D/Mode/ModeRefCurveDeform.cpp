@@ -240,6 +240,7 @@ void ModeRefCurveDeform::RBtnDown(const EVec2i& p, OglForCLI* ogl)
   }
   else
   {
+    m_select_info.Clear();
     ogl->BtnDown_Rot(p);
   }
 
