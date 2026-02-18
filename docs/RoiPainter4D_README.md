@@ -1,7 +1,9 @@
 [English](RoiPainter4D_README_en.md)
 # RoiPainter4D
 
-[RoiPainter4D](RoiPainter4D_README.md) | [I/O](IO.md) | [Visualization](Vis.md) | [Segmentation](Segm.md)
+[**RoiPainter4D**](RoiPainter4D_README.md) | [**I/O**](IO.md) | [**Visualization**](Vis.md) | [**Segmentation**](Segm.md)
+
+
 
 ## 起動方法
 [こちら](https://github.com/InteractiveGraphicsLab/RoiPainter/releases)より，最新のRoiPainter4Dをダウンロードできます．
@@ -13,6 +15,7 @@
 実行にはGPUを搭載した計算機が必要です．（開く画像の解像度によりますが，GRAMが2GByte以上あることが望ましいです）
 
 
+
 ## 起動画面
 ![teaser](https://github.com/user-attachments/assets/192d0330-7498-45b4-a484-5511ec20487f)
 RoiPainter4Dを起動するとこのような画面が表示されます．各Windowの役割は以下の通りです．
@@ -22,8 +25,8 @@ RoiPainter4Dを起動するとこのような画面が表示されます．各Wi
 
 もし，MainWindow上に二つの球が表示されず真っ白い画面が表示される場合は，GPUが使えない状態（そもそもグラフィックスカードがない．または，省電力モードのためGPUの機能がoffになっている）だと思われます．
 
-## 開発者
-井尻 敬 / Takashi Ijiri [web page](https://takashiijiri.com/)
+
+
 <!--
 ## 使い方
 
