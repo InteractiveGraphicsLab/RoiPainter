@@ -154,7 +154,7 @@ namespace RoiPainter4D {
       // 
       // m_btn_loadstate
       // 
-      this->m_btn_loadstate->Location = System::Drawing::Point(14, 437);
+      this->m_btn_loadstate->Location = System::Drawing::Point(14, 446);
       this->m_btn_loadstate->Margin = System::Windows::Forms::Padding(2);
       this->m_btn_loadstate->Name = L"m_btn_loadstate";
       this->m_btn_loadstate->Size = System::Drawing::Size(142, 23);
@@ -165,7 +165,7 @@ namespace RoiPainter4D {
       // 
       // m_btn_savestate
       // 
-      this->m_btn_savestate->Location = System::Drawing::Point(14, 410);
+      this->m_btn_savestate->Location = System::Drawing::Point(14, 419);
       this->m_btn_savestate->Margin = System::Windows::Forms::Padding(2);
       this->m_btn_savestate->Name = L"m_btn_savestate";
       this->m_btn_savestate->Size = System::Drawing::Size(142, 23);
@@ -211,11 +211,11 @@ namespace RoiPainter4D {
       // 
       // m_btn_flipnormal
       // 
-      this->m_btn_flipnormal->Location = System::Drawing::Point(6, 115);
+      this->m_btn_flipnormal->Location = System::Drawing::Point(6, 117);
       this->m_btn_flipnormal->Name = L"m_btn_flipnormal";
       this->m_btn_flipnormal->Size = System::Drawing::Size(157, 23);
       this->m_btn_flipnormal->TabIndex = 30;
-      this->m_btn_flipnormal->Text = L"Flip Normals";
+      this->m_btn_flipnormal->Text = L"Flip normals";
       this->m_btn_flipnormal->UseVisualStyleBackColor = true;
       this->m_btn_flipnormal->Click += gcnew System::EventHandler(this, &FormSegStrokeFfd::m_btn_flipnormal_Click);
       // 
@@ -248,7 +248,7 @@ namespace RoiPainter4D {
       // 
       // m_btn_undo
       // 
-      this->m_btn_undo->Location = System::Drawing::Point(160, 410);
+      this->m_btn_undo->Location = System::Drawing::Point(160, 419);
       this->m_btn_undo->Margin = System::Windows::Forms::Padding(2);
       this->m_btn_undo->Name = L"m_btn_undo";
       this->m_btn_undo->Size = System::Drawing::Size(59, 23);
@@ -259,10 +259,10 @@ namespace RoiPainter4D {
       // 
       // m_btn_copyfromprevframe
       // 
-      this->m_btn_copyfromprevframe->Location = System::Drawing::Point(5, 53);
+      this->m_btn_copyfromprevframe->Location = System::Drawing::Point(6, 86);
       this->m_btn_copyfromprevframe->Margin = System::Windows::Forms::Padding(2);
       this->m_btn_copyfromprevframe->Name = L"m_btn_copyfromprevframe";
-      this->m_btn_copyfromprevframe->Size = System::Drawing::Size(158, 26);
+      this->m_btn_copyfromprevframe->Size = System::Drawing::Size(157, 26);
       this->m_btn_copyfromprevframe->TabIndex = 13;
       this->m_btn_copyfromprevframe->Text = L"Copy curves from pre_frame";
       this->m_btn_copyfromprevframe->UseVisualStyleBackColor = true;
@@ -306,7 +306,7 @@ namespace RoiPainter4D {
       // m_btn_sharestroke
       // 
       this->m_btn_sharestroke->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 9));
-      this->m_btn_sharestroke->Location = System::Drawing::Point(6, 84);
+      this->m_btn_sharestroke->Location = System::Drawing::Point(6, 54);
       this->m_btn_sharestroke->Name = L"m_btn_sharestroke";
       this->m_btn_sharestroke->Size = System::Drawing::Size(157, 27);
       this->m_btn_sharestroke->TabIndex = 18;
@@ -386,7 +386,7 @@ namespace RoiPainter4D {
       // 
       this->m_checkbox_showonlyselectedstroke->AutoSize = true;
       this->m_checkbox_showonlyselectedstroke->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 8));
-      this->m_checkbox_showonlyselectedstroke->Location = System::Drawing::Point(9, 141);
+      this->m_checkbox_showonlyselectedstroke->Location = System::Drawing::Point(9, 146);
       this->m_checkbox_showonlyselectedstroke->Name = L"m_checkbox_showonlyselectedstroke";
       this->m_checkbox_showonlyselectedstroke->Size = System::Drawing::Size(148, 15);
       this->m_checkbox_showonlyselectedstroke->TabIndex = 26;
@@ -421,7 +421,7 @@ namespace RoiPainter4D {
       this->groupBox3->Controls->Add(this->label1);
       this->groupBox3->Location = System::Drawing::Point(14, 162);
       this->groupBox3->Name = L"groupBox3";
-      this->groupBox3->Size = System::Drawing::Size(252, 243);
+      this->groupBox3->Size = System::Drawing::Size(252, 252);
       this->groupBox3->TabIndex = 28;
       this->groupBox3->TabStop = false;
       this->groupBox3->Text = L"Stroke ＆ Deformation";
@@ -431,7 +431,7 @@ namespace RoiPainter4D {
       this->label6->AutoSize = true;
       this->label6->Font = (gcnew System::Drawing::Font(L"ＭＳ ゴシック", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
-      this->label6->Location = System::Drawing::Point(7, 204);
+      this->label6->Location = System::Drawing::Point(7, 213);
       this->label6->Name = L"label6";
       this->label6->Size = System::Drawing::Size(179, 36);
       this->label6->TabIndex = 29;
@@ -442,7 +442,7 @@ namespace RoiPainter4D {
       this->label5->AutoSize = true;
       this->label5->Font = (gcnew System::Drawing::Font(L"ＭＳ ゴシック", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
-      this->label5->Location = System::Drawing::Point(7, 159);
+      this->label5->Location = System::Drawing::Point(7, 168);
       this->label5->Name = L"label5";
       this->label5->Size = System::Drawing::Size(137, 36);
       this->label5->TabIndex = 29;
@@ -452,7 +452,7 @@ namespace RoiPainter4D {
       // 
       this->m_btn_finish_segmentation->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
         static_cast<System::Byte>(128)));
-      this->m_btn_finish_segmentation->Location = System::Drawing::Point(12, 464);
+      this->m_btn_finish_segmentation->Location = System::Drawing::Point(14, 473);
       this->m_btn_finish_segmentation->Margin = System::Windows::Forms::Padding(2);
       this->m_btn_finish_segmentation->Name = L"m_btn_finish_segmentation";
       this->m_btn_finish_segmentation->Size = System::Drawing::Size(191, 32);
@@ -480,6 +480,7 @@ namespace RoiPainter4D {
       this->Controls->Add(this->m_btn_loadmeshandcage);
       this->Name = L"FormSegStrokeFfd";
       this->Text = L"FormSegStrokeFfd";
+      this->Load += gcnew System::EventHandler(this, &FormSegStrokeFfd::FormSegStrokeFfd_Load);
       this->groupBox1->ResumeLayout(false);
       this->groupBox1->PerformLayout();
       this->groupBox2->ResumeLayout(false);
@@ -525,6 +526,8 @@ namespace RoiPainter4D {
     void FrameChanged();
     int GetCpSize(){ return (int)(this->m_numbox_cpsize->Value); }
 
+private: System::Void FormSegStrokeFfd_Load(System::Object^ sender, System::EventArgs^ e) {
+}
 };
   
   enum SFFD_MODE{ SFFD_STROKE, SFFD_CAGE };
