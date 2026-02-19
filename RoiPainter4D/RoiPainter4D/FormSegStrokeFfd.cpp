@@ -118,6 +118,11 @@ System::Void FormSegStrokeFfd::m_btn_sharestroke_Click(System::Object^ sender, S
   ModeSegStrokeFfd::GetInst()->MakeSelectedStroke_Shared();
 }
 
+System::Void FormSegStrokeFfd::m_btn_flipnormal_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeSegStrokeFfd::GetInst()->FlipSelectedStrokeNormalSide();
+}
+
 System::Void FormSegStrokeFfd::m_btn_copycagetoallframes_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeSegStrokeFfd::GetInst()->CopyCageToAllFrames();

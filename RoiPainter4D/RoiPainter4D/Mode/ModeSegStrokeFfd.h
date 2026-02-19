@@ -95,6 +95,7 @@ public:
   void CopyFromPrevFrame();
   void CopyCageToAllFrames();
   void MakeSelectedStroke_Shared();
+  void FlipSelectedStrokeNormalSide();
   void MakeSelectedStroke_Unshared();
 
   void ClearSelectionInfo();

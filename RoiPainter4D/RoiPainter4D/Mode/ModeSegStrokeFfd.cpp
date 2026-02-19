@@ -907,6 +907,25 @@ void ModeSegStrokeFfd::MakeSelectedStroke_Shared()
 
 
 
+void ModeSegStrokeFfd::FlipSelectedStrokeNormalSide()
+{
+  const int frame_idx = formVisParam_getframeI();
+  const int cidx = m_select_info.curve_idx;
+
+  if (m_select_info.selected && m_select_info.is_shared && cidx != -1)
+  {
+    m_shared_curves[cidx].FlipNormal();
+  }
+  if (m_select_info.selected && !m_select_info.is_shared && cidx != -1)
+  {
+    m_curves[frame_idx][cidx].FlipNormal();
+  }
+  formMain_RedrawMainPanel();
+  formMain_ActivateMainForm();
+}
+
+
+
 void ModeSegStrokeFfd::MakeSelectedStroke_Unshared()
 {
   const int frame_idx = formVisParam_getframeI();
