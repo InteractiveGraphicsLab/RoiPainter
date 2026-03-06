@@ -149,6 +149,15 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
       CRSSEC_ID crssec_id = PickCrssec(ray_pos, ray_dir, pos);
       if (crssec_id != CRSSEC_NON)
       {
+        //最近傍のmesh法線を取得
+        EVec3f mesh_normal(0.0f, 0.0f, 0.0f);
+        if (frame_idx >= 0 && frame_idx < m_meshes_def.size() && m_meshes_def[frame_idx].m_vSize > 0)
+        {
+          const TMesh& mesh = m_meshes_def[frame_idx];
+          int nearest_vertex_idx = mesh.GetNearestVertexIdx(pos);
+          if (nearest_vertex_idx >= 0) mesh_normal = mesh.m_vNorms[nearest_vertex_idx];
+        }
+
         if( !m_select_info.selected)
         {
           float crssec_pos = crssec_id == CRSSEC_XY ? pos[2] :
@@ -160,8 +169,9 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
         else if (m_select_info.selected && !m_select_info.is_shared)
         {
           int cpidx;
-          if( m_curves[frame_idx][m_select_info.curve_idx].AddCP(pos, cpidx) ) 
-            m_select_info.cp_idx = cpidx;
+          if(m_curves[frame_idx][m_select_info.curve_idx].AddCP(pos, cpidx)) m_select_info.cp_idx = cpidx;
+          //2点目が追加されたら外側を向くように法線計算
+          if(m_curves[frame_idx][m_select_info.curve_idx].GetNumCPs() == 2) m_curves[frame_idx][m_select_info.curve_idx].AlignNormalWithMesh(mesh_normal);
         }
       }
       else

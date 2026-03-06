@@ -187,6 +187,15 @@ void ModeSegStrokeFfd::LBtnDown(const EVec2i& p, OglForCLI* ogl)
       }
       else if(crssec_id != CRSSEC_NON)
       {
+        //最近傍のmesh法線を取得
+        EVec3f mesh_normal(0.0f, 0.0f, 0.0f);
+        if (m_meshseq.IsInitialized())
+        {
+          const TMesh& mesh = m_meshseq.GetMesh(frame_idx);
+          int nearest_vertex_idx = mesh.GetNearestVertexIdx(pos);
+          if (nearest_vertex_idx >= 0) mesh_normal = mesh.m_vNorms[nearest_vertex_idx];
+        }
+
         //picking失敗 & crosec pick成功 - 新curve追加 or 新CP追加
         if (!m_select_info.selected)
         {
@@ -199,8 +208,9 @@ void ModeSegStrokeFfd::LBtnDown(const EVec2i& p, OglForCLI* ogl)
         else if (m_select_info.selected && !m_select_info.is_shared)
         {
           int cpidx;
-          if (m_curves[frame_idx][m_select_info.curve_idx].AddCP(pos, cpidx))
-            m_select_info.cp_idx = cpidx;
+          if (m_curves[frame_idx][m_select_info.curve_idx].AddCP(pos, cpidx)) m_select_info.cp_idx = cpidx;
+          //2点目が追加されたら外側を向くように法線計算
+          if (m_curves[frame_idx][m_select_info.curve_idx].GetNumCPs() == 2) m_curves[frame_idx][m_select_info.curve_idx].AlignNormalWithMesh(mesh_normal);
         }
       }
       else
@@ -901,6 +911,25 @@ void ModeSegStrokeFfd::MakeSelectedStroke_Shared()
   curves.erase(curves.begin() + m_select_info.curve_idx);
   m_shared_curves.push_back(SharedCurves(num_frames, frame_idx, src));
 
+  formMain_RedrawMainPanel();
+  formMain_ActivateMainForm();
+}
+
+
+
+void ModeSegStrokeFfd::FlipSelectedStrokeNormalSide()
+{
+  const int frame_idx = formVisParam_getframeI();
+  const int cidx = m_select_info.curve_idx;
+
+  if (m_select_info.selected && m_select_info.is_shared && cidx != -1)
+  {
+    m_shared_curves[cidx].FlipNormal();
+  }
+  if (m_select_info.selected && !m_select_info.is_shared && cidx != -1)
+  {
+    m_curves[frame_idx][cidx].FlipNormal();
+  }
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }

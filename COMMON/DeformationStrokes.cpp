@@ -5,6 +5,20 @@
 #include <fstream>
 
 
+
+void PlanarCurve::AlignNormalWithMesh(const EVec3f& mesh_normal)
+{
+  if (m_cps.size() < 2 || mesh_normal.norm() <= 0.001f) return;
+  EVec3f tangent = (m_cps[1] - m_cps[0]).normalized();
+  EVec3f plane_normal = GetCrssecNorm();
+  EVec3f curve_normal = plane_normal.cross(tangent).normalized();
+
+  if (curve_normal.dot(mesh_normal) < 0.0f) m_normal_side = false;
+  else m_normal_side = true;
+}
+
+
+
 bool PlanarCurve::AddCP(const EVec3f &pos, int& inserted_idx)
 {
   const int num_cps = static_cast<int>(m_cps.size());
