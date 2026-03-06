@@ -5,7 +5,7 @@
 #include <fstream>
 
 
-bool PlanarCurve::AddCP(const EVec3f &pos, int& inserted_idx)
+bool PlanarCurve::AddCP(const EVec3f &pos, int& inserted_idx, const EVec3f& mesh_normal)
 {
   const int num_cps = static_cast<int>(m_cps.size());
 
@@ -18,6 +18,22 @@ bool PlanarCurve::AddCP(const EVec3f &pos, int& inserted_idx)
   {
     std::cout << "strange input at AddCP\n";
     return false;
+  }
+
+  if (num_cps == 1 && mesh_normal.norm() > 0.001f)
+  {
+    EVec3f tangent = (pos - m_cps[0]).normalized();
+    EVec3f plane_normal = GetCrssecNorm();
+    EVec3f curve_normal = plane_normal.cross(tangent).normalized();
+
+    if (curve_normal.dot(mesh_normal) < 0.0f)
+    {
+      m_normal_side = false;
+    }
+    else
+    {
+      m_normal_side = true;
+    }
   }
 
   if ( num_cps <= 2 )

@@ -187,6 +187,14 @@ void ModeSegStrokeFfd::LBtnDown(const EVec2i& p, OglForCLI* ogl)
       }
       else if(crssec_id != CRSSEC_NON)
       {
+        EVec3f mesh_normal(0.0f, 0.0f, 0.0f);
+        if (m_meshseq.IsInitialized())
+        {
+          const TMesh& mesh = m_meshseq.GetMesh(frame_idx);
+          int nearest_vertex_idx = mesh.GetNearestVertexIdx(pos);
+          if (nearest_vertex_idx >= 0) mesh_normal = mesh.m_vNorms[nearest_vertex_idx];
+        }
+
         //picking失敗 & crosec pick成功 - 新curve追加 or 新CP追加
         if (!m_select_info.selected)
         {
@@ -199,7 +207,7 @@ void ModeSegStrokeFfd::LBtnDown(const EVec2i& p, OglForCLI* ogl)
         else if (m_select_info.selected && !m_select_info.is_shared)
         {
           int cpidx;
-          if (m_curves[frame_idx][m_select_info.curve_idx].AddCP(pos, cpidx))
+          if (m_curves[frame_idx][m_select_info.curve_idx].AddCP(pos, cpidx, mesh_normal))
             m_select_info.cp_idx = cpidx;
         }
       }
