@@ -154,7 +154,7 @@ namespace RoiPainter4D {
         // 
         // m_btn_loadstate
         // 
-        this->m_btn_loadstate->Location = System::Drawing::Point(14, 446);
+        this->m_btn_loadstate->Location = System::Drawing::Point(14, 456);
         this->m_btn_loadstate->Margin = System::Windows::Forms::Padding(2);
         this->m_btn_loadstate->Name = L"m_btn_loadstate";
         this->m_btn_loadstate->Size = System::Drawing::Size(142, 23);
@@ -165,7 +165,7 @@ namespace RoiPainter4D {
         // 
         // m_btn_savestate
         // 
-        this->m_btn_savestate->Location = System::Drawing::Point(14, 419);
+        this->m_btn_savestate->Location = System::Drawing::Point(14, 429);
         this->m_btn_savestate->Margin = System::Windows::Forms::Padding(2);
         this->m_btn_savestate->Name = L"m_btn_savestate";
         this->m_btn_savestate->Size = System::Drawing::Size(142, 23);
@@ -248,7 +248,7 @@ namespace RoiPainter4D {
         // 
         // m_btn_undo
         // 
-        this->m_btn_undo->Location = System::Drawing::Point(160, 419);
+        this->m_btn_undo->Location = System::Drawing::Point(160, 429);
         this->m_btn_undo->Margin = System::Windows::Forms::Padding(2);
         this->m_btn_undo->Name = L"m_btn_undo";
         this->m_btn_undo->Size = System::Drawing::Size(59, 23);
@@ -421,7 +421,7 @@ namespace RoiPainter4D {
         this->groupBox3->Controls->Add(this->label1);
         this->groupBox3->Location = System::Drawing::Point(14, 162);
         this->groupBox3->Name = L"groupBox3";
-        this->groupBox3->Size = System::Drawing::Size(252, 252);
+        this->groupBox3->Size = System::Drawing::Size(252, 262);
         this->groupBox3->TabIndex = 28;
         this->groupBox3->TabStop = false;
         this->groupBox3->Text = L"Stroke ＆ Deformation";
@@ -452,7 +452,7 @@ namespace RoiPainter4D {
         // 
         this->m_btn_finish_segmentation->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
             static_cast<System::Byte>(128)));
-        this->m_btn_finish_segmentation->Location = System::Drawing::Point(14, 473);
+        this->m_btn_finish_segmentation->Location = System::Drawing::Point(14, 483);
         this->m_btn_finish_segmentation->Margin = System::Windows::Forms::Padding(2);
         this->m_btn_finish_segmentation->Name = L"m_btn_finish_segmentation";
         this->m_btn_finish_segmentation->Size = System::Drawing::Size(191, 32);
@@ -465,7 +465,7 @@ namespace RoiPainter4D {
         // 
         this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
         this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-        this->ClientSize = System::Drawing::Size(278, 507);
+        this->ClientSize = System::Drawing::Size(278, 517);
         this->Controls->Add(this->m_btn_finish_segmentation);
         this->Controls->Add(this->groupBox3);
         this->Controls->Add(this->m_btn_copycagetoallframes);

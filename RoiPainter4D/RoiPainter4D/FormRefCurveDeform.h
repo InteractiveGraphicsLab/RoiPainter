@@ -69,6 +69,8 @@ namespace RoiPainter4D {
   private: System::Windows::Forms::Button^ m_btn_cancel;
   private: System::Windows::Forms::Button^ m_btn_finish;
   private: System::Windows::Forms::GroupBox^ groupBox1;
+  private: System::Windows::Forms::Label^ label6;
+  private: System::Windows::Forms::Label^ label7;
 
   
   
@@ -107,6 +109,8 @@ namespace RoiPainter4D {
       this->m_btn_cancel = (gcnew System::Windows::Forms::Button());
       this->m_btn_finish = (gcnew System::Windows::Forms::Button());
       this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+      this->label6 = (gcnew System::Windows::Forms::Label());
+      this->label7 = (gcnew System::Windows::Forms::Label());
       (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_numbox_cpsize))->BeginInit();
       (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackbar_mcstride))->BeginInit();
       this->groupBox1->SuspendLayout();
@@ -136,7 +140,7 @@ namespace RoiPainter4D {
       // 
       // m_btn_undo
       // 
-      this->m_btn_undo->Location = System::Drawing::Point(156, 302);
+      this->m_btn_undo->Location = System::Drawing::Point(156, 392);
       this->m_btn_undo->Name = L"m_btn_undo";
       this->m_btn_undo->Size = System::Drawing::Size(137, 26);
       this->m_btn_undo->TabIndex = 2;
@@ -268,7 +272,7 @@ namespace RoiPainter4D {
       // 
       // m_btn_loadstate
       // 
-      this->m_btn_loadstate->Location = System::Drawing::Point(8, 334);
+      this->m_btn_loadstate->Location = System::Drawing::Point(8, 424);
       this->m_btn_loadstate->Name = L"m_btn_loadstate";
       this->m_btn_loadstate->Size = System::Drawing::Size(137, 26);
       this->m_btn_loadstate->TabIndex = 1;
@@ -278,7 +282,7 @@ namespace RoiPainter4D {
       // 
       // m_btn_savestate
       // 
-      this->m_btn_savestate->Location = System::Drawing::Point(8, 302);
+      this->m_btn_savestate->Location = System::Drawing::Point(8, 392);
       this->m_btn_savestate->Name = L"m_btn_savestate";
       this->m_btn_savestate->Size = System::Drawing::Size(137, 26);
       this->m_btn_savestate->TabIndex = 1;
@@ -308,7 +312,7 @@ namespace RoiPainter4D {
       // 
       // m_btn_cancel
       // 
-      this->m_btn_cancel->Location = System::Drawing::Point(8, 365);
+      this->m_btn_cancel->Location = System::Drawing::Point(8, 455);
       this->m_btn_cancel->Name = L"m_btn_cancel";
       this->m_btn_cancel->Size = System::Drawing::Size(137, 26);
       this->m_btn_cancel->TabIndex = 32;
@@ -318,7 +322,7 @@ namespace RoiPainter4D {
       // 
       // m_btn_finish
       // 
-      this->m_btn_finish->Location = System::Drawing::Point(158, 365);
+      this->m_btn_finish->Location = System::Drawing::Point(158, 455);
       this->m_btn_finish->Name = L"m_btn_finish";
       this->m_btn_finish->Size = System::Drawing::Size(135, 26);
       this->m_btn_finish->TabIndex = 33;
@@ -328,6 +332,8 @@ namespace RoiPainter4D {
       // 
       // groupBox1
       // 
+      this->groupBox1->Controls->Add(this->label7);
+      this->groupBox1->Controls->Add(this->label6);
       this->groupBox1->Controls->Add(this->m_btn_sharestroke);
       this->groupBox1->Controls->Add(this->m_btn_copy_from_preframe);
       this->groupBox1->Controls->Add(this->m_btn_flipnormal);
@@ -337,16 +343,40 @@ namespace RoiPainter4D {
       this->groupBox1->Controls->Add(this->m_btn_copy_to_allframe);
       this->groupBox1->Location = System::Drawing::Point(8, 96);
       this->groupBox1->Name = L"groupBox1";
-      this->groupBox1->Size = System::Drawing::Size(285, 200);
+      this->groupBox1->Size = System::Drawing::Size(285, 290);
       this->groupBox1->TabIndex = 34;
       this->groupBox1->TabStop = false;
       this->groupBox1->Text = L"Stroke ＆ Deformation";
+      // 
+      // label6
+      // 
+      this->label6->AutoSize = true;
+      this->label6->Font = (gcnew System::Drawing::Font(L"ＭＳ ゴシック", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+        static_cast<System::Byte>(128)));
+      this->label6->Location = System::Drawing::Point(4, 197);
+      this->label6->Name = L"label6";
+      this->label6->Size = System::Drawing::Size(137, 36);
+      this->label6->TabIndex = 32;
+      this->label6->Text = L"　 赤: 選択中のcurve\r\n　 黄: 未選択のcurve\r\n緑/青: all frame curve\r\n";
+      this->label6->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::label6_Click);
+      // 
+      // label7
+      // 
+      this->label7->AutoSize = true;
+      this->label7->Font = (gcnew System::Drawing::Font(L"ＭＳ ゴシック", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+        static_cast<System::Byte>(128)));
+      this->label7->Location = System::Drawing::Point(4, 242);
+      this->label7->Name = L"label7";
+      this->label7->Size = System::Drawing::Size(179, 36);
+      this->label7->TabIndex = 33;
+      this->label7->Text = L"Shift + 左 click - 制御点追加\r\nShift + 左 drag - 制御点移動 \r\nShift + 右 down - 制御点削除";
+      this->label7->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::label7_Click);
       // 
       // FormRefCurveDeform
       // 
       this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
       this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-      this->ClientSize = System::Drawing::Size(300, 397);
+      this->ClientSize = System::Drawing::Size(300, 491);
       this->Controls->Add(this->groupBox1);
       this->Controls->Add(this->m_btn_finish);
       this->Controls->Add(this->m_btn_undo);
@@ -395,6 +425,10 @@ namespace RoiPainter4D {
 	  bool bVisOnlySelectedCurve(){
 	  	return static_cast<bool>(m_cb_only_select_curve->Checked);
 	  }
+private: System::Void label6_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void label7_Click(System::Object^ sender, System::EventArgs^ e) {
+}
 };
 
 	inline void FormRefCurveDeform_Show() { FormRefCurveDeform::GetInst()->Show(); }
