@@ -49,9 +49,10 @@ public:
 
   inline bool GetNormalSide() const { return m_normal_side; }
   inline void FlipNormal() { m_normal_side = !m_normal_side; }
+  void AlignNormalWithMesh(const EVec3f& mesh_normal);
 
   //CP manipulation
-  bool AddCP(const EVec3f& pos, int& inserted_idx, const EVec3f& mesh_normal = EVec3f(0.0f, 0.0f, 0.0f)); // return inserted cp idx
+  bool AddCP(const EVec3f& pos, int& inserted_idx); // return inserted cp idx
   void MoveCP(int cpidx, const EVec3f& _pos);
   void DeleteCP(int cpidx);
   bool PickCPs(const EVec3f& ray_pos, const EVec3f& ray_dir, const float cp_radius, int& cpidx, EVec3f& cp_pos) const;
