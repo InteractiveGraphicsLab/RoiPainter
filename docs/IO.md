@@ -8,17 +8,78 @@
 ## Input / Output functions of RoiPainter4D
 RoiPainter4Dでのデータの読み込みと書き出しについての説明です．
 
-<img align="left" width="300" src="assets/io_menu.png" alt="File menu">
-**Open data**<br>
-[D-1) file > Open dcm 3D](リンクのURL)<br>
-[D-2) file > Open dcm 2D](リンクのURL)<br>
-[D-3) file > Open traw 3D](リンクのURL)<br>
+<img align="left" width="200" src="assets/io_menu.png" alt="File menu">
+<strong>Open data</strong> <br>
+<a href="#d1_open_dcm3d"> D-1) file > Open 4DCT (dcm 3D files) </a> <br>
+<a href="#d2_open_dcm2d"> D-2) file > Open 4DCT (dcm 2D files) </a> <br>
+<a href="#d3_open_traw3d"> D-3) file > Open 4DCT (traw 3D files) </a> <br>
+<a href="#d4_open_mha"> D-2) file > Open 4DCT (mha files) </a> <br>
 <br>
-**Save and Load mask**<br>
-[M-1) file > Save Mask(.msk4)](リンクのURL)<br>
+<strong>Open data</strong> <br>
+[M-1) file > Save Mask(.msk4)](リンクのURL) <br>
 [M-2) file > Load Mask(.msk4)](リンクのURL)
 
 <br clear="left"/>
+
+
+
+## Open data
+
+
+<a id="d1_open_dcm3d"></a>
+
+**D-1) file > Open 4DCT (dcm 3D files)**
+複数の3次元Dicom画像を読み込みます．
+各3次元dicomファイルがひとつのフレームを表します．
+また，ファイル選択後，名前またはファイルの更新時間によりファイルを並び替えられるダイアログが表示されます． このダイアログを利用して正しい順序に並び替えを行なってください．
+
+
+<a id="d2_open_dcm2d"></a>
+
+**D-2) file > Open 4DCT (dcm 2D files)**
+2次元dicomスライスにより構成される4次元画像を読み込みます．
+具体的には，以下のような階層で構成されるフォルダについて，top_folderを指定します．
+
++top_folder
+--- +child_dir1
+------ dcm_slice1
+------ dcm_slice2
+------ dcm_slice3
+------ ...
+--- +child_dir2
+------ dcm_slice1
+------ dcm_slice2
+------ dcm_slice3
+------ ...
+--- +child_dir3
+------ dcm_slice1
+------ dcm_slice2
+------ dcm_slice3
+------ ...
+...
+
+上の 各child_dirTが，T番目のフレームを表します．
+
+
+<a id="d3_open_traw3d"></a>
+
+**D-3) file > Open 4DCT (traw 3D files)**
+独自形式 traw3d_ss ファイル出表現された3次元画像を，複数指定します． このファイルは，ピッチ情報を持ち，一つの画素をsigned short（16bit）として保持します． データフォーマットの詳細については[こちら](https://www2.riken.jp/brict/Ijiri/flowerctlib/index.html)を参照してください．
+
+
+<a id="d4_open_mha"></a>
+
+**D-4) file > Open 4DCT (mha files)**
+MetaImageフォーマット（.mha）の3次元画像ファイルを複数読み込みます．
+各mhaファイルがひとつのフレームを表します．
+mhaファイルは，画像の寸法やピクセル間隔（スペーシング）などのメタデータと，実際のボリュームデータが単一のファイルに統合されている形式です．
+また，ファイル選択後，名前またはファイルの更新時間によりファイルを並び替えられるダイアログが表示されます． このダイアログを利用して正しい順序に並び替えを行なってください．
+
+
+
+## Save and Load mask
+
+
 
 
 ## Open 4DCT data
