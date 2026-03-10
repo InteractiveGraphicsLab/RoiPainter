@@ -5,9 +5,20 @@
 
 
 
-## I/O in RoiPainter
-RoiPainter4Dで画像を読み込むには「`Menu`>`File`」より読み込みたい画像形式に該当する項目をクリックします．また「`Menu`>`File`」より，マスクデータの読み込み・書き出し，画像データの書き出しなども可能です．
+## Input / Output functions of RoiPainter4D
+RoiPainter4Dでのデータの読み込みと書き出しについての説明です．
 
+<img align="left" width="300" src="assets/io_menu.png" alt="File menu">
+**Open data**<br>
+[D-1) file > Open dcm 3D](リンクのURL)<br>
+[D-2) file > Open dcm 2D](リンクのURL)<br>
+[D-3) file > Open traw 3D](リンクのURL)<br>
+<br>
+**Save and Load mask**<br>
+[M-1) file > Save Mask(.msk4)](リンクのURL)<br>
+[M-2) file > Load Mask(.msk4)](リンクのURL)
+
+<br clear="left"/>
 
 
 ## Open 4DCT data
