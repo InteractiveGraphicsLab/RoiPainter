@@ -1,4 +1,4 @@
-[RoiPainter4D TOPページ](RoiPainter4D_README_jp.md)
+[RoiPainter4D TOPページ](RoiPainter4D_README.md)
 
 # 自分でビルドする
 以下の手順でビルドできます．
