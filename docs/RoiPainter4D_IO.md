@@ -1,14 +1,14 @@
 [English](RoiPainter4D_README_en.md)
 # RoiPainter4D
 
-[**RoiPainter4D**](RoiPainter4D_README.md) | [**I/O**](RoiPainter4D_IO.md) | [**Visualization**](RoiPainter4D_Visualization.md) | [**Segmentation**](RoiPainter4D_Segmentation.md)
+[**RoiPainter4D**](RoiPainter4D_README.md) | [**I/O**](RoiPainter4D_IO.md) | [**Visualization**](RoiPainter4D_Visualization.md) | [**Segmentation**](RoiPainter4D_Segmentation.md) | [**Refinement**](RoiPainter4D_Refinement.md)
 
 <hr>
 
 ## Input / Output functions of RoiPainter4D
 RoiPainter4Dでのデータの読み込みと書き出しについての説明です．
 
-<img align="left" width="300" src="assets/io_menu.png" alt="File menu">
+<img align="left" width="300" src="assets/file_menu.png" alt="File menu">
 <strong> Open data </strong> <br>
 <a href="#d1_open_dcm3d"> D-1) file > Open 4DCT (dcm 3D files) </a> <br>
 <a href="#d2_open_dcm2d"> D-2) file > Open 4DCT (dcm 2D files) </a> <br>
@@ -28,9 +28,7 @@ RoiPainter4Dでのデータの読み込みと書き出しについての説明�
 <a href="#e3_Open_raw"> E-3) file > Open 3D 8bit raw (.raw) </a> <br>
 <a href="#e4_export_centroid"> E-4) file > Export Mask Centroid (.csv) </a> <br>
 <a href="#e5_export_eigenvalue"> E-5) file > Export Mask Eigenvalue (.csv) </a> <br>
-
 <br clear="left"/>
-
 
 <hr>
 
