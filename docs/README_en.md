@@ -1,16 +1,16 @@
-[日本語](README.md) | [English](README_en.md)
+[日本語](README.md)
 
 # RoiPainter
 
 <!-- teaser.png -->
-![teaser](https://github.com/user-attachments/assets/14804596-16b9-45cd-b00e-5c729de9c944)
+![teaser](https://github.com/user-attachments/assets/192d0330-7498-45b4-a484-5511ec20487f)
 
-## Installation
-You can download the latest version of RoiPainter 4D from [here](https://github.com/InteractiveGraphicsLab/RoiPainter/releases).
-1. Download `RoiPainter4D.zip` from [here](https://github.com/InteractiveGraphicsLab/RoiPainter/releases) and extract it.
-2. Launch `RoiPainter4D.exe` from the extracted folder.
+## Abstract
+RoiPainter3D/4D is a software for observing and segmenting three-dimensional / four-dimensional images taken by X-ray CT and MRI. This software is being developed by Takashi Ijiri (Shibaura Institute of Technology) in collaboration with students (Shibaura Institute of Technology, Ritsumeikan University, Keio University), physicians, engineers, and researchers. In November 2018, the source code began to be published.
 
-Alternatively, you can [build it yourself](HowToBuild_en.md) from the source code.
+This software is a prototype for research purposes. The developer, collaborators, and the organizations to which the developer belongs are not responsible for any damage caused by the use of this software.
 
-## Usage
-Coming Soon...
+Manuals for each tool are currently being prepared.
+
+* RoiPainter4D [click here](RoiPainter4D_README_jp.md)
+* RoiPainter3D [click here]()

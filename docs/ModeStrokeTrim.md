@@ -1,4 +1,4 @@
-[TOPページ](README.md)
+[RoiPainter4D TOPページ](RoiPainter4D_README_jp.md)
 
 # 曲線による領域削除（Ref Stroke Trim モード）
 

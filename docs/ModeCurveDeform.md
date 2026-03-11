@@ -1,4 +1,4 @@
-[TOPページ](README.md)
+[RoiPainter4D TOPページ](RoiPainter4D_README_jp.md)
 
 # 曲線制約によるマスク編集（Ref Curve Deform モード）
 このモードでは，関心領域の正確な境界を曲線で直接指定することにより，マスク画像を編集できます．
