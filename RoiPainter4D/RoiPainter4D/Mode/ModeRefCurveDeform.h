@@ -22,9 +22,8 @@
 //-----------------------------------------------
 
 
-class ModeRefCurveDeform :
-  public ModeInterface
-{
+class ModeRefCurveDeform : public ModeInterface
+  {
   // Curves 
   std::vector<std::vector<PlanarCurve>> m_curves; // [framd_idx][curve_idx]
   std::vector<SharedCurves> m_shared_curves; // [curve_idx]
@@ -47,6 +46,8 @@ class ModeRefCurveDeform :
 
   std::vector<std::vector<int>   > m_debug_matched_vids;
   std::vector<std::vector<EVec3f>> m_debug_matched_trgtpos;
+
+  bool m_b_modified;
 
   ModeRefCurveDeform();
 
@@ -84,22 +85,22 @@ public:
   void DeformCurrentFrame();
   void DeformAllFrame();
 
-   void Do_RecordSnapShot();
-   void Undo_LoadSnapShot();
+  void Do_RecordSnapShot();
+  void Undo_LoadSnapShot();
 
-   void ConvertMaskToMesh();
-   void ReloadOrigMeshCurrentFrame();
-   void CopyFromPrevFrame();
-   void CopyStrokesToAllFrame();
+  void ConvertMaskToMesh();
+  void ReloadOrigMeshCurrentFrame();
+  void CopyFromPrevFrame();
+  void CopyStrokesToAllFrame();
 
-   void SaveState(const std::string& fname);
-   void LoadState(const std::string& fname);
+  void SaveState(const std::string& fname);
+  void LoadState(const std::string& fname);
 
-   void FlipSelectedStrokeNormalSide();
-   void MakeSelectedStroke_Shared();
-   void MakeSelectedStroke_Unshared();
-   //void LockSelectedStroke();
-   //void UnlockSelectedStroke();
+  void FlipSelectedStrokeNormalSide();
+  void MakeSelectedStroke_Shared();
+  void MakeSelectedStroke_Unshared();
+  //void LockSelectedStroke();
+  //void UnlockSelectedStroke();
 
 private:
   void _Deform(const int);

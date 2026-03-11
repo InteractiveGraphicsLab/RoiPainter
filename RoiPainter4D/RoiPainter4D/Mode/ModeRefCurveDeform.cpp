@@ -36,12 +36,16 @@ ModeRefCurveDeform::ModeRefCurveDeform()
 
 bool ModeRefCurveDeform::CanEndMode()
 {
-  return ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Do you want to leave without saving curves?");
+  if (!m_b_modified) return true;
+
+  return ShowMsgDlgYesNo(MESSAGE_TRUSH_LEAVE, "Leaving?");
 }
 
 
 void ModeRefCurveDeform::StartMode()
 {
+  m_b_modified = false;
+
   std::cout << "ModeRefCurveDeform...startMode----------\n";
 
   const std::vector<MaskData>& mask_data = ImageCore::GetInst()->GetMaskData();
@@ -500,8 +504,9 @@ void ModeRefCurveDeform::ConvertMaskToMesh()
 
 void ModeRefCurveDeform::CancelSegmentation()
 {
-  if (ShowMsgDlgYesNo("Cancel segmentation? 分割結果を破棄して良いですか?", "Cancel Segmentation?")) 
+  if (ShowMsgDlgYesNo("分割結果を破棄して良いですか?\nDo you want to cancel segmentation? ", "Cancel Segmentation?")) 
   {
+    m_b_modified = false;
     ModeCore::GetInst()->ModeSwitch(MODE_VIS_NORMAL);
   }
 }
@@ -516,6 +521,14 @@ void ModeRefCurveDeform::FinishSegmentation()
   const EVec3f pitch      = ImageCore::GetInst()->GetPitch();
 
   if (m_target_mask_id <= 0 || mask_data.size() <= m_target_mask_id) return;
+
+  if (!m_b_modified)
+  {
+    ShowMsgDlg_OK("編集された領域が存在しません．\n No edited region exist", "no edited.");
+    return;
+  }
+
+  m_b_modified = false;
 
   byte mask_locked[256] = {};
   for (int i = 0; i < (int)mask_data.size(); ++i)
@@ -715,6 +728,7 @@ void ModeRefCurveDeform::_Deform(const int _frame_idx)
   // Deform
   LaplacianDeformer deformer;
   deformer.Deform(m_meshes_def[_frame_idx], const_vids, const_trgtpos);
+  m_b_modified = true;
 }
 
 
