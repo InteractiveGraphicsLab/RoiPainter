@@ -6,7 +6,6 @@
 #include "FormVisMask.h"
 #include "FormSegRGrow.h"
 #include "FormSegGCut.h"
-#include "FormSegThreshfieldPaint.h"
 #include "FormSegVoxelPaint.h"
 #include "FormSegLocalRGrow.h"
 #include "FormSegParallelWires.h"
@@ -199,7 +198,6 @@ void FormMain::replaceOtherForms()
   FormRefStrokeTrim   ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormRefSplitByPlane ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegParallelWires::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegThreshfieldPaint::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
 }
 
 
@@ -224,7 +222,6 @@ void FormMain::initializeOtherForms()
   FormRefStrokeTrim  ::getInst()->Show();
   FormRefSplitByPlane::getInst()->Show();
   FormSegParallelWires::GetInst()->Show();
-  FormSegThreshfieldPaint::getInst()->Show();
 
   replaceOtherForms();
   
@@ -237,7 +234,6 @@ void FormMain::initializeOtherForms()
   FormRefStrokeTrim   ::getInst()->Hide();
   FormRefSplitByPlane ::getInst()->Hide();
   FormSegParallelWires::GetInst()->Hide();
-  FormSegThreshfieldPaint::getInst()->Hide();
 
   std::cout << "--------initialize form(dialogs)...DONE\n";
 }

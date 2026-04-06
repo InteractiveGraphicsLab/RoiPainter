@@ -11,15 +11,11 @@
 //------------------------------------------------------------------------------------------
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include <vector>
 
 
 class ModeVizMask : public ModeInterface
 {
-  GlslShaderVolume m_volumeShader;
-  GlslShaderCrsSec m_crssecShader;
-
   bool                m_bDrawStr;
   std::vector<EVec3f> m_stroke;
 

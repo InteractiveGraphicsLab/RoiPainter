@@ -66,6 +66,11 @@ void DrawCrsSec_Segmentation()
   DrawCrossSections(shader);
 }
 
+void DrawCrsSec_Mask()
+{
+  static GlslShaderCrsSec shader("shader/crssecVtx.glsl", "shader/crssecFlg_Msk.glsl");
+  DrawCrossSections(shader);
+}
 
 
 
@@ -97,6 +102,7 @@ void DrawVolume(
 }
 
 
+
 void DrawVolume_Standard(
   const EVec3f& cam_pos, 
   const EVec3f& cam_cnt,
@@ -116,6 +122,16 @@ void DrawVolume_Segmentation(
   DrawVolume(shader, cam_pos, cam_cnt, b_coarse_render);
 }
 
+
+void DrawVolume_Mask(
+    const EVec3f& cam_pos, 
+    const EVec3f& cam_cnt, 
+    bool b_coarse_render)
+{
+  static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl");
+  DrawVolume(shader, cam_pos, cam_cnt, b_coarse_render);
+
+}
 
 
 

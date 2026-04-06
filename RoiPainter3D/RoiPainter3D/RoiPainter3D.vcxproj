@@ -204,9 +204,6 @@
     <ClInclude Include="FormSegRGrow.h">
       <FileType>CppForm</FileType>
     </ClInclude>
-    <ClInclude Include="FormSegThreshfieldPaint.h">
-      <FileType>CppForm</FileType>
-    </ClInclude>
     <ClInclude Include="FormSegVoxelPaint.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -238,7 +235,6 @@
     <ClInclude Include="mode\ModeSegLocalRGrow.h" />
     <ClInclude Include="mode\ModeSegParallelWires.h" />
     <ClInclude Include="mode\ModeSegRGrow.h" />
-    <ClInclude Include="mode\ModeSegThreshfieldPaint.h" />
     <ClInclude Include="mode\ModeSegVoxelPaint.h" />
     <ClInclude Include="mode\ModeVizMask.h" />
     <ClInclude Include="mode\ModeVizNormal.h" />
@@ -267,7 +263,6 @@
     <ClCompile Include="FormSegLocalRGrow.cpp" />
     <ClCompile Include="FormSegParallelWires.cpp" />
     <ClCompile Include="FormSegRGrow.cpp" />
-    <ClCompile Include="FormSegThreshfieldPaint.cpp" />
     <ClCompile Include="FormSegVoxelPaint.cpp" />
     <ClCompile Include="FormStackOrder.cpp" />
     <ClCompile Include="FormSubView.cpp" />
@@ -286,7 +281,6 @@
     <ClCompile Include="mode\ModeSegLocalRGrow.cpp" />
     <ClCompile Include="mode\ModeSegParallelWires.cpp" />
     <ClCompile Include="mode\ModeSegRGrow.cpp" />
-    <ClCompile Include="mode\ModeSegThreshfieldPaint.cpp" />
     <ClCompile Include="mode\ModeSegVoxelPaint.cpp" />
     <ClCompile Include="mode\ModeVizMask.cpp" />
     <ClCompile Include="mode\ModeVizNormal.cpp" />

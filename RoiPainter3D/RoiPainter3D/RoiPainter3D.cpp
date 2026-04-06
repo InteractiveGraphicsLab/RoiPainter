@@ -11,7 +11,6 @@
 #include "mode/ModeSegRGrow.h"
 #include "mode/ModeSegGCut.h"
 #include "mode/ModeSegLocalRGrow.h"
-#include "mode/ModeSegThreshfieldPaint.h"
 #include "mode/ModeSegVoxelPaint.h"
 #include "mode/ModeRefStrokeTrim.h"
 #include "mode/ModeRefSplitByPlane.h"
@@ -42,7 +41,6 @@ int main()
   ModeSegRGrow::GetInst();
   ModeSegGCut::getInst();
   ModeSegLocalRGrow::GetInst();
-  ModeSegThreshfieldPaint::getInst();
   ModeSegVoxelPaint::GetInst();
   ModeRefStrokeTrim::GetInst();
   ModeRefSplitByPlane::GetInst();

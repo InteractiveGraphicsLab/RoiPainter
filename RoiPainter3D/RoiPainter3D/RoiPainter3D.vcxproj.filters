@@ -90,9 +90,6 @@
     <ClInclude Include="mode\ModeSegLocalRGrow.h">
       <Filter>MODE</Filter>
     </ClInclude>
-    <ClInclude Include="mode\ModeSegThreshfieldPaint.h">
-      <Filter>MODE</Filter>
-    </ClInclude>
     <ClInclude Include="mode\ModeSegVoxelPaint.h">
       <Filter>MODE</Filter>
     </ClInclude>
@@ -100,9 +97,6 @@
       <Filter>Forms</Filter>
     </ClInclude>
     <ClInclude Include="FormSegLocalRGrow.h">
-      <Filter>Forms</Filter>
-    </ClInclude>
-    <ClInclude Include="FormSegThreshfieldPaint.h">
       <Filter>Forms</Filter>
     </ClInclude>
     <ClInclude Include="FormSegVoxelPaint.h">
@@ -232,9 +226,6 @@
     <ClCompile Include="mode\ModeSegLocalRGrow.cpp">
       <Filter>MODE</Filter>
     </ClCompile>
-    <ClCompile Include="mode\ModeSegThreshfieldPaint.cpp">
-      <Filter>MODE</Filter>
-    </ClCompile>
     <ClCompile Include="mode\ModeSegVoxelPaint.cpp">
       <Filter>MODE</Filter>
     </ClCompile>
@@ -272,9 +263,6 @@
       <Filter>Forms</Filter>
     </ClCompile>
     <ClCompile Include="FormSegRGrow.cpp">
-      <Filter>Forms</Filter>
-    </ClCompile>
-    <ClCompile Include="FormSegThreshfieldPaint.cpp">
       <Filter>Forms</Filter>
     </ClCompile>
     <ClCompile Include="FormSegVoxelPaint.cpp">

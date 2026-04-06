@@ -9,7 +9,6 @@
 //-----------------------------------------------------------------------------
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 #include <vector>
 

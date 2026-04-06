@@ -18,9 +18,7 @@
 using namespace RoiPainter3D;
 
 
-ModeVizMask::ModeVizMask() :
-  m_volumeShader("shader/volVtx.glsl"   , "shader/volFlg_Msk.glsl"),
-  m_crssecShader("shader/crssecVtx.glsl", "shader/crssecFlg_Msk.glsl")
+ModeVizMask::ModeVizMask() 
 {
   std::cout << "ModeVizMask const...----------------------\n";
   m_bL = m_bR = m_bM = false;
@@ -155,34 +153,16 @@ void ModeVizMask::DrawScene(
 {
   ImageCore::GetInst()->UpdateOGLMaskColorImg();
 
-  //bind volumes ---------------------------------------
   BindAllVolumes();
-
   if (m_bDrawStr) DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
 
-  //Cross Section
-  const EVec3i reso = ImageCore::GetInst()->GetResolution();
-  DrawCrossSections(m_crssecShader);
-
-  //draw mask surface
+  DrawCrsSec_Mask();
   ImageCore::GetInst()->DrawMaskSurfaces();
 
-  //Volume 
   if ( formVisParam_bRendVol() )
   {
-    const bool   b_pse   = formVisParam_bDoPsued();
-    const float  alpha   = formVisParam_getAlpha();
-    const bool   b_roi   = formVisParam_GetOtherROI();
-    const bool   b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    const int    n_slice = (int)((b_manip ? ONMOVE_SLICE_RATE : 1.0) * formVisParam_getSliceNum());
-
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    m_volumeShader.Bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, cam_pos, b_pse, b_roi);
-    t_DrawCuboidSlices(n_slice, cam_pos, cam_cnt, cuboid);
-    m_volumeShader.Unbind();
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    const bool b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
+    DrawVolume_Mask(cam_pos, cam_cnt, b_manip);
   }
 }
 

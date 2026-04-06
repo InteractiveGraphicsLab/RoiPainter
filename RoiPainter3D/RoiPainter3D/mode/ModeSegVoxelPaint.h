@@ -10,15 +10,11 @@
 // 二種類のペイントモード（直接ペイント・らっそ）をサポートする
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include <vector>
 
 
 class ModeSegVoxelPaint : public ModeInterface
 {
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   // field for MODE_REF_VOXEL_PAINT
   bool m_b_refinementmode;
   int  m_refine_maskid   ; 

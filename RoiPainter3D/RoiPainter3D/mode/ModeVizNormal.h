@@ -3,7 +3,6 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include <vector>
 
 class ModeVizNormal : public ModeInterface
