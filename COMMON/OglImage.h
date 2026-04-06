@@ -231,6 +231,7 @@ public:
   const int GetH() const { return m_resolution[1]; }
   const int GetD() const { return m_resolution[2]; }
   GLubyte* GetVolumePtr() { return m_volume; }
+  const GLubyte* GetVolumePtr() const { return m_volume; }
 
   void FlipInZ() {
     FlipVolumeInZ<GLubyte>(m_resolution, m_volume);
@@ -326,6 +327,7 @@ public:
       UnbindOgl();
       m_is_updated = false;
     }
+
 
     if (m_name_gpu == -1 || !glIsTexture(m_name_gpu))
     {

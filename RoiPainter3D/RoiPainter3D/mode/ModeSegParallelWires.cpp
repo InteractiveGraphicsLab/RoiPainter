@@ -754,10 +754,9 @@ void SplineWire::UpdateCurveFromCPs()
   if ( num_samples < 15 ) num_samples = 15; 
 
   //compute curve
-  //std::vector<EVec2d> new_cps, curve_2d;
-  //compute_kCurves( cps_2d, num_samples, new_cps, curve_2d);
-  std::vector<EVec2f> curve_2d = KCurves::CalcKCurvesOpen(cps_2d);
-    
+  std::vector<EVec2f> curve_2d, new_cps;
+  KCurves::compute_kCurves_open(cps_2d, 30, new_cps, curve_2d);
+
 
   //convert curve 3D --> 2D 
   m_curve.resize( curve_2d.size() );

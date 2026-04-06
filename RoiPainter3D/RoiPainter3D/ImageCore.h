@@ -26,11 +26,16 @@
 
 class ImageCore
 {  
+  //singleton
+private:
+  ImageCore();
+public:
+  static ImageCore* GetInst() { static ImageCore p; return &p; }
 
 private:
 	//volume info 
-	EVec3i      m_resolution ;
-	EVec3f      m_pitch      ;
+	EVec3i      m_reso ;
+	EVec3f      m_pitch;
   EVec2i      m_vol_minmax ;
 	std::string m_filepath   ;
 
@@ -48,85 +53,64 @@ public:
 
 	OglImage1D<CH_RGBA> m_img_maskcolor ; // func: maskID    --> color
 
-  //singleton
-private:
-  ImageCore();
-public:
-	static ImageCore* GetInst(){ static ImageCore p; return &p;}
+
+  //I/O Loaders volume 
+  bool  LoadVolume(std::vector<std::string> fnames, std::string fext);
+  bool  LoadVolume(std::string fname, std::string fext);
+  void  LoadMask(const char* fname);
+  void  SaveMask(const char* fname) const ;
+  void  SaveVolumeAsTraw3dss(const char* fname) const;
+
 
   //update opengl volumes by linear tone mapping 
 	void UpdateOGLVolume( short windowlv_min,  short windowlv_max);
   void UpdateOGLMaskColorImg();
 
-	//I/O Loaders volume 
-	bool  LoadVolume   (std::vector<std::string> fnames, std::string fext);
-	bool  LoadVolume   (std::string fname              , std::string fext) ;
-	void  LoadMask     (const char *fname);
-	void  SaveMask     (const char *fname);
-	void  SaveMaskAsFav(const char *fname);
-  void  SaveVolumeAsTraw3dss(const char *fname);
 
-	//getter & setter for resolution and pitch
-	EVec3f GetCuboid() { 
-    return EVec3f( (float)(m_resolution[0] * m_pitch[0]), 
-                   (float)(m_resolution[1] * m_pitch[1]), 
-                   (float)(m_resolution[2] * m_pitch[2])); 
+	//getter for Volume Info (resolution/pitch/cuboid)
+	EVec3f GetCuboid() const { 
+    return EVec3f( (float)(m_reso[0] * m_pitch[0]), 
+                   (float)(m_reso[1] * m_pitch[1]), 
+                   (float)(m_reso[2] * m_pitch[2])); 
   }
 
-
-	EVec3i GetResolution() { return m_resolution; }
+	EVec3i GetResolution() const { return m_reso; } 
   
-  //return tapple {width, height, depth, num_voxel}
-  std::tuple<int, int, int> GetResolution3() {
-    return std::forward_as_tuple( 
-      m_resolution[0], 
-      m_resolution[1], 
-      m_resolution[2] ) ;
+  std::tuple<int, int, int> GetResolution3() const {
+    return std::forward_as_tuple( m_reso[0], m_reso[1], m_reso[2] ) ;
   }
 
-  //return tapple {width, height, depth, width*height, width*height*depth}
-  std::tuple<int, int, int, int, int> GetResolution5() 
+  //return reso (W, H, D, WH, WHD)
+  std::tuple<int, int, int, int, int> GetResolution5() const  
   {
-    return std::forward_as_tuple( 
-      m_resolution[0], 
-      m_resolution[1], 
-      m_resolution[2], 
-      m_resolution[0]*m_resolution[1], 
-      m_resolution[0]*m_resolution[1]*m_resolution[2]) ;
+    const int WH = m_reso[0] * m_reso[1];
+    const int WHD = WH * m_reso[2];
+    return std::forward_as_tuple(m_reso[0], m_reso[1], m_reso[2], WH, WHD); 
   }
 
-  int GetNumVoxels(){
-    return m_resolution[0] * m_resolution[1] * m_resolution[2];
-  }
+  std::string GetFilePath () const { return m_filepath; }
+  int         GetNumVoxels() const { return m_reso[0] * m_reso[1] * m_reso[2]; }
+  EVec2i      GetVolMinMax() const { return m_vol_minmax; }
+  EVec3f      GetPitch    () const { return m_pitch; }
 
-  std::string GetFilePath(){ return m_filepath;}
+  void   SetPitch(const EVec3f pitch) { m_pitch = pitch; }
 
-	//getter/setter for pitch 
-	EVec3f GetPitch() { return m_pitch; }
-  void   SetPitch (const EVec3f pitch){ m_pitch = pitch;}
 
-	//volume min/mac
-	EVec2i GetVolMinMax() { return m_vol_minmax; }
-
-  int GetVoxelIndex(const EVec3f& position)
+  //position --> voxel index
+  EVec4i GetVoxelIndex4i(const EVec3f& position) const
   {
-    const int x = std::min(m_resolution[0] - 1, (int)(position[0] / m_pitch[0]));
-    const int y = std::min(m_resolution[1] - 1, (int)(position[1] / m_pitch[1]));
-    const int z = std::min(m_resolution[2] - 1, (int)(position[2] / m_pitch[2]));
-    return x + y * m_resolution[0] + z * m_resolution[0] * m_resolution[1];
+    const int x = Crop<int>(0, m_reso[0] - 1, (int)(position[0] / m_pitch[0]));
+    const int y = Crop<int>(0, m_reso[1] - 1, (int)(position[1] / m_pitch[1]));
+    const int z = Crop<int>(0, m_reso[2] - 1, (int)(position[2] / m_pitch[2]));
+    return EVec4i(x, y, z, x + y * m_reso[0] + z * m_reso[0] * m_reso[1]);
   }
 
-  EVec4i GetVoxelIndex4i(const EVec3f& position)
+  int GetVoxelIndex(const EVec3f& position) const
   {
-    EVec4i v;
-    v[0] = std::min(m_resolution[0] - 1, (int)(position[0] / m_pitch[0]));
-    v[1] = std::min(m_resolution[1] - 1, (int)(position[1] / m_pitch[1]));
-    v[2] = std::min(m_resolution[2] - 1, (int)(position[2] / m_pitch[2]));
-    v[3] = v[0] + v[1] * m_resolution[0] + v[2] * m_resolution[0] * m_resolution[1];
-    return v;
+    return GetVoxelIndex4i(position)[3];
   }
 
-  short GetVoxelValue(const EVec3f& position)
+  short GetVoxelValue(const EVec3f& position) const
   {
     return m_vol_orig[ GetVoxelIndex(position) ];
   }
@@ -134,12 +118,15 @@ public:
   //generate new region by using all voxels with (m_volFlg[i] == 255) 
   void StoreForegroundAsNewMask();
 
+
+  ///////////////////////////////////////////////////////
   //mask manipuration
-  int  GetActiveMaskID(){ return m_active_maskid; }
+  int  GetActiveMaskID() const{ return m_active_maskid; }
+  void SetActiveMaskID(int maskid) { m_active_maskid = maskid; }
   const std::vector<MaskData> &GetMaskData(){ return m_mask_data; }
-  void SetActiveMaskID(int maskid){ m_active_maskid = maskid; }
   void ClearMaskSurface(int trgtid);
   void DrawMaskSurfaces();
+  
   // manipuration for active (user-selected) mask id
   void ActiveMask_SetLocked  (const bool   tf    );
   void ActiveMask_SetRendSurf(const bool   tf    );
@@ -149,11 +136,9 @@ public:
   void ActiveMask_Erode    ( );
   void ActiveMask_Dilate   ( );
   void ActiveMask_ExportObj(const std::string &fname);
-  void FillHole ( std::set<int> &ids );
 
-  void SmartFillHole( std::set<int> &ids, int dilation_size);
+  void FillHole( std::set<int> &ids, int dilation_size);
   void MargeMaskIDs ( std::set<int> &ids );
-  //todo void ActiveMask_DilateAsNewRegion( );
 
 
   void InitializeVolFlgByLockedMask(int fore_maskid = -1);
@@ -165,7 +150,6 @@ public:
 
 private:
 	void UpdateGradMagnituteVolume();
-
   void GetFlgVolByMask_0_1_255(const int trgt_maskid, byte* flgvol);
 };
 

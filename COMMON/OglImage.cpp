@@ -108,11 +108,11 @@ inline void FillHole3D(const int& W, const int& H, const int& D, byte* vol)
     const int I = x + y * W + z * WH;
     Q.pop_front();
 
-    if (x != 0 && !vol[I - 1]) { vol[I - 1] = 2; Q.push_back(EVec3i(x - 1, y, z)); }
-    if (x != W - 1 && !vol[I + 1]) { vol[I + 1] = 2; Q.push_back(EVec3i(x + 1, y, z)); }
-    if (y != 0 && !vol[I - W]) { vol[I - W] = 2; Q.push_back(EVec3i(x, y - 1, z)); }
-    if (y != H - 1 && !vol[I + W]) { vol[I + W] = 2; Q.push_back(EVec3i(x, y + 1, z)); }
-    if (z != 0 && !vol[I - WH]) { vol[I - WH] = 2; Q.push_back(EVec3i(x, y, z - 1)); }
+    if (x !=   0   && !vol[I -  1]) { vol[I -  1] = 2; Q.push_back(EVec3i(x - 1, y, z)); }
+    if (x != W - 1 && !vol[I +  1]) { vol[I +  1] = 2; Q.push_back(EVec3i(x + 1, y, z)); }
+    if (y !=   0   && !vol[I -  W]) { vol[I -  W] = 2; Q.push_back(EVec3i(x, y - 1, z)); }
+    if (y != H - 1 && !vol[I +  W]) { vol[I +  W] = 2; Q.push_back(EVec3i(x, y + 1, z)); }
+    if (z !=   0   && !vol[I - WH]) { vol[I - WH] = 2; Q.push_back(EVec3i(x, y, z - 1)); }
     if (z != D - 1 && !vol[I + WH]) { vol[I + WH] = 2; Q.push_back(EVec3i(x, y, z + 1)); }
   }
   for (int i = 0; i < WHD; ++i) vol[i] = (vol[i] == 2) ? 0 : 255;
