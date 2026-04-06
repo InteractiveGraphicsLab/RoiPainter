@@ -11,9 +11,11 @@ void BindAllVolumes();
 
 void DrawCrossSections( GlslShaderCrsSec& shader);
 
-void DrawCrsSecNormal();
-void DrawVolumeNormal(const EVec3f &cam_pos, const EVec3f &cam_focus, bool b_coarse_render);
+void DrawCrsSec_Standard();
+void DrawCrsSec_Segmentation();
 
+void DrawVolume_Standard    (const EVec3f &cam_pos, const EVec3f &cam_cnt, bool b_coarse_render);
+void DrawVolume_Segmentation(const EVec3f& cam_pos, const EVec3f& cam_cnt, bool b_coarse_render);
 
 
 CRSSEC_ID PickCrssec(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f* pos);

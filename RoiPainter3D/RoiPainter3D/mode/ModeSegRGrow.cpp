@@ -24,9 +24,7 @@ using namespace RoiPainter3D;
 // 255: target & fore ground voxels
 //-----------------------------------------------------------------------------
 
-ModeSegRGrow::ModeSegRGrow() :
-  m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg_Seg.glsl"),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegRGrow::ModeSegRGrow() 
 {
 	m_bL = m_bR = m_bM = false;
 	m_drag_cp_id   = -1;
@@ -232,35 +230,17 @@ void ModeSegRGrow::DrawScene(
   const EVec3f &cam_pos, 
   const EVec3f &cam_center)
 {
-  
-  //bind volumes ---------------------------------------
   BindAllVolumes();
 
-  //draw cut stroke 
   if ( m_b_drawstroke ) DrawPolyLine( EVec3f(1,1,0), 3, m_stroke );
 
-  //draw planes
-  const EVec3i reso = ImageCore::GetInst()->GetResolution();
-  DrawCrossSections(m_crssec_shader);
+  DrawCrsSec_Segmentation();
 
-  //volume rendering
   if (formVisParam_bRendVol() && !IsSpaceKeyOn())
   {
-    const bool   b_pse   = formVisParam_bDoPsued();
-    const bool   b_roi   = formVisParam_GetOtherROI();
-    const float  alpha   = formVisParam_getAlpha();
     const bool   b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    const int    n_slice = (int)((b_manip ? ONMOVE_SLICE_RATE : 1.0) * formVisParam_getSliceNum());
-
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    m_volume_shader.Bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, cam_pos, b_pse, b_roi );
-    t_DrawCuboidSlices(n_slice, cam_pos, cam_center, cuboid);
-    m_volume_shader.Unbind();
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolume_Segmentation(cam_pos, cam_center, b_manip);
   }
-
 
   //draw control points
   glDisable(GL_LIGHTING);

@@ -338,6 +338,7 @@ void ModeSegGCut::KeyDown(int nChar)
 {
   RedrawScene();
 }
+
 void ModeSegGCut::KeyUp(int nChar) 
 {
   RedrawScene();
@@ -349,32 +350,14 @@ void ModeSegGCut::DrawScene (
   const EVec3f &cam_pos,
   const EVec3f &cam_center )
 {
-
-	//bind volumes ---------------------------------------
 	BindAllVolumes();
+	
+  DrawCrsSec_Segmentation();
 
-	//render cross sections ----------------------------------
-  const EVec3i reso = ImageCore::GetInst()->GetResolution();
-	DrawCrossSections(m_crssec_shader);
-
-	//volume rendering ---------------------------------------
-  const bool   b_draw_vol = formVisParam_bRendVol();
-
-	if ( b_draw_vol && !IsSpaceKeyOn())
+	if (formVisParam_bRendVol() && !IsSpaceKeyOn())
 	{
-    const bool  b_psu     = formVisParam_bDoPsued();
-    const bool  b_roi     = formVisParam_GetOtherROI();
-    const float alpha     = formVisParam_getAlpha();
-    const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    const int   num_slice = (int)((b_onmanip ? ONMOVE_SLICE_RATE : 1.0) * formVisParam_getSliceNum());
-
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		m_volume_shader.Bind(0, 1, 2, 3, 4, 5, 6, alpha * 0.1f, reso, cam_pos, b_psu, b_roi);
-		t_DrawCuboidSlices(num_slice, cam_pos, cam_center, cuboid);
-		m_volume_shader.Unbind();
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
+		const bool  b_onmanip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
+    DrawVolume_Segmentation(cam_pos, cam_center, b_onmanip);
 	}
 
   //draw control points
@@ -396,10 +379,8 @@ void ModeSegGCut::DrawScene (
 	}
 	glDisable(GL_LIGHTING);
 
-
   //draw cut stroke 
   if (m_b_draw_cutsrtoke) DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
-
 }
 
 

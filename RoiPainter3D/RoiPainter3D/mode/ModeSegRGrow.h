@@ -15,9 +15,6 @@
 
 class ModeSegRGrow : public ModeInterface
 {
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-  
   bool  m_b_roi_update;
   
   //cut stroke

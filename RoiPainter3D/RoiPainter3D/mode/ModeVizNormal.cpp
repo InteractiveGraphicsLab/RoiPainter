@@ -156,12 +156,12 @@ void ModeVizNormal::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EV
 
   if (m_bDrawStr) DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
 
-  DrawCrsSecNormal();
+  DrawCrsSec_Standard();
 
   if (formVisParam_bRendVol())
   {
     bool on_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolumeNormal(camP, camF, on_manip);
+    DrawVolume_Standard(camP, camF, on_manip);
   }
 
 }

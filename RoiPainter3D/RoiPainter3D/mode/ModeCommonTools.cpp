@@ -54,11 +54,18 @@ void DrawCrossSections(GlslShaderCrsSec &shader)
   shader.Unbind();
 }
 
-void DrawCrsSecNormal()
+void DrawCrsSec_Standard()
 {
   static GlslShaderCrsSec shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl");
   DrawCrossSections(shader);
 }
+
+void DrawCrsSec_Segmentation()
+{
+  static GlslShaderCrsSec shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl");
+  DrawCrossSections(shader);
+}
+
 
 
 
@@ -66,13 +73,12 @@ void DrawCrsSecNormal()
 //draw volume by slicing
 
 
-void DrawVolumeNormal(
-  const EVec3f& cam_pos, 
-  const EVec3f& cam_focus,
+void DrawVolume(
+  GlslShaderVolume &shader,
+  const EVec3f& cam_pos,
+  const EVec3f& cam_cnt,
   bool b_coarse_render)
 {
-  static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg.glsl");
-
   const EVec3f cuboid = ImageCore::GetInst()->GetCuboid();
   const EVec3i reso = ImageCore::GetInst()->GetResolution();
 
@@ -84,11 +90,30 @@ void DrawVolumeNormal(
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   shader.Bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, cam_pos, b_pse, b_roi);
-  t_DrawCuboidSlices(n_slice, cam_pos, cam_focus, cuboid);
+  t_DrawCuboidSlices(n_slice, cam_pos, cam_cnt, cuboid);
   shader.Unbind();
   glDisable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
-  
+}
+
+
+void DrawVolume_Standard(
+  const EVec3f& cam_pos, 
+  const EVec3f& cam_cnt,
+  bool b_coarse_render)
+{
+  static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg.glsl");
+  DrawVolume(shader, cam_pos, cam_cnt, b_coarse_render);
+}
+
+
+void DrawVolume_Segmentation(
+  const EVec3f& cam_pos,
+  const EVec3f& cam_cnt,
+  bool b_coarse_render)
+{
+  static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl");
+  DrawVolume(shader, cam_pos, cam_cnt, b_coarse_render);
 }
 
 
