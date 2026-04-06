@@ -241,7 +241,7 @@ void ModeSegRGrow::DrawScene(
 
   //draw planes
   const EVec3i reso = ImageCore::GetInst()->GetResolution();
-  DrawCrossSections(cuboid, reso, m_crssec_shader);
+  DrawCrossSections(m_crssec_shader);
 
   //volume rendering
   if (formVisParam_bRendVol() && !IsSpaceKeyOn())

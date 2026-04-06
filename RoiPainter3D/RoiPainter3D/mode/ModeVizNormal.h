@@ -8,9 +8,6 @@
 
 class ModeVizNormal : public ModeInterface
 {
-  GlslShaderVolume m_volumeShader;
-  GlslShaderCrsSec m_crssecShader;
-
   bool m_bDrawStr;
   std::vector<EVec3f> m_stroke;
 

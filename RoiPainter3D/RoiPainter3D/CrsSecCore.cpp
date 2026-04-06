@@ -111,7 +111,7 @@ CRSSEC_ID CrssecCore::PickCrssec
   const EVec3f &ray_pos, 
   const EVec3f &ray_dir, 
   EVec3f &picked_position
-)
+) const
 {
   double minDist = DBL_MAX;
   CRSSEC_ID id = CRSSEC_NON;
@@ -163,7 +163,7 @@ CRSSEC_ID CrssecCore::PickCrssec(
     const EVec3f &cuboid, 
     const EVec3f &ray_pos, 
     const EVec3f &ray_dir
-)
+)const
 {
   EVec3f p;
   return PickCrssec(b_pick_xy, b_pick_yz, b_pick_zx, b_pick_curvecrssec, cuboid, ray_pos, ray_dir, p);
@@ -430,37 +430,6 @@ void t_DrawCuboidSlices(const int num_slice, const EVec3f &cam_pos, const EVec3f
   glDepthMask(true);
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

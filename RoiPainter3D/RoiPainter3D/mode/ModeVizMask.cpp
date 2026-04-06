@@ -162,7 +162,7 @@ void ModeVizMask::DrawScene(
 
   //Cross Section
   const EVec3i reso = ImageCore::GetInst()->GetResolution();
-  DrawCrossSections(cuboid, reso, m_crssecShader);
+  DrawCrossSections(m_crssecShader);
 
   //draw mask surface
   ImageCore::GetInst()->DrawMaskSurfaces();

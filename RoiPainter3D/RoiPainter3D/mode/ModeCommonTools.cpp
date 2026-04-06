@@ -36,11 +36,15 @@ void BindAllVolumes()
   ImageCore::GetInst()->m_img_maskcolor.BindOgl(false);
 }
 
-void DrawCrossSections(
-    const EVec3f &cuboid, 
-    const EVec3i &reso  ,
-    GlslShaderCrsSec &shader)
+
+///////////////////////////////////////////////////////////
+//draw cross sections
+
+void DrawCrossSections(GlslShaderCrsSec &shader)
 {
+  const EVec3f cuboid = ImageCore::GetInst()->GetCuboid();
+  const EVec3i reso = ImageCore::GetInst()->GetResolution();
+
   glColor3d(1, 1, 1);
   shader.Bind(0, 1, 2, 3, 6, reso, false, !IsSpaceKeyOn());
   const bool b_xy = formVisParam_bPlaneXY();
@@ -49,6 +53,46 @@ void DrawCrossSections(
   CrssecCore::GetInst()->DrawCrssec(b_xy, b_yz, b_zx, cuboid);
   shader.Unbind();
 }
+
+void DrawCrsSecNormal()
+{
+  static GlslShaderCrsSec shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl");
+  DrawCrossSections(shader);
+}
+
+
+
+///////////////////////////////////////////////////////////
+//draw volume by slicing
+
+
+void DrawVolumeNormal(
+  const EVec3f& cam_pos, 
+  const EVec3f& cam_focus,
+  bool b_coarse_render)
+{
+  static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg.glsl");
+
+  const EVec3f cuboid = ImageCore::GetInst()->GetCuboid();
+  const EVec3i reso = ImageCore::GetInst()->GetResolution();
+
+  const bool  b_pse = formVisParam_bDoPsued();
+  const float alpha = formVisParam_getAlpha();
+  const bool  b_roi = formVisParam_GetOtherROI();
+  const int   n_slice = (int)((b_coarse_render ? ONMOVE_SLICE_RATE : 1.0) * formVisParam_getSliceNum());
+
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  shader.Bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, cam_pos, b_pse, b_roi);
+  t_DrawCuboidSlices(n_slice, cam_pos, cam_focus, cuboid);
+  shader.Unbind();
+  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+  
+}
+
+
+
 
 
 

@@ -313,7 +313,7 @@ void ModeRefSplitByPlane::DrawScene(
 
   //draw planes
   const EVec3i reso = ImageCore::GetInst()->GetResolution();
-  DrawCrossSections(cuboid, reso, m_crssec_shader);
+  DrawCrossSections(m_crssec_shader);
 
   glDisable(GL_CULL_FACE);
   glColor3d(1, 1, 1);

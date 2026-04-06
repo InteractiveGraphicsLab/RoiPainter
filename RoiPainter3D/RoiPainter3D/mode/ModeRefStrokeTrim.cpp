@@ -374,7 +374,7 @@ void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, c
 		
  //render cross sections ----------------------------------
   const EVec3i reso  = ImageCore::GetInst()->GetResolution();
-  DrawCrossSections(cuboid, reso, m_crssec_shader);
+  DrawCrossSections(m_crssec_shader);
 
 	//volume rendering ---------------------------------------
 	if ( formVisParam_bRendVol() && !IsSpaceKeyOn())

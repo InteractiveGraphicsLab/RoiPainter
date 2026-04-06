@@ -413,7 +413,7 @@ void ModeSegVoxelPaint::DrawScene
   BindAllVolumes();
 
   //draw planes
-  DrawCrossSections(cuboid, reso, m_crssec_shader);
+  DrawCrossSections(m_crssec_shader);
 
   
   if (bDrawVol && !IsSpaceKeyOn())
