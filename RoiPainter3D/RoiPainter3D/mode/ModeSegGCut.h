@@ -14,34 +14,6 @@
 
 
 
-class GCutCp
-{
-public:
-	EVec3f m_pos ;
-	EVec4i m_vidx;
-
-	GCutCp(EVec3f p, EVec4i vidx)
-	{
-		m_pos  = p   ;
-		m_vidx = vidx;
-	}	
-
-  GCutCp(const GCutCp& src)
-	{
-		m_pos  = src.m_pos ;
-		m_vidx = src.m_vidx;
-	}	
-
-  GCutCp &operator=(const GCutCp &src)
-  {
-		m_pos  = src.m_pos ;
-		m_vidx = src.m_vidx;
-    return *this;
-  }
-};
-
-
-
 //Watershed super pixel node (WsdLevel)
 class GCWsdNode
 {
@@ -142,8 +114,8 @@ class ModeSegGCut : public ModeInterface
 	//control points
 	TMesh  m_cp_mesh;
 	float  m_cp_radius;
-	std::vector<GCutCp> m_cps_fore;
-  std::vector<GCutCp> m_cps_back;
+	std::vector<EVec3f> m_cps_fore;
+  std::vector<EVec3f> m_cps_back;
 
 	//watershad super pixel 
 	bool   m_b_wsdnode_initialized;

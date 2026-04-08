@@ -284,14 +284,14 @@ void ModeSegGCut::MouseMove(const EVec2i &p, OglForCLI *ogl)
     //erase control points
 		for (int i = 0; i < (int)m_cps_fore.size(); ++i)
 		{
-			if (DistRayAndPoint(ray_pos, ray_dir, m_cps_fore[i].m_pos) < m_cp_radius)
+			if (DistRayAndPoint(ray_pos, ray_dir, m_cps_fore[i]) < m_cp_radius)
       {
         m_cps_fore.erase( m_cps_fore.begin() + i );
       }
 		}
 		for (int i = 0; i < (int)m_cps_back.size(); ++i)
 		{
-			if ( DistRayAndPoint(ray_pos, ray_dir, m_cps_back[i].m_pos) < m_cp_radius)
+			if ( DistRayAndPoint(ray_pos, ray_dir, m_cps_back[i]) < m_cp_radius)
       {
         m_cps_back.erase( m_cps_back.begin() + i );
       }
@@ -303,12 +303,11 @@ void ModeSegGCut::MouseMove(const EVec2i &p, OglForCLI *ogl)
     EVec3f pos;
 		if ( PickCrssec( ray_pos, ray_dir, &pos) != CRSSEC_NON )
 		{
-			std::vector<GCutCp> &cps =  m_bL ? m_cps_fore : m_cps_back;
+			std::vector<EVec3f> &cps =  m_bL ? m_cps_fore : m_cps_back;
 
-			if( cps.empty() || ( pos - cps.back().m_pos).norm() > m_cp_radius * 3 )
+			if( cps.empty() || ( pos - cps.back()).norm() > m_cp_radius * 3 )
 			{
-				EVec4i vi = ImageCore::GetInst()->GetVoxelIndex4i(pos);
-				cps.push_back( GCutCp( pos, vi) );	
+				cps.push_back( pos );	
 			}
 		}
 	}
@@ -321,6 +320,7 @@ void ModeSegGCut::MouseMove(const EVec2i &p, OglForCLI *ogl)
 }
 
 
+
 void ModeSegGCut::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 {
   if( !PickToMoveCrossSecByWheeling(p, ogl, z_delta ) )
@@ -331,11 +331,11 @@ void ModeSegGCut::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
 }
 
 
-
 void ModeSegGCut::KeyDown(int nChar) 
 {
   RedrawScene();
 }
+
 
 void ModeSegGCut::KeyUp(int nChar) 
 {
@@ -363,17 +363,17 @@ void ModeSegGCut::DrawScene (
   glColor3d(1,0,0);
 	for (const auto& it: m_cps_fore )
 	{
-		glTranslated( it.m_pos[0], it.m_pos[1], it.m_pos[2]);
+		glTranslated( it[0], it[1], it[2]);
 		m_cp_mesh.Draw();
-		glTranslated(-it.m_pos[0],-it.m_pos[1],-it.m_pos[2]);
+		glTranslated(-it[0],-it[1],-it[2]);
 	}
 
   glColor3d(0,0,1);
 	for (const auto& it: m_cps_back )
 	{
-		glTranslated( it.m_pos[0], it.m_pos[1], it.m_pos[2]);
+		glTranslated( it[0], it[1], it[2]);
 		m_cp_mesh.Draw();
-		glTranslated(-it.m_pos[0],-it.m_pos[1],-it.m_pos[2]);
+		glTranslated(-it[0],-it[1],-it[2]);
 	}
 	glDisable(GL_LIGHTING);
 
@@ -455,7 +455,7 @@ void t_constructWsdNodesFromLabel
 	const short *vol      ,
   
   int         &num_wsdnodes, //この関数内で計算される
-	GCWsdNode*  &wsdNodes    , //この関数内でallocateされる
+	GCWsdNode  &wsdNodes    , //この関数内でallocateされる
 	std::set <int>*  &wsdNodeNei    // この関数内でallocateされる
 )
 {
@@ -649,19 +649,19 @@ void t_wsd_DivideOneLabel(
 //when the bothe pos and neg CPs exist in the region
 bool t_wsd_CheckAndSolveConflictCP( 
   const int W, const int H, const int D,
-	const std::vector<GCutCp> &cps_fore ,
-	const std::vector<GCutCp> &cps_back ,
+	const std::vector<EVec4i> &cps_fore_idx ,
+	const std::vector<EVec4i> &cps_back_idx,
 
 	int* vol_label)
 {
 	std::set<int> fore_ids, back_ids;
-	for(const auto& cp : cps_fore ) fore_ids.insert( cp.m_vidx[3] );
-	for(const auto& cp : cps_back ) back_ids.insert( cp.m_vidx[3] );
+	for(const auto& cp : cps_fore_idx) fore_ids.insert( cp[3] );
+	for(const auto& cp : cps_back_idx) back_ids.insert( cp[3] );
 
   const int num_voxel = W*H*D;
 
 	int max_label = 0;
-  for( int i=0; i < num_voxel; ++i) 
+  for ( int i = 0; i < num_voxel; ++i) 
   {
     max_label = std::max( max_label, vol_label[i]);
   }
@@ -750,7 +750,7 @@ void t_RemoveIsolatedForeRegion(
 	const int &W, 
 	const int &H, 
 	const int &D, 
-	const std::vector<GCutCp> &cps_fore,
+	const std::vector<EVec4i> &cps_fore_idx,
 
 	byte* vol_flg)
 {	
@@ -758,10 +758,10 @@ void t_RemoveIsolatedForeRegion(
 
 	//新たな foregroundを254として領域拡張する
 	TQueue<EVec4i> Q;
-	for (const auto &cp : cps_fore)
+	for (const auto &cp : cps_fore_idx)
 	{
-		Q.push_back( cp.m_vidx );
-		vol_flg[ cp.m_vidx[3] ] = 254;
+		Q.push_back( cp );
+		vol_flg[ cp[3] ] = 254;
 	}
 
 	while( !Q.empty() )
@@ -803,15 +803,20 @@ void ModeSegGCut::RunGraphCutWsdLv(float lambda)
 	time_t t1 = clock();
 	std::cout << "graphCut 1....\n";
 
-
-  int W,H,D,WH,WHD;
+  int W, H, D, WH, WHD;
   std::tie(W,H,D,WH,WHD) = ImageCore::GetInst()->GetResolution5();
   const short  *vol      = ImageCore::GetInst()->m_vol_orig;
   byte *vol_flg          = ImageCore::GetInst()->m_vol_flag.GetVolumePtr();
 
+  std::vector<EVec4i> cp_f_idx, cp_b_idx;
+  for (const auto& c : m_cps_fore) 
+		cp_f_idx.push_back(ImageCore::GetInst()->GetVoxelIndex4i(c));
+  for (const auto& c : m_cps_back) 
+		cp_b_idx.push_back(ImageCore::GetInst()->GetVoxelIndex4i(c));
+	
 
 	// ひとつのノードに二つ以上の前景・背景制御点が配置されていたら、分割する
-	if ( t_wsd_CheckAndSolveConflictCP(W,H,D, m_cps_fore, m_cps_back, m_vol_wsdid) )
+	if ( t_wsd_CheckAndSolveConflictCP(W, H, D, cp_f_idx, cp_b_idx, m_vol_wsdid) )
 	{
 		t_constructWsdNodesFromLabel( W,H,D, m_vol_wsdid, vol, m_num_wsdnodes, m_wsdnodes, m_wsdnode_neibor );
 	}
@@ -828,8 +833,8 @@ void ModeSegGCut::RunGraphCutWsdLv(float lambda)
 
 	// cps --> node ids
 	std::vector< int > fore_wsdnodeids, back_wsdnodeids;
-	for (const auto& c : m_cps_fore) fore_wsdnodeids.push_back( m_vol_wsdid[ c.m_vidx[3] ] );
-	for (const auto& c : m_cps_back) back_wsdnodeids.push_back( m_vol_wsdid[ c.m_vidx[3] ] );
+	for (const auto& c : cp_f_idx) fore_wsdnodeids.push_back( m_vol_wsdid[ c[3] ] );
+	for (const auto& c : cp_b_idx) back_wsdnodeids.push_back( m_vol_wsdid[ c[3] ] );
 	t_VectorUnique( fore_wsdnodeids );
 	t_VectorUnique( back_wsdnodeids );
 
@@ -895,7 +900,7 @@ void ModeSegGCut::RunGraphCutWsdLv(float lambda)
     vol_flg[i] = (minCut[ m_vol_wsdid[i] ]) ? 255 : 1;
   }
 
-	t_RemoveIsolatedForeRegion( W,H,D, m_cps_fore, vol_flg );
+	t_RemoveIsolatedForeRegion( W,H,D, cp_f_idx, vol_flg );
 
 	ImageCore::GetInst()->m_vol_flag.SetUpdated();
 
@@ -924,11 +929,11 @@ void ModeSegGCut::RunGraphCutVoxLv(float lambda, int band_width, bool b_genband_
 		return;
 	}
     
-  int W,H,D,WH,WHD;
+  int W, H, D, WH, WHD;
   std::tie(W,H,D,WH,WHD) = ImageCore::GetInst()->GetResolution5();
-  const int    SEAM_W  = band_width;
-	const short  *vol    = ImageCore::GetInst()->m_vol_orig;
-	byte  *vol_flg       = ImageCore::GetInst()->m_vol_flag.GetVolumePtr();
+  const int    SEAM_W    = band_width;
+	const short  *vol      = ImageCore::GetInst()->m_vol_orig;
+	byte  *vol_flg         = ImageCore::GetInst()->m_vol_flag.GetVolumePtr();
 
 
 	// 前景-背景 境界帯状領域の生成
@@ -1041,6 +1046,7 @@ void ModeSegGCut::NewVolLoaded()
 
 
 #pragma managed
+
 
 
 
