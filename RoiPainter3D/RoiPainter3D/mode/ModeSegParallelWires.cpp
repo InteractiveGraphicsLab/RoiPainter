@@ -41,9 +41,7 @@ using namespace RoiPainter3D;
 #define PW_CPSIZE_MAX 6.0f
 
 
-ModeSegParallelWires::ModeSegParallelWires() : 
-  m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg.glsl"),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_ParallelWires.glsl")
+ModeSegParallelWires::ModeSegParallelWires() 
 {
   std::cout << "ModeSegParallelWires constructure...\n";
 
@@ -75,6 +73,8 @@ void ModeSegParallelWires::StartMode ()
   m_draging_cpid << -1, -1;
   FormSegParallelWires_Show();
 
+  ImageCore::GetInst()->InitializeVolFlgByLockedMask();
+
   //initialize wires
   int W, H, D;
   std::tie(W,H,D) =ImageCore::GetInst()->GetResolution3();
@@ -82,7 +82,6 @@ void ModeSegParallelWires::StartMode ()
   m_wires_xy.clear();
   m_wires_yz.clear();
   m_wires_zx.clear();
-
   m_wires_xy.resize(D, SplineWire(SplineWire::PLANE_XY) );
   m_wires_yz.resize(W, SplineWire(SplineWire::PLANE_YZ) );
   m_wires_zx.resize(H, SplineWire(SplineWire::PLANE_ZX) );
@@ -493,30 +492,27 @@ void ModeSegParallelWires::KeyUp  (int nChar){}
 
 void ModeSegParallelWires::DrawScene(
     const EVec3f &cuboid, 
-    const EVec3f &camP, 
-    const EVec3f &camF)
+    const EVec3f &cam_pos, 
+    const EVec3f &cam_center)
 {
   //bind volumes ---------------------------------------
   ImageCore::GetInst()->UpdateOGLMaskColorImg();
   BindAllVolumes();
 
-  const EVec3i reso = ImageCore::GetInst()->GetResolution();
-
-  //if (m_bDrawStr) t_DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
+  static EVec3f cyan(0, 1, 1);
+  static EVec3f red(1, 0.2f, 0.2f);
+  static EVec3f ofstzero(0, 0, 0);
 
   //draw wires (ctrlpt and curve)
+  const EVec3f ray_dir = cam_pos - cam_center;
+  const EVec3i reso    = ImageCore::GetInst()->GetResolution();
   EVec3f offset_xy( 0, 0, 0.05f * cuboid[2] / reso[2]);
   EVec3f offset_yz( 0.05f * cuboid[2] / reso[0], 0, 0);
   EVec3f offset_zx( 0, 0.05f * cuboid[2] / reso[1], 0);
-
-  EVec3f ray_dir = camP - camF;
   if ( ray_dir[0] < 0 ) offset_yz[0] *= -1;
   if ( ray_dir[1] < 0 ) offset_zx[1] *= -1;
   if ( ray_dir[2] < 0 ) offset_xy[2] *= -1;
   
-  static EVec3f cyan(0,   1, 1   );
-  static EVec3f red (1,0.2f, 0.2f);
-  static EVec3f ofstzero(0,0,0);
   if ( FormParallelWires_bDrawAllWires() && !IsSpaceKeyOn() )
   {
     for ( const auto& w : m_wires_xy) w.DrawWire( ofstzero, cyan, 2 );  
@@ -540,24 +536,12 @@ void ModeSegParallelWires::DrawScene(
   }  
   
 
-  DrawCrossSections(m_crssec_shader);
-
+  DrawCrsSec_Segmentation();
 
   if (formVisParam_bRendVol() && !IsShiftKeyOn() )
   {
-    const bool  b_pse   = formVisParam_bDoPsued();
-    const bool  b_roi   = formVisParam_GetOtherROI();
-    const float alpha   = formVisParam_getAlpha();
     const bool  b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    const int   n_slice = (int)((b_manip ? ONMOVE_SLICE_RATE : 1.0) * formVisParam_getSliceNum());
-
-    glDisable(GL_DEPTH_TEST);
-    glEnable (GL_BLEND);
-    m_volume_shader.Bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, camP, b_pse, b_roi );
-    t_DrawCuboidSlices( n_slice, camP, camF, cuboid);
-    m_volume_shader.Unbind();
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolume_Segmentation(cam_pos, cam_center, b_manip);
   }
 }
 

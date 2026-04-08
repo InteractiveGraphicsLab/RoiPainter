@@ -27,9 +27,7 @@ ModeSegLocalRGrow::~ModeSegLocalRGrow()
 {
 }
 
-ModeSegLocalRGrow::ModeSegLocalRGrow() :
-	m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg_LRG.glsl"   ),
-	m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_LRG.glsl")
+ModeSegLocalRGrow::ModeSegLocalRGrow() 
 {
   m_bL = m_bR = m_bM = false;
   m_activeseed_idx = -1;
@@ -711,32 +709,13 @@ void ModeSegLocalRGrow::KeyUp  (int nChar)
 
 void ModeSegLocalRGrow::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center)
 {
-  
-	//bind volumes ---------------------------------------
   BindAllVolumes();
+  DrawCrsSec_LocalRegionGrow();
 
-	//render cross sections ----------------------------------
-  const EVec3i reso = ImageCore::GetInst()->GetResolution();
-  DrawCrossSections(m_crssec_shader);
-
-	//volume rendering ---------------------------------------
-  const bool   b_draw_vol = formVisParam_bRendVol();
-	if ( b_draw_vol && !IsSpaceKeyOn() )
+	if (formVisParam_bRendVol() && !IsSpaceKeyOn() )
 	{
-    const bool  b_pse   = formVisParam_bDoPsued();
-    const bool  b_roi   = formVisParam_GetOtherROI();
-    const float alpha   = formVisParam_getAlpha();
     const bool  b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    const int   n_slice = (int)((b_manip ? ONMOVE_SLICE_RATE : 1.0) * formVisParam_getSliceNum());
-
-
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		m_volume_shader.Bind(0, 1, 2, 3, 4, 5, 6, alpha * 0.1f, reso, cam_pos, b_pse, b_roi);
-		t_DrawCuboidSlices(n_slice, cam_pos, cam_center, cuboid);
-		m_volume_shader.Unbind();
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
+    DrawVolume_LocalRegionGrow(cam_pos, cam_center, b_manip);
 	}
 
   //draw seeds

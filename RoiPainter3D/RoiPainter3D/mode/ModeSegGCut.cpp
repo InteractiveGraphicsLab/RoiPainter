@@ -59,9 +59,7 @@ ModeSegGCut::~ModeSegGCut()
 }
 
 
-ModeSegGCut::ModeSegGCut() :
-	m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg_Seg.glsl"   ),
-	m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegGCut::ModeSegGCut() 
 {
   std::cout << "ModeSegGCutModeSegGCut constructor! \n";
   m_b_wsdnode_initialized = false;

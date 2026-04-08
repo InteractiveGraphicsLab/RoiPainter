@@ -49,9 +49,7 @@ ModeRefStrokeTrim::~ModeRefStrokeTrim()
 }
 
 
-ModeRefStrokeTrim::ModeRefStrokeTrim() :
-	  m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg_Seg.glsl"),
-	  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeRefStrokeTrim::ModeRefStrokeTrim() 
 {
   m_bL = m_bR = m_bM = m_b_drawingstroke = false;
   m_b_modified = false;
@@ -362,40 +360,19 @@ void ModeRefStrokeTrim::KeyUp(int nChar) {}
 
 void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center)
 {
-  //renderingに必用なパラメータを集めておく
-
   if (m_b_drawingstroke && m_stroke3d.size() > 1)
 	{
     DrawPolyLine( EVec3f(1,0,1), 4, m_stroke3d, true );
 	}
 	
-	//bind volumes ---------------------------------------
   BindAllVolumes();
-		
- //render cross sections ----------------------------------
-  const EVec3i reso  = ImageCore::GetInst()->GetResolution();
-  DrawCrossSections(m_crssec_shader);
-
-	//volume rendering ---------------------------------------
+  DrawCrsSec_Segmentation();
 	if ( formVisParam_bRendVol() && !IsSpaceKeyOn())
 	{
-    const float alpha    = formVisParam_getAlpha();
-    const bool b_otherroi= formVisParam_GetOtherROI();
     const bool b_manip   = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    const int  slice_num = (int)( (b_manip ? ONMOVE_SLICE_RATE : 1.0 ) 
-                           * formVisParam_getSliceNum() );
-
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		m_volume_shader.Bind(0, 1, 2, 3, 4, 5, 6, alpha * 0.1f, reso, cam_pos, false, b_otherroi);
-		t_DrawCuboidSlices( slice_num, cam_pos, cam_center, cuboid);
-		m_volume_shader.Unbind();
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
+    DrawVolume_Segmentation(cam_pos, cam_center, b_manip);
 	}
 }
-
-
 
 
 

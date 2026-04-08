@@ -9,7 +9,6 @@
 //--------------------------------------------------------------
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 #include <set>
 
@@ -135,9 +134,6 @@ public:
 
 class ModeSegGCut : public ModeInterface
 {
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-  
 	//mouse manipuration
 	bool m_b_paint_cps     ;
 	bool m_b_draw_cutsrtoke;

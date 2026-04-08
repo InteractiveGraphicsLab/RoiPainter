@@ -3,7 +3,6 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include <vector>
 
 class TMesh;
@@ -79,10 +78,6 @@ public:
 class ModeSegLocalRGrow : public ModeInterface
 {
 private:
-  // shader 
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   //seed id for moving (seed_id, cp_id)
 	EVec2i m_drag_seedcp_id;
 

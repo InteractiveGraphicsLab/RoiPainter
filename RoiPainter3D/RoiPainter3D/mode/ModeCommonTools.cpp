@@ -1,14 +1,13 @@
 #pragma unmanaged
 #include "ModeCommonTools.h"
 #include "ModeInterface.h"
-#include "Mode/GlslShader.h"
 
 #include "ImageCore.h"
 #include "CrsSecCore.h" 
+#include "tmesh.h" 
 
 #pragma managed
 #include "FormVisParam.h" 
-
 #pragma unmanaged
 
 
@@ -72,6 +71,26 @@ void DrawCrsSec_Mask()
   DrawCrossSections(shader);
 }
 
+void DrawCrsSec_LocalRegionGrow()
+{
+  //255 --> Red, 2 --> Blue 
+  static GlslShaderCrsSec shader("shader/crssecVtx.glsl", "shader/crssecFlg_LRG.glsl");
+  DrawCrossSections(shader);
+}
+
+
+
+void DrawSuface_Segmenation(const TMesh& mesh)
+{
+  static GlslShaderCrsSec shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl");
+  const EVec3f cuboid = ImageCore::GetInst()->GetCuboid();
+  const EVec3i reso   = ImageCore::GetInst()->GetResolution();
+
+  glColor3d(1, 1, 1);
+  shader.Bind(0, 1, 2, 3, 6, reso, false, !IsSpaceKeyOn());
+  mesh.Draw();
+  shader.Unbind();
+}
 
 
 ///////////////////////////////////////////////////////////
@@ -112,7 +131,6 @@ void DrawVolume_Standard(
   DrawVolume(shader, cam_pos, cam_cnt, b_coarse_render);
 }
 
-
 void DrawVolume_Segmentation(
   const EVec3f& cam_pos,
   const EVec3f& cam_cnt,
@@ -122,7 +140,6 @@ void DrawVolume_Segmentation(
   DrawVolume(shader, cam_pos, cam_cnt, b_coarse_render);
 }
 
-
 void DrawVolume_Mask(
     const EVec3f& cam_pos, 
     const EVec3f& cam_cnt, 
@@ -130,9 +147,17 @@ void DrawVolume_Mask(
 {
   static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl");
   DrawVolume(shader, cam_pos, cam_cnt, b_coarse_render);
-
 }
 
+void DrawVolume_LocalRegionGrow(
+  const EVec3f& cam_pos,
+  const EVec3f& cam_cnt,
+  bool b_coarse_render)
+{
+  //255 --> Red, 2 --> Blue 
+  static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg_LRG.glsl");
+  DrawVolume(shader, cam_pos, cam_cnt, b_coarse_render);
+}
 
 
 

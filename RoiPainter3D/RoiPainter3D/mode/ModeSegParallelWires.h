@@ -24,7 +24,6 @@
 
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "kcurves.h"
 #include <vector>
 
@@ -92,9 +91,6 @@ private:
 class ModeSegParallelWires : public ModeInterface
 {
 private:
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-  
   CRSSEC_ID m_trgtplane;
 
   //wires

@@ -3,14 +3,10 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include <vector>
 
 class ModeRefStrokeTrim : public ModeInterface
 {
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
 	bool m_b_modified ;
 	bool m_b_drawingstroke;
 	int  m_trgt_maskid ;
