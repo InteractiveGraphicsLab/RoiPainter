@@ -180,6 +180,9 @@
     <ClInclude Include="FormRefSplitByPlane.h">
       <Filter>Forms</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\COMMON\tcolor.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">

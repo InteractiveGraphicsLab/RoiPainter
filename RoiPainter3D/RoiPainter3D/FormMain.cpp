@@ -254,6 +254,8 @@ void FormMain::initializeOtherForms()
 
 
 
+static float lambi[3][4] = {{0.3f, 0.3f, 0.3f, 1},{0, 0, 0, 0},{0, 0, 0, 0}};
+static float ldiff[3][4] = {{1.0f, 1.0f, 1.0f, 1},{0.5f,0.5f,0.5f,1}, {0.5f,0.5f,0.5f,1}};
 
 
 void FormMain::redrawMainPanel()
@@ -283,8 +285,21 @@ void FormMain::redrawMainPanel()
   float p1[4] = { -1000,  1000, -1000, 1 };
   float p2[4] = {  1000, -1000, -1000, 1 };
   glLightfv(GL_LIGHT0, GL_POSITION, p0);
+  glLightfv(GL_LIGHT0, GL_AMBIENT, lambi[0]);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, ldiff[0]);
   glLightfv(GL_LIGHT1, GL_POSITION, p1);
+  glLightfv(GL_LIGHT1, GL_AMBIENT, lambi[1]);
+  glLightfv(GL_LIGHT1, GL_DIFFUSE, ldiff[1]);
   glLightfv(GL_LIGHT2, GL_POSITION, p2);
+  glLightfv(GL_LIGHT2, GL_AMBIENT, lambi[2]);
+  glLightfv(GL_LIGHT2, GL_DIFFUSE, ldiff[2]);
+
+
+
+
+
+
+
 
   if (FormVisParam::getInst()->bRendFrame()) t_DrawCuboidFrame(cuboid);
 

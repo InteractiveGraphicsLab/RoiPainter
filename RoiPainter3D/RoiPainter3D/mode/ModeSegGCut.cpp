@@ -4,7 +4,7 @@
 #include "ImageCore.h"
 #include "ModeCore.h"
 #include "CrsSecCore.h"
-#include "tmesh.h"
+#include "tcolor.h"
 
 #pragma managed
 #include "FormMain.h"
@@ -20,8 +20,6 @@
 
 
 #pragma warning(disable : 4996)
-
-
 
 
 #ifndef FOREBACK_MAX 
@@ -64,7 +62,7 @@ ModeSegGCut::ModeSegGCut()
   std::cout << "ModeSegGCutModeSegGCut constructor! \n";
   m_b_wsdnode_initialized = false;
   m_b_wsdnode_computing   = false;
-  m_vol_wsdid = 0;
+  m_vol_wsdid      = 0;
   m_num_wsdnodes   = 0;
   m_wsdnodes       = 0;
   m_wsdnode_neibor = 0;
@@ -72,9 +70,6 @@ ModeSegGCut::ModeSegGCut()
 }
 
 
-// flg 0: back
-//     1: trgt & fore
-//   255: trgt & back
 bool ModeSegGCut::CanLeaveMode()
 {
 	if ( m_cps_fore.size() == 0 && m_cps_back.size() == 0 ) return true;
@@ -87,6 +82,9 @@ bool ModeSegGCut::CanLeaveMode()
 	return false;
 }
 
+// flg 0: back
+//     1: trgt & fore
+//   255: trgt & back
 
 void ModeSegGCut::StartMode()
 {
@@ -97,7 +95,6 @@ void ModeSegGCut::StartMode()
 	m_cps_fore.clear();
 	m_cps_back.clear();
 	m_cp_radius = (float) ImageCore::GetInst()->GetPitch()[0] * 3;
-	m_cp_mesh.InitializeIcosaHedron( m_cp_radius );
 
   formSegGCut_Show();
 
@@ -179,7 +176,6 @@ void ModeSegGCut::ClearAllCPs()
 
 
 
-
 ////////////////////////////////////////////////////////////////////
 //MOUSE LISTENER 
 
@@ -190,7 +186,7 @@ void ModeSegGCut::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 
   if ( IsShiftKeyOn())
   {
-    m_b_paint_cps = true;
+    m_b_placing_cps = true;
   }
 	else if ( IsCtrKeyOn() )
   {
@@ -212,7 +208,7 @@ void ModeSegGCut::LBtnUp(const EVec2i &p, OglForCLI *ogl)
     CrssecCore::GetInst()->GenerateCurvedCrssec( cuboid, ogl->GetCamPos(), m_stroke );
   }
   m_bL = false;
-	m_b_paint_cps = false;
+	m_b_placing_cps = false;
   m_b_draw_cutsrtoke = false;
 	ogl->BtnUp();
   RedrawScene();
@@ -223,7 +219,7 @@ void ModeSegGCut::RBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
   if( IsShiftKeyOn() ) 
   {
-    m_b_paint_cps = true;
+    m_b_placing_cps = true;
   }
   else
   {
@@ -236,7 +232,7 @@ void ModeSegGCut::RBtnDown(const EVec2i &p, OglForCLI *ogl)
 void ModeSegGCut::RBtnUp(const EVec2i &p, OglForCLI *ogl)
 {
   m_bR = false;
-  m_b_paint_cps = false;
+  m_b_placing_cps = false;
   ogl->BtnUp();
   RedrawScene();
 }
@@ -245,7 +241,7 @@ void ModeSegGCut::MBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
   if( IsShiftKeyOn() )
   {
-    m_b_paint_cps = true;
+    m_b_placing_cps = true;
   }
 	else
   {
@@ -257,7 +253,7 @@ void ModeSegGCut::MBtnDown(const EVec2i &p, OglForCLI *ogl)
 
 void ModeSegGCut::MBtnUp(const EVec2i &p, OglForCLI *ogl)
 {
-  m_bM = m_b_paint_cps = false;
+  m_bM = m_b_placing_cps = false;
 	ogl->BtnUp();
   RedrawScene();
 }
@@ -266,6 +262,7 @@ void ModeSegGCut::MBtnUp(const EVec2i &p, OglForCLI *ogl)
 void ModeSegGCut::LBtnDclk(const EVec2i &p, OglForCLI *ogl){}
 void ModeSegGCut::RBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeSegGCut::MBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
+
 
 
 void ModeSegGCut::MouseMove(const EVec2i &p, OglForCLI *ogl)
@@ -279,25 +276,21 @@ void ModeSegGCut::MouseMove(const EVec2i &p, OglForCLI *ogl)
 	{
 		m_stroke.push_back( ray_pos + 0.1f * ray_dir );
 	}
-	else if (m_b_paint_cps && m_bM)
+	else if (m_b_placing_cps && m_bM)
 	{
-    //erase control points
-		for (int i = 0; i < (int)m_cps_fore.size(); ++i)
+		//erase control points
+		int idx;
+    if ( PickControlPoints(ray_pos, ray_dir, m_cps_fore, m_cp_radius, idx) )
 		{
-			if (DistRayAndPoint(ray_pos, ray_dir, m_cps_fore[i]) < m_cp_radius)
-      {
-        m_cps_fore.erase( m_cps_fore.begin() + i );
-      }
+			m_cps_fore.erase(m_cps_fore.begin() + idx);
 		}
-		for (int i = 0; i < (int)m_cps_back.size(); ++i)
+		if (PickControlPoints(ray_pos, ray_dir, m_cps_back, m_cp_radius, idx))
 		{
-			if ( DistRayAndPoint(ray_pos, ray_dir, m_cps_back[i]) < m_cp_radius)
-      {
-        m_cps_back.erase( m_cps_back.begin() + i );
-      }
+			m_cps_back.erase(m_cps_back.begin() + idx);
 		}
+
 	}
-	else if( m_b_paint_cps && (m_bL || m_bR) )
+	else if( m_b_placing_cps && (m_bL || m_bR) )
 	{
     //paint control points
     EVec3f pos;
@@ -318,7 +311,6 @@ void ModeSegGCut::MouseMove(const EVec2i &p, OglForCLI *ogl)
 
   RedrawScene(false);
 }
-
 
 
 void ModeSegGCut::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
@@ -342,7 +334,6 @@ void ModeSegGCut::KeyUp(int nChar)
   RedrawScene();
 }
 
-
 void ModeSegGCut::DrawScene (
   const EVec3f &cuboid, 
   const EVec3f &cam_pos,
@@ -358,24 +349,11 @@ void ModeSegGCut::DrawScene (
     DrawVolume_Segmentation(cam_pos, cam_center, b_onmanip);
 	}
 
-  //draw control points
+	glEnable(GL_LIGHTING);
+	TMesh::DrawSpheres(m_cps_fore, m_cp_radius, COLOR_R, COLOR_R, COLOR_W, COLOR_SHIN64);
+	TMesh::DrawSpheres(m_cps_back, m_cp_radius, COLOR_B, COLOR_B, COLOR_W, COLOR_SHIN64);
 	glDisable(GL_LIGHTING);
-  glColor3d(1,0,0);
-	for (const auto& it: m_cps_fore )
-	{
-		glTranslated( it[0], it[1], it[2]);
-		m_cp_mesh.Draw();
-		glTranslated(-it[0],-it[1],-it[2]);
-	}
 
-  glColor3d(0,0,1);
-	for (const auto& it: m_cps_back )
-	{
-		glTranslated( it[0], it[1], it[2]);
-		m_cp_mesh.Draw();
-		glTranslated(-it[0],-it[1],-it[2]);
-	}
-	glDisable(GL_LIGHTING);
 
   //draw cut stroke 
   if (m_b_draw_cutsrtoke) DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
@@ -455,7 +433,7 @@ void t_constructWsdNodesFromLabel
 	const short *vol      ,
   
   int         &num_wsdnodes, //この関数内で計算される
-	GCWsdNode  &wsdNodes    , //この関数内でallocateされる
+	GCWsdNode*  &wsdNodes    , //この関数内でallocateされる
 	std::set <int>*  &wsdNodeNei    // この関数内でallocateされる
 )
 {
@@ -1046,7 +1024,6 @@ void ModeSegGCut::NewVolLoaded()
 
 
 #pragma managed
-
 
 
 

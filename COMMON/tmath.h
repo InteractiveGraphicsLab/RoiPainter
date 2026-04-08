@@ -206,6 +206,30 @@ inline float DistRayAndPoint(
 }
 
 
+inline bool PickControlPoints(
+  const  EVec3f &cam_pos, 
+  const  EVec3f &ray_dir, 
+  const  std::vector<EVec3f> &cps, 
+  float  cp_radius,
+  int   &cp_idx)
+{
+  cp_idx = -1;
+  float min_depth = FLT_MAX;
+
+  for (int i = 0; i < (int)cps.size(); ++i)
+  {
+    if (DistRayAndPoint(cam_pos, ray_dir, cps[i]) > cp_radius) continue;
+
+    float d = (cam_pos - cps[i]).norm();
+    if ( d < min_depth ) 
+    {
+      min_depth = (cam_pos - cps[i]).norm();
+      cp_idx = i;
+    }
+  }
+  return cp_idx != -1;
+}
+
 
 inline float DistPointAndLineSegmSq(
   const EVec3f &p,

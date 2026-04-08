@@ -168,6 +168,7 @@
     <ClInclude Include="..\..\COMMON\kcurves.h" />
     <ClInclude Include="..\..\COMMON\OglForCLI.h" />
     <ClInclude Include="..\..\COMMON\OglImage.h" />
+    <ClInclude Include="..\..\COMMON\tcolor.h" />
     <ClInclude Include="..\..\COMMON\thandle3d.h" />
     <ClInclude Include="..\..\COMMON\timageloader.h" />
     <ClInclude Include="..\..\COMMON\tmarchingcubes.h" />

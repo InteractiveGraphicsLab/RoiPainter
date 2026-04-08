@@ -95,6 +95,9 @@ public:
   static void DrawSphere(const EVec3f& position, const float radius,
                         const float* diff, const float* ambi,
                         const float* spec, const float* shin);
+  static void DrawSpheres(const std::vector<EVec3f>& positions, const float radius, 
+                          const float* diff, const float* ambi,
+                          const float* spec, const float* shin);
 
 
   //draw edge [i,j] if vert_flg[i] || vert_flg[j] 

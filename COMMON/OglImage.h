@@ -328,7 +328,6 @@ public:
       m_is_updated = false;
     }
 
-
     if (m_name_gpu == -1 || !glIsTexture(m_name_gpu))
     {
       //generate textrue
