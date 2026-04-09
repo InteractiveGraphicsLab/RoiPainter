@@ -206,6 +206,7 @@ inline float DistRayAndPoint(
 }
 
 
+// cp_idx = -1 if no control point is picked
 inline bool PickControlPoints(
   const  EVec3f &cam_pos, 
   const  EVec3f &ray_dir, 
