@@ -48,27 +48,26 @@ public:
     m_curve = src.m_curve;
   }
   SplineWire &operator=(const SplineWire &src) = delete; //const変数を持つので=はNG
-  //control point manipulation
-  int  AddCtrlPt (const EVec3f &p);
-  void MoveCtrlPt(const int idx, const EVec3f &p);
 
-  int  PickCtrlPt( const EVec3f &ray_pos, const EVec3f &ray_dir);
-  void PickToEraseCtrlPt( const EVec3f &ray_pos, const EVec3f &ray_dir);
+  //control point manipulation
+  int  AddCP (const EVec3f &p);
+  void MoveCP(const int idx, const EVec3f &p);
+  int  PickCP       ( const EVec3f &ray_pos, const EVec3f &ray_dir);
+  void PickToEraseCP( const EVec3f &ray_pos, const EVec3f &ray_dir);
   
   //rendering
-  void DrawCtrlPt() const;
-  void DrawWire  (const EVec3f &offset, const EVec3f &color, float width) const;
+  void DrawCPs() const;
+  void DrawWire(const EVec3f &offset, const EVec3f &color, float width) const;
 
   int GetNumCtrlPts() const { return (int) m_cps.size(); }
   const std::vector<EVec3f> &GetCurve() const { return m_curve; }
-
 
   static void SetCtrlPtRadius(float r){
     m_cp_radius = r;
   }
   
-  void exportCtrlPtInfo(std::ofstream &ofs) const;
-  void importCtrlPtInfo(std::ifstream &ifs) ;
+  void exportCpInfo(std::ofstream &ofs) const;
+  void importCpInfo(std::ifstream &ifs) ;
   
 private:
   void UpdateCurveFromCPs( );

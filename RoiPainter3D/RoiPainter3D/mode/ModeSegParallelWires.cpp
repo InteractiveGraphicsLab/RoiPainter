@@ -4,6 +4,7 @@
 #include "ImageCore.h"
 #include "CrsSecCore.h"
 #include "kcurves.h"
+#include "tcolor.h"
 #include <fstream>
 #include "../ModeCore.h"
 
@@ -257,14 +258,14 @@ void ModeSegParallelWires::LBtnDown  (const EVec2i &p, OglForCLI *ogl)
     auto  crssecid = bxy ? CRSSEC_XY     : byz ? CRSSEC_YZ     : CRSSEC_ZX    ;
 
     //1) pick control point, 2) pick plane
-    int pidx = wires[ wireidx ].PickCtrlPt( rayp, rayd);
+    int pidx = wires[ wireidx ].PickCP( rayp, rayd);
     if ( pidx != -1 )
     {
       m_draging_cpid << wireidx, pidx;
     }
     else if ( PickCrsSec( crssecid, rayp, rayd, &pos ) != CRSSEC_NON )
     {
-      int idx = wires[ wireidx ].AddCtrlPt( pos );
+      int idx = wires[ wireidx ].AddCP( pos );
       m_draging_cpid << wireidx, idx;
     }
 
@@ -289,15 +290,15 @@ void ModeSegParallelWires::RBtnDown  (const EVec2i &p, OglForCLI *ogl)
     
     if ( FormParallelWires_bPlaneXY() ) 
     {
-      m_wires_xy[ m_planexy_idx ].PickToEraseCtrlPt( rayp, rayd );
+      m_wires_xy[ m_planexy_idx ].PickToEraseCP( rayp, rayd );
     }
     if ( FormParallelWires_bPlaneYZ() ) 
     {
-      m_wires_yz[ m_planeyz_idx ].PickToEraseCtrlPt( rayp, rayd );
+      m_wires_yz[ m_planeyz_idx ].PickToEraseCP( rayp, rayd );
     }
     if ( FormParallelWires_bPlaneZX() ) 
     {
-      m_wires_zx[ m_planezx_idx ].PickToEraseCtrlPt( rayp, rayd );
+      m_wires_zx[ m_planezx_idx ].PickToEraseCP( rayp, rayd );
     }
     RedrawScene();
   }
@@ -320,15 +321,15 @@ void ModeSegParallelWires::MBtnDown  (const EVec2i &p, OglForCLI *ogl)
     
     if ( FormParallelWires_bPlaneXY() ) 
     {
-      m_wires_xy[ m_planexy_idx ].PickToEraseCtrlPt( rayp, rayd );
+      m_wires_xy[ m_planexy_idx ].PickToEraseCP( rayp, rayd );
     }
     if ( FormParallelWires_bPlaneYZ() ) 
     {
-      m_wires_yz[ m_planeyz_idx ].PickToEraseCtrlPt( rayp, rayd );
+      m_wires_yz[ m_planeyz_idx ].PickToEraseCP( rayp, rayd );
     }
     if ( FormParallelWires_bPlaneZX() ) 
     {
-      m_wires_zx[ m_planezx_idx ].PickToEraseCtrlPt( rayp, rayd );
+      m_wires_zx[ m_planezx_idx ].PickToEraseCP( rayp, rayd );
     }
 
     RedrawScene();
@@ -380,7 +381,7 @@ void ModeSegParallelWires::MouseMove (const EVec2i &p, OglForCLI *ogl)
 
     if ( PickCrsSec( crssec_id, rayp, rayd, &pos ) != CRSSEC_NON )
     {
-      wires[ m_draging_cpid[0] ].MoveCtrlPt( m_draging_cpid[1], pos );
+      wires[ m_draging_cpid[0] ].MoveCP( m_draging_cpid[1], pos );
     }
   }
   else
@@ -520,15 +521,15 @@ void ModeSegParallelWires::DrawScene(
   glCullFace( GL_BACK );
   if ( FormParallelWires_bPlaneXY() && !IsSpaceKeyOn() ) {
     m_wires_xy[m_planexy_idx].DrawWire  ( EVec3f(0, 0, ofst[2]), red, 5);
-    m_wires_xy[m_planexy_idx].DrawCtrlPt( );  
+    m_wires_xy[m_planexy_idx].DrawCPs( );  
   }  
   if ( FormParallelWires_bPlaneYZ() && !IsSpaceKeyOn() ){
     m_wires_yz[m_planeyz_idx].DrawWire  ( EVec3f(ofst[0], 0, 0), red, 5 );
-    m_wires_yz[m_planeyz_idx].DrawCtrlPt( );  
+    m_wires_yz[m_planeyz_idx].DrawCPs( );  
   }  
   if ( FormParallelWires_bPlaneZX() && !IsSpaceKeyOn() ){
     m_wires_zx[m_planezx_idx].DrawWire  ( EVec3f(0, ofst[1], 0), red, 5 );
-    m_wires_zx[m_planezx_idx].DrawCtrlPt( );  
+    m_wires_zx[m_planezx_idx].DrawCPs( );  
   }  
   
 
@@ -572,9 +573,9 @@ void ModeSegParallelWires::ImportWireInfo(std::string fname)
 
   ImageCore::GetInst()->SetPitch( p );
 
-  for ( auto& wire : m_wires_xy ) wire.importCtrlPtInfo( ifs );
-  for ( auto& wire : m_wires_yz ) wire.importCtrlPtInfo( ifs );
-  for ( auto& wire : m_wires_zx ) wire.importCtrlPtInfo( ifs );
+  for ( auto& wire : m_wires_xy ) wire.importCpInfo( ifs );
+  for ( auto& wire : m_wires_yz ) wire.importCpInfo( ifs );
+  for ( auto& wire : m_wires_zx ) wire.importCpInfo( ifs );
 
   ifs >> buf; 
   std::cout << buf << "\n";
@@ -602,9 +603,9 @@ void ModeSegParallelWires::ExportWireInfo(std::string fname)
   ofs << pitch[0] << " " << pitch[1] << " " << pitch[2] << "\n";
   
   //xy 
-  for ( const auto& wire : m_wires_xy ) wire.exportCtrlPtInfo( ofs );
-  for ( const auto& wire : m_wires_yz ) wire.exportCtrlPtInfo( ofs );
-  for ( const auto& wire : m_wires_zx ) wire.exportCtrlPtInfo( ofs );
+  for ( const auto& wire : m_wires_xy ) wire.exportCpInfo( ofs );
+  for ( const auto& wire : m_wires_yz ) wire.exportCpInfo( ofs );
+  for ( const auto& wire : m_wires_zx ) wire.exportCpInfo( ofs );
   
   ofs << "wire_info_fin\n";
 
@@ -628,7 +629,7 @@ SplineWire::SplineWire( PLANE_ID plane_id ) :
 
 
 //retern idx where the point was inserted
-int SplineWire::AddCtrlPt (const EVec3f &p)
+int SplineWire::AddCP (const EVec3f &p)
 {
   //find insert position 
   int   found_idx = -1;
@@ -666,8 +667,7 @@ int SplineWire::AddCtrlPt (const EVec3f &p)
 }
 
 
-
-void SplineWire::MoveCtrlPt(const int idx, const EVec3f &p)
+void SplineWire::MoveCP(const int idx, const EVec3f &p)
 {
   if ( idx < 0 || m_cps.size() <= idx ) return;
   m_cps[ idx ] = p;
@@ -675,8 +675,7 @@ void SplineWire::MoveCtrlPt(const int idx, const EVec3f &p)
 }
 
 
-
-int SplineWire::PickCtrlPt( const EVec3f &ray_pos, const EVec3f &ray_dir)
+int SplineWire::PickCP( const EVec3f &ray_pos, const EVec3f &ray_dir)
 {
   int idx = -1;
   if (PickControlPoints(ray_pos, ray_dir, m_cps, m_cp_radius, idx)) return idx;
@@ -684,19 +683,15 @@ int SplineWire::PickCtrlPt( const EVec3f &ray_pos, const EVec3f &ray_dir)
 }
 
 
-
-void SplineWire::PickToEraseCtrlPt( const EVec3f &ray_pos, const EVec3f &ray_dir)
+void SplineWire::PickToEraseCP( const EVec3f &ray_pos, const EVec3f &ray_dir)
 {
-  int idx = PickCtrlPt(ray_pos, ray_dir);
-  
+  int idx = PickCP(ray_pos, ray_dir);
   if ( idx != -1 ) 
   {
     m_cps.erase( m_cps.begin() + idx );  
   }
-
   UpdateCurveFromCPs();
 }
-
 
 
 
@@ -723,17 +718,9 @@ void SplineWire::UpdateCurveFromCPs()
       cps_2d[i] << m_cps[i][2], m_cps[i][0];
   }
 
-  //prepare num of sampling points
-  EVec3f pitch        = ImageCore::GetInst()->GetPitch();
-  float  ave_pitch    = (pitch[0] + pitch[1] + pitch[2]) / 3.0f;
-  float  total_length = VertsLength( m_cps, true );
-  int    num_samples  = (int)( total_length / ave_pitch / 10.0);
-  if ( num_samples < 15 ) num_samples = 15; 
-
   //compute curve
   std::vector<EVec2f> curve_2d, new_cps;
-  KCurves::compute_kCurves_open(cps_2d, 30, new_cps, curve_2d);
-
+  KCurves::compute_kCurves(cps_2d, 30, new_cps, curve_2d);
 
   //convert curve 3D --> 2D 
   m_curve.resize( curve_2d.size() );
@@ -758,27 +745,13 @@ void SplineWire::UpdateCurveFromCPs()
 }
 
 
-
-const static float diff_g[4] = { 0.5f, 1.0f, 0.5f, 0.3f };
-const static float ambi_g[4] = { 0.5f, 1.0f, 0.5f, 0.3f };
-const static float diff_r[4] = { 1.0f, 0.2f, 0, 0.3f };
-const static float ambi_r[4] = { 1.0f, 0.2f, 0, 0.3f };
-const static float spec[4] = { 1,1,1,0.3f };
-const static float shin[1] = { 64.0f };
-
-
-void SplineWire::DrawCtrlPt( ) const
+void SplineWire::DrawCPs( ) const
 {
   glEnable( GL_LIGHTING );
-
   for ( int i=0; i < (int)m_cps.size(); ++i)
   { 
-    const EVec3f &p = m_cps[i];
-    const float  &r = m_cp_radius;
-    if ( i == 0 || i == m_cps.size() -1 ) 
-      TMesh::DrawIcosaHedron( p, r, diff_g, ambi_g, spec, shin );
-    else
-      TMesh::DrawIcosaHedron( p, r, diff_r, ambi_r, spec, shin );
+    float *c = (i == 0 || i == m_cps.size() - 1) ? COLOR_G : COLOR_R;
+    TMesh::DrawSphere(m_cps[i], m_cp_radius, c, c, COLOR_W, COLOR_SHIN64);
   }
   glDisable( GL_LIGHTING );
 
@@ -800,8 +773,7 @@ void SplineWire::DrawWire(
 
 
 
-
-void SplineWire::exportCtrlPtInfo(std::ofstream &ofs) const
+void SplineWire::exportCpInfo(std::ofstream &ofs) const
 {
   ofs << (int) m_cps.size() << "\n";
   for ( int i=0; i < (int) m_cps.size(); ++i)
@@ -809,7 +781,7 @@ void SplineWire::exportCtrlPtInfo(std::ofstream &ofs) const
 }
 
 
-void SplineWire::importCtrlPtInfo(std::ifstream &ifs) 
+void SplineWire::importCpInfo(std::ifstream &ifs) 
 {
   m_curve.clear();
   m_cps.clear();

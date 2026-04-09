@@ -5,20 +5,15 @@
 #include "ModeInterface.h"
 #include <vector>
 
-class TMesh;
-
-
 class LRGSeed
 {
 private:
-  static TMesh m_cp_mesh;
   static float m_cp_radius;
 public:
   static void  SetCpRadius( float radius );
   static float GetCpRadius( );
 
 public:
-
   //m_pos.size() == 1: sphere, > 1: cylinder 
 	std::vector < EVec3f > m_cps;
 	short  m_min_v, m_max_v;

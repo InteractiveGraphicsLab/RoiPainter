@@ -3,6 +3,8 @@
 #include "ModeCommonTools.h"
 #include "ImageCore.h"
 #include "ModeCore.h"
+#include "tmesh.h"
+#include "tcolor.h"
 #include "CrsSecCore.h"
 #include "LogCore.h"
 #include "thandle3d.h"
@@ -1123,18 +1125,10 @@ static void s_LocalRegionGrow
 // class LRGSeed 
 //
 
-const static float diffR[4] = {1   ,0,0,0}, diffB[4] = {0.3f,0.3f,1   ,0}, diffG[4] = {0,  1 ,0,0};
-const static float ambiR[4] = {0.5f,0,0,0}, ambiB[4] = {0.3f,0.3f,0.8f,0}, ambiG[4] = {0,0.8f,0,0};
-const static float spec [4] = {1   ,1,1,0};
-const static float shin [1] = {56.0f};
-
-
-TMesh LRGSeed::m_cp_mesh = TMesh();
 float LRGSeed::m_cp_radius = 1.0;
 void LRGSeed::SetCpRadius(float radius)
 {
   m_cp_radius = radius;
-	m_cp_mesh.InitializeIcosaHedron( m_cp_radius );
 }
 
 float LRGSeed::GetCpRadius()
@@ -1143,43 +1137,27 @@ float LRGSeed::GetCpRadius()
 }
 
 
-
 void LRGSeed::Draw() const
 {
 	//draw seed 
-	glPointSize(15);
 	glEnable(GL_LIGHTING);
-
-	for( const auto& p : m_cps)
-	{
-		glTranslated( p[0], p[1], p[2] );
-		if(m_flg_fore) m_cp_mesh.Draw( diffR, ambiR, spec, shin);
-		else           m_cp_mesh.Draw( diffB, ambiB, spec, shin);
-		glTranslated( -p[0], -p[1],-p[2] );
-	}
+  const float* c = m_flg_fore ? COLOR_R : COLOR_B;
+  TMesh::DrawSpheres(m_cps, m_cp_radius, c, c, COLOR_W, COLOR_SHIN64);
 	glDisable(GL_LIGHTING);
-
 }
-
 
 
 void LRGSeed::DrawAsActive() const
 {
 	float r = (m_flg_fore == 1) ? 1.0f : 0;
 	float b = (m_flg_fore == 1) ? 0 : 1.0f;
-
-	float spec[4] = { 1,1,1,0.3f };
 	float diff[4] = { r,0,b,0.3f };
-	//float diff[4] = { r,0,b,0.5f };
-	//float ambi[4] = { 0.3f*r,0,0.3f*b,0.3f };
 	float ambi[4] = { 2.0f*r,0,2.0f*b,1.0f };
-	float shin[1] = { 64.0f };
 
-
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR , spec);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR , COLOR_W);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE  , diff);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT  , ambi);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shin);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, COLOR_SHIN64);
 
   glEnable(GL_CULL_FACE );
   glCullFace(GL_BACK);
