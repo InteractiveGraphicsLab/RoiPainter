@@ -358,7 +358,7 @@ void ModeRefStrokeTrim::KeyDown(int nChar)
 void ModeRefStrokeTrim::KeyUp(int nChar) {}
 
 
-void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center)
+void ModeRefStrokeTrim::DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center)
 {
   if (m_b_drawingstroke && m_stroke3d.size() > 1)
 	{
@@ -369,7 +369,7 @@ void ModeRefStrokeTrim::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, c
   DrawCrsSec_Segmentation();
 	if ( formVisParam_bRendVol() && !IsSpaceKeyOn())
 	{
-    const bool b_manip   = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
+    const bool b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
     DrawVolume_Segmentation(cam_pos, cam_center, b_manip);
 	}
 }

@@ -491,7 +491,6 @@ void ModeSegParallelWires::KeyUp  (int nChar){}
 
 
 void ModeSegParallelWires::DrawScene(
-    const EVec3f &cuboid, 
     const EVec3f &cam_pos, 
     const EVec3f &cam_center)
 {
@@ -505,33 +504,30 @@ void ModeSegParallelWires::DrawScene(
 
   //draw wires (ctrlpt and curve)
   const EVec3f ray_dir = cam_pos - cam_center;
-  const EVec3i reso    = ImageCore::GetInst()->GetResolution();
-  EVec3f offset_xy( 0, 0, 0.05f * cuboid[2] / reso[2]);
-  EVec3f offset_yz( 0.05f * cuboid[2] / reso[0], 0, 0);
-  EVec3f offset_zx( 0, 0.05f * cuboid[2] / reso[1], 0);
-  if ( ray_dir[0] < 0 ) offset_yz[0] *= -1;
-  if ( ray_dir[1] < 0 ) offset_zx[1] *= -1;
-  if ( ray_dir[2] < 0 ) offset_xy[2] *= -1;
+  EVec3f ofst    = 0.05f * ImageCore::GetInst()->GetPitch();
+  if ( ray_dir[0] < 0 ) ofst[0] *= -1;
+  if ( ray_dir[1] < 0 ) ofst[1] *= -1;
+  if ( ray_dir[2] < 0 ) ofst[2] *= -1;
   
   if ( FormParallelWires_bDrawAllWires() && !IsSpaceKeyOn() )
   {
-    for ( const auto& w : m_wires_xy) w.DrawWire( ofstzero, cyan, 2 );  
-    for ( const auto& w : m_wires_yz) w.DrawWire( ofstzero, cyan, 2 );  
-    for ( const auto& w : m_wires_zx) w.DrawWire( ofstzero, cyan, 2 );  
+    for ( const auto& w : m_wires_xy) w.DrawWire( EVec3f(0, 0, 0), cyan, 2);
+    for ( const auto& w : m_wires_yz) w.DrawWire( EVec3f(0, 0, 0), cyan, 2 );
+    for ( const auto& w : m_wires_zx) w.DrawWire( EVec3f(0, 0, 0), cyan, 2 );
   }
   
   //draw current target wire
   glCullFace( GL_BACK );
   if ( FormParallelWires_bPlaneXY() && !IsSpaceKeyOn() ) {
-    m_wires_xy[m_planexy_idx].DrawWire  ( offset_xy, red, 5 );  
+    m_wires_xy[m_planexy_idx].DrawWire  ( EVec3f(0, 0, ofst[2]), red, 5);
     m_wires_xy[m_planexy_idx].DrawCtrlPt( );  
   }  
   if ( FormParallelWires_bPlaneYZ() && !IsSpaceKeyOn() ){
-    m_wires_yz[m_planeyz_idx].DrawWire  ( offset_yz, red, 5 );  
+    m_wires_yz[m_planeyz_idx].DrawWire  ( EVec3f(ofst[0], 0, 0), red, 5 );
     m_wires_yz[m_planeyz_idx].DrawCtrlPt( );  
   }  
   if ( FormParallelWires_bPlaneZX() && !IsSpaceKeyOn() ){
-    m_wires_zx[m_planezx_idx].DrawWire  ( offset_zx, red, 5 );  
+    m_wires_zx[m_planezx_idx].DrawWire  ( EVec3f(0, ofst[1], 0), red, 5 );
     m_wires_zx[m_planezx_idx].DrawCtrlPt( );  
   }  
   
@@ -682,11 +678,8 @@ void SplineWire::MoveCtrlPt(const int idx, const EVec3f &p)
 
 int SplineWire::PickCtrlPt( const EVec3f &ray_pos, const EVec3f &ray_dir)
 {
-  for ( int i = 0; i < (int)m_cps.size(); ++i)
-  {
-    if( DistRayAndPoint( ray_pos, ray_dir, m_cps[i] ) < m_cp_radius ) 
-      return i;
-  }
+  int idx = -1;
+  if (PickControlPoints(ray_pos, ray_dir, m_cps, m_cp_radius, idx)) return idx;
   return -1;
 }
 

@@ -13,7 +13,6 @@ class ModeRefSplitByPlane : public ModeInterface
   bool m_is_updated;
 
   //control points (cps)
-  TMesh m_cp_sphere;
   float m_cp_radi;
   std::vector<EVec3f> m_cps;
   int m_drag_cpid;
@@ -55,7 +54,7 @@ public:
 
   void KeyDown(int nChar);
   void KeyUp(int nChar);
-  void DrawScene(const EVec3f& cuboid, const EVec3f& cam_pos, const EVec3f& cam_center);
+  void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center);
   void cancelSegmentation();
   void finishSegmentation();
 

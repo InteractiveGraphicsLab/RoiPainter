@@ -335,10 +335,12 @@ void ModeSegGCut::KeyUp(int nChar)
 }
 
 void ModeSegGCut::DrawScene (
-  const EVec3f &cuboid, 
   const EVec3f &cam_pos,
   const EVec3f &cam_center )
 {
+	if (m_b_draw_cutsrtoke)
+		DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke);
+
 	BindAllVolumes();
 	
   DrawCrsSec_Segmentation();
@@ -354,9 +356,6 @@ void ModeSegGCut::DrawScene (
 	TMesh::DrawSpheres(m_cps_back, m_cp_radius, COLOR_B, COLOR_B, COLOR_W, COLOR_SHIN64);
 	glDisable(GL_LIGHTING);
 
-
-  //draw cut stroke 
-  if (m_b_draw_cutsrtoke) DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
 }
 
 

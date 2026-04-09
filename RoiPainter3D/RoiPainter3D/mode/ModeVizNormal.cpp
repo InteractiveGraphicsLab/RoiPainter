@@ -150,7 +150,7 @@ void ModeVizNormal::MouseWheel(const EVec2i &p, short zDelta, OglForCLI *ogl)
 void ModeVizNormal::KeyDown(int nChar) {}
 void ModeVizNormal::KeyUp(int nChar) {}
 
-void ModeVizNormal::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+void ModeVizNormal::DrawScene(const EVec3f &camP, const EVec3f &camF)
 {
   BindAllVolumes();
 

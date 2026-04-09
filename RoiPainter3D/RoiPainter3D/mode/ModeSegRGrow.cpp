@@ -5,6 +5,7 @@
 #include "ModeCore.h"
 #include "CrsSecCore.h"
 #include "tqueue.h"
+#include "tcolor.h"
 
 #pragma managed
 #include "FormMain.h"
@@ -23,12 +24,11 @@ using namespace RoiPainter3D;
 //  1 : target & back ground voxels 
 // 255: target & fore ground voxels
 //-----------------------------------------------------------------------------
-
 ModeSegRGrow::ModeSegRGrow() 
 {
 	m_bL = m_bR = m_bM = false;
 	m_drag_cp_id   = -1;
-  m_cp_size      = 0.1f;
+  m_cp_radius      = 0.1f;
 	m_b_roi_update = false;
   m_b_drawstroke = false;
 }
@@ -57,9 +57,8 @@ void ModeSegRGrow::StartMode()
 {
   ImageCore::GetInst()->InitializeVolFlgByLockedMask();
 
-	m_cp_centers.clear();
-	m_cp_size = ImageCore::GetInst()->GetPitch()[0] * 3;
-	m_cp_sphere.InitializeIcosaHedron( m_cp_size );
+	m_cps.clear();
+	m_cp_radius = ImageCore::GetInst()->GetPitch()[0] * 3;
 
 	EVec2i vol_minmax = ImageCore::GetInst()->GetVolMinMax();
   formSegRGrow_InitAllItems(vol_minmax[0],vol_minmax[1]);
@@ -147,13 +146,13 @@ void ModeSegRGrow::LBtnDclk(const EVec2i &p, OglForCLI *ogl)
 	int cpid = PickControlPoints( ray_pos, ray_dir );
 	if (cpid != -1)
 	{
-		m_cp_centers.erase( m_cp_centers.begin() + cpid );
+		m_cps.erase( m_cps.begin() + cpid );
 	}
   else
   {
     EVec3f pos;
 	  CRSSEC_ID id = PickCrssec(ray_pos, ray_dir, &pos);
-	  if (id != CRSSEC_NON) m_cp_centers.push_back( pos );
+	  if (id != CRSSEC_NON) m_cps.push_back( pos );
   }
   RedrawScene();
 }
@@ -177,7 +176,7 @@ void ModeSegRGrow::MouseMove(const EVec2i &p, OglForCLI *ogl)
   else if ( m_drag_cp_id != -1)
 	{
 		CRSSEC_ID id = PickCrssec(ray_pos, ray_dir, &pos);
-		if (id != CRSSEC_NON) m_cp_centers[m_drag_cp_id] = pos;
+		if (id != CRSSEC_NON) m_cps[m_drag_cp_id] = pos;
 	}
 	else 
 	{
@@ -203,9 +202,9 @@ int ModeSegRGrow::PickControlPoints(
     const EVec3f &ray_pos, 
     const EVec3f &ray_dir)
 {
-	for (int i = 0; i < (int)m_cp_centers.size(); ++i)
+	for (int i = 0; i < (int)m_cps.size(); ++i)
 	{
-		if (DistRayAndPoint(ray_pos, ray_dir, m_cp_centers[i]) < m_cp_size) 
+		if (DistRayAndPoint(ray_pos, ray_dir, m_cps[i]) < m_cp_radius) 
       return i;
 	}
 	return -1;
@@ -226,14 +225,12 @@ void ModeSegRGrow::KeyUp(int nChar)
 
 
 void ModeSegRGrow::DrawScene(
-  const EVec3f &cuboid, 
   const EVec3f &cam_pos, 
   const EVec3f &cam_center)
 {
+	if (m_b_drawstroke) DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke);
+
   BindAllVolumes();
-
-  if ( m_b_drawstroke ) DrawPolyLine( EVec3f(1,1,0), 3, m_stroke );
-
   DrawCrsSec_Segmentation();
 
   if (formVisParam_bRendVol() && !IsSpaceKeyOn())
@@ -243,14 +240,8 @@ void ModeSegRGrow::DrawScene(
   }
 
   //draw control points
-  glDisable(GL_LIGHTING);
-  glColor3d(1,0,0);
-  for ( const auto& it : m_cp_centers ) 
-  {
-    glTranslated( it[0], it[1], it[2]);
-    m_cp_sphere.Draw();
-    glTranslated(-it[0], -it[1], -it[2]);
-  }
+  glEnable(GL_LIGHTING);
+	TMesh::DrawSpheres(m_cps, m_cp_radius, COLOR_R, COLOR_R, COLOR_W, COLOR_SHIN64);
   glDisable(GL_LIGHTING);
 }
 
@@ -296,7 +287,7 @@ void ModeSegRGrow::RunRegionGrow6(short minv, short maxv)
 	//CP --> pixel id
 	//volFlg : 0:never change, 1:back, 255:fore
 	TQueue<EVec4i> Q;
-	for ( const auto cp : m_cp_centers)
+	for ( const auto cp : m_cps)
 	{
 		const int x = std::min(W-1, (int)( cp[0] / pitch[0] ) ) ;
 		const int y = std::min(H-1, (int)( cp[1] / pitch[1] ) ) ;
@@ -361,7 +352,7 @@ void ModeSegRGrow::RunRegionGrow26(short minV, short maxV)
 	//CP --> pixel id
 	//vflg : 0:never change, 1:back, 255:fore
 	TQueue<EVec4i> Q;
-	for ( const auto cp : m_cp_centers)
+	for ( const auto cp : m_cps)
 	{
 		const int x = std::min(W-1, (int)( cp[0] / pitch[0] ) ) ;
 		const int y = std::min(H-1, (int)( cp[1] / pitch[1] ) ) ;

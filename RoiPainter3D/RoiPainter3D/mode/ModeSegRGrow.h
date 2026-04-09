@@ -22,9 +22,8 @@ class ModeSegRGrow : public ModeInterface
 
   //control points (cp)
   int   m_drag_cp_id;
-  float m_cp_size;
-  TMesh m_cp_sphere;
-	std::vector<EVec3f> m_cp_centers;
+  float m_cp_radius;
+	std::vector<EVec3f> m_cps;
 
   ModeSegRGrow();
 public:
@@ -55,10 +54,7 @@ public:
 
   bool CanLeaveMode();
   void StartMode   ();
-  void DrawScene( 
-    const EVec3f &cuboid, 
-    const EVec3f &cam_pos, 
-    const EVec3f &cam_center);
+  void DrawScene( const EVec3f &cam_pos, const EVec3f &cam_center);
 
 
 public:

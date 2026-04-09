@@ -707,7 +707,9 @@ void ModeSegLocalRGrow::KeyUp  (int nChar)
 
 
 
-void ModeSegLocalRGrow::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center)
+void ModeSegLocalRGrow::DrawScene(
+    const EVec3f &cam_pos, 
+    const EVec3f &cam_center)
 {
   BindAllVolumes();
   DrawCrsSec_LocalRegionGrow();

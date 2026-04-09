@@ -5,6 +5,7 @@
 #include "ModeCore.h"
 #include "CrsSecCore.h"
 #include "time.h"
+#include "tcolor.h"
 #include "LogCore.h"
 #include "OglImage.h"
 
@@ -85,8 +86,6 @@ void ModeRefSplitByPlane::StartMode()
   m_b_drawstroke = false;
   m_stroke.clear();
   m_drag_cpid = -1;
-
-  m_cp_sphere.InitializeIcosaHedron(m_cp_radi);
   m_is_updated = false;
 }
 
@@ -299,7 +298,6 @@ void ModeRefSplitByPlane::KeyUp(int nChar) {}
 
 
 void ModeRefSplitByPlane::DrawScene(
-    const EVec3f& cuboid, 
     const EVec3f& cam_pos, 
     const EVec3f& cam_center)
 {
@@ -320,14 +318,8 @@ void ModeRefSplitByPlane::DrawScene(
 
 
   //draw control points
-  glDisable(GL_LIGHTING);
-  glColor3d(0.8, 0.1, 0.1);
-  for (const auto& it : m_cps)
-  {
-    glTranslated( it[0],  it[1],  it[2]);
-    m_cp_sphere.Draw();
-    glTranslated(-it[0], -it[1], -it[2]);
-  }
+  glEnable(GL_LIGHTING);
+  TMesh::DrawSpheres(m_cps, m_cp_radi, COLOR_R, COLOR_R, COLOR_W, COLOR_SHIN64);
   
   glDisable(GL_LIGHTING);
   //draw plane 
@@ -340,8 +332,6 @@ void ModeRefSplitByPlane::DrawScene(
   glColor3d(0, 1, 0); glVertex3fv(m_plane_pos.data()); glVertex3fv(v2.data());
   glColor3d(0, 0, 1); glVertex3fv(m_plane_pos.data()); glVertex3fv(v3.data());
   glEnd();
-
-
 }
 
 

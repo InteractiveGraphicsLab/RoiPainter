@@ -37,8 +37,8 @@ public:
   void KeyUp  (int nChar) { m_mode->KeyUp  (nChar); }
   void KeyDown(int nChar) { m_mode->KeyDown(nChar); }
 
-  void DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center) {
-    m_mode->DrawScene(cuboid, cam_pos, cam_center);
+  void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center) {
+    m_mode->DrawScene(cam_pos, cam_center);
   }
 
   MODE_ID GetCurrentModeId(){ return m_mode_id; }

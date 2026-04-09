@@ -1,4 +1,4 @@
-#ifndef MODE_MODESEGPARALLELWIRES_H_
+﻿#ifndef MODE_MODESEGPARALLELWIRES_H_
 #define MODE_MODESEGPARALLELWIRES_H_
 #pragma unmanaged
 
@@ -42,23 +42,12 @@ private:
   static float m_cp_radius;
 
 public:
-  SplineWire( PLANE_ID plane_id );
-  
+  SplineWire( PLANE_ID plane_id );  
   SplineWire(const SplineWire& src) : m_plane_id (src.m_plane_id){
-    Copy(src);
-  }
-  SplineWire &operator=(const SplineWire &src)
-  {
-    Copy(src);
-    return *this;
-  }
-  void Copy(const SplineWire& src){
     m_cps = src.m_cps;
     m_curve = src.m_curve;
-    if ( m_plane_id != src.m_plane_id )
-      std::cout << "!!!!!!!!!!!!!!!!!!! strange copy at SplineWire !!!!!!!!!!!!\n"; 
   }
-  
+  SplineWire &operator=(const SplineWire &src) = delete; //const変数を持つので=はNG
   //control point manipulation
   int  AddCtrlPt (const EVec3f &p);
   void MoveCtrlPt(const int idx, const EVec3f &p);
@@ -133,7 +122,7 @@ public:
 
   bool CanLeaveMode();
   void StartMode ();
-  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+  void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center);
 
   void FinishSegmentation();
   void CancelSegmentation();

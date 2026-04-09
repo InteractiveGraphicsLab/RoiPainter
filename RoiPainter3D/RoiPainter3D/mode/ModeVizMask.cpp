@@ -147,7 +147,6 @@ void ModeVizMask::KeyUp(int nChar) {}
 
 
 void ModeVizMask::DrawScene(
-    const EVec3f &cuboid, 
     const EVec3f &cam_pos, 
     const EVec3f &cam_cnt)
 {

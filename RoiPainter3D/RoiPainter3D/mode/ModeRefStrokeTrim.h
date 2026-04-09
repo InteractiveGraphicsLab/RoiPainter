@@ -45,7 +45,7 @@ public:
 
   bool CanLeaveMode();
   void StartMode ();
-  void DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center);
+  void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center);
 
   void cancelSegmentation();
   void finishSegmentation();

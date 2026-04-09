@@ -398,9 +398,8 @@ static void t_drawCubes
 
 void ModeSegVoxelPaint::DrawScene
 (
-    const EVec3f &cuboid, 
-    const EVec3f &camP  ,
-    const EVec3f &camF
+    const EVec3f &cam_pos,
+    const EVec3f &cam_center
 )
 {
   BindAllVolumes();
@@ -409,7 +408,7 @@ void ModeSegVoxelPaint::DrawScene
   if (formVisParam_bRendVol() && !IsSpaceKeyOn())
   {
     const bool  b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    DrawVolume_Segmentation(camP, camF, b_manip);
+    DrawVolume_Segmentation(cam_pos, cam_center, b_manip);
   }
 
 
@@ -421,7 +420,7 @@ void ModeSegVoxelPaint::DrawScene
 
 	if (m_b_lassomode) 
   {
-		EVec3f ofset = (camP - camF).normalized() * 0.5;
+		EVec3f ofset = (cam_pos - cam_center).normalized() * 0.5;
 		glLineWidth(2);
 
     if( m_bL ) 

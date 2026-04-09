@@ -295,15 +295,9 @@ void FormMain::redrawMainPanel()
   glLightfv(GL_LIGHT2, GL_DIFFUSE, ldiff[2]);
 
 
-
-
-
-
-
-
   if (FormVisParam::getInst()->bRendFrame()) t_DrawCuboidFrame(cuboid);
 
-  ModeCore::GetInst()->DrawScene(cuboid, m_ogl->GetCamPos(), m_ogl->GetCamCnt());
+  ModeCore::GetInst()->DrawScene(m_ogl->GetCamPos(), m_ogl->GetCamCnt());
 
   if (FormVisParam::getInst()->bRendIndi())
   {
