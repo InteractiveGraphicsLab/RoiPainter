@@ -11,15 +11,11 @@
 //------------------------------------------------------------------------------------------
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include <vector>
 
 
 class ModeVizMask : public ModeInterface
 {
-  GlslShaderVolume m_volumeShader;
-  GlslShaderCrsSec m_crssecShader;
-
   bool                m_bDrawStr;
   std::vector<EVec3f> m_stroke;
 
@@ -51,7 +47,7 @@ public:
 
   bool CanLeaveMode();
   void StartMode ();
-  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+  void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center);
 
 };
 

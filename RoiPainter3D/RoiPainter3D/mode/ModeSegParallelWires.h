@@ -1,4 +1,4 @@
-#ifndef MODE_MODESEGPARALLELWIRES_H_
+﻿#ifndef MODE_MODESEGPARALLELWIRES_H_
 #define MODE_MODESEGPARALLELWIRES_H_
 #pragma unmanaged
 
@@ -24,7 +24,6 @@
 
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "kcurves.h"
 #include <vector>
 
@@ -43,44 +42,32 @@ private:
   static float m_cp_radius;
 
 public:
-  SplineWire( PLANE_ID plane_id );
-  
+  SplineWire( PLANE_ID plane_id );  
   SplineWire(const SplineWire& src) : m_plane_id (src.m_plane_id){
-    Copy(src);
-  }
-  SplineWire &operator=(const SplineWire &src)
-  {
-    Copy(src);
-    return *this;
-  }
-  void Copy(const SplineWire& src){
     m_cps = src.m_cps;
     m_curve = src.m_curve;
-    if ( m_plane_id != src.m_plane_id )
-      std::cout << "!!!!!!!!!!!!!!!!!!! strange copy at SplineWire !!!!!!!!!!!!\n"; 
   }
-  
-  //control point manipulation
-  int  AddCtrlPt (const EVec3f &p);
-  void MoveCtrlPt(const int idx, const EVec3f &p);
+  SplineWire &operator=(const SplineWire &src) = delete; //const変数を持つので=はNG
 
-  int  PickCtrlPt( const EVec3f &ray_pos, const EVec3f &ray_dir);
-  void PickToEraseCtrlPt( const EVec3f &ray_pos, const EVec3f &ray_dir);
+  //control point manipulation
+  int  AddCP (const EVec3f &p);
+  void MoveCP(const int idx, const EVec3f &p);
+  int  PickCP       ( const EVec3f &ray_pos, const EVec3f &ray_dir);
+  void PickToEraseCP( const EVec3f &ray_pos, const EVec3f &ray_dir);
   
   //rendering
-  void DrawCtrlPt() const;
-  void DrawWire  (const EVec3f &offset, const EVec3f &color, float width) const;
+  void DrawCPs() const;
+  void DrawWire(const EVec3f &offset, const EVec3f &color, float width) const;
 
   int GetNumCtrlPts() const { return (int) m_cps.size(); }
   const std::vector<EVec3f> &GetCurve() const { return m_curve; }
-
 
   static void SetCtrlPtRadius(float r){
     m_cp_radius = r;
   }
   
-  void exportCtrlPtInfo(std::ofstream &ofs) const;
-  void importCtrlPtInfo(std::ifstream &ifs) ;
+  void exportCpInfo(std::ofstream &ofs) const;
+  void importCpInfo(std::ifstream &ifs) ;
   
 private:
   void UpdateCurveFromCPs( );
@@ -92,9 +79,6 @@ private:
 class ModeSegParallelWires : public ModeInterface
 {
 private:
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-  
   CRSSEC_ID m_trgtplane;
 
   //wires
@@ -137,7 +121,7 @@ public:
 
   bool CanLeaveMode();
   void StartMode ();
-  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+  void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center);
 
   void FinishSegmentation();
   void CancelSegmentation();

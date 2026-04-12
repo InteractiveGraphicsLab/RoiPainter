@@ -3,14 +3,10 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include <vector>
 
 class ModeRefStrokeTrim : public ModeInterface
 {
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
 	bool m_b_modified ;
 	bool m_b_drawingstroke;
 	int  m_trgt_maskid ;
@@ -49,7 +45,7 @@ public:
 
   bool CanLeaveMode();
   void StartMode ();
-  void DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center);
+  void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center);
 
   void cancelSegmentation();
   void finishSegmentation();

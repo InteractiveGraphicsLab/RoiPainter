@@ -27,9 +27,7 @@ ModeSegVoxelPaint::~ModeSegVoxelPaint()
 }
 
 
-ModeSegVoxelPaint::ModeSegVoxelPaint() :
-	m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg_Seg.glsl"   ),
-	m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegVoxelPaint::ModeSegVoxelPaint() 
 {
   m_bR = m_bL = m_bM = false;
   m_b_refinementmode = false;
@@ -400,49 +398,29 @@ static void t_drawCubes
 
 void ModeSegVoxelPaint::DrawScene
 (
-    const EVec3f &cuboid, 
-    const EVec3f &camP  ,
-    const EVec3f &camF
+    const EVec3f &cam_pos,
+    const EVec3f &cam_center
 )
 {
-  const bool   bDrawVol = formVisParam_bRendVol();
-  const EVec3i reso     = ImageCore::GetInst()->GetResolution();
-  const EVec3f pitch    = ImageCore::GetInst()->GetPitch();
-
-  //bind volumes ---------------------------------------
   BindAllVolumes();
-
-  //draw planes
-  DrawCrossSections(cuboid, reso, m_crssec_shader);
-
+  DrawCrsSec_Segmentation();
   
-  if (bDrawVol && !IsSpaceKeyOn())
+  if (formVisParam_bRendVol() && !IsSpaceKeyOn())
   {
-    const bool  b_pse   = formVisParam_bDoPsued();
-    const float alpha   = formVisParam_getAlpha();
-    const bool  b_roi   = formVisParam_GetOtherROI();
     const bool  b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    const int   n_slice = (int)((b_manip ? ONMOVE_SLICE_RATE : 1.0) * formVisParam_getSliceNum());
-
-
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    m_volume_shader.Bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, camP, b_pse, b_roi);
-    t_DrawCuboidSlices(n_slice, camP, camF, cuboid);
-    m_volume_shader.Unbind();
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    DrawVolume_Segmentation(cam_pos, cam_center, b_manip);
   }
 
 
 	if ( m_b_paintmode )
   {
+    const EVec3f pitch = ImageCore::GetInst()->GetPitch();
     t_drawCubes( m_paint_voxels, pitch, m_bL);
   }
 
 	if (m_b_lassomode) 
   {
-		EVec3f ofset = (camP - camF).normalized() * 0.5;
+		EVec3f ofset = (cam_pos - cam_center).normalized() * 0.5;
 		glLineWidth(2);
 
     if( m_bL ) 

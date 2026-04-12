@@ -416,18 +416,18 @@ bool ImageCore::LoadVolume(vector<string> fnames, string fext)
 
 	bool success = false;
 	//3D
-  if ( trgtId == 0 && t_LoadTRawSS   (fnames[0].c_str(), m_resolution, m_pitch, m_vol_orig) ) success = true;
-	if ( trgtId == 2 && t_LoadTxt      (fnames[0].c_str(), m_resolution, m_pitch, m_vol_orig) ) success = true;
-	if ( trgtId == 3 && t_LoadDCM3D    (fnames[0].c_str(), m_resolution, m_pitch, m_vol_orig) ) success = true;
-	if ( trgtId == 4 && t_LoadPVM3D    (fnames[0].c_str(), m_resolution, m_pitch, m_vol_orig) ) success = true;
+  if ( trgtId == 0 && t_LoadTRawSS   (fnames[0].c_str(), m_reso, m_pitch, m_vol_orig) ) success = true;
+	if ( trgtId == 2 && t_LoadTxt      (fnames[0].c_str(), m_reso, m_pitch, m_vol_orig) ) success = true;
+	if ( trgtId == 3 && t_LoadDCM3D    (fnames[0].c_str(), m_reso, m_pitch, m_vol_orig) ) success = true;
+	if ( trgtId == 4 && t_LoadPVM3D    (fnames[0].c_str(), m_reso, m_pitch, m_vol_orig) ) success = true;
 	
   //if ( trgtId == 5 && t_LoadFAV      (fnames[0].c_str(), m_Reso, m_Pitch, m_volOrig) ) success = true;
   if ( trgtId == 5 ) CLI_MessageBox_OK_Show("fav loader is under construction.", "message");
   if ( trgtId == 6 ) CLI_MessageBox_OK_Show("sph loader is under construction.", "message");
 
   //2D slices
-	if ( trgtId ==10 && t_LoadDCMs     (fnames           , m_resolution, m_pitch, m_vol_orig) ) success = true;
-	if ( trgtId ==11 && t_LoadBMP_TIFs (fnames           , m_resolution, m_pitch, m_vol_orig) ) success = true;
+	if ( trgtId ==10 && t_LoadDCMs     (fnames           , m_reso, m_pitch, m_vol_orig) ) success = true;
+	if ( trgtId ==11 && t_LoadBMP_TIFs (fnames           , m_reso, m_pitch, m_vol_orig) ) success = true;
 
 
 	bool strangePitch = m_pitch[0] <= 0 || m_pitch[1] <= 0 || m_pitch[2] <= 0;
@@ -450,24 +450,24 @@ bool ImageCore::LoadVolume(vector<string> fnames, string fext)
 		{
       int flg = RoiPainter3D::formStackOrder_showModalDialog();
       //if (flg == 1) t_FlipVolumeInZ<short>(m_resolution[0], m_resolution[1], m_resolution[2], m_vol_orig);
-      if (flg == 1) FlipVolumeInZ<short>( m_resolution[0], m_resolution[1], m_resolution[2], m_vol_orig);
+      if (flg == 1) FlipVolumeInZ<short>( m_reso[0], m_reso[1], m_reso[2], m_vol_orig);
 		}
 	}
 	else 
 	{
 		m_filepath = "";
-		t_LoadDefoultVolume(m_resolution, m_pitch, m_vol_orig);
+		t_LoadDefoultVolume(m_reso, m_pitch, m_vol_orig);
 	}
 
 	// post loading 
 	short minV, maxV;
-	GetMaxMinOfArray<short>( m_resolution[0]* m_resolution[1] * m_resolution[2], m_vol_orig, minV, maxV);
+	GetMaxMinOfArray<short>( m_reso[0]* m_reso[1] * m_reso[2], m_vol_orig, minV, maxV);
 
-	m_vol_origgm = new float[m_resolution[0]* m_resolution[1] * m_resolution[2]];
-	m_vol      .Allocate( m_resolution );
-	m_vol_flag .Allocate( m_resolution );
-	m_vol_mask .Allocate( m_resolution );
-	m_vol_gm   .Allocate( m_resolution );
+	m_vol_origgm = new float[m_reso[0]* m_reso[1] * m_reso[2]];
+	m_vol      .Allocate( m_reso );
+	m_vol_flag .Allocate( m_reso );
+	m_vol_mask .Allocate( m_reso );
+	m_vol_gm   .Allocate( m_reso );
 
 	m_vol     .SetValue(m_vol_orig, minV, maxV);
 	m_vol_flag.SetAllZero();
@@ -488,10 +488,10 @@ bool ImageCore::LoadVolume(vector<string> fnames, string fext)
 
 void ImageCore::UpdateGradMagnituteVolume()
 {
-	const int N = m_resolution[0] * m_resolution[1] * m_resolution[2];
+	const int N = m_reso[0] * m_reso[1] * m_reso[2];
 
 	memset( m_vol_origgm, 0, sizeof(float) * N);
-	Sobel3D<short, float>( m_resolution[0], m_resolution[1], m_resolution[2], m_vol_orig, m_vol_origgm);
+	Sobel3D<short, float>( m_reso[0], m_reso[1], m_reso[2], m_vol_orig, m_vol_origgm);
 
 	float minV, maxV;
 	GetMaxMinOfArray<float>( N, m_vol_origgm, minV, maxV);
@@ -578,7 +578,7 @@ void ImageCore::LoadMask(const char *fname)
 	fread(&H      , sizeof(int), 1, fp);
 	fread(&D      , sizeof(int), 1, fp);
 
-	if(W != m_resolution[0] || H != m_resolution[1] || D != m_resolution[2] )
+	if(W != m_reso[0] || H != m_reso[1] || D != m_reso[2] )
 	{
 		RoiPainter3D::CLI_MessageBox_OK_Show( "strange volume size\n", "caution");
 		fclose( fp );
@@ -624,17 +624,17 @@ void ImageCore::LoadMask(const char *fname)
 
 
 
-void ImageCore::SaveMask( const char* fname)
+void ImageCore::SaveMask( const char* fname) const
 {
   FILE* fp = fopen(fname, "wb");
 
   //save mask image
   int version = 0;
   fwrite(&version  , sizeof(int), 1, fp);
-  fwrite(&m_resolution[0], sizeof(int), 1, fp);
-  fwrite(&m_resolution[1], sizeof(int), 1, fp);
-  fwrite(&m_resolution[2], sizeof(int), 1, fp);
-  fwrite(&m_vol_mask[0], sizeof(byte), m_resolution[0] * m_resolution[1] * m_resolution[2], fp);
+  fwrite(&m_reso[0], sizeof(int), 1, fp);
+  fwrite(&m_reso[1], sizeof(int), 1, fp);
+  fwrite(&m_reso[2], sizeof(int), 1, fp);
+  fwrite(m_vol_mask.GetVolumePtr(), sizeof(byte), m_reso[0] * m_reso[1] * m_reso[2], fp);
 
 	int maskN = (int)m_mask_data.size();
 	fwrite(&maskN, sizeof(int), 1, fp);
@@ -704,7 +704,7 @@ void ImageCore::ActiveMask_Delete  ()
   if (CLI_MessageBox_YESNO_Show("Do you want to DELETE the selected mask?", "caution") == false) return;
 
 
-  const int N = m_resolution[0] * m_resolution[1] * m_resolution[2];
+  const int N = m_reso[0] * m_reso[1] * m_reso[2];
 
   byte* mask3d = m_vol_mask.GetVolumePtr();
 #pragma omp parallel for
@@ -785,102 +785,6 @@ void ImageCore::MargeMaskIDs (std::set<int> &ids)
 }
 
 
-//
-//smart fillhole 
-//
-void ImageCore::SmartFillHole( std::set<int> &ids, int dilation_size )
-{
-  bool b_zero_exist = false;
-  for ( auto i : ids ) 
-    if( i == 0 ) b_zero_exist = true;
-
-  if (b_zero_exist)
-  {
-    const char *message = 
-      "0th region (background) cannot be used"
-      "0番領域はSmart fillhole似利用できません";
-    CLI_MessageBox_OK_Show( message, "CAUTION");
-    return;
-  }
-
-  //1. gen volume 
-  const int num_masks  = (int)m_mask_data.size();
-  const int num_voxels = GetNumVoxels();
-  byte *is_trgt    = new byte[num_masks ];
-  byte *vol_orig   = new byte[num_voxels];
-
-  memset( is_trgt, 0, sizeof(byte) * num_masks );
-  for ( auto it : ids) is_trgt[it] = 1;
-
-#pragma omp parallel for 
-  for ( int i=0; i < num_voxels; ++i )
-  {
-    vol_orig[i] = is_trgt[m_vol_mask[i]] ? 255 : 1;
-  }
-
-
-  //2. calc dilation
-  byte *vol_dilate = new byte[num_voxels];
-  memcpy( vol_dilate, vol_orig, sizeof(byte)*num_voxels);
-
-  for( int i=0; i < dilation_size; ++i)
-    Dilate3D(m_resolution, vol_dilate);
-  
-  //3. calc hole filling --> extract hole area (前景に変化した画素を抽出)
-  byte *vol_fill   = new byte[num_voxels];
-  
-
-#pragma omp parallel for 
-  for ( int i=0; i < num_voxels; ++i )
-  {
-    vol_fill[i] = (vol_dilate[i] == 255) ? 255 : 0;
-  }
-
-  FillHole3D(m_resolution[0], m_resolution[1], m_resolution[2], vol_fill);
-
-#pragma omp parallel for 
-  for ( int i=0; i < num_voxels; ++i )
-  {
-    vol_fill[i] = (vol_fill[i]==255 && vol_dilate[i] != 255) ? 255 : 1;
-  }
-
-  
-  //store hole area
-  bool b_foreexist = false;
-  for ( int i=0; i < num_voxels && !b_foreexist; ++i ) 
-  {
-    if ( vol_fill[i] == 255) b_foreexist = true;
-  }
-  
-  if( b_foreexist )
-  {
-    for ( int i=0; i < dilation_size; ++i )
-      Dilate3D(m_resolution, vol_fill);
-
-    m_vol_flag.SetAllZero();
-
-#pragma omp parallel for     
-    for ( int i=0; i < num_voxels; ++i)
-    {
-      int maskid = m_vol_mask[i]; 
-      bool tf = (vol_fill[i] == 255) && 
-                ( maskid == 0 || !m_mask_data[maskid].m_b_locked ) ;
-      if ( tf ) 
-      {
-        m_vol_flag[i] = 255;
-      }
-    }
-
-    StoreForegroundAsNewMask();
-  } 
-
-  delete[] is_trgt;
-  delete[] vol_orig;
-  delete[] vol_dilate;
-  delete[] vol_fill;
-}
-
-
 
 
 void ImageCore::ActiveMask_Erode()
@@ -888,12 +792,12 @@ void ImageCore::ActiveMask_Erode()
   std::cout << "mask erode...\n";
   if ( m_active_maskid <= 0 || m_mask_data.size() <= m_active_maskid) return;
 
-  const int N = m_resolution[0] * m_resolution[1] * m_resolution[2];
+  const int N = m_reso[0] * m_reso[1] * m_reso[2];
   
   byte* flgs = new byte[N];
   GetFlgVolByMask_0_1_255( m_active_maskid, flgs);
 
-  Erode3D( m_resolution, flgs);
+  Erode3D( m_reso, flgs);
 
 #pragma omp parallel for 
   for (int i = 0; i < N; ++i) 
@@ -917,12 +821,12 @@ void ImageCore::ActiveMask_Dilate  ()
   if ( m_active_maskid <= 0 || m_mask_data.size() <= m_active_maskid) return;
 
   std::cout << "mask dilate...\n";
-  const int N = m_resolution[0] * m_resolution[1] * m_resolution[2];
+  const int N = m_reso[0] * m_reso[1] * m_reso[2];
 
   byte* flgs = new byte[N];
   GetFlgVolByMask_0_1_255( m_active_maskid, flgs);
   
-  Dilate3D( m_resolution, flgs);
+  Dilate3D( m_reso, flgs);
 
 #pragma omp parallel for 
   for (int i = 0; i < N; ++i) 
@@ -938,66 +842,103 @@ void ImageCore::ActiveMask_Dilate  ()
   std::cout << "mask dilate...DONE\n";
 }
 
-
-
-void ImageCore::FillHole( std::set<int> &ids )
+// --------------------------------------------
+// Fill Hole 
+// idsで指定されたマスク領域の中空領域を埋める
+// 
+// dilation_size != 0の場合
+// (i)ids領域に dilation_size回の膨張を実施
+// (ii)内部を埋める
+// (iii)内部に膨張処理
+// その領域を新たなマスク領域として保存
+//---------------------------------------------
+void ImageCore::FillHole(std::set<int>& ids, int dilation_size)
 {
-  std::cout << "mask fillhole...\n";
-
   bool b_zero_exist = false;
-  for ( auto i : ids ) 
-    if( i == 0 ) b_zero_exist = true;
+  for (auto i : ids)
+    if (i == 0) b_zero_exist = true;
 
   if (b_zero_exist)
   {
-    const char *message = 
-      "0th region (background) cannot be used"
-      "0番領域はSmart fillhole似利用できません";
-    CLI_MessageBox_OK_Show( message, "CAUTION");
+    const char* message =
+      "maskid = 0 (background) cannot be used \n"
+      "0番領域はFill hole に 利用できません";
+    CLI_MessageBox_OK_Show(message, "CAUTION");
     return;
   }
 
-  //1. gen flg volume 
-  const int num_masks  = (int)m_mask_data.size();
+  // Gen volumes
+  const int num_masks = (int)m_mask_data.size();
   const int num_voxels = GetNumVoxels();
-  byte *is_trgt  = new byte[num_masks ];
-  byte *vol_flg  = new byte[num_voxels];
-  byte *vol_hole = new byte[num_voxels];
+  byte* is_trgt    = new byte[num_masks];
+  byte* vol_orig   = new byte[num_voxels];
+  byte* vol_dilate = new byte[num_voxels];
+  byte* vol_fill   = new byte[num_voxels];
 
-  memset( is_trgt, 0, sizeof(byte) * num_masks );
-  for ( auto it : ids) is_trgt[it] = 1;
+  memset(is_trgt, 0, sizeof(byte) * num_masks);
+  for (auto it : ids) is_trgt[it] = 1;
 
 #pragma omp parallel for 
-  for ( int i=0; i < num_voxels; ++i )
+  for (int i = 0; i < num_voxels; ++i)
   {
-    vol_flg[i] = is_trgt[m_vol_mask[i]] ? 255 : 0;
+    vol_orig[i] = is_trgt[m_vol_mask[i]] ? 255 : 1;
   }
 
-  memcpy( vol_hole, vol_flg, sizeof(byte) * num_voxels );
-  FillHole3D(m_resolution[0], m_resolution[1], m_resolution[2], vol_hole);
+  //外側Dilation -> FillHole --> 内側抽出 --> 内側Dilation
+  memcpy(vol_dilate, vol_orig, sizeof(byte) * num_voxels);
+  for (int i = 0; i < dilation_size; ++i)
+  {
+    Dilate3D(m_reso, vol_dilate);
+  }
+
+#pragma omp parallel for 
+  for (int i = 0; i < num_voxels; ++i)
+  {
+    vol_fill[i] = (vol_dilate[i] == 255) ? 255 : 0;
+  }
+
+  FillHole3D(m_reso[0], m_reso[1], m_reso[2], vol_fill);
+
+#pragma omp parallel for 
+  for (int i = 0; i < num_voxels; ++i)
+  {
+    vol_fill[i] = (vol_fill[i] == 255 && vol_dilate[i] != 255) ? 255 : 1;
+  }
+
+  for (int i = 0; i < dilation_size; ++i)
+    Dilate3D(m_reso, vol_fill);
 
 
-  m_vol_flag.SetAllZero();
+  //store hole area
+  bool b_foreexist = false;
+  for (int i = 0; i < num_voxels && !b_foreexist; ++i)
+  {
+    if (vol_fill[i] == 255) b_foreexist = true;
+  }
+
+  if (b_foreexist)
+  {
+    m_vol_flag.SetAllZero();
+
 #pragma omp parallel for     
-  for ( int i=0; i < num_voxels; ++i)
-  {
-    if( vol_hole[i] == 255 && 
-        vol_flg [i] != 255 && 
-       !m_mask_data[m_vol_mask[i]].m_b_locked)
+    for (int i = 0; i < num_voxels; ++i)
     {
-      m_vol_flag[i] = 255;
+      int maskid = m_vol_mask[i];
+      bool tf = (vol_fill[i] == 255) && (maskid == 0 || !m_mask_data[maskid].m_b_locked);
+      if (tf)
+      {
+        m_vol_flag[i] = 255;
+      }
     }
-  }
 
-  StoreForegroundAsNewMask();
+    StoreForegroundAsNewMask();
+  }
 
   delete[] is_trgt;
-  delete[] vol_flg;
-  delete[] vol_hole;
-
-  std::cout << "fillhole...DONE\n";
+  delete[] vol_orig;
+  delete[] vol_dilate;
+  delete[] vol_fill;
 }
-
 
 
 
@@ -1019,7 +960,7 @@ void ImageCore::ActiveMask_ExportObj  (const string &fname)
   }
 
   TMesh mesh;
-  marchingcubes::MarchingCubes(m_resolution, m_pitch, v, 128, 0, 0, mesh);
+  marchingcubes::MarchingCubes(m_reso, m_pitch, v, 128, 0, 0, mesh);
   mesh.Smoothing(smoothing_n);
   mesh.ExportObjNoTexCd(fname.c_str());
 
@@ -1048,7 +989,7 @@ void ImageCore::ExportMaskIDsAsOneMesh   ( std::set<int> mask_ids, const char *f
   }
 
   TMesh mesh;
-  marchingcubes::MarchingCubes( m_resolution, m_pitch, v, 128, 0, 0, mesh);
+  marchingcubes::MarchingCubes( m_reso, m_pitch, v, 128, 0, 0, mesh);
   mesh.Smoothing(smoothing_n);
   mesh.ExportObjNoTexCd( fname );
 
@@ -1216,7 +1157,7 @@ static const EVec3i ColPallet[ColPalletN] = {
 void ImageCore::StoreForegroundAsNewMask()
 {
 	const int id = (int) m_mask_data.size();
-	const int N = m_resolution[0] * m_resolution[1] * m_resolution[2];
+	const int N = m_reso[0] * m_reso[1] * m_reso[2];
 
 #pragma omp parallel for
 	for (int i = 0; i < N; ++i)
@@ -1276,7 +1217,7 @@ void ImageCore::ActiveMask_SetRendSurf(const bool tf)
       v[i] = ( m_vol_mask[i] == m_active_maskid ) ? 255 : 0;
     }
 
-    marchingcubes::MarchingCubes(m_resolution, m_pitch, v, 128, 0, 0, trgtMsk.m_surface);
+    marchingcubes::MarchingCubes(m_reso, m_pitch, v, 128, 0, 0, trgtMsk.m_surface);
 		trgtMsk.m_surface.Smoothing(2);
 
 		delete[] v;
@@ -1298,14 +1239,14 @@ void  ImageCore::ClearMaskSurface(int trgtid)
 
 
 
-void ImageCore::SaveVolumeAsTraw3dss(const char *fname)
+void ImageCore::SaveVolumeAsTraw3dss(const char *fname) const
 {
   string f = string(fname);
   if(f.length() < 9 || f.substr(f.length()-9, 9) != "traw3D_ss" ){
     f += ".traw3D_ss";
   }
     
-  EVec3i res = m_resolution;
+  EVec3i res = m_reso;
   EVec3f pit = m_pitch;
   short *vol = m_vol_orig;
 
@@ -1333,30 +1274,6 @@ void ImageCore::SaveVolumeAsTraw3dss(const char *fname)
   }
   fclose(fp);
 
-  /*
-  //test code just for debug
-  float *imgZX = new float[D*W];
-  float *imgZY = new float[D*H];
-  memset( imgZX, 0, sizeof(float) * D*W);
-  memset( imgZY, 0, sizeof(float) * D*H);
-
-  for( int x = 0; x < W; ++x)
-  for( int y = 0; y < H; ++y)
-  for( int z = 0; z < D; ++z)
-  {
-    imgZX[x + z*W] += vol[x + y*W + z *W*H];
-    imgZY[y + z*H] += vol[x + y*W + z *W*H];
-  }
-
-  OGLImage2D4 img;
-  img.Allocate(W,D);
-  img.setGrayValue_normalize(imgZX);
-  img.SaveAs("zx.bmp", 0);
-  
-  img.Allocate(H,D);
-  img.setGrayValue_normalize(imgZY);
-  img.SaveAs("zy.bmp", 0);
-  */
 }
 
 

@@ -203,7 +203,7 @@ System::Void FormVisMask::btnFillHole_Click(
     return;
   }
 
-  ImageCore::GetInst()->FillHole( trgt_ids );
+  ImageCore::GetInst()->FillHole( trgt_ids, 0);
   updateList();
   RedrawScene();
 }
@@ -260,7 +260,7 @@ System::Void FormVisMask::btnSmartFillHole_Click(
     return;
   } 
 
-  ImageCore::GetInst()->SmartFillHole(trgt_ids, dilation_size);
+  ImageCore::GetInst()->FillHole(trgt_ids, dilation_size);
   updateList();
   RedrawScene();
 }

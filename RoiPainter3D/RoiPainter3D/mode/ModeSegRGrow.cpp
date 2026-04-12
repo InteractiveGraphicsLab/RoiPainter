@@ -5,6 +5,7 @@
 #include "ModeCore.h"
 #include "CrsSecCore.h"
 #include "tqueue.h"
+#include "tcolor.h"
 
 #pragma managed
 #include "FormMain.h"
@@ -23,34 +24,24 @@ using namespace RoiPainter3D;
 //  1 : target & back ground voxels 
 // 255: target & fore ground voxels
 //-----------------------------------------------------------------------------
-
-ModeSegRGrow::ModeSegRGrow() :
-  m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg_Seg.glsl"),
-  m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl")
+ModeSegRGrow::ModeSegRGrow() 
 {
 	m_bL = m_bR = m_bM = false;
 	m_drag_cp_id   = -1;
-  m_cp_size      = 0.1f;
+  m_cp_radius      = 0.1f;
 	m_b_roi_update = false;
   m_b_drawstroke = false;
 }
 
 
-ModeSegRGrow::~ModeSegRGrow()
-{
-}
-
+ModeSegRGrow::~ModeSegRGrow(){}
 
 
 bool ModeSegRGrow::CanLeaveMode()
 {
 	if( !m_b_roi_update) return true;
-
-	if ( CLI_MessageBox_YESNO_Show("Current Result is not stored. \nDo you want to leave?" ,"caution") )
-	{
-		return true;
-	}
-	return false;
+	const char* msg = "Current Result is not stored. \nDo you want to leave?";
+	return CLI_MessageBox_YESNO_Show(msg, "caution");
 }
 
 
@@ -59,16 +50,14 @@ void ModeSegRGrow::StartMode()
 {
   ImageCore::GetInst()->InitializeVolFlgByLockedMask();
 
-	m_cp_centers.clear();
-	m_cp_size = ImageCore::GetInst()->GetPitch()[0] * 3;
-	m_cp_sphere.InitializeIcosaHedron( m_cp_size );
+	m_cps.clear();
+	m_cp_radius = ImageCore::GetInst()->GetPitch()[0] * 3;
 
 	EVec2i vol_minmax = ImageCore::GetInst()->GetVolMinMax();
   formSegRGrow_InitAllItems(vol_minmax[0],vol_minmax[1]);
   formSegRGrow_Show();
 
-  //Lock/Unlock pitch box 
-  //ピッチ変更によりseedがずれる可能性はあるがseed数が少ないのでpitch変更可能にしておく
+  //Unlock pitch box (ピッチ変更にしておく）
   formVisParam_UnlockPitchBox();
 }
 
@@ -78,26 +67,28 @@ void ModeSegRGrow::StartMode()
 // Mouse Listener (Camera manipuration & CP manipuration)
 void ModeSegRGrow::LBtnDown(const EVec2i &p, OglForCLI *ogl)
 {
-  EVec3f ray_pos, ray_dir;
-	ogl->GetCursorRay(p, ray_pos, ray_dir);
 
   m_bL = true;
 
   if (IsCtrKeyOn())
   {
+		//start cut stroke drawing
     m_stroke.clear();
     m_b_drawstroke = true;
+		return;
   }
-  else if( (m_drag_cp_id = PickControlPoints(ray_pos, ray_dir) ) != -1 ) 
-  {
-    //do nothing 
-  }
-  else
-  {
-	  ogl->BtnDown_Trans(p);
-  }
-}
 
+	EVec3f ray_pos, ray_dir;
+	ogl->GetCursorRay(p, ray_pos, ray_dir);
+	
+  if(PickControlPoints(ray_pos, ray_dir, m_cps, m_cp_radius, m_drag_cp_id))
+  {
+    //start dragging control point
+		return;
+	}
+
+	ogl->BtnDown_Trans(p);
+}
 
 void ModeSegRGrow::LBtnUp(const EVec2i &p, OglForCLI *ogl)
 {
@@ -146,18 +137,23 @@ void ModeSegRGrow::LBtnDclk(const EVec2i &p, OglForCLI *ogl)
   EVec3f ray_pos, ray_dir;
 	ogl->GetCursorRay( p, ray_pos, ray_dir );
 
-	int cpid = PickControlPoints( ray_pos, ray_dir );
-	if (cpid != -1)
+	int cpid;
+	if (PickControlPoints(ray_pos, ray_dir, m_cps, m_cp_radius, cpid))
 	{
-		m_cp_centers.erase( m_cp_centers.begin() + cpid );
+		m_cps.erase( m_cps.begin() + cpid );
+		RedrawScene();
+    return;
 	}
-  else
-  {
-    EVec3f pos;
-	  CRSSEC_ID id = PickCrssec(ray_pos, ray_dir, &pos);
-	  if (id != CRSSEC_NON) m_cp_centers.push_back( pos );
-  }
-  RedrawScene();
+
+  EVec3f pos;
+	if (PickCrssec(ray_pos, ray_dir, &pos) != CRSSEC_NON)
+	{
+		m_cps.push_back( pos );
+		RedrawScene();
+		return;
+	}
+
+	//なんとなくearly returnで書いてみたけど、可読性はどうなんだろうね。。
 }
 
 
@@ -179,7 +175,7 @@ void ModeSegRGrow::MouseMove(const EVec2i &p, OglForCLI *ogl)
   else if ( m_drag_cp_id != -1)
 	{
 		CRSSEC_ID id = PickCrssec(ray_pos, ray_dir, &pos);
-		if (id != CRSSEC_NON) m_cp_centers[m_drag_cp_id] = pos;
+		if (id != CRSSEC_NON) m_cps[m_drag_cp_id] = pos;
 	}
 	else 
 	{
@@ -199,78 +195,28 @@ void ModeSegRGrow::MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl)
   RedrawScene();
 }
 
-
-
-int ModeSegRGrow::PickControlPoints(
-    const EVec3f &ray_pos, 
-    const EVec3f &ray_dir)
-{
-	for (int i = 0; i < (int)m_cp_centers.size(); ++i)
-	{
-		if (DistRayAndPoint(ray_pos, ray_dir, m_cp_centers[i]) < m_cp_size) 
-      return i;
-	}
-	return -1;
-}
-
-
-
-void ModeSegRGrow::KeyDown(int nChar) 
-{
-  RedrawScene();
-}
-
-
-void ModeSegRGrow::KeyUp(int nChar) 
-{
-  RedrawScene();
-}
+void ModeSegRGrow::KeyDown(int nChar) { RedrawScene(); }
+void ModeSegRGrow::KeyUp  (int nChar) { RedrawScene(); }
 
 
 void ModeSegRGrow::DrawScene(
-  const EVec3f &cuboid, 
   const EVec3f &cam_pos, 
   const EVec3f &cam_center)
 {
-  
-  //bind volumes ---------------------------------------
+	if (m_b_drawstroke) DrawPolyLine(EVec3f(1, 1, 0), 3, m_stroke);
+
   BindAllVolumes();
+  DrawCrsSec_Segmentation();
 
-  //draw cut stroke 
-  if ( m_b_drawstroke ) DrawPolyLine( EVec3f(1,1,0), 3, m_stroke );
-
-  //draw planes
-  const EVec3i reso = ImageCore::GetInst()->GetResolution();
-  DrawCrossSections(cuboid, reso, m_crssec_shader);
-
-  //volume rendering
   if (formVisParam_bRendVol() && !IsSpaceKeyOn())
   {
-    const bool   b_pse   = formVisParam_bDoPsued();
-    const bool   b_roi   = formVisParam_GetOtherROI();
-    const float  alpha   = formVisParam_getAlpha();
-    const bool   b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    const int    n_slice = (int)((b_manip ? ONMOVE_SLICE_RATE : 1.0) * formVisParam_getSliceNum());
-
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    m_volume_shader.Bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, cam_pos, b_pse, b_roi );
-    t_DrawCuboidSlices(n_slice, cam_pos, cam_center, cuboid);
-    m_volume_shader.Unbind();
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    const bool b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
+    DrawVolume_Segmentation(cam_pos, cam_center, b_manip);
   }
-
 
   //draw control points
-  glDisable(GL_LIGHTING);
-  glColor3d(1,0,0);
-  for ( const auto& it : m_cp_centers ) 
-  {
-    glTranslated( it[0], it[1], it[2]);
-    m_cp_sphere.Draw();
-    glTranslated(-it[0], -it[1], -it[2]);
-  }
+  glEnable(GL_LIGHTING);
+	TMesh::DrawSpheres(m_cps, m_cp_radius, COLOR_R, COLOR_R, COLOR_W, COLOR_SHIN64);
   glDisable(GL_LIGHTING);
 }
 
@@ -279,12 +225,12 @@ void ModeSegRGrow::DrawScene(
 
 void ModeSegRGrow::RunThresholding(short min_v, short max_v)
 {
-  const int   num_voxels = ImageCore::GetInst()->GetNumVoxels();
-	const short       *vol = ImageCore::GetInst()->m_vol_orig;
-	byte *vol_flg = ImageCore::GetInst()->m_vol_flag.GetVolumePtr();
+  const int    n   = ImageCore::GetInst()->GetNumVoxels();
+	const short *vol = ImageCore::GetInst()->m_vol_orig;
+	byte *vol_flg    = ImageCore::GetInst()->m_vol_flag.GetVolumePtr();
 
 #pragma omp parallel for
-	for (int i = 0; i < num_voxels; ++i) if ( vol_flg[i] != 0 )
+	for (int i = 0; i < n; ++i) if ( vol_flg[i] != 0 )
 	{
 		vol_flg[i] = (min_v <= vol[i] && vol[i] <= max_v) ? 255 : 1;
 	}
@@ -299,11 +245,10 @@ void ModeSegRGrow::RunThresholding(short min_v, short max_v)
 void ModeSegRGrow::RunRegionGrow6(short minv, short maxv)
 {
   std::cout << "runRegionGrow6...";
+	//volFlg : 0:never change, 1:back, 255:fore
 
-  //サイズ関連を準備  
-  int W,H,D,WH,WHD;
-  std::tie(W,H,D,WH,WHD) = ImageCore::GetInst()->GetResolution5();
-  const EVec3f pitch= ImageCore::GetInst()->GetPitch();
+  int W, H, D, WH, WHD;
+  std::tie(W, H, D, WH, WHD) = ImageCore::GetInst()->GetResolution5();
 
 	const short  *vol   = ImageCore::GetInst()->m_vol_orig;
 	byte         *vflg  = ImageCore::GetInst()->m_vol_flag.GetVolumePtr(); 
@@ -314,19 +259,15 @@ void ModeSegRGrow::RunRegionGrow6(short minv, short maxv)
     formSetRGrow_DoLimitIteration() ? formSetRGrow_GetMaxIteration() : INT_MAX;
 
 	//CP --> pixel id
-	//volFlg : 0:never change, 1:back, 255:fore
 	TQueue<EVec4i> Q;
-	for ( const auto cp : m_cp_centers)
+	for ( const auto cp : m_cps)
 	{
-		const int x = std::min(W-1, (int)( cp[0] / pitch[0] ) ) ;
-		const int y = std::min(H-1, (int)( cp[1] / pitch[1] ) ) ;
-		const int z = std::min(D-1, (int)( cp[2] / pitch[2] ) ) ;
-		const int I = x + y*W + z*WH;
-
-		if ( vflg[I] != 0 && minv <= vol[I] && vol[I] <= maxv)
+		EVec4i p = ImageCore::GetInst()->GetVoxelIndex4i(cp);
+    const int vi = p[3];
+		if ( vflg[vi] != 0 && minv <= vol[vi] && vol[vi] <= maxv)
 		{
-			Q.push_back( EVec4i(x, y, z, I) );
-			vflg[I] = 255;
+			Q.push_back( p );
+			vflg[vi] = 255;
 		}
 	}
 
@@ -357,18 +298,16 @@ void ModeSegRGrow::RunRegionGrow6(short minv, short maxv)
   RedrawScene();
 
   std::cout << "runRegionGrow6...DONE\n\n";
-
 }
 
 
 void ModeSegRGrow::RunRegionGrow26(short minV, short maxV)
 {
   std::cout << "runRegionGrow26...";
+	//volFlg : 0:never change, 1:back, 255:fore
 
-  //サイズ関連を準備  
-  int W,H,D,WH,WHD;
+  int W, H, D, WH, WHD;
   std::tie(W,H,D,WH,WHD) = ImageCore::GetInst()->GetResolution5();
-  const EVec3f pitch= ImageCore::GetInst()->GetPitch();
 
 	const short  *vol  = ImageCore::GetInst()->m_vol_orig;
 	byte         *vflg = ImageCore::GetInst()->m_vol_flag.GetVolumePtr(); 
@@ -378,19 +317,15 @@ void ModeSegRGrow::RunRegionGrow26(short minV, short maxV)
   const int maxnum_iteration = 
     formSetRGrow_DoLimitIteration() ? formSetRGrow_GetMaxIteration() : INT_MAX;
 
-	//CP --> pixel id
-	//vflg : 0:never change, 1:back, 255:fore
 	TQueue<EVec4i> Q;
-	for ( const auto cp : m_cp_centers)
+	for ( const auto cp : m_cps)
 	{
-		const int x = std::min(W-1, (int)( cp[0] / pitch[0] ) ) ;
-		const int y = std::min(H-1, (int)( cp[1] / pitch[1] ) ) ;
-		const int z = std::min(D-1, (int)( cp[2] / pitch[2] ) ) ;
-		const int I = x + y*W + z*WH;
+    EVec4i p = ImageCore::GetInst()->GetVoxelIndex4i(cp);
+    const int I = p[3];
 
 		if ( vflg[I] != 0 && minV <= vol[I] && vol[I] <= maxV)
 		{
-			Q.push_back( EVec4i(x, y, z, I) );
+			Q.push_back( p );
 			vflg[I] = 255;
 		}
 	}

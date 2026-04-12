@@ -10,8 +10,8 @@ uniform int       u_doHL       ;
 uniform int       u_gMag       ;
 uniform vec4      u_texCdOfst  ; //(x,y,z,0)
 
-const float COEF_1_255     = 0.00392;
-const float COEF_1_255_2   = 0.00196;
+const float COEF_1_255   = 0.00392; // 1/255
+const float COEF_1_255_2 = 0.00196; // 1/255/2
 
 //u_img3_flg  0  - non target 
 //            1  - trgt back
@@ -38,7 +38,7 @@ void main(void)
 		{
 			gl_FragColor.x = 1.0;
 		}
-		else if( COEF_1_255_2*3 < imgFlg && imgFlg < COEF_1_255_2*5)
+		else if( COEF_1_255_2*3 < imgFlg && imgFlg < COEF_1_255_2*5) //flg == 2
 		{
 			gl_FragColor.x -= 0.3;
 			gl_FragColor.y -= 0.3;

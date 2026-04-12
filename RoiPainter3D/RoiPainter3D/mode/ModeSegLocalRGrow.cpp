@@ -3,6 +3,8 @@
 #include "ModeCommonTools.h"
 #include "ImageCore.h"
 #include "ModeCore.h"
+#include "tmesh.h"
+#include "tcolor.h"
 #include "CrsSecCore.h"
 #include "LogCore.h"
 #include "thandle3d.h"
@@ -27,9 +29,7 @@ ModeSegLocalRGrow::~ModeSegLocalRGrow()
 {
 }
 
-ModeSegLocalRGrow::ModeSegLocalRGrow() :
-	m_volume_shader("shader/volVtx.glsl"   , "shader/volFlg_LRG.glsl"   ),
-	m_crssec_shader("shader/crssecVtx.glsl", "shader/crssecFlg_LRG.glsl")
+ModeSegLocalRGrow::ModeSegLocalRGrow() 
 {
   m_bL = m_bR = m_bM = false;
   m_activeseed_idx = -1;
@@ -709,34 +709,17 @@ void ModeSegLocalRGrow::KeyUp  (int nChar)
 
 
 
-void ModeSegLocalRGrow::DrawScene(const EVec3f &cuboid, const EVec3f &cam_pos, const EVec3f &cam_center)
+void ModeSegLocalRGrow::DrawScene(
+    const EVec3f &cam_pos, 
+    const EVec3f &cam_center)
 {
-  
-	//bind volumes ---------------------------------------
   BindAllVolumes();
+  DrawCrsSec_LocalRegionGrow();
 
-	//render cross sections ----------------------------------
-  const EVec3i reso = ImageCore::GetInst()->GetResolution();
-  DrawCrossSections(cuboid, reso, m_crssec_shader);
-
-	//volume rendering ---------------------------------------
-  const bool   b_draw_vol = formVisParam_bRendVol();
-	if ( b_draw_vol && !IsSpaceKeyOn() )
+	if (formVisParam_bRendVol() && !IsSpaceKeyOn() )
 	{
-    const bool  b_pse   = formVisParam_bDoPsued();
-    const bool  b_roi   = formVisParam_GetOtherROI();
-    const float alpha   = formVisParam_getAlpha();
     const bool  b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    const int   n_slice = (int)((b_manip ? ONMOVE_SLICE_RATE : 1.0) * formVisParam_getSliceNum());
-
-
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		m_volume_shader.Bind(0, 1, 2, 3, 4, 5, 6, alpha * 0.1f, reso, cam_pos, b_pse, b_roi);
-		t_DrawCuboidSlices(n_slice, cam_pos, cam_center, cuboid);
-		m_volume_shader.Unbind();
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
+    DrawVolume_LocalRegionGrow(cam_pos, cam_center, b_manip);
 	}
 
   //draw seeds
@@ -1142,18 +1125,10 @@ static void s_LocalRegionGrow
 // class LRGSeed 
 //
 
-const static float diffR[4] = {1   ,0,0,0}, diffB[4] = {0.3f,0.3f,1   ,0}, diffG[4] = {0,  1 ,0,0};
-const static float ambiR[4] = {0.5f,0,0,0}, ambiB[4] = {0.3f,0.3f,0.8f,0}, ambiG[4] = {0,0.8f,0,0};
-const static float spec [4] = {1   ,1,1,0};
-const static float shin [1] = {56.0f};
-
-
-TMesh LRGSeed::m_cp_mesh = TMesh();
 float LRGSeed::m_cp_radius = 1.0;
 void LRGSeed::SetCpRadius(float radius)
 {
   m_cp_radius = radius;
-	m_cp_mesh.InitializeIcosaHedron( m_cp_radius );
 }
 
 float LRGSeed::GetCpRadius()
@@ -1162,43 +1137,27 @@ float LRGSeed::GetCpRadius()
 }
 
 
-
 void LRGSeed::Draw() const
 {
 	//draw seed 
-	glPointSize(15);
 	glEnable(GL_LIGHTING);
-
-	for( const auto& p : m_cps)
-	{
-		glTranslated( p[0], p[1], p[2] );
-		if(m_flg_fore) m_cp_mesh.Draw( diffR, ambiR, spec, shin);
-		else           m_cp_mesh.Draw( diffB, ambiB, spec, shin);
-		glTranslated( -p[0], -p[1],-p[2] );
-	}
+  const float* c = m_flg_fore ? COLOR_R : COLOR_B;
+  TMesh::DrawSpheres(m_cps, m_cp_radius, c, c, COLOR_W, COLOR_SHIN64);
 	glDisable(GL_LIGHTING);
-
 }
-
 
 
 void LRGSeed::DrawAsActive() const
 {
 	float r = (m_flg_fore == 1) ? 1.0f : 0;
 	float b = (m_flg_fore == 1) ? 0 : 1.0f;
-
-	float spec[4] = { 1,1,1,0.3f };
 	float diff[4] = { r,0,b,0.3f };
-	//float diff[4] = { r,0,b,0.5f };
-	//float ambi[4] = { 0.3f*r,0,0.3f*b,0.3f };
 	float ambi[4] = { 2.0f*r,0,2.0f*b,1.0f };
-	float shin[1] = { 64.0f };
 
-
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR , spec);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR , COLOR_W);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE  , diff);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT  , ambi);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shin);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, COLOR_SHIN64);
 
   glEnable(GL_CULL_FACE );
   glCullFace(GL_BACK);

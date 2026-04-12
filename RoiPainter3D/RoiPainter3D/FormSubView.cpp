@@ -90,7 +90,7 @@ void FormSubView::RedrawPanel()
 
   if (FormVisParam::getInst()->bRendFrame()) t_DrawCuboidFrame(cuboid);
 
-  ModeCore::GetInst()->DrawScene(cuboid, m_cam->m_pos, m_cam->m_cnt);
+  ModeCore::GetInst()->DrawScene(m_cam->m_pos, m_cam->m_cnt);
 
   if (FormVisParam::getInst()->bRendIndi())
   {

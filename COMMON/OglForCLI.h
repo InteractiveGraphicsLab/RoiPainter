@@ -418,24 +418,6 @@ private:
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT  , ambi.data());
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shin);
 
-    ////lights
-    //glEnable(GL_LIGHTING);
-    //EVec4f lPosi[3] = { EVec4f(1000,1000,-1000,1), EVec4f(-1000,1000,-1000,1), EVec4f(1000,-1000,-1000,1) };
-    //EVec4f lambi[3] = { EVec4f(1.0f,1.0f,1.0f,1), EVec4f(0,0,0,0)            , EVec4f(0,0,0,0) };
-    //EVec4f ldiff[3] = { EVec4f(1.0f,1.0f,1.0f,1), EVec4f(0.5f,0.5f,0.5f,1)   , EVec4f(0.5f,0.5f,0.5f,1) };
-    //EVec4f lspec[3] = { EVec4f(0.3f,0.3f,0.3f,1), EVec4f(0.3f,0.3f,0.3f,1)   , EVec4f(0.3f,0.3f,0.3f,1) };
-
-    //for (int i = 0; i < 3; ++i)
-    //{
-    //  GLenum light = (i == 0) ? GL_LIGHT0 : 
-    //                 (i == 1) ? GL_LIGHT1 : GL_LIGHT2;
-    //  glLightfv(light, GL_POSITION, lPosi[i].data());
-    //  glLightfv(light, GL_AMBIENT , lambi[i].data());
-    //  glLightfv(light, GL_DIFFUSE , ldiff[i].data());
-    //  glLightfv(light, GL_SPECULAR, lspec[i].data());
-    //  glEnable(light);
-    //}
-
     // other general states
     glEnable(GL_DEPTH_TEST);
 

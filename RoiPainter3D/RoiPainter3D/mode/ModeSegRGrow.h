@@ -9,26 +9,18 @@
 //-----------------------------------------------------------------------------
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include "tmesh.h"
 #include <vector>
 
 class ModeSegRGrow : public ModeInterface
 {
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-  
-  bool  m_b_roi_update;
-  
-  //cut stroke
   bool  m_b_drawstroke;
-  std::vector<EVec3f> m_stroke;
+  bool  m_b_roi_update;
+  int   m_drag_cp_id; // -1 : not dragging 
 
-  //control points (cp)
-  int   m_drag_cp_id;
-  float m_cp_size;
-  TMesh m_cp_sphere;
-	std::vector<EVec3f> m_cp_centers;
+  std::vector<EVec3f> m_stroke;
+	std::vector<EVec3f> m_cps;
+  float m_cp_radius;
 
   ModeSegRGrow();
 public:
@@ -41,7 +33,6 @@ public:
   }
 
   // overload functions ---------------------------------------------
-
   void LBtnUp    (const EVec2i &p, OglForCLI *ogl);
   void RBtnUp    (const EVec2i &p, OglForCLI *ogl);
   void MBtnUp    (const EVec2i &p, OglForCLI *ogl);
@@ -53,17 +44,11 @@ public:
   void MBtnDclk  (const EVec2i &p, OglForCLI *ogl);
   void MouseMove (const EVec2i &p, OglForCLI *ogl);
   void MouseWheel(const EVec2i &p, short z_delta, OglForCLI *ogl);
-
   void KeyDown(int nChar);
   void KeyUp  (int nChar);
-
   bool CanLeaveMode();
   void StartMode   ();
-  void DrawScene( 
-    const EVec3f &cuboid, 
-    const EVec3f &cam_pos, 
-    const EVec3f &cam_center);
-
+  void DrawScene( const EVec3f &cam_pos, const EVec3f &cam_center);
 
 public:
   void RunThresholding(short minV, short maxV);
@@ -74,9 +59,6 @@ public:
   void RunFillHole();
 
   void FinishSegmentation();
-
-private:
-  int PickControlPoints(const EVec3f &rayP, const EVec3f &rayD);
 
 };
 

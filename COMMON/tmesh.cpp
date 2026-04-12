@@ -877,6 +877,23 @@ void TMesh::DrawSphere
   DrawSphere(position, radius);
 }
 
+void TMesh::DrawSpheres(
+  const std::vector<EVec3f> &positions, 
+  const float radius,
+  const float *diff, 
+  const float *ambi, 
+  const float *spec, 
+  const float *shin) 
+{
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR , spec);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE  , diff);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT  , ambi);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shin);
+  for (const auto &p : positions) DrawSphere(p, radius);
+}
+
+
+
 
 void TMesh::DrawIcosaHedron(
   const float r,

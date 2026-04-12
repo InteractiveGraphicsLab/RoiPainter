@@ -18,10 +18,11 @@
 
 class CrssecCore
 {
+private:
   //plane
-  float  m_plane_xy; //[0,1]
-  float  m_plane_yz; //[0,1]
-  float  m_plane_zx; //[0,1]
+  float m_plane_xy; //[0,1]
+  float m_plane_yz; //[0,1]
+  float m_plane_zx; //[0,1]
 
   //curved cross section 
   EVec3f  m_curve_crssec_norm;
@@ -44,17 +45,18 @@ public:
   //picking cross sections
   CRSSEC_ID PickCrssec(
     bool b_pick_xy, bool b_pick_yz, bool b_pick_zx, bool b_pick_curvecrssec, 
-    const EVec3f &cuboid, const EVec3f &ray_pos, const EVec3f &ray_dir);
+    const EVec3f &cuboid, const EVec3f &ray_pos, const EVec3f &ray_dir) const;
 
   CRSSEC_ID PickCrssec(
     bool b_pick_xy, bool b_pick_yz, bool b_pick_zx, bool b_pick_curvecrssec, 
     const EVec3f &cuboid, const EVec3f &ray_pos, const EVec3f &ray_dir,
-    EVec3f &picked_position);
+    EVec3f &picked_position) const;
 
   void MoveCrssec(EVec3i reso, EVec3f pitch, CRSSEC_ID id, short delta);
 
   //move three planes to fit to the picked 3D position
-  void FitCrssecToPosition(const EVec3i &reso, const EVec3f &pitch, const EVec3f &pos, CRSSEC_ID fixId)
+  void FitCrssecToPosition(const EVec3i &reso, const EVec3f &pitch, 
+                           const EVec3f &pos, CRSSEC_ID fixId)
   {
     if (fixId != CRSSEC_XY) m_plane_xy = pos[2] / (pitch[2] * reso[2]);
     if (fixId != CRSSEC_YZ) m_plane_yz = pos[0] / (pitch[0] * reso[0]);
@@ -64,14 +66,12 @@ public:
   void  GenerateCurvedCrssec(const EVec3f &cuboid, const EVec3f &camP, const std::vector<EVec3f> &stroke);
   void  ClearCurvedCrossec(){ m_curve_crssec.Clear(); m_curve_crssec_edge.clear(); }
 
-  float GetPlaneXyPosition() { return m_plane_xy; }
-  float GetPlaneYzPosition() { return m_plane_yz; }
-  float GetPlaneZxPosition() { return m_plane_zx; }
-
+  float GetPlaneXyPosition() const { return m_plane_xy; }
+  float GetPlaneYzPosition() const { return m_plane_yz; }
+  float GetPlaneZxPosition() const { return m_plane_zx; }
   void SetPlaneXyPosition(float plane_xy ){ m_plane_xy = plane_xy; }
   void SetPlaneYzPosition(float plane_yz ){ m_plane_yz = plane_yz; }
   void SetPlaneZxPosition(float plane_zx ){ m_plane_zx = plane_zx; }
-
 };
 
 

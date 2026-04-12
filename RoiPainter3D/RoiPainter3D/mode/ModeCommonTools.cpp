@@ -1,14 +1,13 @@
 #pragma unmanaged
 #include "ModeCommonTools.h"
 #include "ModeInterface.h"
-#include "Mode/GlslShader.h"
 
 #include "ImageCore.h"
 #include "CrsSecCore.h" 
+#include "tmesh.h" 
 
 #pragma managed
 #include "FormVisParam.h" 
-
 #pragma unmanaged
 
 
@@ -36,11 +35,15 @@ void BindAllVolumes()
   ImageCore::GetInst()->m_img_maskcolor.BindOgl(false);
 }
 
-void DrawCrossSections(
-    const EVec3f &cuboid, 
-    const EVec3i &reso  ,
-    GlslShaderCrsSec &shader)
+
+///////////////////////////////////////////////////////////
+//draw cross sections
+
+void DrawCrossSections(GlslShaderCrsSec &shader)
 {
+  const EVec3f cuboid = ImageCore::GetInst()->GetCuboid();
+  const EVec3i reso = ImageCore::GetInst()->GetResolution();
+
   glColor3d(1, 1, 1);
   shader.Bind(0, 1, 2, 3, 6, reso, false, !IsSpaceKeyOn());
   const bool b_xy = formVisParam_bPlaneXY();
@@ -49,6 +52,113 @@ void DrawCrossSections(
   CrssecCore::GetInst()->DrawCrssec(b_xy, b_yz, b_zx, cuboid);
   shader.Unbind();
 }
+
+void DrawCrsSec_Standard()
+{
+  static GlslShaderCrsSec shader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl");
+  DrawCrossSections(shader);
+}
+
+void DrawCrsSec_Segmentation()
+{
+  static GlslShaderCrsSec shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl");
+  DrawCrossSections(shader);
+}
+
+void DrawCrsSec_Mask()
+{
+  static GlslShaderCrsSec shader("shader/crssecVtx.glsl", "shader/crssecFlg_Msk.glsl");
+  DrawCrossSections(shader);
+}
+
+void DrawCrsSec_LocalRegionGrow()
+{
+  //255 --> Red, 2 --> Blue 
+  static GlslShaderCrsSec shader("shader/crssecVtx.glsl", "shader/crssecFlg_LRG.glsl");
+  DrawCrossSections(shader);
+}
+
+
+
+void DrawSuface_Segmenation(const TMesh& mesh)
+{
+  static GlslShaderCrsSec shader("shader/crssecVtx.glsl", "shader/crssecFlg_Seg.glsl");
+  const EVec3f cuboid = ImageCore::GetInst()->GetCuboid();
+  const EVec3i reso   = ImageCore::GetInst()->GetResolution();
+
+  glColor3d(1, 1, 1);
+  shader.Bind(0, 1, 2, 3, 6, reso, false, !IsSpaceKeyOn());
+  mesh.Draw();
+  shader.Unbind();
+}
+
+
+///////////////////////////////////////////////////////////
+//draw volume by slicing
+
+
+void DrawVolume(
+  GlslShaderVolume &shader,
+  const EVec3f& cam_pos,
+  const EVec3f& cam_cnt,
+  bool b_coarse_render)
+{
+  const EVec3f cuboid = ImageCore::GetInst()->GetCuboid();
+  const EVec3i reso = ImageCore::GetInst()->GetResolution();
+
+  const bool  b_pse = formVisParam_bDoPsued();
+  const float alpha = formVisParam_getAlpha();
+  const bool  b_roi = formVisParam_GetOtherROI();
+  const int   n_slice = (int)((b_coarse_render ? ONMOVE_SLICE_RATE : 1.0) * formVisParam_getSliceNum());
+
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  shader.Bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, cam_pos, b_pse, b_roi);
+  t_DrawCuboidSlices(n_slice, cam_pos, cam_cnt, cuboid);
+  shader.Unbind();
+  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+}
+
+
+
+void DrawVolume_Standard(
+  const EVec3f& cam_pos, 
+  const EVec3f& cam_cnt,
+  bool b_coarse_render)
+{
+  static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg.glsl");
+  DrawVolume(shader, cam_pos, cam_cnt, b_coarse_render);
+}
+
+void DrawVolume_Segmentation(
+  const EVec3f& cam_pos,
+  const EVec3f& cam_cnt,
+  bool b_coarse_render)
+{
+  static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg_Seg.glsl");
+  DrawVolume(shader, cam_pos, cam_cnt, b_coarse_render);
+}
+
+void DrawVolume_Mask(
+    const EVec3f& cam_pos, 
+    const EVec3f& cam_cnt, 
+    bool b_coarse_render)
+{
+  static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg_Msk.glsl");
+  DrawVolume(shader, cam_pos, cam_cnt, b_coarse_render);
+}
+
+void DrawVolume_LocalRegionGrow(
+  const EVec3f& cam_pos,
+  const EVec3f& cam_cnt,
+  bool b_coarse_render)
+{
+  //255 --> Red, 2 --> Blue 
+  static GlslShaderVolume shader("shader/volVtx.glsl", "shader/volFlg_LRG.glsl");
+  DrawVolume(shader, cam_pos, cam_cnt, b_coarse_render);
+}
+
 
 
 

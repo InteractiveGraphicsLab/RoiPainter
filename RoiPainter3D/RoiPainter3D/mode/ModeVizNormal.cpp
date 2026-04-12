@@ -17,14 +17,9 @@ using namespace RoiPainter3D;
 
 
 
-ModeVizNormal::~ModeVizNormal()
-{
+ModeVizNormal::~ModeVizNormal(){}
 
-}
-
-ModeVizNormal::ModeVizNormal() :
-  m_volumeShader("shader/volVtx.glsl"   , "shader/volFlg.glsl"),
-  m_crssecShader("shader/crssecVtx.glsl", "shader/crssecFlg.glsl")
+ModeVizNormal::ModeVizNormal() 
 {
   std::cout << "ModeVizNormal...\n";
 
@@ -36,13 +31,10 @@ ModeVizNormal::ModeVizNormal() :
 
 
 
-
 bool ModeVizNormal::CanLeaveMode()
 {
   return true;
 }
-
-
 
 
 
@@ -116,13 +108,7 @@ void ModeVizNormal::MBtnUp(const EVec2i &p, OglForCLI *ogl)
 }
 
 
-void ModeVizNormal::LBtnDclk(const EVec2i &p, OglForCLI *ogl)
-{
-
-
-}
-
-
+void ModeVizNormal::LBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeVizNormal::RBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 void ModeVizNormal::MBtnDclk(const EVec2i &p, OglForCLI *ogl) {}
 
@@ -164,34 +150,18 @@ void ModeVizNormal::MouseWheel(const EVec2i &p, short zDelta, OglForCLI *ogl)
 void ModeVizNormal::KeyDown(int nChar) {}
 void ModeVizNormal::KeyUp(int nChar) {}
 
-void ModeVizNormal::DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF)
+void ModeVizNormal::DrawScene(const EVec3f &camP, const EVec3f &camF)
 {
-
-  //bind volumes ---------------------------------------
   BindAllVolumes();
 
   if (m_bDrawStr) DrawPolyLine(EVec3f(1,1,0), 3, m_stroke);
 
-  const EVec3i reso = ImageCore::GetInst()->GetResolution();
-  DrawCrossSections(cuboid, reso, m_crssecShader);
+  DrawCrsSec_Standard();
 
-  const bool   b_rend_vol = formVisParam_bRendVol();
-
-  if (b_rend_vol)
+  if (formVisParam_bRendVol())
   {
-    const bool  b_pse   = formVisParam_bDoPsued();
-    const float alpha   = formVisParam_getAlpha();
-    const bool  b_roi   = formVisParam_GetOtherROI();
-    const bool  b_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
-    const int   n_slice = (int)((b_manip ? ONMOVE_SLICE_RATE : 1.0) * formVisParam_getSliceNum());
-
-    glDisable(GL_DEPTH_TEST);
-    glEnable (GL_BLEND);
-    m_volumeShader.Bind(0, 1, 2, 3, 4, 5, 6, alpha, reso, camP, b_pse, b_roi);
-    t_DrawCuboidSlices(n_slice, camP, camF, cuboid);
-    m_volumeShader.Unbind();
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    bool on_manip = formVisParam_bOnManip() || m_bL || m_bR || m_bM;
+    DrawVolume_Standard(camP, camF, on_manip);
   }
 
 }

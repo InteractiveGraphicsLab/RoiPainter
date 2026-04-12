@@ -3,21 +3,16 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include <vector>
 #include "tmesh.h"
 
 class ModeRefSplitByPlane : public ModeInterface
 {
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   //target mask id 
   int m_trgt_maskid;
   bool m_is_updated;
 
   //control points (cps)
-  TMesh m_cp_sphere;
   float m_cp_radi;
   std::vector<EVec3f> m_cps;
   int m_drag_cpid;
@@ -59,7 +54,7 @@ public:
 
   void KeyDown(int nChar);
   void KeyUp(int nChar);
-  void DrawScene(const EVec3f& cuboid, const EVec3f& cam_pos, const EVec3f& cam_center);
+  void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center);
   void cancelSegmentation();
   void finishSegmentation();
 

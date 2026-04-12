@@ -3,23 +3,17 @@
 #pragma unmanaged
 
 #include "ModeInterface.h"
-#include "GlslShader.h"
 #include <vector>
-
-class TMesh;
-
 
 class LRGSeed
 {
 private:
-  static TMesh m_cp_mesh;
   static float m_cp_radius;
 public:
   static void  SetCpRadius( float radius );
   static float GetCpRadius( );
 
 public:
-
   //m_pos.size() == 1: sphere, > 1: cylinder 
 	std::vector < EVec3f > m_cps;
 	short  m_min_v, m_max_v;
@@ -79,10 +73,6 @@ public:
 class ModeSegLocalRGrow : public ModeInterface
 {
 private:
-  // shader 
-  GlslShaderVolume m_volume_shader;
-  GlslShaderCrsSec m_crssec_shader;
-
   //seed id for moving (seed_id, cp_id)
 	EVec2i m_drag_seedcp_id;
 
@@ -124,7 +114,7 @@ public:
 
   bool CanLeaveMode();
   void StartMode ();
-  void DrawScene(const EVec3f &cuboid, const EVec3f &camP, const EVec3f &camF);
+  void DrawScene(const EVec3f &cam_pos, const EVec3f &cam_center);
 
   void FinishSegmentation();
   void CancelSegmentation();
