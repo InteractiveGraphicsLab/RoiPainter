@@ -64,6 +64,7 @@ namespace RoiPainter3D {
     System::Windows::Forms::ToolStripMenuItem^ exportCurrentCameraPosToolStripMenuItem;
     System::Windows::Forms::ToolStripMenuItem^ importCurrentCameraPosToolStripMenuItem;
     private: System::Windows::Forms::ToolStripMenuItem^ refinementSplitByPlaneToolStripMenuItem;
+    private: System::Windows::Forms::ToolStripMenuItem^ modelingPlaceLandMarksToolStripMenuItem;
 
 
 
@@ -143,13 +144,14 @@ namespace RoiPainter3D {
             this->toolStripSeparator4 = (gcnew System::Windows::Forms::ToolStripSeparator());
             this->refinementStrokeTrimingToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->refinementVoxelPaintToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+            this->refinementSplitByPlaneToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->miscsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->exportCurrentCameraPosToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->importCurrentCameraPosToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->m_menuitem_subview_x = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->m_menuitem_subview_y = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->m_menuitem_subview_z = (gcnew System::Windows::Forms::ToolStripMenuItem());
-            this->refinementSplitByPlaneToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+            this->modelingPlaceLandMarksToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->menuStrip1->SuspendLayout();
             this->SuspendLayout();
             // 
@@ -159,7 +161,7 @@ namespace RoiPainter3D {
                 | System::Windows::Forms::AnchorStyles::Left)
                 | System::Windows::Forms::AnchorStyles::Right));
             this->FormMainPanel->Location = System::Drawing::Point(2, 24);
-            this->FormMainPanel->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
+            this->FormMainPanel->Margin = System::Windows::Forms::Padding(2);
             this->FormMainPanel->Name = L"FormMainPanel";
             this->FormMainPanel->Size = System::Drawing::Size(666, 481);
             this->FormMainPanel->TabIndex = 0;
@@ -331,12 +333,12 @@ namespace RoiPainter3D {
             // 
             // modeToolStripMenuItem
             // 
-            this->modeToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(13) {
+            this->modeToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(14) {
                 this->visualizationStandardToolStripMenuItem,
                     this->visualizationMaskToolStripMenuItem, this->toolStripSeparator3, this->segmentationThresholdToolStripMenuItem, this->segmentationGraphCutToolStripMenuItem,
                     this->segmentationToolStripMenuItem, this->segmentationToolStripMenuItem1, this->segmentationThreshFieldPaintToolStripMenuItem,
                     this->segmentationParallelWiresToolStripMenuItem, this->toolStripSeparator4, this->refinementStrokeTrimingToolStripMenuItem,
-                    this->refinementVoxelPaintToolStripMenuItem, this->refinementSplitByPlaneToolStripMenuItem
+                    this->refinementVoxelPaintToolStripMenuItem, this->refinementSplitByPlaneToolStripMenuItem, this->modelingPlaceLandMarksToolStripMenuItem
             });
             this->modeToolStripMenuItem->Name = L"modeToolStripMenuItem";
             this->modeToolStripMenuItem->Size = System::Drawing::Size(50, 20);
@@ -421,6 +423,13 @@ namespace RoiPainter3D {
             this->refinementVoxelPaintToolStripMenuItem->Text = L"Refinement Voxel Paint";
             this->refinementVoxelPaintToolStripMenuItem->Click += gcnew System::EventHandler(this, &FormMain::refinementVoxelPaintToolStripMenuItem_Click);
             // 
+            // refinementSplitByPlaneToolStripMenuItem
+            // 
+            this->refinementSplitByPlaneToolStripMenuItem->Name = L"refinementSplitByPlaneToolStripMenuItem";
+            this->refinementSplitByPlaneToolStripMenuItem->Size = System::Drawing::Size(266, 22);
+            this->refinementSplitByPlaneToolStripMenuItem->Text = L"Refinement Split By Plane";
+            this->refinementSplitByPlaneToolStripMenuItem->Click += gcnew System::EventHandler(this, &FormMain::refinementSplitByPlaneToolStripMenuItem_Click);
+            // 
             // miscsToolStripMenuItem
             // 
             this->miscsToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(5) {
@@ -464,12 +473,12 @@ namespace RoiPainter3D {
             this->m_menuitem_subview_z->Text = L"Show SubView Z";
             this->m_menuitem_subview_z->Click += gcnew System::EventHandler(this, &FormMain::m_menuitem_subview_z_Click);
             // 
-            // refinementSplitByPlaneToolStripMenuItem
+            // modelingPlaceLandMarksToolStripMenuItem
             // 
-            this->refinementSplitByPlaneToolStripMenuItem->Name = L"refinementSplitByPlaneToolStripMenuItem";
-            this->refinementSplitByPlaneToolStripMenuItem->Size = System::Drawing::Size(266, 22);
-            this->refinementSplitByPlaneToolStripMenuItem->Text = L"Refinement Split By Plane";
-            this->refinementSplitByPlaneToolStripMenuItem->Click += gcnew System::EventHandler(this, &FormMain::refinementSplitByPlaneToolStripMenuItem_Click);
+            this->modelingPlaceLandMarksToolStripMenuItem->Name = L"modelingPlaceLandMarksToolStripMenuItem";
+            this->modelingPlaceLandMarksToolStripMenuItem->Size = System::Drawing::Size(266, 22);
+            this->modelingPlaceLandMarksToolStripMenuItem->Text = L"Modeling Place Land Marks";
+            this->modelingPlaceLandMarksToolStripMenuItem->Click += gcnew System::EventHandler(this, &FormMain::modelingPlaceLandMarksToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -479,7 +488,7 @@ namespace RoiPainter3D {
             this->Controls->Add(this->FormMainPanel);
             this->Controls->Add(this->menuStrip1);
             this->MainMenuStrip = this->menuStrip1;
-            this->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
+            this->Margin = System::Windows::Forms::Padding(2);
             this->Name = L"FormMain";
             this->Text = L"FormMain";
             this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &FormMain::FormMain_KeyDown);
@@ -526,6 +535,7 @@ namespace RoiPainter3D {
     System::Void refinementVoxelPaintToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) ;
     System::Void refinementStrokeTrimingToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) ;
     System::Void refinementSplitByPlaneToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
+    System::Void modelingPlaceLandMarksToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
 
     System::Void FormMain_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) ;
     System::Void FormMain_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) ;
