@@ -2,6 +2,7 @@
 #include "ModeMdlPlaceLMKs.h"
 #include "OglForCLI.h"
 #include "ModeCommonTools.h"
+#include "ImageCore.h"
 
 #pragma managed
 #include "../FormMdlPlaceLMKs.h"
@@ -13,7 +14,7 @@ using namespace RoiPainter3D;
 
 ModeMdlPlaceLMKs::ModeMdlPlaceLMKs()
 {
-
+  m_bL = m_bR = m_bM = false;
 
 }
 
@@ -26,6 +27,13 @@ bool ModeMdlPlaceLMKs::CanLeaveMode()
 void ModeMdlPlaceLMKs::StartMode() 
 {
   formMdlPlaceLMKs_Show();
+}
+
+void ModeMdlPlaceLMKs::GenIsoSurFace() {
+  const EVec3i reso  = ImageCore::GetInst()->GetResolution();
+  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
+
+  short* volume = ImageCore::GetInst()->m_vol_orig;
 }
 
 

@@ -39,6 +39,8 @@ public:
 	void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center) ;
 	//
 
+	void GenIsoSurFace();
+
 };
 
 #pragma managed
