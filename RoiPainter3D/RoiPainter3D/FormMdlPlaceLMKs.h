@@ -48,6 +48,9 @@ namespace RoiPainter3D {
 
 	private: System::Windows::Forms::Button^ m_btn_aaa;
 	private: System::Windows::Forms::TrackBar^ trackBar1;
+	private: System::Windows::Forms::Label^ m_thresh;
+
+
 	protected:
 
 	private:
@@ -65,6 +68,7 @@ namespace RoiPainter3D {
 		{
 			this->m_btn_aaa = (gcnew System::Windows::Forms::Button());
 			this->trackBar1 = (gcnew System::Windows::Forms::TrackBar());
+			this->m_thresh = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -80,16 +84,27 @@ namespace RoiPainter3D {
 			// 
 			// trackBar1
 			// 
-			this->trackBar1->Location = System::Drawing::Point(62, 131);
+			this->trackBar1->Location = System::Drawing::Point(34, 55);
 			this->trackBar1->Name = L"trackBar1";
-			this->trackBar1->Size = System::Drawing::Size(146, 45);
+			this->trackBar1->Size = System::Drawing::Size(278, 45);
 			this->trackBar1->TabIndex = 1;
+			// 
+			// m_thresh
+			// 
+			this->m_thresh->AutoSize = true;
+			this->m_thresh->Location = System::Drawing::Point(32, 9);
+			this->m_thresh->Name = L"m_thresh";
+			this->m_thresh->Size = System::Drawing::Size(72, 12);
+			this->m_thresh->TabIndex = 2;
+			this->m_thresh->Text = L"Thresh(閾値)";
+			this->m_thresh->Click += gcnew System::EventHandler(this, &FormMdlPlaceLMKs::label1_Click);
 			// 
 			// FormMdlPlaceLMKs
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(371, 385);
+			this->Controls->Add(this->m_thresh);
 			this->Controls->Add(this->trackBar1);
 			this->Controls->Add(this->m_btn_aaa);
 			this->Name = L"FormMdlPlaceLMKs";
@@ -102,7 +117,9 @@ namespace RoiPainter3D {
 #pragma endregion
 	private: System::Void m_btn_aaa_Click(System::Object^ sender, System::EventArgs^ e) {}
 
-	};
+	private: System::Void label1_Click(System::Object^ sender, System::EventArgs^ e) {
+	}
+};
 	inline void formMdlPlaceLMKs_Hide() { FormMdlPlaceLMKs::getInst()->Hide(); }
 	inline void formMdlPlaceLMKs_Show() { FormMdlPlaceLMKs::getInst()->Show(); }
 

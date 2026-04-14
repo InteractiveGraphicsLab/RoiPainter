@@ -26,6 +26,7 @@ bool ModeMdlPlaceLMKs::CanLeaveMode()
 
 void ModeMdlPlaceLMKs::StartMode() 
 {
+  m_bL = m_bR = m_bM = false;
   formMdlPlaceLMKs_Show();
 }
 
