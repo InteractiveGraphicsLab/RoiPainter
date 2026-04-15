@@ -10,7 +10,10 @@
 #include "../FormMain.h"
 #pragma unmanaged
 
+#include "tmarchingcubes.h"
+
 using namespace RoiPainter3D;
+using namespace marchingcubes;
 
 ModeMdlPlaceLMKs::ModeMdlPlaceLMKs()
 {
@@ -30,11 +33,36 @@ void ModeMdlPlaceLMKs::StartMode()
   formMdlPlaceLMKs_Show();
 }
 
-void ModeMdlPlaceLMKs::GenIsoSurFace() {
+
+static void GenIsoSurFaceHalf(const EVec3i reso, const EVec3f pitch, const short* volume, const int isovalue, TTriangleSoup &mesh) {
+  const int W = reso[0], H = reso[1], D = reso[2];
+  const int hW = W / 2, hH = H / 2, hD = D / 2;
+  EVec3i rh(hW, hH, hD);
+  EVec3f ph(pitch[0] * 2, pitch[1] * 2, pitch[2] * 2);
+
+  short* vh = new short[hW * hH * hD];
+  for (int z = 0; z < hD; ++z)
+    for (int y = 0; y < hH; ++y)
+      for (int x = 0; x < hW; ++x)
+        vh[z * hW * hH + y * hW + x] = volume[2 * z * W * H + 2 * y * W + 2 * x];
+  MarchingCubesPolygonSoup(rh, ph, vh, isovalue, 0, 0, mesh);
+
+  delete[] vh;
+}
+
+void ModeMdlPlaceLMKs::GenIsoSurFace(const int isovalue) {
+  m_isovalue = isovalue;
+
   const EVec3i reso  = ImageCore::GetInst()->GetResolution();
   const EVec3f pitch = ImageCore::GetInst()->GetPitch();
+  bool do_halfen = reso[0] % 2 == 0 && reso[1] % 2 == 0 && reso[2] % 2 == 0;
 
   short* volume = ImageCore::GetInst()->m_vol_orig;
+
+  if (do_halfen)
+    GenIsoSurFaceHalf(reso, pitch, volume, isovalue, m_isosurface);
+  else
+    MarchingCubesPolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurface);
 }
 
 

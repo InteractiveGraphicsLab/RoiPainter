@@ -3,6 +3,7 @@
 #include "ModeInterface.h"
 #include <vector>
 #include "tmesh.h"
+#include "ttrianglesoup.h"
 
 #pragma unmanaged
 
@@ -10,6 +11,9 @@
 class ModeMdlPlaceLMKs : public ModeInterface
 {
 private:
+	int m_isovalue;
+	TTriangleSoup m_isosurface;
+
 	ModeMdlPlaceLMKs();
 public:
 	static ModeMdlPlaceLMKs* GetInst() {
@@ -39,7 +43,7 @@ public:
 	void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center) ;
 	//
 
-	void GenIsoSurFace();
+	void GenIsoSurFace(const int isovalue);
 
 };
 
