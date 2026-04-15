@@ -11,6 +11,7 @@
 #pragma unmanaged
 
 #include "tmarchingcubes.h"
+#include "tcolor.h"
 
 using namespace RoiPainter3D;
 using namespace marchingcubes;
@@ -65,12 +66,22 @@ void ModeMdlPlaceLMKs::GenIsoSurFace(const int isovalue) {
     MarchingCubesPolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurface);
 }
 
+bool ModeMdlPlaceLMKs::PickIsosurface(const EVec3f& rayPos, const EVec3f& rayDir, EVec3f& pos) {
+  EVec3f p;
+  bool pick = m_isosurface.PickByRay(rayPos, rayDir, p);
+
+  pos = p;
+  return pick;
+}
+
 
 
 void ModeMdlPlaceLMKs::LBtnUp(const EVec2i& p, OglForCLI* ogl)
 {
   m_bL = false;
   ogl->BtnUp();
+
+  
 }
 
 void ModeMdlPlaceLMKs::RBtnUp(const EVec2i& p, OglForCLI* ogl) 
@@ -88,12 +99,14 @@ void ModeMdlPlaceLMKs::LBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
   m_bL = true;
   
-  if (IsShiftKeyOn())
-  {
+  if (IsShiftKeyOn()) {
+    EVec3f rayPos, rayDir, pos;
+    ogl->GetCursorRay(p, rayPos, rayDir);
 
-  }
-  else
-  {
+    if (PickIsosurface(rayPos, rayDir, pos)) {
+      m_lmk.push_back(pos);
+    }
+  } else {
     ogl->BtnDown_Trans(p);
   }
 
@@ -117,6 +130,9 @@ void ModeMdlPlaceLMKs::MBtnDclk(const EVec2i& p, OglForCLI* ogl) {}
 void ModeMdlPlaceLMKs::MouseMove(const EVec2i& p, OglForCLI* ogl) 
 {
   if (!m_bL && !m_bR && !m_bM) return;
+  EVec3f rayPos, rayDir, pos;
+  ogl->GetCursorRay(p, rayPos, rayDir);
+
 
   ogl->MouseMove(p);
 
@@ -131,6 +147,25 @@ void ModeMdlPlaceLMKs::KeyDown(int nChar) {}
 void ModeMdlPlaceLMKs::KeyUp(int nChar) {}
 
 
+static void DrawColoredLMKs(const TMesh& lmkMesh, const std::vector<EVec3f>& lmk) {
+  static const int NUM_COL = 9;//今のところ9色
+  static float COLOR[9][4] = {
+    {1.0f, 0.0f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.0f, 0.5f}, {0.0f, 0.0f, 1.0f, 0.5f},
+    {1.0f, 0.5f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.5f, 0.5f}, {0.5f, 0.0f, 1.0f, 0.5f},
+    {0.5f, 0.0f, 0.0f, 0.5f}, {0.0f, 0.5f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.5f, 0.5f}
+  };
+
+  for (int i = 0; i < lmk.size(); i++) {
+    float* c = COLOR[i % NUM_COL];
+    glPushMatrix();
+    glTranslated(lmk[i][0], lmk[i][1], lmk[i][2]);
+    lmkMesh.Draw(c, c, COLOR_W, COLOR_SHIN64);
+    glPopMatrix();
+  }
+}
+
+static float COLOR_HY[4] = { 0.3f, 0.4f, 0.1f, 0.3f };
+static float COLOR_RB[4] = { 0.8f, 0.2f, 0.8f, 0.3f };
 
 void ModeMdlPlaceLMKs::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center) 
 {
@@ -144,5 +179,10 @@ void ModeMdlPlaceLMKs::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center
     DrawVolume_Standard(cam_pos, cam_center, on_manip);
   }
 
+  glEnable(GL_LIGHTING);
+  m_isosurface.Draw(COLOR_HY, COLOR_HY, COLOR_W, COLOR_SHIN64);
+
+  DrawColoredLMKs(m_lmkMesh, m_lmk);
 
 }
+

@@ -11,8 +11,15 @@
 class ModeMdlPlaceLMKs : public ModeInterface
 {
 private:
+	// 等値面
 	int m_isovalue;
 	TTriangleSoup m_isosurface;
+
+	// landmark
+	int m_dragLmkIdx = -1;
+	std::vector <EVec3f> m_lmk;
+	float m_lmkRad;
+	TMesh m_lmkMesh;
 
 	ModeMdlPlaceLMKs();
 public:
@@ -44,6 +51,8 @@ public:
 	//
 
 	void GenIsoSurFace(const int isovalue);
+
+	bool PickIsosurface(const EVec3f& rayPos, const EVec3f& rayDir, EVec3f& pos);
 
 };
 

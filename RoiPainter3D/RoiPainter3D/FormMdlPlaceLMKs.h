@@ -119,7 +119,7 @@ namespace RoiPainter3D {
 			this->m_textbox_setIsoValue->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 12));
 			this->m_textbox_setIsoValue->Location = System::Drawing::Point(29, 32);
 			this->m_textbox_setIsoValue->Name = L"m_textbox_setIsoValue";
-			this->m_textbox_setIsoValue->Size = System::Drawing::Size(61, 19);
+			this->m_textbox_setIsoValue->Size = System::Drawing::Size(61, 23);
 			this->m_textbox_setIsoValue->TabIndex = 7;
 			this->m_textbox_setIsoValue->TextChanged += gcnew System::EventHandler(this, &FormMdlPlaceLMKs::m_textbox_setIsoValue_TextChanged);
 			// 
