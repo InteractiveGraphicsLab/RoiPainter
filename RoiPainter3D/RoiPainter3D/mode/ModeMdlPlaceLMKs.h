@@ -2,6 +2,7 @@
 
 #include "ModeInterface.h"
 #include <vector>
+#include <set>
 #include "tmesh.h"
 #include "ttrianglesoup.h"
 
@@ -53,6 +54,7 @@ public:
 	void GenIsoSurFace(const int isovalue);
 
 	bool PickIsosurface(const EVec3f& rayPos, const EVec3f& rayDir, EVec3f& pos);
+
 
 };
 
