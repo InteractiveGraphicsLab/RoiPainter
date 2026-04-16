@@ -3,6 +3,7 @@
 #include "OglForCLI.h"
 #include "ModeCommonTools.h"
 #include "ImageCore.h"
+#include "ModeCore.h"
 
 #pragma managed
 #include "../FormMdlPlaceLMKs.h"
@@ -36,6 +37,23 @@ void ModeMdlPlaceLMKs::StartMode()
   m_lmkRad = ImageCore::GetInst()->GetPitch()[0];
   m_lmkMesh.InitializeAsSphere(m_lmkRad, 10, 10);
 
+}
+
+void ModeMdlPlaceLMKs::FinishSegmentation() {
+  const int num_voxels = ImageCore::GetInst()->GetNumVoxels();
+  byte* flg3d = ImageCore::GetInst()->m_vol_flag.GetVolumePtr();
+  byte* flgInOut = new byte[num_voxels];
+
+  for (int i = 0; i < num_voxels; i++) {
+    flg3d[i] = (flg3d[i] == 0) ? 0 :
+      (flgInOut[i] == 1) ? 255 : 1;
+  }
+  delete[] flgInOut;
+  
+
+  ImageCore::GetInst()->StoreForegroundAsNewMask();
+  ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
+  RedrawScene();
 }
 
 
@@ -97,13 +115,46 @@ static int PickLMK(const EVec3f& rayPos, const EVec3f& rayDir, const std::vector
     return minIdx;
 }
 
-static int PickToEraseLMK(const EVec3f& rayPos, const EVec3f& rayDir, std::vector<EVec3f>& lmk, const float lmkRad) {
+static int EraseLMK(const EVec3f& rayPos, const EVec3f& rayDir, std::vector<EVec3f>& lmk, const float lmkRad) {
     int lmkIdx = PickLMK(rayPos, rayDir, lmk, lmkRad);
     if (lmkIdx != -1) {
         lmk.erase(lmk.begin() + lmkIdx);
         return true;
     }
     return false;
+}
+
+void ModeMdlPlaceLMKs::ExportLandmark(std::string fname) {
+  std::ofstream ofs(fname.c_str());
+  if (!ofs.is_open()) {
+    std::cout << "error when opening " << fname << "\n";
+    return;
+  }
+
+  ofs << (int)m_lmk.size() << "\n";
+  for (int i = 0; i < m_lmk.size(); i++) {
+    WriteToFstream(ofs, m_lmk[i]);
+  }
+  ofs.close();
+}
+
+void ModeMdlPlaceLMKs::ImportLandmark(std::string fname) {
+  std::ifstream ifs(fname);
+  if (ifs.fail()) {
+    std::cout << "file open error" << "\n";
+    return;
+  }
+
+  m_lmk.clear();
+  int num_lmk;
+
+  ifs >> num_lmk;
+  m_lmk.resize(num_lmk);
+  for (int i = 0; i < m_lmk.size(); i++) {
+    ReadFromFstream(ifs, m_lmk[i]);
+  }
+  ifs.close();
+  RedrawScene();
 }
 
 
@@ -156,7 +207,7 @@ void ModeMdlPlaceLMKs::RBtnDown(const EVec2i& p, OglForCLI* ogl)
       EVec3f rayPos, rayDir, pos;
       ogl->GetCursorRay(p, rayPos, rayDir);
 
-      if (PickToEraseLMK(rayPos, rayDir, m_lmk, m_lmkRad)) {
+      if (EraseLMK(rayPos, rayDir, m_lmk, m_lmkRad)) {
           RedrawScene();
       }
   } else {
@@ -202,7 +253,7 @@ void ModeMdlPlaceLMKs::KeyUp(int nChar) {}
 
 
 static void DrawColoredLMKs(const TMesh& lmkMesh, const std::vector<EVec3f>& lmk) {
-  static const int NUM_COL = 9;//今のところ9色
+  static const int NUM_COL = 9;
   static float COLOR[9][4] = {
     {1.0f, 0.0f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.0f, 0.5f}, {0.0f, 0.0f, 1.0f, 0.5f},
     {1.0f, 0.5f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.5f, 0.5f}, {0.5f, 0.0f, 1.0f, 0.5f},
@@ -220,7 +271,6 @@ static void DrawColoredLMKs(const TMesh& lmkMesh, const std::vector<EVec3f>& lmk
 }
 
 static float COLOR_HY[4] = { 0.3f, 0.4f, 0.1f, 0.3f };
-static float COLOR_RB[4] = { 0.8f, 0.2f, 0.8f, 0.3f };
 
 void ModeMdlPlaceLMKs::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center) 
 {

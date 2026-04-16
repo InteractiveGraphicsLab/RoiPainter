@@ -12,6 +12,10 @@
 class ModeMdlPlaceLMKs : public ModeInterface
 {
 private:
+	//target mask id 
+	int m_trgt_maskid;
+	bool m_is_updated;
+
 	// 等値面
 	int m_isovalue;
 	TTriangleSoup m_isosurface;
@@ -48,12 +52,16 @@ public:
 	bool CanLeaveMode() ;
 
 	void StartMode() ;
+	
 	void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center) ;
 	//
 
 	void GenIsoSurFace(const int isovalue);
 
 	bool PickIsosurface(const EVec3f& rayPos, const EVec3f& rayDir, EVec3f& pos);
+	void ImportLandmark(std::string fname);
+	void ExportLandmark(std::string fname);
+	void FinishSegmentation();
 
 
 };
