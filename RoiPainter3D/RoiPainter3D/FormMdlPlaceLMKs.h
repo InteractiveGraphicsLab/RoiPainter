@@ -17,11 +17,11 @@ namespace RoiPainter3D {
 	private: 
 		System::Windows::Forms::Button^ m_btn_genIsosurface;
 		System::Windows::Forms::TrackBar^ m_trackbar_setIsoValue;
-	private: System::Windows::Forms::TextBox^ m_textbox_setIsoValue;
-	private: System::Windows::Forms::GroupBox^ m_groupbox_isosurface;
-	private: System::Windows::Forms::Button^ m_btn_import;
-	private: System::Windows::Forms::Button^ m_btn_export;
-	private: System::Windows::Forms::Button^ m_btn_finish;
+		System::Windows::Forms::TextBox^ m_textbox_setIsoValue;
+		System::Windows::Forms::GroupBox^ m_groupbox_isosurface;
+		System::Windows::Forms::Button^ m_btn_import;
+		System::Windows::Forms::Button^ m_btn_export;
+		System::Windows::Forms::Button^ m_btn_finish;
 
 
 
@@ -31,9 +31,9 @@ namespace RoiPainter3D {
 		FormMdlPlaceLMKs(void)
 		{
 			InitializeComponent();
-			m_trackbar_setIsoValue->SetRange(-1500, 4400);
-			m_trackbar_setIsoValue->Value = 100;
-			m_textbox_setIsoValue->Text = (100).ToString();
+			m_trackbar_setIsoValue->SetRange(-1500, 1500);
+			m_trackbar_setIsoValue->Value = 300;
+			m_textbox_setIsoValue->Text = (300).ToString();
 		}
 
 	public:
@@ -170,20 +170,20 @@ namespace RoiPainter3D {
 			this->m_groupbox_isosurface->ResumeLayout(false);
 			this->m_groupbox_isosurface->PerformLayout();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
 	private: System::Void m_btn_genIsosurface_Click(System::Object^ sender, System::EventArgs^ e);
-
-	private: System::Void label1_Click(System::Object^ sender, System::EventArgs^ e) {
-	}
-private: System::Void m_trackbar_setIsoValue__Scroll(System::Object^ sender, System::EventArgs^ e);
-private: System::Void m_textbox_setIsoValue_TextChanged(System::Object^ sender, System::EventArgs^ e);
-private: System::Void m_btn_import_Click(System::Object^ sender, System::EventArgs^ e);
-private: System::Void m_btn_export_Click(System::Object^ sender, System::EventArgs^ e);
-private: System::Void m_btn_finish_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void m_trackbar_setIsoValue__Scroll(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void m_textbox_setIsoValue_TextChanged(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void m_btn_import_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void m_btn_export_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void m_btn_finish_Click(System::Object^ sender, System::EventArgs^ e);
 };
-	inline void formMdlPlaceLMKs_Hide() { FormMdlPlaceLMKs::getInst()->Hide(); }
+
 	inline void formMdlPlaceLMKs_Show() { FormMdlPlaceLMKs::getInst()->Show(); }
+	inline void formMdlPlaceLMKs_Hide() { FormMdlPlaceLMKs::getInst()->Hide(); }
+	
 
 }

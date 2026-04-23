@@ -16,7 +16,7 @@ System::Void FormMdlPlaceLMKs::m_trackbar_setIsoValue__Scroll(System::Object^ se
 
 System::Void FormMdlPlaceLMKs::m_btn_genIsosurface_Click(System::Object^ sender, System::EventArgs^ e) {
   int value = m_trackbar_setIsoValue->Value;
-  ModeMdlPlaceLMKs::GetInst()->GenIsoSurFace(value);
+  ModeMdlPlaceLMKs::GetInst()->GenIsoSurface(value);
 }
 
 
@@ -45,7 +45,7 @@ System::Void FormMdlPlaceLMKs::m_btn_import_Click(System::Object^ sender, System
 
   IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
   std::string fname = static_cast<const char*>(mptr.ToPointer());
-  ModeMdlPlaceLMKs::GetInst()->ImportLandmark(fname);
+  ModeMdlPlaceLMKs::GetInst()->ImportLandmarks(fname);
 }
 
 
@@ -56,7 +56,7 @@ System::Void FormMdlPlaceLMKs::m_btn_export_Click(System::Object^ sender, System
 
   IntPtr mptr = Marshal::StringToHGlobalAnsi(dlg->FileName);
   std::string fname = static_cast<const char*>(mptr.ToPointer());
-  ModeMdlPlaceLMKs::GetInst()->ExportLandmark(fname);
+  ModeMdlPlaceLMKs::GetInst()->ExportLandmarks(fname);
 }
 
 

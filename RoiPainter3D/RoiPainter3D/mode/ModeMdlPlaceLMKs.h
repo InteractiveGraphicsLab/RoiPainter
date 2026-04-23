@@ -12,19 +12,15 @@
 class ModeMdlPlaceLMKs : public ModeInterface
 {
 private:
-	//target mask id 
-	int m_trgt_maskid;
-	bool m_is_updated;
-
 	// 等値面
 	int m_isovalue;
 	TTriangleSoup m_isosurface;
 
 	// landmark
-	int m_dragLmkIdx = -1;
+	int m_drag_lmk_ID = -1;
 	std::vector <EVec3f> m_lmk;
-	float m_lmkRad;
-	TMesh m_lmkMesh;
+	float m_lmk_radius;
+	TMesh m_lmk_mesh;
 
 	ModeMdlPlaceLMKs();
 public:
@@ -50,18 +46,19 @@ public:
 	void KeyUp(int nChar) ;
 
 	bool CanLeaveMode() ;
-
 	void StartMode() ;
 	
 	void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center) ;
 	//
 
-	void GenIsoSurFace(const int isovalue);
-
-	bool PickIsosurface(const EVec3f& rayPos, const EVec3f& rayDir, EVec3f& pos);
-	void ImportLandmark(std::string fname);
-	void ExportLandmark(std::string fname);
 	void FinishSegmentation();
+
+	void GenIsoSurface(const int isovalue);
+
+	bool PickIsoSurface(const EVec3f& rayPos, const EVec3f& rayDir, EVec3f& pos);
+	void ImportLandmarks(std::string fname);
+	void ExportLandmarks(std::string fname);
+	
 
 
 };
