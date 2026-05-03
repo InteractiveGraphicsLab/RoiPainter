@@ -15,13 +15,13 @@ namespace RoiPainter3D {
 	public ref class FormMdlPlaceLMKs : public System::Windows::Forms::Form
 	{
 	private: 
-		System::Windows::Forms::Button^ m_btn_genIsosurface;
+		System::Windows::Forms::Button^   m_btn_genIsosurface;
 		System::Windows::Forms::TrackBar^ m_trackbar_setIsoValue;
-		System::Windows::Forms::TextBox^ m_textbox_setIsoValue;
+		System::Windows::Forms::TextBox^  m_textbox_setIsoValue;
 		System::Windows::Forms::GroupBox^ m_groupbox_isosurface;
-		System::Windows::Forms::Button^ m_btn_import;
-		System::Windows::Forms::Button^ m_btn_export;
-		System::Windows::Forms::Button^ m_btn_finish;
+		System::Windows::Forms::Button^   m_btn_import;
+		System::Windows::Forms::Button^   m_btn_export;
+		System::Windows::Forms::Button^   m_btn_finish;
 
 
 
@@ -42,8 +42,6 @@ namespace RoiPainter3D {
 			if (m_singleton == nullptr) m_singleton = gcnew FormMdlPlaceLMKs();
 			return m_singleton;
 		}
-
-		//void InitParams();
 
 
 	protected:
@@ -85,9 +83,9 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_genIsosurface
 			// 
-			this->m_btn_genIsosurface->Location = System::Drawing::Point(25, 93);
+			this->m_btn_genIsosurface->Location = System::Drawing::Point(99, 93);
 			this->m_btn_genIsosurface->Name = L"m_btn_genIsosurface";
-			this->m_btn_genIsosurface->Size = System::Drawing::Size(278, 23);
+			this->m_btn_genIsosurface->Size = System::Drawing::Size(144, 23);
 			this->m_btn_genIsosurface->TabIndex = 10;
 			this->m_btn_genIsosurface->Text = L"generate isosurface";
 			this->m_btn_genIsosurface->UseVisualStyleBackColor = true;
@@ -95,9 +93,9 @@ namespace RoiPainter3D {
 			// 
 			// m_trackbar_setIsoValue
 			// 
-			this->m_trackbar_setIsoValue->Location = System::Drawing::Point(16, 42);
+			this->m_trackbar_setIsoValue->Location = System::Drawing::Point(62, 42);
 			this->m_trackbar_setIsoValue->Name = L"m_trackbar_setIsoValue";
-			this->m_trackbar_setIsoValue->Size = System::Drawing::Size(278, 45);
+			this->m_trackbar_setIsoValue->Size = System::Drawing::Size(233, 45);
 			this->m_trackbar_setIsoValue->TabIndex = 8;
 			this->m_trackbar_setIsoValue->TabStop = false;
 			this->m_trackbar_setIsoValue->TickStyle = System::Windows::Forms::TickStyle::None;
@@ -120,14 +118,14 @@ namespace RoiPainter3D {
 			this->m_groupbox_isosurface->Controls->Add(this->m_btn_genIsosurface);
 			this->m_groupbox_isosurface->Location = System::Drawing::Point(12, 12);
 			this->m_groupbox_isosurface->Name = L"m_groupbox_isosurface";
-			this->m_groupbox_isosurface->Size = System::Drawing::Size(335, 147);
+			this->m_groupbox_isosurface->Size = System::Drawing::Size(347, 147);
 			this->m_groupbox_isosurface->TabIndex = 11;
 			this->m_groupbox_isosurface->TabStop = false;
 			this->m_groupbox_isosurface->Text = L"IsoSurface";
 			// 
 			// m_btn_import
 			// 
-			this->m_btn_import->Location = System::Drawing::Point(37, 205);
+			this->m_btn_import->Location = System::Drawing::Point(23, 205);
 			this->m_btn_import->Name = L"m_btn_import";
 			this->m_btn_import->Size = System::Drawing::Size(122, 27);
 			this->m_btn_import->TabIndex = 12;
@@ -137,7 +135,7 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_export
 			// 
-			this->m_btn_export->Location = System::Drawing::Point(192, 205);
+			this->m_btn_export->Location = System::Drawing::Point(223, 205);
 			this->m_btn_export->Name = L"m_btn_export";
 			this->m_btn_export->Size = System::Drawing::Size(123, 27);
 			this->m_btn_export->TabIndex = 13;
@@ -170,7 +168,6 @@ namespace RoiPainter3D {
 			this->m_groupbox_isosurface->ResumeLayout(false);
 			this->m_groupbox_isosurface->PerformLayout();
 			this->ResumeLayout(false);
-			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -185,5 +182,4 @@ namespace RoiPainter3D {
 	inline void formMdlPlaceLMKs_Show() { FormMdlPlaceLMKs::getInst()->Show(); }
 	inline void formMdlPlaceLMKs_Hide() { FormMdlPlaceLMKs::getInst()->Hide(); }
 	
-
 }

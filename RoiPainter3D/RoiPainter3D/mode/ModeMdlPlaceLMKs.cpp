@@ -24,17 +24,19 @@ ModeMdlPlaceLMKs::ModeMdlPlaceLMKs()
 
 }
 
-static int PickLandmark(const EVec3f& ray_pos, const EVec3f& ray_dir, const std::vector<EVec3f>& lmk, const float lmk_radius) {
+
+static int PickLandmark(const EVec3f& ray_pos, const EVec3f& ray_dir, const std::vector<EVec3f>& lmk, const float lmk_radius) 
+{
   float min_depth = FLT_MAX;
   int min_ID = -1;
 
-  for (int i = 0; i < lmk.size(); i++) {
-    if (DistRayAndPoint(ray_pos, ray_dir, lmk[i]) > lmk_radius) {
-      continue;
-    }
+  for (int i = 0; i < lmk.size(); i++) 
+  {
+    if (DistRayAndPoint(ray_pos, ray_dir, lmk[i]) > lmk_radius) continue;
 
     float d = (ray_pos - lmk[i]).norm();
-    if (d < min_depth) {
+    if (d < min_depth) 
+    {
       min_ID = i;
       min_depth = d;
     }
@@ -42,9 +44,12 @@ static int PickLandmark(const EVec3f& ray_pos, const EVec3f& ray_dir, const std:
   return min_ID;
 }
 
-static int EraseLandmark(const EVec3f& ray_pos, const EVec3f& ray_dir, std::vector<EVec3f>& lmk, const float lmk_radius) {
+
+static int EraseLandmark(const EVec3f& ray_pos, const EVec3f& ray_dir, std::vector<EVec3f>& lmk, const float lmk_radius) 
+{
   int lmk_ID = PickLandmark(ray_pos, ray_dir, lmk, lmk_radius);
-  if (lmk_ID != -1) {
+  if (lmk_ID != -1) 
+  {
     lmk.erase(lmk.begin() + lmk_ID);
     return true;
   }
@@ -62,52 +67,64 @@ void ModeMdlPlaceLMKs::LBtnUp(const EVec2i& p, OglForCLI* ogl)
   RedrawScene();
 }
 
+
 void ModeMdlPlaceLMKs::RBtnUp(const EVec2i& p, OglForCLI* ogl) 
 {
   m_bR = false;
   ogl->BtnUp();
 }
+
+
 void ModeMdlPlaceLMKs::MBtnUp(const EVec2i& p, OglForCLI* ogl) 
 {
   m_bM = false;
   ogl->BtnUp();
 }
 
+
 void ModeMdlPlaceLMKs::LBtnDown(const EVec2i& p, OglForCLI* ogl) 
 {
   m_bL = true;
   
-  if (IsShiftKeyOn()) {
+  if (IsShiftKeyOn()) 
+  {
     EVec3f rayPos, rayDir, pos;
     ogl->GetCursorRay(p, rayPos, rayDir);
 
     m_drag_lmk_ID = PickLandmark(rayPos, rayDir, m_lmk, m_lmk_radius);
     if (m_drag_lmk_ID != -1) return;
 
-    if (PickIsoSurface(rayPos, rayDir, pos)) {
+    if (PickIsoSurface(rayPos, rayDir, pos)) 
+    {
       m_lmk.push_back(pos);
       m_drag_lmk_ID = (int)m_lmk.size() - 1;
     }
-  } else {
+  } 
+  else 
+  {
     ogl->BtnDown_Trans(p);
   }
 
 }
 
+
 void ModeMdlPlaceLMKs::RBtnDown(const EVec2i& p, OglForCLI* ogl) 
 {
   m_bR = true;
-  if (IsShiftKeyOn()) {
+  if (IsShiftKeyOn()) 
+  {
       EVec3f ray_pos, ray_dir, pos;
       ogl->GetCursorRay(p, ray_pos, ray_dir);
 
-      if (EraseLandmark(ray_pos, ray_dir, m_lmk, m_lmk_radius)) {
+      if (EraseLandmark(ray_pos, ray_dir, m_lmk, m_lmk_radius)) 
           RedrawScene();
-      }
-  } else {
+  } 
+  else 
+  {
       ogl->BtnDown_Rot(p);
   }
 }
+
 
 void ModeMdlPlaceLMKs::MBtnDown(const EVec2i& p, OglForCLI* ogl) 
 {
@@ -116,9 +133,11 @@ void ModeMdlPlaceLMKs::MBtnDown(const EVec2i& p, OglForCLI* ogl)
 
 }
 
+
 void ModeMdlPlaceLMKs::LBtnDclk(const EVec2i& p, OglForCLI* ogl) {}
 void ModeMdlPlaceLMKs::RBtnDclk(const EVec2i& p, OglForCLI* ogl) {}
 void ModeMdlPlaceLMKs::MBtnDclk(const EVec2i& p, OglForCLI* ogl) {}
+
 
 void ModeMdlPlaceLMKs::MouseMove(const EVec2i& p, OglForCLI* ogl) 
 {
@@ -126,10 +145,10 @@ void ModeMdlPlaceLMKs::MouseMove(const EVec2i& p, OglForCLI* ogl)
   EVec3f ray_pos, ray_dir, pos;
   ogl->GetCursorRay(p, ray_pos, ray_dir);
 
-  if (m_drag_lmk_ID != -1) {
-    if (PickIsoSurface(ray_pos, ray_dir, pos)) {
+  if (m_drag_lmk_ID != -1) 
+  {
+    if (PickIsoSurface(ray_pos, ray_dir, pos)) 
 		m_lmk[m_drag_lmk_ID] = pos;
-    }
   }
 
 
@@ -137,7 +156,6 @@ void ModeMdlPlaceLMKs::MouseMove(const EVec2i& p, OglForCLI* ogl)
 
   RedrawScene();
 }
-
 
 
 void ModeMdlPlaceLMKs::MouseWheel(const EVec2i& p, short z_delta, OglForCLI* ogl) {}
@@ -150,6 +168,7 @@ bool ModeMdlPlaceLMKs::CanLeaveMode()
 {
   return true;
 }
+
 
 void ModeMdlPlaceLMKs::StartMode()
 {
@@ -164,13 +183,17 @@ void ModeMdlPlaceLMKs::StartMode()
   formVisParam_UnlockPitchBox();
 }
 
-void ModeMdlPlaceLMKs::FinishSegmentation() {
+
+void ModeMdlPlaceLMKs::FinishSegmentation() 
+{
   ImageCore::GetInst()->StoreForegroundAsNewMask();
   ModeCore::GetInst()->ModeSwitch(MODE_VIS_MASK);
   RedrawScene();
 }
 
-static void DrawColoredLandmark(const TMesh& lmk_mesh, const std::vector<EVec3f>& lmk) {
+
+static void DrawColoredLandmark(const TMesh& lmk_mesh, const std::vector<EVec3f>& lmk) 
+{
   static const int NUM_COL = 9;
   static float COLOR[9][4] = {
     {1.0f, 0.0f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.0f, 0.5f}, {0.0f, 0.0f, 1.0f, 0.5f},
@@ -178,7 +201,8 @@ static void DrawColoredLandmark(const TMesh& lmk_mesh, const std::vector<EVec3f>
     {0.5f, 0.0f, 0.0f, 0.5f}, {0.0f, 0.5f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.5f, 0.5f}
   };
 
-  for (int i = 0; i < lmk.size(); i++) {
+  for (int i = 0; i < lmk.size(); i++) 
+  {
     float* c = COLOR[i % NUM_COL];
     glPushMatrix();
     glTranslated(lmk[i][0], lmk[i][1], lmk[i][2]);
@@ -188,7 +212,9 @@ static void DrawColoredLandmark(const TMesh& lmk_mesh, const std::vector<EVec3f>
   }
 }
 
+
 static float COLOR_HY[4] = { 0.3f, 0.4f, 0.1f, 0.3f };
+
 
 void ModeMdlPlaceLMKs::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center)
 {
@@ -198,7 +224,6 @@ void ModeMdlPlaceLMKs::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center
 
   glEnable(GL_LIGHTING);
   DrawColoredLandmark(m_lmk_mesh, m_lmk);
-
 
   m_isosurface.Draw(COLOR_HY, COLOR_HY, COLOR_W, COLOR_SHIN64);
 
@@ -211,8 +236,8 @@ void ModeMdlPlaceLMKs::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center
 }
 
 
-
-static void GenIsoSurFaceHalf(const EVec3i reso, const EVec3f pitch, const short* volume, const int isovalue, TTriangleSoup& mesh) {
+static void GenIsoSurfaceHalf(const EVec3i reso, const EVec3f pitch, const short* volume, const int isovalue, TTriangleSoup& mesh) 
+{
   const int W = reso[0], H = reso[1], D = reso[2];
   const int hW = W / 2, hH = H / 2, hD = D / 2;
   EVec3i rh(hW, hH, hD);
@@ -228,7 +253,9 @@ static void GenIsoSurFaceHalf(const EVec3i reso, const EVec3f pitch, const short
   delete[] vh;
 }
 
-void ModeMdlPlaceLMKs::GenIsoSurface(const int isovalue) {
+
+void ModeMdlPlaceLMKs::GenIsoSurface(const int isovalue) 
+{
   m_isovalue = isovalue;
 
   const EVec3i reso = ImageCore::GetInst()->GetResolution();
@@ -238,14 +265,14 @@ void ModeMdlPlaceLMKs::GenIsoSurface(const int isovalue) {
   short* volume = ImageCore::GetInst()->m_vol_orig;
 
   if (do_halfen)
-    GenIsoSurFaceHalf(reso, pitch, volume, isovalue, m_isosurface);
+    GenIsoSurfaceHalf(reso, pitch, volume, isovalue, m_isosurface);
   else
     MarchingCubesPolygonSoup(reso, pitch, volume, isovalue, 0, 0, m_isosurface);
 }
 
 
-
-bool ModeMdlPlaceLMKs::PickIsoSurface(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos) {
+bool ModeMdlPlaceLMKs::PickIsoSurface(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos) 
+{
   EVec3f p;
   bool pick = m_isosurface.PickByRay(ray_pos, ray_dir, p);
 
@@ -253,24 +280,29 @@ bool ModeMdlPlaceLMKs::PickIsoSurface(const EVec3f& ray_pos, const EVec3f& ray_d
   return pick;
 }
 
-void ModeMdlPlaceLMKs::ExportLandmarks(std::string fname) {
+
+void ModeMdlPlaceLMKs::ExportLandmarks(std::string fname) 
+{
   std::ofstream ofs(fname.c_str());
-  if (!ofs.is_open()) {
+  if (!ofs.is_open()) 
+  {
     std::cout << "error when opening " << fname << "\n";
     return;
   }
 
   ofs << (int)m_lmk.size() << "\n";
-  for (int i = 0; i < m_lmk.size(); i++) {
+  for (int i = 0; i < m_lmk.size(); i++) 
     WriteToFstream(ofs, m_lmk[i]);
-  }
   ofs.close();
 }
 
-void ModeMdlPlaceLMKs::ImportLandmarks(std::string fname) {
+
+void ModeMdlPlaceLMKs::ImportLandmarks(std::string fname) 
+{
   std::ifstream ifs(fname);
-  if (ifs.fail()) {
-    std::cout << "file open error" << "\n";
+  if (ifs.fail()) 
+  {
+    std::cout << "error when opening " << "\n";
     return;
   }
 
@@ -279,12 +311,9 @@ void ModeMdlPlaceLMKs::ImportLandmarks(std::string fname) {
 
   ifs >> num_lmk;
   m_lmk.resize(num_lmk);
-  for (int i = 0; i < m_lmk.size(); i++) {
+  for (int i = 0; i < m_lmk.size(); i++) 
     ReadFromFstream(ifs, m_lmk[i]);
-  }
   ifs.close();
   RedrawScene();
 }
-
-
 

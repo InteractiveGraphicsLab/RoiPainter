@@ -24,7 +24,8 @@ private:
 
 	ModeMdlPlaceLMKs();
 public:
-	static ModeMdlPlaceLMKs* GetInst() {
+	static ModeMdlPlaceLMKs* GetInst() 
+	{
 		static ModeMdlPlaceLMKs p;
 		return &p;
 	}
@@ -54,13 +55,10 @@ public:
 	void FinishSegmentation();
 
 	void GenIsoSurface(const int isovalue);
-
 	bool PickIsoSurface(const EVec3f& rayPos, const EVec3f& rayDir, EVec3f& pos);
 	void ImportLandmarks(std::string fname);
 	void ExportLandmarks(std::string fname);
 	
-
-
 };
 
 #pragma managed
