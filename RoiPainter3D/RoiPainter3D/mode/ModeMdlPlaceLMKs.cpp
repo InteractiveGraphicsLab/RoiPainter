@@ -177,6 +177,7 @@ void ModeMdlPlaceLMKs::StartMode()
   m_bL = m_bR = m_bM = false;
   formMdlPlaceLMKs_Show();
 
+  int m_drag_lmk_ID = -1;
   m_lmk_radius = ImageCore::GetInst()->GetPitch()[0];
   m_lmk_mesh.InitializeAsSphere(m_lmk_radius, 10, 10);
 

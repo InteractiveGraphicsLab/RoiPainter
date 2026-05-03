@@ -17,7 +17,7 @@ private:
 	TTriangleSoup m_isosurface;
 
 	// landmark
-	int m_drag_lmk_ID = -1;
+	int m_drag_lmk_ID;
 	std::vector <EVec3f> m_lmk;
 	float m_lmk_radius;
 	TMesh m_lmk_mesh;
