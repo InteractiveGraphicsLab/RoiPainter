@@ -14,6 +14,8 @@
 #include "formMaskIdSelection.h"
 #include "FormIntegerSelection.h"
 #include "climessagebox.h"
+#include "FormMdlPlaceLMKs.h"
+
 
 #pragma unmanaged
 #include "ImageCore.h"
@@ -198,6 +200,7 @@ void FormMain::replaceOtherForms()
   FormRefStrokeTrim   ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormRefSplitByPlane ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegParallelWires::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormMdlPlaceLMKs    ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
 }
 
 
@@ -725,6 +728,12 @@ System::Void FormMain::segmentationToolStripMenuItem1_Click(System::Object^  sen
 
 System::Void FormMain::segmentationParallelWiresToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e){
   ModeCore::GetInst()->ModeSwitch(MODE_SEG_PARAWIRE);
+  redrawMainPanel();
+}
+
+System::Void FormMain::modelingPlaceLandMarksToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeCore::GetInst()->ModeSwitch(MODE_MDL_PLACELMK);
   redrawMainPanel();
 }
 

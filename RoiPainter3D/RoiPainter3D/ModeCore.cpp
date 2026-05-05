@@ -9,6 +9,7 @@
 #include "Mode/ModeRefSplitByPlane.h"
 #include "Mode/ModeSegLocalRGrow.h"
 #include "Mode/ModeSegParallelWires.h"
+#include "Mode/ModeMdlPlaceLMKs.h"
 #include <iostream>
 
 #pragma managed
@@ -21,6 +22,7 @@
 #include "FormSegParallelWires.h"
 #include "FormRefStrokeTrim.h"
 #include "FormRefSplitByPlane.h"
+#include "FormMdlPlaceLMKs.h"
 
 #pragma unmanaged
 
@@ -55,6 +57,7 @@ void ModeCore::ModeSwitch(MODE_ID m)
   else if (m == MODE_REF_VOXPAINT  ) { m_mode = ModeSegVoxelPaint   ::GetInst(); m_mode_id = m; }
   else if (m == MODE_SEG_LCLRGROW  ) { m_mode = ModeSegLocalRGrow   ::GetInst(); m_mode_id = m; }
   else if (m == MODE_REF_SPLITPLANE) { m_mode = ModeRefSplitByPlane ::GetInst(); m_mode_id = m; }
+  else if (m == MODE_MDL_PLACELMK  ) { m_mode = ModeMdlPlaceLMKs    ::GetInst(); m_mode_id = m; }
   else	                             { m_mode = ModeVizNormal::getInst(); m_mode_id = MODE_VIS_NORMAL; }
 
   //// Hide all Forms
@@ -67,7 +70,8 @@ void ModeCore::ModeSwitch(MODE_ID m)
   FormSegParallelWires_Hide();
   formSegLocalRGrow_Hide();
   formRefSplitByPlane_Hide();
-
+  formMdlPlaceLMKs_Hide();
+ 
   // start new mode
   m_mode->StartMode();
 }

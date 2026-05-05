@@ -183,6 +183,12 @@
     <ClInclude Include="..\..\COMMON\tcolor.h">
       <Filter>COMMON</Filter>
     </ClInclude>
+    <ClInclude Include="FormMdlPlaceLMKs.h">
+      <Filter>Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="mode\ModeMdlPlaceLMKs.h">
+      <Filter>MODE</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -312,6 +318,12 @@
     </ClCompile>
     <ClCompile Include="FormRefSplitByPlane.cpp">
       <Filter>Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="FormMdlPlaceLMKs.cpp">
+      <Filter>Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="mode\ModeMdlPlaceLMKs.cpp">
+      <Filter>MODE</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

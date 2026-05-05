@@ -25,15 +25,16 @@ enum MODE_ID
 {
 	MODE_VIS_NORMAL    , // ModeVizNormal       
 	MODE_VIS_MASK      , // ModeVizMask    
-  MODE_SEG_REGGROW   , // ModeSegRegGrow     
+	MODE_SEG_REGGROW   , // ModeSegRegGrow     
 	MODE_SEG_GCUT      , // ModeSegGGut           
 	MODE_SEG_VOXPAINT  , // ModeSegVoxelPaint
 	MODE_SEG_LCLRGROW  , // ModeSegLocalRGrow  (Local Region Growing by Takashi Ijiri & Shogo Tsuruoka (Ritumei))
-  MODE_SEG_PARAWIRE  , // ModeSegParallelWires
+	MODE_SEG_PARAWIRE  , // ModeSegParallelWires
 	MODE_SEG_THRESHPNT , // ModeSegThreshfieldPaint (UIST paper by Takeo Igarashi, NOT YET IMPLEMENTED)
 	MODE_REF_STRKTRIM  , // ModeRefStrokeTrim
 	MODE_REF_VOXPAINT  , // ModeSegVoxelPaint
-	MODE_REF_SPLITPLANE  // ModeRefSplitByPlane
+	MODE_REF_SPLITPLANE, // ModeRefSplitByPlane
+	MODE_MDL_PLACELMK    // ModeMdlPlaceLMKs    
 };
 
 
