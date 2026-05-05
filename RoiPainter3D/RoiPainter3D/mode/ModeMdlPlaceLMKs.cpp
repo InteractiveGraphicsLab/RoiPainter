@@ -21,7 +21,6 @@ using namespace marchingcubes;
 ModeMdlPlaceLMKs::ModeMdlPlaceLMKs()
 {
   m_bL = m_bR = m_bM = false;
-
 }
 
 
@@ -45,15 +44,15 @@ static int PickLandmark(const EVec3f& ray_pos, const EVec3f& ray_dir, const std:
 }
 
 
-static int EraseLandmark(const EVec3f& ray_pos, const EVec3f& ray_dir, std::vector<EVec3f>& lmk, const float lmk_radius) 
+static void PickToEraseLandmark(
+  const EVec3f& ray_pos, 
+  const EVec3f& ray_dir, 
+  std::vector<EVec3f>& lmk, 
+  const float lmk_radius) 
 {
-  int lmk_ID = PickLandmark(ray_pos, ray_dir, lmk, lmk_radius);
-  if (lmk_ID != -1) 
-  {
-    lmk.erase(lmk.begin() + lmk_ID);
-    return true;
-  }
-  return false;
+  int id = PickLandmark(ray_pos, ray_dir, lmk, lmk_radius);
+  if (id != -1)
+    lmk.erase(lmk.begin() + id);
 }
 
 
@@ -61,9 +60,7 @@ void ModeMdlPlaceLMKs::LBtnUp(const EVec2i& p, OglForCLI* ogl)
 {
   m_bL = false;
   ogl->BtnUp();
-
   m_drag_lmk_ID = -1;
-
   RedrawScene();
 }
 
@@ -113,15 +110,14 @@ void ModeMdlPlaceLMKs::RBtnDown(const EVec2i& p, OglForCLI* ogl)
   m_bR = true;
   if (IsShiftKeyOn()) 
   {
-      EVec3f ray_pos, ray_dir, pos;
-      ogl->GetCursorRay(p, ray_pos, ray_dir);
-
-      if (EraseLandmark(ray_pos, ray_dir, m_lmk, m_lmk_radius)) 
-          RedrawScene();
+    EVec3f ray_pos, ray_dir, pos;
+    ogl->GetCursorRay(p, ray_pos, ray_dir);
+    PickToEraseLandmark(ray_pos, ray_dir, m_lmk, m_lmk_radius);
+    RedrawScene();
   } 
   else 
   {
-      ogl->BtnDown_Rot(p);
+    ogl->BtnDown_Rot(p);
   }
 }
 
@@ -130,7 +126,6 @@ void ModeMdlPlaceLMKs::MBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
   m_bM = true;
   ogl->BtnDown_Zoom(p);
-
 }
 
 
@@ -151,9 +146,7 @@ void ModeMdlPlaceLMKs::MouseMove(const EVec2i& p, OglForCLI* ogl)
 		m_lmk[m_drag_lmk_ID] = pos;
   }
 
-
   ogl->MouseMove(p);
-
   RedrawScene();
 }
 
@@ -177,7 +170,7 @@ void ModeMdlPlaceLMKs::StartMode()
   m_bL = m_bR = m_bM = false;
   formMdlPlaceLMKs_Show();
 
-  int m_drag_lmk_ID = -1;
+  m_drag_lmk_ID = -1;
   m_lmk_radius = ImageCore::GetInst()->GetPitch()[0];
   m_lmk_mesh.InitializeAsSphere(m_lmk_radius, 10, 10);
 
