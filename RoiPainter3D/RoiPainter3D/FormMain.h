@@ -65,6 +65,7 @@ namespace RoiPainter3D {
     System::Windows::Forms::ToolStripMenuItem^ importCurrentCameraPosToolStripMenuItem;
     private: System::Windows::Forms::ToolStripMenuItem^ refinementSplitByPlaneToolStripMenuItem;
     private: System::Windows::Forms::ToolStripMenuItem^ modelingPlaceLandMarksToolStripMenuItem;
+    private: System::Windows::Forms::ToolStripMenuItem^ modelingMulcleTemplatesToolStripMenuItem;
 
 
 
@@ -145,13 +146,14 @@ namespace RoiPainter3D {
             this->refinementStrokeTrimingToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->refinementVoxelPaintToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->refinementSplitByPlaneToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+            this->modelingPlaceLandMarksToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->miscsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->exportCurrentCameraPosToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->importCurrentCameraPosToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->m_menuitem_subview_x = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->m_menuitem_subview_y = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->m_menuitem_subview_z = (gcnew System::Windows::Forms::ToolStripMenuItem());
-            this->modelingPlaceLandMarksToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+            this->modelingMulcleTemplatesToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->menuStrip1->SuspendLayout();
             this->SuspendLayout();
             // 
@@ -333,12 +335,13 @@ namespace RoiPainter3D {
             // 
             // modeToolStripMenuItem
             // 
-            this->modeToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(14) {
+            this->modeToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(15) {
                 this->visualizationStandardToolStripMenuItem,
                     this->visualizationMaskToolStripMenuItem, this->toolStripSeparator3, this->segmentationThresholdToolStripMenuItem, this->segmentationGraphCutToolStripMenuItem,
                     this->segmentationToolStripMenuItem, this->segmentationToolStripMenuItem1, this->segmentationThreshFieldPaintToolStripMenuItem,
                     this->segmentationParallelWiresToolStripMenuItem, this->toolStripSeparator4, this->refinementStrokeTrimingToolStripMenuItem,
-                    this->refinementVoxelPaintToolStripMenuItem, this->refinementSplitByPlaneToolStripMenuItem, this->modelingPlaceLandMarksToolStripMenuItem
+                    this->refinementVoxelPaintToolStripMenuItem, this->refinementSplitByPlaneToolStripMenuItem, this->modelingPlaceLandMarksToolStripMenuItem,
+                    this->modelingMulcleTemplatesToolStripMenuItem
             });
             this->modeToolStripMenuItem->Name = L"modeToolStripMenuItem";
             this->modeToolStripMenuItem->Size = System::Drawing::Size(50, 20);
@@ -430,6 +433,13 @@ namespace RoiPainter3D {
             this->refinementSplitByPlaneToolStripMenuItem->Text = L"Refinement Split By Plane";
             this->refinementSplitByPlaneToolStripMenuItem->Click += gcnew System::EventHandler(this, &FormMain::refinementSplitByPlaneToolStripMenuItem_Click);
             // 
+            // modelingPlaceLandMarksToolStripMenuItem
+            // 
+            this->modelingPlaceLandMarksToolStripMenuItem->Name = L"modelingPlaceLandMarksToolStripMenuItem";
+            this->modelingPlaceLandMarksToolStripMenuItem->Size = System::Drawing::Size(266, 22);
+            this->modelingPlaceLandMarksToolStripMenuItem->Text = L"Modeling Place Land Marks";
+            this->modelingPlaceLandMarksToolStripMenuItem->Click += gcnew System::EventHandler(this, &FormMain::modelingPlaceLandMarksToolStripMenuItem_Click);
+            // 
             // miscsToolStripMenuItem
             // 
             this->miscsToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(5) {
@@ -473,12 +483,12 @@ namespace RoiPainter3D {
             this->m_menuitem_subview_z->Text = L"Show SubView Z";
             this->m_menuitem_subview_z->Click += gcnew System::EventHandler(this, &FormMain::m_menuitem_subview_z_Click);
             // 
-            // modelingPlaceLandMarksToolStripMenuItem
+            // modelingMulcleTemplatesToolStripMenuItem
             // 
-            this->modelingPlaceLandMarksToolStripMenuItem->Name = L"modelingPlaceLandMarksToolStripMenuItem";
-            this->modelingPlaceLandMarksToolStripMenuItem->Size = System::Drawing::Size(266, 22);
-            this->modelingPlaceLandMarksToolStripMenuItem->Text = L"Modeling Place Land Marks";
-            this->modelingPlaceLandMarksToolStripMenuItem->Click += gcnew System::EventHandler(this, &FormMain::modelingPlaceLandMarksToolStripMenuItem_Click);
+            this->modelingMulcleTemplatesToolStripMenuItem->Name = L"modelingMulcleTemplatesToolStripMenuItem";
+            this->modelingMulcleTemplatesToolStripMenuItem->Size = System::Drawing::Size(266, 22);
+            this->modelingMulcleTemplatesToolStripMenuItem->Text = L"Modeling Mulcle Templates";
+            this->modelingMulcleTemplatesToolStripMenuItem->Click += gcnew System::EventHandler(this, &FormMain::modelingMulcleTemplatesToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -536,6 +546,7 @@ namespace RoiPainter3D {
     System::Void refinementStrokeTrimingToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) ;
     System::Void refinementSplitByPlaneToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
     System::Void modelingPlaceLandMarksToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
+    System::Void modelingMulcleTemplatesToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
 
     System::Void FormMain_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) ;
     System::Void FormMain_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) ;

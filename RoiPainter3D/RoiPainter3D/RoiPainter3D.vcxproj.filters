@@ -189,6 +189,12 @@
     <ClInclude Include="mode\ModeMdlPlaceLMKs.h">
       <Filter>MODE</Filter>
     </ClInclude>
+    <ClInclude Include="FormMdlFitMuscleModel.h">
+      <Filter>Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="mode\ModeMdlFitMuscleModel.h">
+      <Filter>MODE</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -323,6 +329,12 @@
       <Filter>Forms</Filter>
     </ClCompile>
     <ClCompile Include="mode\ModeMdlPlaceLMKs.cpp">
+      <Filter>MODE</Filter>
+    </ClCompile>
+    <ClCompile Include="FormMdlFitMuscleModel.cpp">
+      <Filter>Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="mode\ModeMdlFitMuscleModel.cpp">
       <Filter>MODE</Filter>
     </ClCompile>
   </ItemGroup>

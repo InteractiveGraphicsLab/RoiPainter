@@ -10,6 +10,7 @@
 #include "Mode/ModeSegLocalRGrow.h"
 #include "Mode/ModeSegParallelWires.h"
 #include "Mode/ModeMdlPlaceLMKs.h"
+#include "Mode/ModeMdlFitMuscleModel.h"
 #include <iostream>
 
 #pragma managed
@@ -23,6 +24,7 @@
 #include "FormRefStrokeTrim.h"
 #include "FormRefSplitByPlane.h"
 #include "FormMdlPlaceLMKs.h"
+#include "FormMdlFitMuscleModel.h"
 
 #pragma unmanaged
 
@@ -48,16 +50,17 @@ void ModeCore::ModeSwitch(MODE_ID m)
 
   if (!m_mode->CanLeaveMode()) return;
 
-  if      (m == MODE_VIS_MASK      ) { m_mode = ModeVizMask         ::getInst(); m_mode_id = m; }
-  else if (m == MODE_SEG_REGGROW   ) { m_mode = ModeSegRGrow        ::GetInst(); m_mode_id = m; }
-  else if (m == MODE_SEG_GCUT      ) { m_mode = ModeSegGCut         ::getInst(); m_mode_id = m; }
-  else if (m == MODE_SEG_VOXPAINT  ) { m_mode = ModeSegVoxelPaint   ::GetInst(); m_mode_id = m; }
-  else if (m == MODE_SEG_PARAWIRE  ) { m_mode = ModeSegParallelWires::GetInst(); m_mode_id = m; }
-  else if (m == MODE_REF_STRKTRIM  ) { m_mode = ModeRefStrokeTrim   ::GetInst(); m_mode_id = m; }
-  else if (m == MODE_REF_VOXPAINT  ) { m_mode = ModeSegVoxelPaint   ::GetInst(); m_mode_id = m; }
-  else if (m == MODE_SEG_LCLRGROW  ) { m_mode = ModeSegLocalRGrow   ::GetInst(); m_mode_id = m; }
-  else if (m == MODE_REF_SPLITPLANE) { m_mode = ModeRefSplitByPlane ::GetInst(); m_mode_id = m; }
-  else if (m == MODE_MDL_PLACELMK  ) { m_mode = ModeMdlPlaceLMKs    ::GetInst(); m_mode_id = m; }
+  if      (m == MODE_VIS_MASK      ) { m_mode = ModeVizMask          ::getInst(); m_mode_id = m; }
+  else if (m == MODE_SEG_REGGROW   ) { m_mode = ModeSegRGrow         ::GetInst(); m_mode_id = m; }
+  else if (m == MODE_SEG_GCUT      ) { m_mode = ModeSegGCut          ::getInst(); m_mode_id = m; }
+  else if (m == MODE_SEG_VOXPAINT  ) { m_mode = ModeSegVoxelPaint    ::GetInst(); m_mode_id = m; }
+  else if (m == MODE_SEG_PARAWIRE  ) { m_mode = ModeSegParallelWires ::GetInst(); m_mode_id = m; }
+  else if (m == MODE_REF_STRKTRIM  ) { m_mode = ModeRefStrokeTrim    ::GetInst(); m_mode_id = m; }
+  else if (m == MODE_REF_VOXPAINT  ) { m_mode = ModeSegVoxelPaint    ::GetInst(); m_mode_id = m; }
+  else if (m == MODE_SEG_LCLRGROW  ) { m_mode = ModeSegLocalRGrow    ::GetInst(); m_mode_id = m; }
+  else if (m == MODE_REF_SPLITPLANE) { m_mode = ModeRefSplitByPlane  ::GetInst(); m_mode_id = m; }
+  else if (m == MODE_MDL_PLACELMK  ) { m_mode = ModeMdlPlaceLMKs     ::GetInst(); m_mode_id = m; }
+  else if (m == MODE_MDL_FITMUSCLE ) { m_mode = ModeMdlFitMuscleModel::GetInst(); m_mode_id = m; }
   else	                             { m_mode = ModeVizNormal::getInst(); m_mode_id = MODE_VIS_NORMAL; }
 
   //// Hide all Forms
@@ -71,7 +74,7 @@ void ModeCore::ModeSwitch(MODE_ID m)
   formSegLocalRGrow_Hide();
   formRefSplitByPlane_Hide();
   formMdlPlaceLMKs_Hide();
- 
+  formMdlFitMuscle_Hide();
   // start new mode
   m_mode->StartMode();
 }

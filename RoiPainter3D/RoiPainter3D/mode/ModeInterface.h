@@ -34,8 +34,10 @@ enum MODE_ID
 	MODE_REF_STRKTRIM  , // ModeRefStrokeTrim
 	MODE_REF_VOXPAINT  , // ModeSegVoxelPaint
 	MODE_REF_SPLITPLANE, // ModeRefSplitByPlane
-	MODE_MDL_PLACELMK    // ModeMdlPlaceLMKs    
+	MODE_MDL_PLACELMK  , // ModeMdlPlaceLMKs    
+  MODE_MDL_FITMUSCLE   // ModeMdlFitMuscleModel
 };
+
 
 
 class ModeInterface

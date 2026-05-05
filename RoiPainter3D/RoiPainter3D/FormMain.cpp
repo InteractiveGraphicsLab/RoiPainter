@@ -15,6 +15,7 @@
 #include "FormIntegerSelection.h"
 #include "climessagebox.h"
 #include "FormMdlPlaceLMKs.h"
+#include "FormMdlFitMuscleModel.h"
 
 
 #pragma unmanaged
@@ -195,12 +196,13 @@ void FormMain::replaceOtherForms()
   FormVisMask ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegRGrow::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
   FormSegGCut ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegLocalRGrow   ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegVoxelPaint   ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormRefStrokeTrim   ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormRefSplitByPlane ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormSegParallelWires::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
-  FormMdlPlaceLMKs    ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegLocalRGrow    ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegVoxelPaint    ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormRefStrokeTrim    ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormRefSplitByPlane  ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormSegParallelWires ::GetInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormMdlPlaceLMKs     ::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
+  FormMdlFitMuscleModel::getInst()->Location = Point(thisX + thisW, thisY + dlgH);
 }
 
 
@@ -224,7 +226,9 @@ void FormMain::initializeOtherForms()
   FormSegVoxelPaint  ::getInst()->Show();
   FormRefStrokeTrim  ::getInst()->Show();
   FormRefSplitByPlane::getInst()->Show();
-  FormSegParallelWires::GetInst()->Show();
+  FormSegParallelWires ::GetInst()->Show();
+  FormMdlPlaceLMKs     ::getInst()->Show();  
+  FormMdlFitMuscleModel::getInst()->Show();
 
   replaceOtherForms();
   
@@ -237,7 +241,8 @@ void FormMain::initializeOtherForms()
   FormRefStrokeTrim   ::getInst()->Hide();
   FormRefSplitByPlane ::getInst()->Hide();
   FormSegParallelWires::GetInst()->Hide();
-
+  FormMdlPlaceLMKs     ::getInst()->Hide();
+  FormMdlFitMuscleModel::getInst()->Hide();
   std::cout << "--------initialize form(dialogs)...DONE\n";
 }
 
@@ -737,7 +742,11 @@ System::Void FormMain::modelingPlaceLandMarksToolStripMenuItem_Click(System::Obj
   redrawMainPanel();
 }
 
-
+System::Void FormMain::modelingMulcleTemplatesToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeCore::GetInst()->ModeSwitch(MODE_MDL_FITMUSCLE);
+  redrawMainPanel();
+}
 
 System::Void FormMain::m_menuitem_subview_x_Click(
     System::Object^  sender, 

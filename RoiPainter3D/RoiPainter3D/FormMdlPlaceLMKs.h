@@ -23,8 +23,6 @@ namespace RoiPainter3D {
 		System::Windows::Forms::Button^   m_btn_export;
 		System::Windows::Forms::Button^   m_btn_finish;
 
-
-
 	private:
 		static FormMdlPlaceLMKs^ m_singleton;
 

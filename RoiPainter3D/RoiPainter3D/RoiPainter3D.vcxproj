@@ -187,6 +187,9 @@
     <ClInclude Include="FormMaskIDselection.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="FormMdlFitMuscleModel.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="FormMdlPlaceLMKs.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -233,6 +236,7 @@
     <ClInclude Include="mode\GlslShader.h" />
     <ClInclude Include="mode\ModeCommonTools.h" />
     <ClInclude Include="mode\ModeInterface.h" />
+    <ClInclude Include="mode\ModeMdlFitMuscleModel.h" />
     <ClInclude Include="mode\ModeMdlPlaceLMKs.h" />
     <ClInclude Include="mode\ModeRefSplitByPlane.h" />
     <ClInclude Include="mode\ModeRefStrokeTrim.h" />
@@ -262,6 +266,7 @@
     <ClCompile Include="FormIntegerSelection.cpp" />
     <ClCompile Include="FormMain.cpp" />
     <ClCompile Include="FormMaskIDselection.cpp" />
+    <ClCompile Include="FormMdlFitMuscleModel.cpp" />
     <ClCompile Include="FormMdlPlaceLMKs.cpp" />
     <ClCompile Include="FormRefSplitByPlane.cpp" />
     <ClCompile Include="FormRefStrokeTrim.cpp" />
@@ -281,6 +286,7 @@
     <ClCompile Include="mode\GlslShader.cpp" />
     <ClCompile Include="mode\ModeCommonTools.cpp" />
     <ClCompile Include="mode\ModeInterface.cpp" />
+    <ClCompile Include="mode\ModeMdlFitMuscleModel.cpp" />
     <ClCompile Include="mode\ModeMdlPlaceLMKs.cpp" />
     <ClCompile Include="mode\ModeRefSplitByPlane.cpp" />
     <ClCompile Include="mode\ModeRefStrokeTrim.cpp" />
