@@ -1,9 +1,17 @@
 ﻿#pragma once
 
 #include "ModeInterface.h"
+#include "tmesh.h"
+#include <vector>
+#include <set>
+#include <string>
+#include <windows.h>
 
 class ModeMdlFitMuscleModel : public ModeInterface
 {
+private:
+	std::vector<TMesh*> m_models;
+	std::vector<std::vector<float>> m_colorList;
 
 	ModeMdlFitMuscleModel();
 public:
@@ -37,6 +45,14 @@ public:
 
 	void FinishSegmentation();
 
+	void InitColorList();
+
+
+	void ImportObjFile(std::string fname);
+
+	void ImportAllObjInFolder(std::string folderPath);
+
+	void ModelReset();
 };
 
 #pragma managed

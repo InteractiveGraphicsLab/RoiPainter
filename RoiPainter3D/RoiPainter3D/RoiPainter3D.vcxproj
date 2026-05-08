@@ -313,6 +313,9 @@
     <EmbeddedResource Include="FormMaskIDselection.resx">
       <DependentUpon>FormMaskIDselection.h</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormMdlFitMuscleModel.resx">
+      <DependentUpon>FormMdlFitMuscleModel.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormMdlPlaceLMKs.resx">
       <DependentUpon>FormMdlPlaceLMKs.h</DependentUpon>
     </EmbeddedResource>
