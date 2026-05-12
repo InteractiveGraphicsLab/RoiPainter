@@ -335,10 +335,15 @@ static bool t_LoadDCM3D(
 	tdcm.getSize(reso[0], reso[1], reso[2]);
 	if( reso[2] <= 1 ) return false;
 	
-	pitch[0] = 1;
-	pitch[1] = 1;
-	pitch[2] = 1;
-  CLI_MessageBox_OK_Show( "pitch情報は読み込んでいません。正しい値をダイアログより指定してしてください", "message");
+  const double pX = (tdcm.getPitchX() < 0.0) ? 1.0 : tdcm.getPitchX();
+  const double pY = (tdcm.getPitchY() < 0.0) ? 1.0 : tdcm.getPitchY();
+  const double pZ = (tdcm.getSliceThickness() < 0.0) ? 1.0 : tdcm.getSliceThickness();
+  pitch << (float)pX, (float)pY, (float)pZ;
+
+	//pitch[0] = 1;
+	//pitch[1] = 1;
+	//pitch[2] = 1;
+ // CLI_MessageBox_OK_Show( "pitch情報は読み込んでいません。正しい値をダイアログより指定してしてください", "message");
 
 	std::cout << "resolution " << reso[0] << " " << reso[1]  << " " << reso[2] << "\n";
 

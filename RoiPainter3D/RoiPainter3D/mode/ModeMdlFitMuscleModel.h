@@ -2,6 +2,7 @@
 
 #include "ModeInterface.h"
 #include "tmesh.h"
+#include "ttrianglesoup.h"
 #include <vector>
 #include <set>
 #include <string>
@@ -10,6 +11,17 @@
 class ModeMdlFitMuscleModel : public ModeInterface
 {
 private:
+	// 等値面
+	int m_isovalue;
+	TTriangleSoup m_isosurface;
+
+	// Landmark
+	int m_drag_lmk_ID;
+	std::vector <EVec3f> m_lmk;
+	float m_lmk_radius;
+	TMesh m_lmk_mesh;
+
+	// objファイル
 	std::vector<TMesh*> m_models;
 	std::vector<std::vector<float>> m_colorList;
 
@@ -49,10 +61,15 @@ public:
 
 
 	void ImportObjFile(std::string fname);
-
 	void ImportAllObjInFolder(std::string folderPath);
-
 	void ModelReset();
+
+	void GenIsoSurface(const int isovalue, const bool do_halfen);
+
+	bool PickIsoSurface(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos);
+
+	void ImportLandmarks(std::string fname);
+	void ExportLandmarks(std::string fname);
 };
 
 #pragma managed
