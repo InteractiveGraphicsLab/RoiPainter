@@ -16,14 +16,17 @@ private:
 	TTriangleSoup m_isosurface;
 
 	// Landmark
-	int m_drag_lmk_ID;
-	std::vector <EVec3f> m_lmk;
+	int m_drag_isosurface_lmk_ID;
+	int m_drag_model_lmk_ID;
+	std::vector <EVec3f> m_isosurface_lmk;
+	std::vector <EVec3f> m_model_lmk;
 	float m_lmk_radius;
 	TMesh m_lmk_mesh;
 
-	// objファイル
+	// .obj model
 	std::vector<TMesh*> m_models;
-	std::vector<std::vector<float>> m_colorList;
+	EVec3f m_models_pos;
+	bool m_drag_model_flg;
 
 	ModeMdlFitMuscleModel();
 public:
@@ -57,7 +60,6 @@ public:
 
 	void FinishSegmentation();
 
-	void InitColorList();
 
 
 	void ImportObjFile(std::string fname);
@@ -67,6 +69,7 @@ public:
 	void GenIsoSurface(const int isovalue, const bool do_halfen);
 
 	bool PickIsoSurface(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos);
+	bool PickObjModels(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos);
 
 	void ImportLandmarks(std::string fname);
 	void ExportLandmarks(std::string fname);

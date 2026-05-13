@@ -55,6 +55,8 @@ namespace RoiPainter3D {
 	private: System::Windows::Forms::Button^ m_btn_import_lmks;
 	private: System::Windows::Forms::Button^ m_btn_export_lmks;
 	private: System::Windows::Forms::CheckBox^ m_checkBox_half_iso;
+	private: System::Windows::Forms::Button^ m_btn_finish;
+
 
 	protected:
 
@@ -84,13 +86,14 @@ namespace RoiPainter3D {
 			this->m_btn_gen_iso = (gcnew System::Windows::Forms::Button());
 			this->m_btn_import_lmks = (gcnew System::Windows::Forms::Button());
 			this->m_btn_export_lmks = (gcnew System::Windows::Forms::Button());
+			this->m_btn_finish = (gcnew System::Windows::Forms::Button());
 			this->m_groopbox_isosurface->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackBar_isovalue))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// m_btn_import_obj
 			// 
-			this->m_btn_import_obj->Location = System::Drawing::Point(50, 262);
+			this->m_btn_import_obj->Location = System::Drawing::Point(49, 224);
 			this->m_btn_import_obj->Name = L"m_btn_import_obj";
 			this->m_btn_import_obj->Size = System::Drawing::Size(108, 32);
 			this->m_btn_import_obj->TabIndex = 0;
@@ -100,7 +103,7 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_reset
 			// 
-			this->m_btn_reset->Location = System::Drawing::Point(227, 262);
+			this->m_btn_reset->Location = System::Drawing::Point(226, 224);
 			this->m_btn_reset->Name = L"m_btn_reset";
 			this->m_btn_reset->Size = System::Drawing::Size(108, 32);
 			this->m_btn_reset->TabIndex = 1;
@@ -161,9 +164,9 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_import_lmks
 			// 
-			this->m_btn_import_lmks->Location = System::Drawing::Point(53, 178);
+			this->m_btn_import_lmks->Location = System::Drawing::Point(49, 178);
 			this->m_btn_import_lmks->Name = L"m_btn_import_lmks";
-			this->m_btn_import_lmks->Size = System::Drawing::Size(104, 25);
+			this->m_btn_import_lmks->Size = System::Drawing::Size(108, 25);
 			this->m_btn_import_lmks->TabIndex = 3;
 			this->m_btn_import_lmks->Text = L"Import LMKs";
 			this->m_btn_import_lmks->UseVisualStyleBackColor = true;
@@ -179,11 +182,22 @@ namespace RoiPainter3D {
 			this->m_btn_export_lmks->UseVisualStyleBackColor = true;
 			this->m_btn_export_lmks->Click += gcnew System::EventHandler(this, &FormMdlFitMuscleModel::m_btn_export_lmks_Click);
 			// 
+			// m_btn_finish
+			// 
+			this->m_btn_finish->Location = System::Drawing::Point(148, 288);
+			this->m_btn_finish->Name = L"m_btn_finish";
+			this->m_btn_finish->Size = System::Drawing::Size(93, 28);
+			this->m_btn_finish->TabIndex = 5;
+			this->m_btn_finish->Text = L"Finish";
+			this->m_btn_finish->UseVisualStyleBackColor = true;
+			this->m_btn_finish->Click += gcnew System::EventHandler(this, &FormMdlFitMuscleModel::m_btn_finish_Click);
+			// 
 			// FormMdlFitMuscleModel
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(393, 342);
+			this->Controls->Add(this->m_btn_finish);
 			this->Controls->Add(this->m_btn_export_lmks);
 			this->Controls->Add(this->m_btn_import_lmks);
 			this->Controls->Add(this->m_groopbox_isosurface);
@@ -205,6 +219,7 @@ namespace RoiPainter3D {
 	private: System::Void m_btn_export_lmks_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void m_btn_import_lmks_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void m_btn_reset_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void m_btn_finish_Click(System::Object^ sender, System::EventArgs^ e);
 };
 
 	inline void formMdlFitMuscle_Show() { FormMdlFitMuscleModel::getInst()->Show(); }

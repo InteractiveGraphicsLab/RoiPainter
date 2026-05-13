@@ -59,7 +59,9 @@ void ModeMdlFitMuscleModel::LBtnUp(const EVec2i& p, OglForCLI* ogl)
 {
   m_bL = false;
   ogl->BtnUp();
-  m_drag_lmk_ID = -1;
+  m_drag_isosurface_lmk_ID = -1;
+  m_drag_model_lmk_ID = -1;
+  m_drag_model_flg = false;
   RedrawScene();
 }
 
@@ -81,19 +83,33 @@ void ModeMdlFitMuscleModel::MBtnUp(const EVec2i& p, OglForCLI* ogl)
 void ModeMdlFitMuscleModel::LBtnDown(const EVec2i& p, OglForCLI* ogl) 
 {
   m_bL = true;
-
+  EVec3f ray_pos, ray_dir, pos;
+  ogl->GetCursorRay(p, ray_pos, ray_dir);
   if (IsShiftKeyOn()) 
   {
-    EVec3f rayPos, rayDir, pos;
-    ogl->GetCursorRay(p, rayPos, rayDir);
+    m_drag_isosurface_lmk_ID = PickLandmark(ray_pos, ray_dir, m_isosurface_lmk, m_lmk_radius);
+    if (m_drag_isosurface_lmk_ID != -1) return;
 
-    m_drag_lmk_ID = PickLandmark(rayPos, rayDir, m_lmk, m_lmk_radius);
-    if (m_drag_lmk_ID != -1) return;
-
-    if (PickIsoSurface(rayPos, rayDir, pos))
+    if (PickIsoSurface(ray_pos, ray_dir, pos))
     {
-      m_lmk.push_back(pos);
-      m_drag_lmk_ID = (int)m_lmk.size() - 1;
+      m_isosurface_lmk.push_back(pos);
+      m_drag_isosurface_lmk_ID = (int)m_isosurface_lmk.size() - 1;
+    }
+
+    m_drag_model_lmk_ID = PickLandmark(ray_pos, ray_dir, m_model_lmk, m_lmk_radius);
+    if (m_drag_model_lmk_ID != -1) return;
+
+    if (PickObjModels(ray_pos, ray_dir, pos))
+    {
+      m_model_lmk.push_back(pos);
+      m_drag_isosurface_lmk_ID = (int)m_model_lmk.size() - 1;
+    }
+  }
+  else if (IsCtrKeyOn())
+  {
+    if (PickObjModels(ray_pos, ray_dir, pos))
+    {
+      m_drag_model_flg = true;
     }
   }
   else
@@ -106,11 +122,12 @@ void ModeMdlFitMuscleModel::LBtnDown(const EVec2i& p, OglForCLI* ogl)
 void ModeMdlFitMuscleModel::RBtnDown(const EVec2i& p, OglForCLI* ogl) 
 {
   m_bR = true;
+  EVec3f ray_pos, ray_dir, pos;
+  ogl->GetCursorRay(p, ray_pos, ray_dir);
   if (IsShiftKeyOn())
   {
-    EVec3f ray_pos, ray_dir, pos;
-    ogl->GetCursorRay(p, ray_pos, ray_dir);
-    PickToEraseLandmark(ray_pos, ray_dir, m_lmk, m_lmk_radius);
+    PickToEraseLandmark(ray_pos, ray_dir, m_isosurface_lmk, m_lmk_radius);
+    PickToEraseLandmark(ray_pos, ray_dir, m_model_lmk, m_lmk_radius);
     RedrawScene();
   }
   else
@@ -138,10 +155,20 @@ void ModeMdlFitMuscleModel::MouseMove(const EVec2i& p, OglForCLI* ogl)
   EVec3f ray_pos, ray_dir, pos;
   ogl->GetCursorRay(p, ray_pos, ray_dir);
 
-  if (m_drag_lmk_ID != -1)
+  if (m_drag_isosurface_lmk_ID != -1)
   {
     if (PickIsoSurface(ray_pos, ray_dir, pos))
-      m_lmk[m_drag_lmk_ID] = pos;
+      m_isosurface_lmk[m_drag_isosurface_lmk_ID] = pos;
+  }
+
+  if (m_drag_model_lmk_ID != -1)
+  {
+    if (PickObjModels(ray_pos, ray_dir, pos))
+      m_model_lmk[m_drag_model_lmk_ID] = pos;
+  }
+
+  if (m_drag_model_flg)
+  {
   }
 
   ogl->MouseMove(p);
@@ -161,33 +188,17 @@ bool ModeMdlFitMuscleModel::CanLeaveMode()
   return true;
 }
 
-void ModeMdlFitMuscleModel::InitColorList()
-{
-  m_colorList = {
-        {1.0f, 0.0f, 0.0f, 1.0f}, // 赤
-        {0.0f, 1.0f, 0.0f, 1.0f}, // 緑
-        {0.0f, 0.0f, 1.0f, 1.0f}, // 青
-        {1.0f, 1.0f, 0.0f, 1.0f}, // 黄
-        {0.0f, 1.0f, 1.0f, 1.0f}, // シアン（水色）
-        {1.0f, 0.0f, 1.0f, 1.0f}, // マゼンタ（紫）
-        {1.0f, 0.5f, 0.0f, 1.0f}, // オレンジ
-        {0.5f, 1.0f, 0.0f, 1.0f}, // 黄緑
-        {0.0f, 0.5f, 1.0f, 1.0f}, // 空色
-        {0.5f, 0.0f, 1.0f, 1.0f}, // 紫
-        {1.0f, 1.0f, 1.0f, 1.0f}, // 白
-        {0.7f, 0.7f, 0.7f, 1.0f}  // グレー
-  };
-}
+
 
 void ModeMdlFitMuscleModel::StartMode() 
 {
   ImageCore::GetInst()->InitializeVolFlgByLockedMask();
 
   m_bL = m_bR = m_bM = false;
-  InitColorList();
   formMdlFitMuscle_Show();
 
-  m_drag_lmk_ID = -1;
+  m_drag_isosurface_lmk_ID = -1;
+  m_drag_model_lmk_ID = -1;
   m_lmk_radius = ImageCore::GetInst()->GetPitch()[0];
   m_lmk_mesh.InitializeAsSphere(m_lmk_radius, 10, 10);
 
@@ -223,18 +234,18 @@ void ModeMdlFitMuscleModel::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_c
   
   DrawCrsSec_Standard();
   glEnable(GL_LIGHTING);
-  DrawColoredLandmark(m_lmk_mesh, m_lmk);
+  DrawColoredLandmark(m_lmk_mesh, m_isosurface_lmk);
+  DrawColoredLandmark(m_lmk_mesh, m_model_lmk);
   m_isosurface.Draw(COLOR_HY, COLOR_HY, COLOR_W, COLOR_SHIN64);
 
-  int count = 0;
-  int numColors = static_cast<int>(m_colorList.size());
-  glDisable(GL_LIGHTING);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glColor4fv(COLOR_W);
+  
   for (TMesh* mesh : m_models) {
-    int colorIdx = count % numColors;
-    glColor3f(m_colorList[colorIdx][0], m_colorList[colorIdx][1], m_colorList[colorIdx][2]);
     mesh->Draw();
-    count++;
   }
+  glDisable(GL_BLEND);
 
   if (formVisParam_bRendVol()) 
   {
@@ -355,6 +366,16 @@ bool ModeMdlFitMuscleModel::PickIsoSurface(const EVec3f& ray_pos, const EVec3f& 
   return pick;
 }
 
+bool ModeMdlFitMuscleModel::PickObjModels(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos)
+{
+  for (TMesh* model : m_models)
+  {
+    if (model->PickByRay(ray_pos, ray_dir, pos))
+      return true;
+  }
+  return false;
+}
+
 
 void ModeMdlFitMuscleModel::ImportLandmarks(std::string fname)
 {
@@ -365,13 +386,13 @@ void ModeMdlFitMuscleModel::ImportLandmarks(std::string fname)
     return;
   }
 
-  m_lmk.clear();
+  m_isosurface_lmk.clear();
   int num_lmk;
 
   ifs >> num_lmk;
-  m_lmk.resize(num_lmk);
-  for (int i = 0; i < m_lmk.size(); i++)
-    ReadFromFstream(ifs, m_lmk[i]);
+  m_isosurface_lmk.resize(num_lmk);
+  for (int i = 0; i < m_isosurface_lmk.size(); i++)
+    ReadFromFstream(ifs, m_isosurface_lmk[i]);
   ifs.close();
   RedrawScene();
 }
@@ -385,8 +406,8 @@ void ModeMdlFitMuscleModel::ExportLandmarks(std::string fname)
     std::cout << "error when opening " << fname << "\n";
     return;
   }
-  ofs << (int)m_lmk.size() << "\n";
-  for (int i = 0; i < m_lmk.size(); i++)
-    WriteToFstream(ofs, m_lmk[i]);
+  ofs << (int)m_isosurface_lmk.size() << "\n";
+  for (int i = 0; i < m_isosurface_lmk.size(); i++)
+    WriteToFstream(ofs, m_isosurface_lmk[i]);
   ofs.close();
 }

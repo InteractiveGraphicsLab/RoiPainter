@@ -97,3 +97,9 @@ System::Void FormMdlFitMuscleModel::m_btn_import_lmks_Click(System::Object^ send
   std::string fname = static_cast<const char*>(mptr.ToPointer());
   ModeMdlFitMuscleModel::GetInst()->ImportLandmarks(fname);
 }
+
+
+System::Void FormMdlFitMuscleModel::m_btn_finish_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeMdlFitMuscleModel::GetInst()->FinishSegmentation();
+}
