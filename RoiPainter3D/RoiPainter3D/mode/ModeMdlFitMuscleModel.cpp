@@ -83,31 +83,46 @@ void ModeMdlFitMuscleModel::MBtnUp(const EVec2i& p, OglForCLI* ogl)
 void ModeMdlFitMuscleModel::LBtnDown(const EVec2i& p, OglForCLI* ogl) 
 {
   m_bL = true;
-  EVec3f ray_pos, ray_dir, pos;
+  EVec3f ray_pos, ray_dir, iso_pos, model_pos;
   ogl->GetCursorRay(p, ray_pos, ray_dir);
   if (IsShiftKeyOn()) 
   {
     m_drag_isosurface_lmk_ID = PickLandmark(ray_pos, ray_dir, m_isosurface_lmk, m_lmk_radius);
     if (m_drag_isosurface_lmk_ID != -1) return;
 
-    if (PickIsoSurface(ray_pos, ray_dir, pos))
+    if (PickIsoSurface(ray_pos, ray_dir, iso_pos))
     {
-      m_isosurface_lmk.push_back(pos);
-      m_drag_isosurface_lmk_ID = (int)m_isosurface_lmk.size() - 1;
+      if (PickObjModels(ray_pos, ray_dir, model_pos) && ((model_pos - ray_pos).norm() - (iso_pos - ray_pos).norm()) < 0)
+      {
+        
+      }
+      else 
+      {
+        m_isosurface_lmk.push_back(iso_pos);
+        m_drag_isosurface_lmk_ID = (int)m_isosurface_lmk.size() - 1;
+      }
+      
     }
 
     m_drag_model_lmk_ID = PickLandmark(ray_pos, ray_dir, m_model_lmk, m_lmk_radius);
     if (m_drag_model_lmk_ID != -1) return;
 
-    if (PickObjModels(ray_pos, ray_dir, pos))
+    if (PickObjModels(ray_pos, ray_dir, model_pos))
     {
-      m_model_lmk.push_back(pos);
-      m_drag_isosurface_lmk_ID = (int)m_model_lmk.size() - 1;
+      if (PickIsoSurface(ray_pos, ray_dir, iso_pos) && ((iso_pos - ray_pos).norm() - (model_pos - ray_pos).norm()) < 0)
+      {
+        
+      }
+      else 
+      {
+        m_model_lmk.push_back(model_pos);
+        m_drag_isosurface_lmk_ID = (int)m_model_lmk.size() - 1;
+      }
     }
   }
   else if (IsCtrKeyOn())
   {
-    if (PickObjModels(ray_pos, ray_dir, pos))
+    if (PickObjModels(ray_pos, ray_dir, model_pos))
     {
       m_drag_model_flg = true;
     }
@@ -228,24 +243,46 @@ static void DrawColoredLandmark(const TMesh& lmk_mesh, const std::vector<EVec3f>
   }
 }
 
+void ModeMdlFitMuscleModel::DrawLandmarks()
+{ 
+  for (EVec3f lmk : m_isosurface_lmk)
+  {
+    glPushMatrix();
+    glTranslated(lmk[0], lmk[1], lmk[2]);
+
+    m_lmk_mesh.Draw(COLOR_R, COLOR_R, COLOR_W, COLOR_SHIN64);
+    glPopMatrix();
+  }
+
+  for (EVec3f lmk : m_model_lmk)
+  {
+    glPushMatrix();
+    glTranslated(lmk[0], lmk[1], lmk[2]);
+
+    m_lmk_mesh.Draw(COLOR_B, COLOR_B, COLOR_W, COLOR_SHIN64);
+    glPopMatrix();
+  }
+}
+
+
 void ModeMdlFitMuscleModel::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center) 
 {
   BindAllVolumes();
   
   DrawCrsSec_Standard();
   glEnable(GL_LIGHTING);
-  DrawColoredLandmark(m_lmk_mesh, m_isosurface_lmk);
-  DrawColoredLandmark(m_lmk_mesh, m_model_lmk);
+  DrawLandmarks();
+
   m_isosurface.Draw(COLOR_HY, COLOR_HY, COLOR_W, COLOR_SHIN64);
 
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glColor4fv(COLOR_W);
   
+  //glEnable(GL_BLEND);
+  //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   for (TMesh* mesh : m_models) {
-    mesh->Draw();
+    if (IsModelVisible(mesh))
+      mesh->Draw(COLOR_W, COLOR_W, COLOR_W, COLOR_SHIN64);
   }
-  glDisable(GL_BLEND);
+  //glDisable(GL_BLEND);
 
   if (formVisParam_bRendVol()) 
   {
@@ -263,50 +300,7 @@ void ModeMdlFitMuscleModel::FinishSegmentation()
 }
 
 
-void ModeMdlFitMuscleModel::ImportObjFile(std::string fname)
-{
-  TMesh* newMesh = new TMesh(fname.c_str());
-  if (newMesh->m_vSize > 0) {
-    m_models.push_back(newMesh);
-  }
-  else 
-  {
-    delete newMesh;
-  }
-}
 
-void ModeMdlFitMuscleModel::ImportAllObjInFolder(std::string folder_path)
-{
-  std::string search_path = folder_path + "\\*";
-  WIN32_FIND_DATAA find_data;
-  HANDLE hFind = FindFirstFileA(search_path.c_str(), &find_data);
-
-  if (hFind == INVALID_HANDLE_VALUE) return;
-
-  do
-  {
-    std::string file_name = find_data.cFileName;
-
-    if (file_name == "." || file_name == "..") continue;
-
-    std::string full_path = folder_path + "\\" + file_name;
-    if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-    {
-      ImportAllObjInFolder(full_path);
-    }
-    else
-    {
-      if (full_path.size() > 4 &&
-        _stricmp(full_path.substr(full_path.size() - 4).c_str(), ".obj") == 0)
-      {
-        this->ImportObjFile(full_path);
-      }
-    }
-  } while (FindNextFileA(hFind, &find_data));
-
-  FindClose(hFind);
-
-}
 
 void ModeMdlFitMuscleModel::ModelReset()
 {
@@ -315,9 +309,11 @@ void ModeMdlFitMuscleModel::ModelReset()
     if (mesh != nullptr)
     {
       delete mesh;
+      mesh = nullptr;
     }
   }
-
+  
+  m_model_visibility_map.clear();
   m_models.clear();
 }
 
@@ -370,7 +366,7 @@ bool ModeMdlFitMuscleModel::PickObjModels(const EVec3f& ray_pos, const EVec3f& r
 {
   for (TMesh* model : m_models)
   {
-    if (model->PickByRay(ray_pos, ray_dir, pos))
+    if (model->PickByRay(ray_pos, ray_dir, pos) && m_model_visibility_map[model])
       return true;
   }
   return false;
@@ -387,12 +383,20 @@ void ModeMdlFitMuscleModel::ImportLandmarks(std::string fname)
   }
 
   m_isosurface_lmk.clear();
-  int num_lmk;
+  m_model_lmk.clear();
+  int num_isosurface_lmk;
+  int num_model_lmk;
+  std::string str;
 
-  ifs >> num_lmk;
-  m_isosurface_lmk.resize(num_lmk);
+  ifs >> str >> num_isosurface_lmk;
+  m_isosurface_lmk.resize(num_isosurface_lmk);
   for (int i = 0; i < m_isosurface_lmk.size(); i++)
     ReadFromFstream(ifs, m_isosurface_lmk[i]);
+
+  ifs >> str >> num_model_lmk;
+  m_model_lmk.resize(num_model_lmk);
+  for (int i = 0; i < m_model_lmk.size(); i++)
+    ReadFromFstream(ifs, m_model_lmk[i]);
   ifs.close();
   RedrawScene();
 }
@@ -406,8 +410,43 @@ void ModeMdlFitMuscleModel::ExportLandmarks(std::string fname)
     std::cout << "error when opening " << fname << "\n";
     return;
   }
-  ofs << (int)m_isosurface_lmk.size() << "\n";
+  ofs << "IsosurfaceLandMarks " << (int)m_isosurface_lmk.size() << "\n";
   for (int i = 0; i < m_isosurface_lmk.size(); i++)
     WriteToFstream(ofs, m_isosurface_lmk[i]);
+
+  ofs << "ModelLandMarks " << (int)m_model_lmk.size() << "\n";
+  for (int i = 0; i < m_model_lmk.size(); i++)
+    WriteToFstream(ofs, m_model_lmk[i]);
   ofs.close();
+}
+
+
+TMesh* ModeMdlFitMuscleModel::ImportObjFile(std::string fname)
+{
+  TMesh* newMesh = new TMesh(fname.c_str());
+  if (newMesh->m_vSize > 0) {
+    m_models.push_back(newMesh);
+    m_model_visibility_map[newMesh] = true;
+    return newMesh; 
+  }
+  else
+  {
+    delete newMesh;
+    return nullptr; 
+  }
+}
+
+
+void ModeMdlFitMuscleModel::SetModelVisibility(TMesh* mesh, bool isVisible)
+{
+  m_model_visibility_map[mesh] = isVisible;
+}
+
+bool ModeMdlFitMuscleModel::IsModelVisible(TMesh* mesh)
+{
+  if (m_model_visibility_map.find(mesh) != m_model_visibility_map.end())
+  {
+    return m_model_visibility_map[mesh];
+  }
+  return true;
 }

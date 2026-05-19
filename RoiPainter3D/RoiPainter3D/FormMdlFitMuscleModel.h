@@ -56,6 +56,7 @@ namespace RoiPainter3D {
 	private: System::Windows::Forms::Button^ m_btn_export_lmks;
 	private: System::Windows::Forms::CheckBox^ m_checkBox_half_iso;
 	private: System::Windows::Forms::Button^ m_btn_finish;
+	private: System::Windows::Forms::TreeView^ m_treeView_models;
 
 
 	protected:
@@ -87,13 +88,14 @@ namespace RoiPainter3D {
 			this->m_btn_import_lmks = (gcnew System::Windows::Forms::Button());
 			this->m_btn_export_lmks = (gcnew System::Windows::Forms::Button());
 			this->m_btn_finish = (gcnew System::Windows::Forms::Button());
+			this->m_treeView_models = (gcnew System::Windows::Forms::TreeView());
 			this->m_groopbox_isosurface->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackBar_isovalue))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// m_btn_import_obj
 			// 
-			this->m_btn_import_obj->Location = System::Drawing::Point(49, 224);
+			this->m_btn_import_obj->Location = System::Drawing::Point(256, 174);
 			this->m_btn_import_obj->Name = L"m_btn_import_obj";
 			this->m_btn_import_obj->Size = System::Drawing::Size(108, 32);
 			this->m_btn_import_obj->TabIndex = 0;
@@ -103,7 +105,7 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_reset
 			// 
-			this->m_btn_reset->Location = System::Drawing::Point(226, 224);
+			this->m_btn_reset->Location = System::Drawing::Point(256, 212);
 			this->m_btn_reset->Name = L"m_btn_reset";
 			this->m_btn_reset->Size = System::Drawing::Size(108, 32);
 			this->m_btn_reset->TabIndex = 1;
@@ -164,7 +166,7 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_import_lmks
 			// 
-			this->m_btn_import_lmks->Location = System::Drawing::Point(49, 178);
+			this->m_btn_import_lmks->Location = System::Drawing::Point(256, 250);
 			this->m_btn_import_lmks->Name = L"m_btn_import_lmks";
 			this->m_btn_import_lmks->Size = System::Drawing::Size(108, 25);
 			this->m_btn_import_lmks->TabIndex = 3;
@@ -174,7 +176,7 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_export_lmks
 			// 
-			this->m_btn_export_lmks->Location = System::Drawing::Point(233, 178);
+			this->m_btn_export_lmks->Location = System::Drawing::Point(256, 281);
 			this->m_btn_export_lmks->Name = L"m_btn_export_lmks";
 			this->m_btn_export_lmks->Size = System::Drawing::Size(101, 24);
 			this->m_btn_export_lmks->TabIndex = 4;
@@ -184,7 +186,7 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_finish
 			// 
-			this->m_btn_finish->Location = System::Drawing::Point(148, 288);
+			this->m_btn_finish->Location = System::Drawing::Point(264, 311);
 			this->m_btn_finish->Name = L"m_btn_finish";
 			this->m_btn_finish->Size = System::Drawing::Size(93, 28);
 			this->m_btn_finish->TabIndex = 5;
@@ -192,11 +194,21 @@ namespace RoiPainter3D {
 			this->m_btn_finish->UseVisualStyleBackColor = true;
 			this->m_btn_finish->Click += gcnew System::EventHandler(this, &FormMdlFitMuscleModel::m_btn_finish_Click);
 			// 
+			// m_treeView_models
+			// 
+			this->m_treeView_models->CheckBoxes = true;
+			this->m_treeView_models->Location = System::Drawing::Point(34, 174);
+			this->m_treeView_models->Name = L"m_treeView_models";
+			this->m_treeView_models->Size = System::Drawing::Size(165, 143);
+			this->m_treeView_models->TabIndex = 6;
+			this->m_treeView_models->AfterCheck += gcnew System::Windows::Forms::TreeViewEventHandler(this, &FormMdlFitMuscleModel::m_treeView_models_AfterCheck);
+			// 
 			// FormMdlFitMuscleModel
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(393, 342);
+			this->Controls->Add(this->m_treeView_models);
 			this->Controls->Add(this->m_btn_finish);
 			this->Controls->Add(this->m_btn_export_lmks);
 			this->Controls->Add(this->m_btn_import_lmks);
@@ -220,6 +232,9 @@ namespace RoiPainter3D {
 	private: System::Void m_btn_import_lmks_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void m_btn_reset_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void m_btn_finish_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void m_treeView_models_AfterCheck(System::Object^ sender, System::Windows::Forms::TreeViewEventArgs^ e);
+
+	private: void CreateTreeView(String^ dirPath, TreeNode^ parentNode);
 };
 
 	inline void formMdlFitMuscle_Show() { FormMdlFitMuscleModel::getInst()->Show(); }

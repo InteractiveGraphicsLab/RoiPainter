@@ -7,7 +7,9 @@
 #pragma managed
 
 using namespace RoiPainter3D;
+using namespace System::IO;
 using namespace System::Runtime::InteropServices;
+
 
 
 System::Void FormMdlFitMuscleModel::m_btn_import_obj_Click(System::Object^ sender, System::EventArgs^ e)
@@ -17,14 +19,9 @@ System::Void FormMdlFitMuscleModel::m_btn_import_obj_Click(System::Object^ sende
 
   if (fbd->ShowDialog() == System::Windows::Forms::DialogResult::OK)
   {
-    IntPtr mptr = Marshal::StringToHGlobalAnsi(fbd->SelectedPath);
-    try {
-      std::string folderPath = static_cast<const char*>(mptr.ToPointer());
-      ModeMdlFitMuscleModel::GetInst()->ImportAllObjInFolder(folderPath);
-    }
-    finally {
-      Marshal::FreeHGlobal(mptr);
-    }
+    m_treeView_models->Nodes->Clear();
+
+    CreateTreeView(fbd->SelectedPath, nullptr);
   }
 }
 
@@ -102,4 +99,82 @@ System::Void FormMdlFitMuscleModel::m_btn_import_lmks_Click(System::Object^ send
 System::Void FormMdlFitMuscleModel::m_btn_finish_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeMdlFitMuscleModel::GetInst()->FinishSegmentation();
+}
+
+
+void FormMdlFitMuscleModel::CreateTreeView(String^ dirPath, TreeNode^ parentNode)
+{
+  array<String^>^ dirs = Directory::GetDirectories(dirPath);
+  for each(String ^ d in dirs)
+  {
+    DirectoryInfo^ di = gcnew DirectoryInfo(d);
+    TreeNode^ node = gcnew TreeNode(di->Name);
+
+    node->Checked = true;
+
+    if (parentNode == nullptr)
+      m_treeView_models->Nodes->Add(node);
+    else
+      parentNode->Nodes->Add(node);
+    CreateTreeView(d, node);
+  }
+
+  array<String^>^ files = Directory::GetFiles(dirPath, "*.obj");
+  for each(String ^ f in files)
+  {
+    FileInfo^ fi = gcnew FileInfo(f);
+    TreeNode^ node = gcnew TreeNode(fi->Name);
+
+    IntPtr mptr = Marshal::StringToHGlobalAnsi(f);
+    try
+    {
+      std::string cppStr = static_cast<const char*>(mptr.ToPointer());
+      TMesh* meshPtr = ModeMdlFitMuscleModel::GetInst()->ImportObjFile(cppStr);
+      if (meshPtr != nullptr)
+      {
+        node->Tag = (IntPtr)meshPtr;
+        node->Checked = true;
+
+        if (parentNode == nullptr) m_treeView_models->Nodes->Add(node);
+        else parentNode->Nodes->Add(node);
+      }
+    }
+    finally
+    {
+      Marshal::FreeHGlobal(mptr);
+    }
+  }
+
+
+}
+
+static void UpdateModelVisibility(TreeNode^ node)
+{
+  if (node->Tag != nullptr)
+  {
+    TMesh* mesh = (TMesh*)((IntPtr)node->Tag).ToPointer();
+    ModeMdlFitMuscleModel::GetInst()->SetModelVisibility(mesh, node->Checked);
+  }
+}
+
+static void CheckAllChildNodes(TreeNode^ treeNode, bool nodeChecked)
+{
+  for each(TreeNode ^ node in treeNode->Nodes)
+  {
+    node->Checked = nodeChecked;
+    if (node->Nodes->Count > 0)
+    {
+      CheckAllChildNodes(node, nodeChecked);
+    }
+    UpdateModelVisibility(node);
+  }
+}
+
+System::Void FormMdlFitMuscleModel::m_treeView_models_AfterCheck(System::Object^ sender, System::Windows::Forms::TreeViewEventArgs^ e)
+{
+  if (e->Action != TreeViewAction::Unknown)
+  {
+    CheckAllChildNodes(e->Node, e->Node->Checked);
+  }
+  UpdateModelVisibility(e->Node);
 }

@@ -6,6 +6,7 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <map>
 #include <windows.h>
 
 class ModeMdlFitMuscleModel : public ModeInterface
@@ -25,6 +26,7 @@ private:
 
 	// .obj model
 	std::vector<TMesh*> m_models;
+	std::map<TMesh*, bool> m_model_visibility_map;
 	EVec3f m_models_pos;
 	bool m_drag_model_flg;
 
@@ -62,9 +64,12 @@ public:
 
 
 
-	void ImportObjFile(std::string fname);
-	void ImportAllObjInFolder(std::string folderPath);
+	void DrawLandmarks();
 	void ModelReset();
+
+	TMesh* ImportObjFile(std::string fname);
+	
+	bool IsModelVisible(TMesh* mesh);
 
 	void GenIsoSurface(const int isovalue, const bool do_halfen);
 
@@ -73,6 +78,9 @@ public:
 
 	void ImportLandmarks(std::string fname);
 	void ExportLandmarks(std::string fname);
+
+	// setter
+	void SetModelVisibility(TMesh* mesh, bool isVisible);
 };
 
 #pragma managed
