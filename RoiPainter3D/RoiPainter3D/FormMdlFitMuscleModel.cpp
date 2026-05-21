@@ -23,12 +23,15 @@ System::Void FormMdlFitMuscleModel::m_btn_import_obj_Click(System::Object^ sende
 
     CreateTreeView(fbd->SelectedPath, nullptr);
   }
+  UpdateMasterCheckboxState();
 }
 
 
 System::Void FormMdlFitMuscleModel::m_btn_reset_Click(System::Object^ sender, System::EventArgs^ e)
 {
   ModeMdlFitMuscleModel::GetInst()->ModelReset();
+  m_treeView_models->Nodes->Clear();
+
 }
 
 
@@ -177,4 +180,70 @@ System::Void FormMdlFitMuscleModel::m_treeView_models_AfterCheck(System::Object^
     CheckAllChildNodes(e->Node, e->Node->Checked);
   }
   UpdateModelVisibility(e->Node);
+  UpdateMasterCheckboxState();
+}
+
+
+void FormMdlFitMuscleModel::SetAllNodesCheckedState(TreeNodeCollection^ nodes, bool isChecked)
+{
+  for each (TreeNode ^ node in nodes)
+  {
+    node->Checked = isChecked;
+    if (node->Nodes->Count > 0)
+    {
+      SetAllNodesCheckedState(node->Nodes, isChecked);
+    }
+    UpdateModelVisibility(node);
+  }
+}
+
+
+System::Void FormMdlFitMuscleModel::m_checkbox_select_all_Click(System::Object^ seder, System::EventArgs^ e)
+{
+  if (m_checkbox_select_all->CheckState == CheckState::Indeterminate)
+  {
+    m_checkbox_select_all->CheckState = CheckState::Unchecked;
+  }
+
+  bool isChecked = (m_checkbox_select_all->CheckState == CheckState::Checked);
+  SetAllNodesCheckedState(m_treeView_models->Nodes, isChecked);
+}
+
+
+void FormMdlFitMuscleModel::CountCheckedNodes(TreeNodeCollection^ nodes, int% totalCount, int% checkedCount)
+{
+  for each (TreeNode ^ node in nodes)
+  {
+    if (node->Tag != nullptr)
+    {
+      totalCount++;
+      if (node->Checked)
+        checkedCount++;
+    }
+    if (node->Nodes->Count > 0)
+      CountCheckedNodes(node->Nodes, totalCount, checkedCount);
+  }
+}
+
+void FormMdlFitMuscleModel::UpdateMasterCheckboxState()
+{
+  int total = 0;
+  int checked = 0;
+
+  CountCheckedNodes(m_treeView_models->Nodes, total, checked);
+
+  if (total == 0)
+    m_checkbox_select_all->CheckState = CheckState::Unchecked;
+  else if (checked == total)
+    m_checkbox_select_all->CheckState = CheckState::Checked;
+  else if (checked == 0)
+    m_checkbox_select_all->CheckState = CheckState::Unchecked;
+  else
+    m_checkbox_select_all->CheckState = CheckState::Indeterminate;
+}
+
+System::Void FormMdlFitMuscleModel::m_btn_pca_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeMdlFitMuscleModel::GetInst()->TranslateModel();
+  ModeMdlFitMuscleModel::GetInst()->SetPCAAxis(true);
 }

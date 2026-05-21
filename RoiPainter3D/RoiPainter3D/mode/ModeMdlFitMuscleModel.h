@@ -30,6 +30,8 @@ private:
 	EVec3f m_models_pos;
 	bool m_drag_model_flg;
 
+	bool m_flag;
+
 	ModeMdlFitMuscleModel();
 public:
 	static ModeMdlFitMuscleModel* GetInst()
@@ -78,9 +80,14 @@ public:
 
 	void ImportLandmarks(std::string fname);
 	void ExportLandmarks(std::string fname);
+	
+	void TranslateModel();
+
+	void DrawPrincipalAxis(std::vector<EVec3f> lmks, float length);
 
 	// setter
 	void SetModelVisibility(TMesh* mesh, bool isVisible);
+	void SetPCAAxis(bool flag);
 };
 
 #pragma managed

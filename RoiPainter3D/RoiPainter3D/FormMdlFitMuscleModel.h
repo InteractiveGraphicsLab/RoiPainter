@@ -59,6 +59,10 @@ namespace RoiPainter3D {
 	private: System::Windows::Forms::TreeView^ m_treeView_models;
 
 
+	private: System::Windows::Forms::CheckBox^ m_checkbox_select_all;
+	private: System::Windows::Forms::Button^ m_btn_pca;
+
+
 	protected:
 
 	protected:
@@ -89,15 +93,17 @@ namespace RoiPainter3D {
 			this->m_btn_export_lmks = (gcnew System::Windows::Forms::Button());
 			this->m_btn_finish = (gcnew System::Windows::Forms::Button());
 			this->m_treeView_models = (gcnew System::Windows::Forms::TreeView());
+			this->m_checkbox_select_all = (gcnew System::Windows::Forms::CheckBox());
+			this->m_btn_pca = (gcnew System::Windows::Forms::Button());
 			this->m_groopbox_isosurface->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackBar_isovalue))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// m_btn_import_obj
 			// 
-			this->m_btn_import_obj->Location = System::Drawing::Point(256, 174);
+			this->m_btn_import_obj->Location = System::Drawing::Point(243, 132);
 			this->m_btn_import_obj->Name = L"m_btn_import_obj";
-			this->m_btn_import_obj->Size = System::Drawing::Size(108, 32);
+			this->m_btn_import_obj->Size = System::Drawing::Size(108, 24);
 			this->m_btn_import_obj->TabIndex = 0;
 			this->m_btn_import_obj->Text = L"Import Obj";
 			this->m_btn_import_obj->UseVisualStyleBackColor = true;
@@ -105,9 +111,9 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_reset
 			// 
-			this->m_btn_reset->Location = System::Drawing::Point(256, 212);
+			this->m_btn_reset->Location = System::Drawing::Point(243, 161);
 			this->m_btn_reset->Name = L"m_btn_reset";
-			this->m_btn_reset->Size = System::Drawing::Size(108, 32);
+			this->m_btn_reset->Size = System::Drawing::Size(108, 24);
 			this->m_btn_reset->TabIndex = 1;
 			this->m_btn_reset->Text = L"Models Reset";
 			this->m_btn_reset->UseVisualStyleBackColor = true;
@@ -119,9 +125,9 @@ namespace RoiPainter3D {
 			this->m_groopbox_isosurface->Controls->Add(this->m_textBox_isovalue);
 			this->m_groopbox_isosurface->Controls->Add(this->m_trackBar_isovalue);
 			this->m_groopbox_isosurface->Controls->Add(this->m_btn_gen_iso);
-			this->m_groopbox_isosurface->Location = System::Drawing::Point(34, 24);
+			this->m_groopbox_isosurface->Location = System::Drawing::Point(34, 12);
 			this->m_groopbox_isosurface->Name = L"m_groopbox_isosurface";
-			this->m_groopbox_isosurface->Size = System::Drawing::Size(323, 130);
+			this->m_groopbox_isosurface->Size = System::Drawing::Size(323, 114);
 			this->m_groopbox_isosurface->TabIndex = 2;
 			this->m_groopbox_isosurface->TabStop = false;
 			this->m_groopbox_isosurface->Text = L"iso surface";
@@ -131,7 +137,7 @@ namespace RoiPainter3D {
 			this->m_checkBox_half_iso->AutoSize = true;
 			this->m_checkBox_half_iso->Checked = true;
 			this->m_checkBox_half_iso->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->m_checkBox_half_iso->Location = System::Drawing::Point(214, 26);
+			this->m_checkBox_half_iso->Location = System::Drawing::Point(214, 20);
 			this->m_checkBox_half_iso->Name = L"m_checkBox_half_iso";
 			this->m_checkBox_half_iso->Size = System::Drawing::Size(103, 16);
 			this->m_checkBox_half_iso->TabIndex = 3;
@@ -140,7 +146,7 @@ namespace RoiPainter3D {
 			// 
 			// m_textBox_isovalue
 			// 
-			this->m_textBox_isovalue->Location = System::Drawing::Point(16, 24);
+			this->m_textBox_isovalue->Location = System::Drawing::Point(6, 18);
 			this->m_textBox_isovalue->Name = L"m_textBox_isovalue";
 			this->m_textBox_isovalue->Size = System::Drawing::Size(58, 19);
 			this->m_textBox_isovalue->TabIndex = 2;
@@ -148,7 +154,7 @@ namespace RoiPainter3D {
 			// 
 			// m_trackBar_isovalue
 			// 
-			this->m_trackBar_isovalue->Location = System::Drawing::Point(29, 49);
+			this->m_trackBar_isovalue->Location = System::Drawing::Point(24, 42);
 			this->m_trackBar_isovalue->Name = L"m_trackBar_isovalue";
 			this->m_trackBar_isovalue->Size = System::Drawing::Size(272, 45);
 			this->m_trackBar_isovalue->TabIndex = 1;
@@ -156,9 +162,9 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_gen_iso
 			// 
-			this->m_btn_gen_iso->Location = System::Drawing::Point(90, 100);
+			this->m_btn_gen_iso->Location = System::Drawing::Point(96, 87);
 			this->m_btn_gen_iso->Name = L"m_btn_gen_iso";
-			this->m_btn_gen_iso->Size = System::Drawing::Size(130, 24);
+			this->m_btn_gen_iso->Size = System::Drawing::Size(130, 22);
 			this->m_btn_gen_iso->TabIndex = 0;
 			this->m_btn_gen_iso->Text = L"Generate IsoSurface";
 			this->m_btn_gen_iso->UseVisualStyleBackColor = true;
@@ -166,9 +172,9 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_import_lmks
 			// 
-			this->m_btn_import_lmks->Location = System::Drawing::Point(256, 250);
+			this->m_btn_import_lmks->Location = System::Drawing::Point(243, 191);
 			this->m_btn_import_lmks->Name = L"m_btn_import_lmks";
-			this->m_btn_import_lmks->Size = System::Drawing::Size(108, 25);
+			this->m_btn_import_lmks->Size = System::Drawing::Size(108, 24);
 			this->m_btn_import_lmks->TabIndex = 3;
 			this->m_btn_import_lmks->Text = L"Import LMKs";
 			this->m_btn_import_lmks->UseVisualStyleBackColor = true;
@@ -176,9 +182,9 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_export_lmks
 			// 
-			this->m_btn_export_lmks->Location = System::Drawing::Point(256, 281);
+			this->m_btn_export_lmks->Location = System::Drawing::Point(243, 221);
 			this->m_btn_export_lmks->Name = L"m_btn_export_lmks";
-			this->m_btn_export_lmks->Size = System::Drawing::Size(101, 24);
+			this->m_btn_export_lmks->Size = System::Drawing::Size(108, 24);
 			this->m_btn_export_lmks->TabIndex = 4;
 			this->m_btn_export_lmks->Text = L"Export LMKs";
 			this->m_btn_export_lmks->UseVisualStyleBackColor = true;
@@ -186,9 +192,9 @@ namespace RoiPainter3D {
 			// 
 			// m_btn_finish
 			// 
-			this->m_btn_finish->Location = System::Drawing::Point(264, 311);
+			this->m_btn_finish->Location = System::Drawing::Point(243, 251);
 			this->m_btn_finish->Name = L"m_btn_finish";
-			this->m_btn_finish->Size = System::Drawing::Size(93, 28);
+			this->m_btn_finish->Size = System::Drawing::Size(108, 24);
 			this->m_btn_finish->TabIndex = 5;
 			this->m_btn_finish->Text = L"Finish";
 			this->m_btn_finish->UseVisualStyleBackColor = true;
@@ -197,17 +203,43 @@ namespace RoiPainter3D {
 			// m_treeView_models
 			// 
 			this->m_treeView_models->CheckBoxes = true;
-			this->m_treeView_models->Location = System::Drawing::Point(34, 174);
+			this->m_treeView_models->Location = System::Drawing::Point(34, 132);
 			this->m_treeView_models->Name = L"m_treeView_models";
 			this->m_treeView_models->Size = System::Drawing::Size(165, 143);
 			this->m_treeView_models->TabIndex = 6;
 			this->m_treeView_models->AfterCheck += gcnew System::Windows::Forms::TreeViewEventHandler(this, &FormMdlFitMuscleModel::m_treeView_models_AfterCheck);
+			// 
+			// m_checkbox_select_all
+			// 
+			this->m_checkbox_select_all->AutoSize = true;
+			this->m_checkbox_select_all->Checked = true;
+			this->m_checkbox_select_all->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->m_checkbox_select_all->Location = System::Drawing::Point(34, 304);
+			this->m_checkbox_select_all->Name = L"m_checkbox_select_all";
+			this->m_checkbox_select_all->Size = System::Drawing::Size(74, 16);
+			this->m_checkbox_select_all->TabIndex = 9;
+			this->m_checkbox_select_all->Text = L"Select All";
+			this->m_checkbox_select_all->ThreeState = true;
+			this->m_checkbox_select_all->UseVisualStyleBackColor = true;
+			this->m_checkbox_select_all->Click += gcnew System::EventHandler(this, &FormMdlFitMuscleModel::m_checkbox_select_all_Click);
+			// 
+			// m_btn_pca
+			// 
+			this->m_btn_pca->Location = System::Drawing::Point(243, 281);
+			this->m_btn_pca->Name = L"m_btn_pca";
+			this->m_btn_pca->Size = System::Drawing::Size(104, 24);
+			this->m_btn_pca->TabIndex = 10;
+			this->m_btn_pca->Text = L"PCA";
+			this->m_btn_pca->UseVisualStyleBackColor = true;
+			this->m_btn_pca->Click += gcnew System::EventHandler(this, &FormMdlFitMuscleModel::m_btn_pca_Click);
 			// 
 			// FormMdlFitMuscleModel
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(393, 342);
+			this->Controls->Add(this->m_btn_pca);
+			this->Controls->Add(this->m_checkbox_select_all);
 			this->Controls->Add(this->m_treeView_models);
 			this->Controls->Add(this->m_btn_finish);
 			this->Controls->Add(this->m_btn_export_lmks);
@@ -221,6 +253,7 @@ namespace RoiPainter3D {
 			this->m_groopbox_isosurface->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackBar_isovalue))->EndInit();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -233,8 +266,15 @@ namespace RoiPainter3D {
 	private: System::Void m_btn_reset_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void m_btn_finish_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void m_treeView_models_AfterCheck(System::Object^ sender, System::Windows::Forms::TreeViewEventArgs^ e);
+	private: System::Void m_checkbox_select_all_Click(System::Object^ seder, System::EventArgs^ e);
+	private: System::Void m_btn_pca_Click(System::Object^ sender, System::EventArgs^ e);
 
 	private: void CreateTreeView(String^ dirPath, TreeNode^ parentNode);
+	private: void SetAllNodesCheckedState(TreeNodeCollection^ nodes, bool isChecked);
+	private: void CountCheckedNodes(TreeNodeCollection^ nodes, int% totalCount, int% checkedCount);
+	private: void UpdateMasterCheckboxState();
+
+	
 };
 
 	inline void formMdlFitMuscle_Show() { FormMdlFitMuscleModel::getInst()->Show(); }

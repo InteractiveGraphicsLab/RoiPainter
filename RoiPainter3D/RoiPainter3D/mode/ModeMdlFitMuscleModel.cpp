@@ -20,6 +20,7 @@ using namespace marchingcubes;
 ModeMdlFitMuscleModel::ModeMdlFitMuscleModel()
 {
   m_bL = m_bR = m_bM = false;
+  m_flag = false;
 }
 
 static int PickLandmark(const EVec3f& ray_pos, const EVec3f& ray_dir, const std::vector<EVec3f>& lmk, const float lmk_radius)
@@ -265,6 +266,8 @@ void ModeMdlFitMuscleModel::DrawLandmarks()
 }
 
 
+
+
 void ModeMdlFitMuscleModel::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center) 
 {
   BindAllVolumes();
@@ -283,6 +286,11 @@ void ModeMdlFitMuscleModel::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_c
       mesh->Draw(COLOR_W, COLOR_W, COLOR_W, COLOR_SHIN64);
   }
   //glDisable(GL_BLEND);
+  if (m_flag)
+  {
+    DrawPrincipalAxis(m_model_lmk, 100);
+    DrawPrincipalAxis(m_isosurface_lmk, 100);
+  }
 
   if (formVisParam_bRendVol()) 
   {
@@ -300,7 +308,91 @@ void ModeMdlFitMuscleModel::FinishSegmentation()
 }
 
 
+static EVec3f CalcLMKGravityCenter(const std::vector<EVec3f>& lmks)
+{
+  EVec3f pos_sum = EVec3f(0, 0, 0);
+  for (int i = 0; i < lmks.size(); i++)
+    pos_sum += lmks[i];
+  return pos_sum / (float)lmks.size();
+  
+}
 
+static EMatXf CreateLandmarkMatrix(const std::vector<EVec3f>& lmks)
+{
+  EMatXf lmk_mat(lmks.size(), 3);
+  for (int i = 0; i < lmks.size(); i++)
+  {
+    for (int j = 0; j < 3; j++)
+    {
+      lmk_mat(i, j) = lmks[i][j];
+    }
+  }
+  return lmk_mat;
+}
+
+
+static EMat3f PCA(std::vector<EVec3f>& lmks)
+{
+  std::vector<EVec3f> center_lmks;
+  EVec3f gravity_center = CalcLMKGravityCenter(lmks);
+  for (int i = 0; i < lmks.size(); i++)
+    center_lmks.push_back(lmks[i] - gravity_center);
+
+  EMatXf lmk_mat = CreateLandmarkMatrix(center_lmks);
+
+  EMat3f covariance_mat = (lmk_mat.transpose() * lmk_mat) / (float)center_lmks.size();
+
+  Eigen::SelfAdjointEigenSolver<EMat3f> solver(covariance_mat);
+
+  EMat3f principal_mat = solver.eigenvectors();
+  
+  return principal_mat;
+}
+
+void ModeMdlFitMuscleModel::TranslateModel()
+{
+  EMat3f iso_principal_mat = PCA(m_isosurface_lmk);
+  EMat3f model_principal_mat = PCA(m_model_lmk);
+
+  if (iso_principal_mat.col(2).dot(model_principal_mat.col(2)) < 0)
+  {
+    iso_principal_mat.col(2) *= -1;
+  }
+
+  EMat3f rotation = iso_principal_mat * model_principal_mat.transpose();
+
+  if (rotation.determinant() < 0)
+  {
+    iso_principal_mat.col(0) *= -1;
+
+    rotation = iso_principal_mat * model_principal_mat.transpose();
+  }
+
+  EVec3f translate = CalcLMKGravityCenter(m_isosurface_lmk) - rotation * CalcLMKGravityCenter(m_model_lmk);
+
+  for (TMesh* model : m_models)
+  {
+    model->Rotate(rotation);
+    model->Translate(translate);
+  }
+}
+
+void ModeMdlFitMuscleModel::DrawPrincipalAxis(std::vector<EVec3f> lmks, float length)
+{
+  EVec3f center = CalcLMKGravityCenter(lmks);
+  EMat3f vertex_mat = PCA(lmks);
+  EVec3f axis = vertex_mat.col(2);
+
+  EVec3f p0 = center;
+  EVec3f p1 = center + axis.normalized() * length;
+
+  glBegin(GL_LINES);
+
+  glVertex3f(p0[0], p0[1], p0[2]);
+  glVertex3f(p1[0], p1[1], p1[2]);
+
+  glEnd();
+}
 
 void ModeMdlFitMuscleModel::ModelReset()
 {
@@ -440,6 +532,11 @@ TMesh* ModeMdlFitMuscleModel::ImportObjFile(std::string fname)
 void ModeMdlFitMuscleModel::SetModelVisibility(TMesh* mesh, bool isVisible)
 {
   m_model_visibility_map[mesh] = isVisible;
+}
+
+void ModeMdlFitMuscleModel::SetPCAAxis(bool flag)
+{
+  m_flag = flag;
 }
 
 bool ModeMdlFitMuscleModel::IsModelVisible(TMesh* mesh)
