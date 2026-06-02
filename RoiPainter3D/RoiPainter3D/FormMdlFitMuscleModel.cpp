@@ -244,6 +244,5 @@ void FormMdlFitMuscleModel::UpdateMasterCheckboxState()
 
 System::Void FormMdlFitMuscleModel::m_btn_pca_Click(System::Object^ sender, System::EventArgs^ e)
 {
-  ModeMdlFitMuscleModel::GetInst()->TranslateModel();
-  ModeMdlFitMuscleModel::GetInst()->SetPCAAxis(true);
+  ModeMdlFitMuscleModel::GetInst()->ModelPCATranslate();
 }

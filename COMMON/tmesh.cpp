@@ -155,13 +155,22 @@ bool TMesh::Initialize(const char *fName)
     {
       //sscanfの返り値は正常に読めた数: / が入ったら2文字しか読めない
 
-      int v[3], t[3], s;
-      int vtxnum = sscanf(bkup, "f %d %d %d %d", &v[0], &v[1], &v[2], &s);
-      if (vtxnum < 3) vtxnum = sscanf(bkup, "f %d/%d %d/%d %d/%d %d/%d"            , &v[0], &t[0], &v[1], &t[1], &v[2], &t[2], &s, &s) / 2;
-      if (vtxnum < 3) vtxnum = sscanf(bkup, "f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d", &v[0], &t[0], &s, &v[1], &t[1], &s, &v[2], &t[2], &s, &s, &s, &s) / 3;
-      if (vtxnum < 3) vtxnum = sscanf(bkup, "f %d//%d %d//%d %d//%d %d//%d"        , &v[0], &s, &v[1], &s, &v[2], &s, &s, &s) / 2;
-      pList  .push_back(TPoly(v[0] - 1, v[1] - 1, v[2] - 1));
-      pUvList.push_back(TPoly(t[0] - 1, t[1] - 1, t[2] - 1));
+      int v[4] = { 0 }, t[4] = { 0 }, s;
+      int vtxnum = sscanf(bkup, "f %d %d %d %d", &v[0], &v[1], &v[2], &v[3]);
+      if (vtxnum < 3) vtxnum = sscanf(bkup, "f %d/%d %d/%d %d/%d %d/%d"            , &v[0], &t[0], &v[1], &t[1], &v[2], &t[2], &v[3], &t[3]) / 2;
+      if (vtxnum < 3) vtxnum = sscanf(bkup, "f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d", &v[0], &t[0], &s, &v[1], &t[1], &s, &v[2], &t[2], &s, &v[3], &t[3], &s) / 3;
+      if (vtxnum < 3) vtxnum = sscanf(bkup, "f %d//%d %d//%d %d//%d %d//%d"        , &v[0], &s, &v[1], &s, &v[2], &s, &v[3], &s) / 2;
+      if (vtxnum >= 3) 
+      {
+        pList.push_back(TPoly(v[0] - 1, v[1] - 1, v[2] - 1));
+        pUvList.push_back(TPoly(t[0] - 1, t[1] - 1, t[2] - 1));
+
+        if (vtxnum == 4) 
+        {
+          pList.push_back(TPoly(v[0] - 1, v[2] - 1, v[3] - 1));
+          pUvList.push_back(TPoly(t[0] - 1, t[2] - 1, t[3] - 1));
+        }
+      }
 
     }
     free(bkup);

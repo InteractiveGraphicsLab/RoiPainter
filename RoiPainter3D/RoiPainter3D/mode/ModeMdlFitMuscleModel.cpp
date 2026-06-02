@@ -20,7 +20,6 @@ using namespace marchingcubes;
 ModeMdlFitMuscleModel::ModeMdlFitMuscleModel()
 {
   m_bL = m_bR = m_bM = false;
-  m_flag = false;
 }
 
 static int PickLandmark(const EVec3f& ray_pos, const EVec3f& ray_dir, const std::vector<EVec3f>& lmk, const float lmk_radius)
@@ -60,9 +59,8 @@ void ModeMdlFitMuscleModel::LBtnUp(const EVec2i& p, OglForCLI* ogl)
 {
   m_bL = false;
   ogl->BtnUp();
-  m_drag_isosurface_lmk_ID = -1;
+  m_drag_iso_lmk_ID = -1;
   m_drag_model_lmk_ID = -1;
-  m_drag_model_flg = false;
   RedrawScene();
 }
 
@@ -88,8 +86,8 @@ void ModeMdlFitMuscleModel::LBtnDown(const EVec2i& p, OglForCLI* ogl)
   ogl->GetCursorRay(p, ray_pos, ray_dir);
   if (IsShiftKeyOn()) 
   {
-    m_drag_isosurface_lmk_ID = PickLandmark(ray_pos, ray_dir, m_isosurface_lmk, m_lmk_radius);
-    if (m_drag_isosurface_lmk_ID != -1) return;
+    m_drag_iso_lmk_ID = PickLandmark(ray_pos, ray_dir, m_iso_lmks, m_lmk_radius);
+    if (m_drag_iso_lmk_ID != -1) return;
 
     if (PickIsoSurface(ray_pos, ray_dir, iso_pos))
     {
@@ -99,13 +97,13 @@ void ModeMdlFitMuscleModel::LBtnDown(const EVec2i& p, OglForCLI* ogl)
       }
       else 
       {
-        m_isosurface_lmk.push_back(iso_pos);
-        m_drag_isosurface_lmk_ID = (int)m_isosurface_lmk.size() - 1;
+        m_iso_lmks.push_back(iso_pos);
+        m_drag_iso_lmk_ID = (int)m_iso_lmks.size() - 1;
       }
       
     }
 
-    m_drag_model_lmk_ID = PickLandmark(ray_pos, ray_dir, m_model_lmk, m_lmk_radius);
+    m_drag_model_lmk_ID = PickLandmark(ray_pos, ray_dir, m_model_lmks, m_lmk_radius);
     if (m_drag_model_lmk_ID != -1) return;
 
     if (PickObjModels(ray_pos, ray_dir, model_pos))
@@ -116,17 +114,11 @@ void ModeMdlFitMuscleModel::LBtnDown(const EVec2i& p, OglForCLI* ogl)
       }
       else 
       {
-        m_model_lmk.push_back(model_pos);
-        m_drag_isosurface_lmk_ID = (int)m_model_lmk.size() - 1;
+        m_model_lmks.push_back(model_pos);
+        m_drag_model_lmk_ID = (int)m_model_lmks.size() - 1;
       }
     }
-  }
-  else if (IsCtrKeyOn())
-  {
-    if (PickObjModels(ray_pos, ray_dir, model_pos))
-    {
-      m_drag_model_flg = true;
-    }
+
   }
   else
   {
@@ -142,8 +134,8 @@ void ModeMdlFitMuscleModel::RBtnDown(const EVec2i& p, OglForCLI* ogl)
   ogl->GetCursorRay(p, ray_pos, ray_dir);
   if (IsShiftKeyOn())
   {
-    PickToEraseLandmark(ray_pos, ray_dir, m_isosurface_lmk, m_lmk_radius);
-    PickToEraseLandmark(ray_pos, ray_dir, m_model_lmk, m_lmk_radius);
+    PickToEraseLandmark(ray_pos, ray_dir, m_iso_lmks, m_lmk_radius);
+    PickToEraseLandmark(ray_pos, ray_dir, m_model_lmks, m_lmk_radius);
     RedrawScene();
   }
   else
@@ -171,21 +163,19 @@ void ModeMdlFitMuscleModel::MouseMove(const EVec2i& p, OglForCLI* ogl)
   EVec3f ray_pos, ray_dir, pos;
   ogl->GetCursorRay(p, ray_pos, ray_dir);
 
-  if (m_drag_isosurface_lmk_ID != -1)
+  if (m_drag_iso_lmk_ID != -1)
   {
     if (PickIsoSurface(ray_pos, ray_dir, pos))
-      m_isosurface_lmk[m_drag_isosurface_lmk_ID] = pos;
+      m_iso_lmks[m_drag_iso_lmk_ID] = pos;
   }
 
   if (m_drag_model_lmk_ID != -1)
   {
     if (PickObjModels(ray_pos, ray_dir, pos))
-      m_model_lmk[m_drag_model_lmk_ID] = pos;
+      m_model_lmks[m_drag_model_lmk_ID] = pos;
   }
 
-  if (m_drag_model_flg)
-  {
-  }
+  
 
   ogl->MouseMove(p);
   RedrawScene();
@@ -213,8 +203,7 @@ void ModeMdlFitMuscleModel::StartMode()
   m_bL = m_bR = m_bM = false;
   formMdlFitMuscle_Show();
 
-  m_drag_isosurface_lmk_ID = -1;
-  m_drag_model_lmk_ID = -1;
+  m_drag_iso_lmk_ID = -1;
   m_lmk_radius = ImageCore::GetInst()->GetPitch()[0];
   m_lmk_mesh.InitializeAsSphere(m_lmk_radius, 10, 10);
 
@@ -222,50 +211,27 @@ void ModeMdlFitMuscleModel::StartMode()
 
 }
 
-static float COLOR_HY[4] = { 0.3f, 0.4f, 0.1f, 0.3f };
 
-static void DrawColoredLandmark(const TMesh& lmk_mesh, const std::vector<EVec3f>& lmk)
+
+static void DrawLandmarks(const TMesh lmk_mesh, std::vector<EVec3f>& lmks, const std::string color_name)
 {
-  static const int NUM_COL = 9;
-  static float COLOR[9][4] = {
-    {1.0f, 0.0f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.0f, 0.5f}, {0.0f, 0.0f, 1.0f, 0.5f},
-    {1.0f, 0.5f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.5f, 0.5f}, {0.5f, 0.0f, 1.0f, 0.5f},
-    {0.5f, 0.0f, 0.0f, 0.5f}, {0.0f, 0.5f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.5f, 0.5f}
-  };
-
-  for (int i = 0; i < lmk.size(); i++)
-  {
-    float* c = COLOR[i % NUM_COL];
-    glPushMatrix();
-    glTranslated(lmk[i][0], lmk[i][1], lmk[i][2]);
-
-    lmk_mesh.Draw(c, c, COLOR_W, COLOR_SHIN64);
-    glPopMatrix();
-  }
-}
-
-void ModeMdlFitMuscleModel::DrawLandmarks()
-{ 
-  for (EVec3f lmk : m_isosurface_lmk)
+  for (EVec3f& lmk : lmks)
   {
     glPushMatrix();
     glTranslated(lmk[0], lmk[1], lmk[2]);
 
-    m_lmk_mesh.Draw(COLOR_R, COLOR_R, COLOR_W, COLOR_SHIN64);
-    glPopMatrix();
-  }
+    if (color_name == "Red")
+      lmk_mesh.Draw(COLOR_R, COLOR_R, COLOR_W, COLOR_SHIN64);
+    else if (color_name == "Blue")
+      lmk_mesh.Draw(COLOR_B, COLOR_B, COLOR_W, COLOR_SHIN64);
+    else
+      lmk_mesh.Draw();
 
-  for (EVec3f lmk : m_model_lmk)
-  {
-    glPushMatrix();
-    glTranslated(lmk[0], lmk[1], lmk[2]);
-
-    m_lmk_mesh.Draw(COLOR_B, COLOR_B, COLOR_W, COLOR_SHIN64);
     glPopMatrix();
   }
 }
 
-
+static float COLOR_HY[4] = { 0.3f, 0.4f, 0.1f, 0.3f };
 
 
 void ModeMdlFitMuscleModel::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_center) 
@@ -274,7 +240,9 @@ void ModeMdlFitMuscleModel::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_c
   
   DrawCrsSec_Standard();
   glEnable(GL_LIGHTING);
-  DrawLandmarks();
+
+  DrawLandmarks(m_lmk_mesh, m_iso_lmks, "Red");
+  DrawLandmarks(m_lmk_mesh, m_model_lmks, "Blue");
 
   m_isosurface.Draw(COLOR_HY, COLOR_HY, COLOR_W, COLOR_SHIN64);
 
@@ -286,11 +254,7 @@ void ModeMdlFitMuscleModel::DrawScene(const EVec3f& cam_pos, const EVec3f& cam_c
       mesh->Draw(COLOR_W, COLOR_W, COLOR_W, COLOR_SHIN64);
   }
   //glDisable(GL_BLEND);
-  if (m_flag)
-  {
-    DrawPrincipalAxis(m_model_lmk, 100);
-    DrawPrincipalAxis(m_isosurface_lmk, 100);
-  }
+  
 
   if (formVisParam_bRendVol()) 
   {
@@ -331,7 +295,7 @@ static EMatXf CreateLandmarkMatrix(const std::vector<EVec3f>& lmks)
 }
 
 
-static EMat3f PCA(std::vector<EVec3f>& lmks)
+static EMat3f PCA(const std::vector<EVec3f>& lmks)
 {
   std::vector<EVec3f> center_lmks;
   EVec3f gravity_center = CalcLMKGravityCenter(lmks);
@@ -344,55 +308,61 @@ static EMat3f PCA(std::vector<EVec3f>& lmks)
 
   Eigen::SelfAdjointEigenSolver<EMat3f> solver(covariance_mat);
 
-  EMat3f principal_mat = solver.eigenvectors();
+  EMat3f pca_mat = solver.eigenvectors();
   
-  return principal_mat;
+  return pca_mat;
 }
 
-void ModeMdlFitMuscleModel::TranslateModel()
+
+
+void ModeMdlFitMuscleModel::ModelPCATranslate()
 {
-  EMat3f iso_principal_mat = PCA(m_isosurface_lmk);
-  EMat3f model_principal_mat = PCA(m_model_lmk);
+  EMat3f iso_pca_mat = PCA(m_iso_lmks);
+  EMat3f model_pca_mat = PCA(m_model_lmks);
 
-  if (iso_principal_mat.col(2).dot(model_principal_mat.col(2)) < 0)
+  if (iso_pca_mat.col(1).dot(model_pca_mat.col(1)) < 0)
   {
-    iso_principal_mat.col(2) *= -1;
+    iso_pca_mat.col(1) *= -1;
   }
 
-  EMat3f rotation = iso_principal_mat * model_principal_mat.transpose();
+  EMat3f rotation_mat = iso_pca_mat * model_pca_mat.transpose();
 
-  if (rotation.determinant() < 0)
+  if (rotation_mat.determinant() < 0)
   {
-    iso_principal_mat.col(0) *= -1;
-
-    rotation = iso_principal_mat * model_principal_mat.transpose();
+    iso_pca_mat.col(0) *= -1;
+    rotation_mat = iso_pca_mat * model_pca_mat.transpose();
   }
 
-  EVec3f translate = CalcLMKGravityCenter(m_isosurface_lmk) - rotation * CalcLMKGravityCenter(m_model_lmk);
+  EVec3f translate_mat = CalcLMKGravityCenter(m_iso_lmks) - rotation_mat * CalcLMKGravityCenter(m_model_lmks);
 
   for (TMesh* model : m_models)
   {
-    model->Rotate(rotation);
-    model->Translate(translate);
+    model->Rotate(rotation_mat);
+    model->Translate(translate_mat);
   }
+
+  m_iso_lmks.clear();
+  m_model_lmks.clear();
 }
 
-void ModeMdlFitMuscleModel::DrawPrincipalAxis(std::vector<EVec3f> lmks, float length)
-{
-  EVec3f center = CalcLMKGravityCenter(lmks);
-  EMat3f vertex_mat = PCA(lmks);
-  EVec3f axis = vertex_mat.col(2);
 
-  EVec3f p0 = center;
-  EVec3f p1 = center + axis.normalized() * length;
 
-  glBegin(GL_LINES);
-
-  glVertex3f(p0[0], p0[1], p0[2]);
-  glVertex3f(p1[0], p1[1], p1[2]);
-
-  glEnd();
-}
+//void ModeMdlFitMuscleModel::DrawPrincipalAxis(std::vector<EVec3f> lmks, float length)
+//{
+//  EVec3f center = CalcLMKGravityCenter(lmks);
+//  EMat3f vertex_mat = PCA(lmks);
+//  EVec3f axis = vertex_mat.col(2);
+//
+//  EVec3f p0 = center;
+//  EVec3f p1 = center + axis.normalized() * length;
+//
+//  glBegin(GL_LINES);
+//
+//  glVertex3f(p0[0], p0[1], p0[2]);
+//  glVertex3f(p1[0], p1[1], p1[2]);
+//
+//  glEnd();
+//}
 
 void ModeMdlFitMuscleModel::ModelReset()
 {
@@ -456,12 +426,33 @@ bool ModeMdlFitMuscleModel::PickIsoSurface(const EVec3f& ray_pos, const EVec3f& 
 
 bool ModeMdlFitMuscleModel::PickObjModels(const EVec3f& ray_pos, const EVec3f& ray_dir, EVec3f& pos)
 {
+  bool is_hit = false;
+  float min_dist = std::numeric_limits<float>::max();
+  EVec3f closest_pos;
+
   for (TMesh* model : m_models)
   {
-    if (model->PickByRay(ray_pos, ray_dir, pos) && m_model_visibility_map[model])
-      return true;
+    if (!m_model_visibility_map[model]) continue;
+
+    EVec3f hit_pos;
+    if (model->PickByRay(ray_pos, ray_dir, hit_pos))
+    {
+      EVec3f diff = hit_pos - ray_pos;
+      float dist = diff.norm();
+
+      if (dist < min_dist)
+      {
+        min_dist = dist;
+        closest_pos = hit_pos;
+        is_hit = true;
+      }
+    }
   }
-  return false;
+  if (is_hit)
+  {
+    pos = closest_pos;
+  }
+  return is_hit;
 }
 
 
@@ -474,21 +465,21 @@ void ModeMdlFitMuscleModel::ImportLandmarks(std::string fname)
     return;
   }
 
-  m_isosurface_lmk.clear();
-  m_model_lmk.clear();
+  m_iso_lmks.clear();
+  m_model_lmks.clear();
   int num_isosurface_lmk;
   int num_model_lmk;
   std::string str;
 
   ifs >> str >> num_isosurface_lmk;
-  m_isosurface_lmk.resize(num_isosurface_lmk);
-  for (int i = 0; i < m_isosurface_lmk.size(); i++)
-    ReadFromFstream(ifs, m_isosurface_lmk[i]);
+  m_iso_lmks.resize(num_isosurface_lmk);
+  for (int i = 0; i < m_iso_lmks.size(); i++)
+    ReadFromFstream(ifs, m_iso_lmks[i]);
 
   ifs >> str >> num_model_lmk;
-  m_model_lmk.resize(num_model_lmk);
-  for (int i = 0; i < m_model_lmk.size(); i++)
-    ReadFromFstream(ifs, m_model_lmk[i]);
+  m_model_lmks.resize(num_model_lmk);
+  for (int i = 0; i < m_model_lmks.size(); i++)
+    ReadFromFstream(ifs, m_model_lmks[i]);
   ifs.close();
   RedrawScene();
 }
@@ -502,13 +493,13 @@ void ModeMdlFitMuscleModel::ExportLandmarks(std::string fname)
     std::cout << "error when opening " << fname << "\n";
     return;
   }
-  ofs << "IsosurfaceLandMarks " << (int)m_isosurface_lmk.size() << "\n";
-  for (int i = 0; i < m_isosurface_lmk.size(); i++)
-    WriteToFstream(ofs, m_isosurface_lmk[i]);
+  ofs << "IsosurfaceLandMarks " << (int)m_iso_lmks.size() << "\n";
+  for (int i = 0; i < m_iso_lmks.size(); i++)
+    WriteToFstream(ofs, m_iso_lmks[i]);
 
-  ofs << "ModelLandMarks " << (int)m_model_lmk.size() << "\n";
-  for (int i = 0; i < m_model_lmk.size(); i++)
-    WriteToFstream(ofs, m_model_lmk[i]);
+  ofs << "ModelLandMarks " << (int)m_model_lmks.size() << "\n";
+  for (int i = 0; i < m_model_lmks.size(); i++)
+    WriteToFstream(ofs, m_model_lmks[i]);
   ofs.close();
 }
 
@@ -529,15 +520,11 @@ TMesh* ModeMdlFitMuscleModel::ImportObjFile(std::string fname)
 }
 
 
-void ModeMdlFitMuscleModel::SetModelVisibility(TMesh* mesh, bool isVisible)
+void ModeMdlFitMuscleModel::SetModelVisibility(TMesh* mesh, const bool isVisible)
 {
   m_model_visibility_map[mesh] = isVisible;
 }
 
-void ModeMdlFitMuscleModel::SetPCAAxis(bool flag)
-{
-  m_flag = flag;
-}
 
 bool ModeMdlFitMuscleModel::IsModelVisible(TMesh* mesh)
 {
@@ -547,3 +534,4 @@ bool ModeMdlFitMuscleModel::IsModelVisible(TMesh* mesh)
   }
   return true;
 }
+

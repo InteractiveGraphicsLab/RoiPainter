@@ -17,20 +17,17 @@ private:
 	TTriangleSoup m_isosurface;
 
 	// Landmark
-	int m_drag_isosurface_lmk_ID;
+	int m_drag_iso_lmk_ID;
 	int m_drag_model_lmk_ID;
-	std::vector <EVec3f> m_isosurface_lmk;
-	std::vector <EVec3f> m_model_lmk;
+	std::vector <EVec3f> m_iso_lmks;
+	std::vector <EVec3f> m_model_lmks;
 	float m_lmk_radius;
 	TMesh m_lmk_mesh;
 
 	// .obj model
 	std::vector<TMesh*> m_models;
 	std::map<TMesh*, bool> m_model_visibility_map;
-	EVec3f m_models_pos;
-	bool m_drag_model_flg;
 
-	bool m_flag;
 
 	ModeMdlFitMuscleModel();
 public:
@@ -66,7 +63,6 @@ public:
 
 
 
-	void DrawLandmarks();
 	void ModelReset();
 
 	TMesh* ImportObjFile(std::string fname);
@@ -81,13 +77,12 @@ public:
 	void ImportLandmarks(std::string fname);
 	void ExportLandmarks(std::string fname);
 	
-	void TranslateModel();
+	void ModelPCATranslate();
 
-	void DrawPrincipalAxis(std::vector<EVec3f> lmks, float length);
+	//void DrawPrincipalAxis(std::vector<EVec3f> lmks, float length);
 
 	// setter
-	void SetModelVisibility(TMesh* mesh, bool isVisible);
-	void SetPCAAxis(bool flag);
+	void SetModelVisibility(TMesh* mesh, const bool isVisible);
 };
 
 #pragma managed
