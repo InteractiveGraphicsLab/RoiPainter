@@ -140,6 +140,8 @@ bool t_LoadMeshAndCage(
     cage.Initialize(vs, ps);
   }
 
+
+  /*
   //calc scale / trans
   EVec3f bbmin, bbmax;
   cage.GetBoundBox(bbmin, bbmax);
@@ -150,6 +152,7 @@ bool t_LoadMeshAndCage(
   EVec3f gc = cage.GetGravityCenter();
   cage.Translate(-gc + cuboid / 2);
   mesh.Translate(-gc + cuboid / 2);
+  */
 
   return true;
 }

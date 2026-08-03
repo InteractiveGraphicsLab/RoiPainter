@@ -40,10 +40,14 @@
 #include "Mode/ModeSegStrokeFfd.h"
 #include "Mode/ModePlaceCPs.h"
 #include "Mode/ModeRefCurveDeform.h"
+#include "CagedMeshSequence.h"
+#include "deform_by_stroke.h"
 #include <string>
 #include <vector>
 #pragma managed
 
+#include <iostream>
+#include <string>
 
 using namespace System;
 using namespace System::IO;
@@ -61,9 +65,46 @@ using namespace RoiPainter4D;
 
 
 [STAThreadAttribute]
-int main()
+int main(int argc, char* argv[])
 {
   std::cout << "\n\n---------------------main()--------------------------\n";
+
+  if (argc >= 4 && std::string(argv[1]) == "--precomp") {
+    std::string mesh_path = argv[2];
+    std::string cage_path = argv[3];
+
+    std::cout << "[C++] Headless Precomputation Started..." << std::endl;
+    CagedMeshSequence cms;
+    // Initializeを呼ぶだけで内部で .hmnccdprecomp が計算・保存される
+    cms.Initialize(1, EVec3f(1, 1, 1), mesh_path, cage_path);
+    std::cout << "[C++] Precomputation Finished!" << std::endl;
+    return 0; // GUIを開かずに即終了
+  }
+
+  if (argc >= 6 && std::string(argv[1]) == "--deform") {
+    std::string mesh_path = argv[2];
+    std::string cage_path = argv[3];
+    std::string statelog_path = argv[4];
+    std::string out_dir = argv[5];
+
+    // 1. メッシュとケージの読み込み
+    CagedMeshSequence cms;
+    cms.Initialize(1, EVec3f(1, 1, 1), mesh_path, cage_path);
+
+    // 2. statelogファイルから曲線制約(ストローク)を読み込む
+    std::vector<std::vector<DeformByStroke::EVec3f>> strokes;
+    // ※ここに statelog_path を ifstream で読み込んで 
+    //   strokes に座標を追加していく処理を書く
+
+    // 3. 発見したDeform関数を呼び出す！
+    // (第3引数は frame_idx なので 0 を指定)
+    DeformByStroke::Deform(cms, strokes, 0, 1.0f, 1.0f, 5.0f);
+
+    // 4. 結果を保存
+    cms.ExportCageMeshSequenceAsObj(out_dir + "/result.obj", false);
+
+    return 0; // 完了して終了
+  }
 
 
   //初期化のタイミングは重要
