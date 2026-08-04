@@ -85,25 +85,53 @@ int main(int argc, char* argv[])
     std::string mesh_path = argv[2];
     std::string cage_path = argv[3];
     std::string statelog_path = argv[4];
-    std::string out_dir = argv[5];
+    std::string out_path = argv[5]; // 出力ファイル名（例: out.obj -> out00.obj が保存されます）
 
-    // 1. メッシュとケージの読み込み
+    std::cout << "[C++] Headless Deformation Started..." << std::endl;
+
+    // 1. メッシュとケージのロード (1フレーム分として初期化)
+    // ※ ここで同階層にある .hmnccdprecomp が自動的に読み込まれます
     CagedMeshSequence cms;
     cms.Initialize(1, EVec3f(1, 1, 1), mesh_path, cage_path);
 
-    // 2. statelogファイルから曲線制約(ストローク)を読み込む
+    // 2. statelogのパース（GUI非依存の簡易パーサー）
     std::vector<std::vector<DeformByStroke::EVec3f>> strokes;
-    // ※ここに statelog_path を ifstream で読み込んで 
-    //   strokes に座標を追加していく処理を書く
+    std::vector<DeformByStroke::EVec3f> current_stroke;
+    std::ifstream ifs(statelog_path);
+    std::string line;
 
-    // 3. 発見したDeform関数を呼び出す！
-    // (第3引数は frame_idx なので 0 を指定)
-    DeformByStroke::Deform(cms, strokes, 0, 1.0f, 1.0f, 5.0f);
+    while (std::getline(ifs, line)) {
+      float x, y, z;
+      // 3つのfloatが取得できた場合はコントロールポイントの座標
+      if (sscanf(line.c_str(), "%f %f %f", &x, &y, &z) == 3) {
+        current_stroke.push_back(DeformByStroke::EVec3f(x, y, z));
+      }
+      // "EndStroke" という文字列があれば、1本のストロークが終了
+      else if (line.find("EndStroke") != std::string::npos && line.find("EndStrokes") == std::string::npos) {
+        if (!current_stroke.empty()) {
+          strokes.push_back(current_stroke);
+          current_stroke.clear();
+        }
+      }
+    }
 
-    // 4. 結果を保存
-    cms.ExportCageMeshSequenceAsObj(out_dir + "/result.obj", false);
+    // 3. 変形の実行 (エラー曲線を引いた場合のみ実行)
+    if (!strokes.empty()) {
+      std::cout << "[C++] Deforming with " << strokes.size() << " strokes..." << std::endl;
+      // 論文設定と完全一致: α=1, β=1, γ=5, 20回反復
+      for (int i = 0; i < 20; ++i) {
+        DeformByStroke::Deform(cms, strokes, 0, 1.0f, 1.0f, 5.0f);
+      }
+    }
+    else {
+      std::cout << "[C++] No strokes found. Skipping deformation." << std::endl;
+    }
 
-    return 0; // 完了して終了
+    // 4. 結果メッシュの保存 (ExportCageMeshSequenceAsObj は末尾に 00.obj を付与する仕様)
+    cms.ExportCageMeshSequenceAsObj(out_path, false);
+    std::cout << "[C++] Saved deformed mesh prefix: " << out_path << std::endl;
+
+    return 0; // GUIを立ち上げずに正常終了
   }
 
 
