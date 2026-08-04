@@ -205,7 +205,7 @@ void CagedMeshSequence::Initialize(
 
     if (n_mesh_vtx == mesh.m_vSize &&
       n_cage_vtx == cage.m_vSize &&
-      ShowMsgDlgYesNo(MESSAGE_REUSE, "Reuse Precomputation?"))
+     true)
     {
 
       for (int i = 0; i < mesh.m_vSize; ++i)

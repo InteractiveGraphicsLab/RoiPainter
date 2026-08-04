@@ -94,26 +94,58 @@ int main(int argc, char* argv[])
     CagedMeshSequence cms;
     cms.Initialize(1, EVec3f(1, 1, 1), mesh_path, cage_path);
 
-    // 2. statelogのパース（GUI非依存の簡易パーサー）
+    // 2. statelogのパース（GUIのLoadStateと完全に同じステートマシンを採用）
     std::vector<std::vector<DeformByStroke::EVec3f>> strokes;
-    std::vector<DeformByStroke::EVec3f> current_stroke;
+    std::vector<DeformByStroke::EVec3f> stroke;
     std::ifstream ifs(statelog_path);
-    std::string line;
 
-    while (std::getline(ifs, line)) {
-      float x, y, z;
-      // 3つのfloatが取得できた場合はコントロールポイントの座標
-      if (sscanf(line.c_str(), "%f %f %f", &x, &y, &z) == 3) {
-        current_stroke.push_back(DeformByStroke::EVec3f(x, y, z));
+    enum class E_State { Search, Stroke_init, Stroke };
+    E_State state = E_State::Search;
+
+    while (!ifs.eof()) {
+      char line_char[200];
+      ifs.getline(line_char, 200);
+      std::string line = std::string(line_char);
+
+      // 改行コード(CR)の除去（Windows/Linux互換のため）
+      if (!line.empty() && line.back() == '\r') line.pop_back();
+
+      if (state == E_State::Search) {
+        if (line == "Strokes:") {
+          state = E_State::Stroke_init;
+        }
       }
-      // "EndStroke" という文字列があれば、1本のストロークが終了
-      else if (line.find("EndStroke") != std::string::npos && line.find("EndStrokes") == std::string::npos) {
-        if (!current_stroke.empty()) {
-          strokes.push_back(current_stroke);
-          current_stroke.clear();
+      else if (state == E_State::Stroke_init || state == E_State::Stroke) {
+        if (state == E_State::Stroke_init) {
+          stroke.clear();
+          state = E_State::Stroke;
+          int x;
+          // shared_idx (e.g. -1) を読み飛ばす
+          if (sscanf(line_char, "%d", &x) == 1) {
+            continue;
+          }
+        }
+
+        float x, y, z;
+        // 座標を読み込む
+        if (sscanf(line_char, "%f %f %f", &x, &y, &z) == 3) {
+          stroke.push_back(DeformByStroke::EVec3f(x, y, z));
+        }
+        else if (line == "EndStrokes") {
+          // 終了合図。最後のストロークを保存してパースを抜ける
+          if (!stroke.empty()) strokes.push_back(stroke);
+          break;
+        }
+        else {
+          // 空行や次の "-1" をストロークの区切りとして扱う
+          if (!stroke.empty()) {
+            strokes.push_back(stroke);
+          }
+          state = E_State::Stroke_init;
         }
       }
     }
+    ifs.close();
 
     // 3. 変形の実行 (エラー曲線を引いた場合のみ実行)
     if (!strokes.empty()) {
