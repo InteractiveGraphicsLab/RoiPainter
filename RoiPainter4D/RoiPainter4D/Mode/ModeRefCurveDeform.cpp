@@ -23,6 +23,7 @@
 #include "tmarchingcubes.h"
 
 using namespace RoiPainter4D;
+using namespace System::IO;
 
 ModeRefCurveDeform::~ModeRefCurveDeform() {}
 
@@ -374,7 +375,10 @@ void ModeRefCurveDeform::DrawScene(
   if (!IsSpaceKeyOn() && 0 <= frame_idx && frame_idx < (int)m_meshes_def.size())
   {
     glUseProgram(gl2Program);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(1.0f, 1.0f);
     m_meshes_def[frame_idx].Draw();
+    glDisable(GL_POLYGON_OFFSET_FILL);
     glUseProgram(0);
   }
 
@@ -918,6 +922,118 @@ void ModeRefCurveDeform::LoadState(const std::string& _fpath)
   file.close();
   formMain_RedrawMainPanel();
 
+}
+
+void ModeRefCurveDeform::SaveYaml(const std::string& fpath, const std::string& input_dir, const std::string& output_dir)
+{
+  std::ofstream file(fpath);
+  if (!file)
+  {
+    std::cout << "Failed to save state.\n";
+    return;
+  }
+
+  // ヘッダー部の出力
+  file << "data: {input_dir: '" << input_dir << "', output_dir: '" << output_dir << "', target_id: " << m_target_mask_id << "}\n";
+  file << "volume: {num_input_frames: null, num_output_frames: null}\n";
+  file << "curves:\n";
+
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
+
+  // 単一の PlanarCurve を YAML 形式で書き出すヘルパー関数
+  auto writeCurveYaml = [&file](const PlanarCurve& curve, int frame_idx) {
+    int num_cps = curve.GetNumCPs();
+    if (num_cps == 0) return;
+
+    for (int i = 0; i < num_cps; ++i)
+    {
+      const auto& pt = curve.GetCP(i);
+
+      if (i == 0)
+      {
+        file << "- - [" << pt[0] << ", " << pt[1] << ", " << pt[2] << ", " << frame_idx << "]\n";
+      }
+      else
+      {
+        file << "  - [" << pt[0] << ", " << pt[1] << ", " << pt[2] << ", " << frame_idx << "]\n";
+      }
+    }
+    };
+
+  // 1. 各フレームの通常曲線 (m_curves) を出力
+  for (int fi = 0; fi < num_frames; ++fi)
+  {
+    for (const auto& curve : m_curves[fi])
+    {
+      writeCurveYaml(curve, fi);
+    }
+  }
+
+  file.close();
+  std::cout << "YAML exported to: " << fpath << "\n";
+}
+
+void ModeRefCurveDeform::LoadMha(std::vector<std::unique_ptr<byte[]>>& masks)
+{
+  int W, H, D, WH, WHD;
+  std::tie(W, H, D, WH, WHD) = ImageCore::GetInst()->GetResolution5();
+  const int num_frames = static_cast<int>(masks.size());
+
+  // 2. メッシュ生成 (Marching Cubes)
+  const int stride = FormRefCurveDeform_GetMcStride();
+  const int scale_num = static_cast<int>(pow(stride, 3));
+  const int num_voxels = ImageCore::GetInst()->GetNumVoxels();
+  const EVec3i reso = ImageCore::GetInst()->GetReso();
+  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
+
+  const int w = reso[0] / stride;
+  const int h = reso[1] / stride;
+  const int d = reso[2] / stride;
+
+  m_meshes_orig = std::vector<TMesh>(num_frames);
+  m_meshes_def = std::vector<TMesh>(num_frames);
+
+  const int target_id = (m_target_mask_id > 0) ? m_target_mask_id : 1;
+
+#pragma omp parallel for
+  for (int frame_idx = 0; frame_idx < num_frames; ++frame_idx)
+  {
+    const byte* mask = masks[frame_idx].get();
+    std::unique_ptr<short[]> v = std::make_unique<short[]>(num_voxels / scale_num);
+
+    for (int z = 0; z < d; ++z) {
+      for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+
+          float ave = 0.0f;
+          for (int c = 0; c < stride; ++c) {
+            for (int b = 0; b < stride; ++b) {
+              for (int a = 0; a < stride; ++a) {
+                const int idx = ((z * stride + c) * reso[1] * reso[0])
+                  + ((y * stride + b) * reso[0])
+                  + (x * stride + a);
+                ave += (mask[idx] == target_id) ? 1.0f : 0.0f;
+              }
+            }
+          }
+          ave /= powf(static_cast<float>(stride), 3.0f);
+          v[z * h * w + y * w + x] = (ave >= 0.49f) ? 255 : 0;
+        }
+      }
+    }
+
+    TMesh mesh;
+    marchingcubes::MarchingCubes(reso / stride, pitch, v.get(), 128, 0, 0, mesh);
+    mesh.Scale(static_cast<float>(stride));
+    mesh.Smoothing(3);
+
+    m_meshes_orig[frame_idx] = mesh;
+    m_meshes_def[frame_idx] = mesh;
+  }
+
+  formMain_RedrawMainPanel();
+  formMain_ActivateMainForm();
+  m_b_modified = true;
 }
 
 

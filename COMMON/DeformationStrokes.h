@@ -18,6 +18,7 @@ private:
   std::vector<EVec3f> m_curve = {};
   std::vector<EVec3f> m_cps   = {};
   bool m_normal_side = true;
+  bool m_normal_draw = false;
 
 public:
   PlanarCurve(CRSSEC_ID id, float crssec_pos, const EVec3f first_cp) : 
@@ -211,7 +212,7 @@ inline void DrawPlanerCurvesAndSharedCurves
   const std::vector<SharedCurves>&shared_curves
 )
 {
-  const float STD_THICK = 2.0f;
+  const float STD_THICK = 5.0f;
   const float SEL_THICK = 5.0f;
 
   for (int i = 0; i < curves.size(); ++i)
@@ -220,7 +221,7 @@ inline void DrawPlanerCurvesAndSharedCurves
     if (VIS_ONLY_SEL && !is_selected) continue;
 
     const PlanarCurve& c = curves[i];
-    float* color = is_selected ? COLOR_R : COLOR_Y;
+    float* color = is_selected ? COLOR_R : COLOR_BLACK;
     float  thick = is_selected ? SEL_THICK : STD_THICK;
     int   cp_idx = is_selected ? select_info.cp_idx : -1;
     c.Draw(color, thick);
