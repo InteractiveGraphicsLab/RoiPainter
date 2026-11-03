@@ -95,8 +95,11 @@ public:
 
   void SaveState(const std::string& fname);
   void LoadState(const std::string& fname);
+  void SaveYaml(const std::string& fpath, const std::string& input_dir, const std::string& output_dir);
+  void LoadMha(std::vector<std::unique_ptr<byte[]>>& masks);
 
   void FlipSelectedStrokeNormalSide();
+  void DrawSelectedStrokeNormals();
   void MakeSelectedStroke_Shared();
   void MakeSelectedStroke_Unshared();
   //void LockSelectedStroke();

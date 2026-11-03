@@ -124,28 +124,31 @@ void PlanarCurve::Draw(const float color[4], const float thickness) const
   EVec3f c = EVec3f(color[0], color[1], color[2]);
   DrawPolyLine(c, thickness, m_curve, false);
 
-  glColor3f(0.0f, 1.0f, 1.0f);
-  glLineWidth(thickness);
 
-  const float normal_length = 1.0f;
+  if (m_normal_draw) {
+    glColor3f(0.0f, 1.0f, 1.0f);
+    glLineWidth(thickness);
 
-  const EVec3f plane_normal = EVec3f(
-    m_crssec_id == CRSSEC_YZ ? 1.0f : 0.0f,
-    m_crssec_id == CRSSEC_ZX ? 1.0f : 0.0f,
-    m_crssec_id == CRSSEC_XY ? 1.0f : 0.0f
-  );
+    const float normal_length = 1.0f;
 
-  glBegin(GL_LINES);
-  for (size_t i = 1; i < m_curve.size() - 1; i += 5)
-  {
-    EVec3f tangent = (m_curve[i + 1] - m_curve[i - 1]).normalized();
-    EVec3f norm = plane_normal.cross(tangent).normalized();
-    if (!m_normal_side) norm = -norm;
-    EVec3f p = m_curve[i] + normal_length * norm;
-    glVertex3fv(m_curve[i].data());
-    glVertex3fv(p.data());
+    const EVec3f plane_normal = EVec3f(
+      m_crssec_id == CRSSEC_YZ ? 1.0f : 0.0f,
+      m_crssec_id == CRSSEC_ZX ? 1.0f : 0.0f,
+      m_crssec_id == CRSSEC_XY ? 1.0f : 0.0f
+    );
+
+    glBegin(GL_LINES);
+    for (size_t i = 1; i < m_curve.size() - 1; i += 5)
+    {
+      EVec3f tangent = (m_curve[i + 1] - m_curve[i - 1]).normalized();
+      EVec3f norm = plane_normal.cross(tangent).normalized();
+      if (!m_normal_side) norm = -norm;
+      EVec3f p = m_curve[i] + normal_length * norm;
+      glVertex3fv(m_curve[i].data());
+      glVertex3fv(p.data());
+    }
+    glEnd();
   }
-  glEnd();
 }
   
 

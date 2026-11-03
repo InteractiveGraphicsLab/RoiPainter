@@ -18,6 +18,7 @@ private:
   std::vector<EVec3f> m_curve = {};
   std::vector<EVec3f> m_cps   = {};
   bool m_normal_side = true;
+  bool m_normal_draw = true;
 
 public:
   PlanarCurve(CRSSEC_ID id, float crssec_pos, const EVec3f first_cp) : 
@@ -49,6 +50,7 @@ public:
 
   inline bool GetNormalSide() const { return m_normal_side; }
   inline void FlipNormal() { m_normal_side = !m_normal_side; }
+  inline void DrawNormal() { m_normal_draw = !m_normal_draw; }
   void AlignNormalWithMesh(const EVec3f& mesh_normal);
 
   //CP manipulation
@@ -137,6 +139,11 @@ public:
     for (size_t i = 0; i < m_curves.size(); ++i) m_curves[i].FlipNormal();
   }
 
+  void DrawNormal()
+  {
+    for (size_t i = 0; i < m_curves.size(); ++i) m_curves[i].DrawNormal();
+  }
+
 
   void MoveCP(const int frame_idx, const int cp_idx, const EVec3f &pos) 
   {
@@ -211,7 +218,7 @@ inline void DrawPlanerCurvesAndSharedCurves
   const std::vector<SharedCurves>&shared_curves
 )
 {
-  const float STD_THICK = 2.0f;
+  const float STD_THICK = 5.0f;
   const float SEL_THICK = 5.0f;
 
   for (int i = 0; i < curves.size(); ++i)

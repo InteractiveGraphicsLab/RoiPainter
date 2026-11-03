@@ -24,4 +24,7 @@ static float COLOR_GRAY[4] = { 0.5f, 0.5f, 0.5f, 0.5f };
 
 static float COLOR_SHIN64[1] = { 64 };
 
+static float COLOR_LIGHTBLUE[4] = { 0.0f, 0.0f, 1.0f, 0.5f };
+static float COLOR_BLACK[4] = { 0.0f, 0.0f, 0.0f, 0.5f };
+
 #endif
