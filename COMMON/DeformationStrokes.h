@@ -18,7 +18,7 @@ private:
   std::vector<EVec3f> m_curve = {};
   std::vector<EVec3f> m_cps   = {};
   bool m_normal_side = true;
-  bool m_normal_draw = false;
+  bool m_normal_draw = true;
 
 public:
   PlanarCurve(CRSSEC_ID id, float crssec_pos, const EVec3f first_cp) : 
@@ -50,6 +50,7 @@ public:
 
   inline bool GetNormalSide() const { return m_normal_side; }
   inline void FlipNormal() { m_normal_side = !m_normal_side; }
+  inline void DrawNormal() { m_normal_draw = !m_normal_draw; }
   void AlignNormalWithMesh(const EVec3f& mesh_normal);
 
   //CP manipulation
@@ -138,6 +139,11 @@ public:
     for (size_t i = 0; i < m_curves.size(); ++i) m_curves[i].FlipNormal();
   }
 
+  void DrawNormal()
+  {
+    for (size_t i = 0; i < m_curves.size(); ++i) m_curves[i].DrawNormal();
+  }
+
 
   void MoveCP(const int frame_idx, const int cp_idx, const EVec3f &pos) 
   {
@@ -221,7 +227,7 @@ inline void DrawPlanerCurvesAndSharedCurves
     if (VIS_ONLY_SEL && !is_selected) continue;
 
     const PlanarCurve& c = curves[i];
-    float* color = is_selected ? COLOR_R : COLOR_BLACK;
+    float* color = is_selected ? COLOR_R : COLOR_Y;
     float  thick = is_selected ? SEL_THICK : STD_THICK;
     int   cp_idx = is_selected ? select_info.cp_idx : -1;
     c.Draw(color, thick);

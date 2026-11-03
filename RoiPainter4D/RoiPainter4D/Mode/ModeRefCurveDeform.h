@@ -99,6 +99,7 @@ public:
   void LoadMha(std::vector<std::unique_ptr<byte[]>>& masks);
 
   void FlipSelectedStrokeNormalSide();
+  void DrawSelectedStrokeNormals();
   void MakeSelectedStroke_Shared();
   void MakeSelectedStroke_Unshared();
   //void LockSelectedStroke();

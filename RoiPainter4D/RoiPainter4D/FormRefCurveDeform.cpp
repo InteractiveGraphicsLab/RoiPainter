@@ -93,6 +93,16 @@ System::Void FormRefCurveDeform::m_btn_flipnormal_Click(System::Object^ sender, 
   ModeRefCurveDeform::GetInst()->FlipSelectedStrokeNormalSide();
 }
 
+System::Void FormRefCurveDeform::m_btn_drawnormal_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->DrawSelectedStrokeNormals();
+}
+
+System::Void FormRefCurveDeform::m_btn_load_mha_Click(System::Object^ sender, System::EventArgs^ e)
+{
+  ModeRefCurveDeform::GetInst()->DrawSelectedStrokeNormals();
+}
+
 
 
 System::Void FormRefCurveDeform::m_btn_loadstate_Click(System::Object^ sender, System::EventArgs^ e)
@@ -188,47 +198,5 @@ static bool OpenDlgMulti(
   return true;
 }
 
-
-
-
-System::Void FormRefCurveDeform::m_btn_load_mha_Click(System::Object^ sender, System::EventArgs^ e)
-{
-  const char* filter = "mha files (*.mha)|*.mha";
-  std::vector<std::string> fnames, fdates;
-  if (!OpenDlgMulti(filter, fnames, fdates)) return;
-
-  int W, H, D, WH, WHD;
-  std::tie(W, H, D, WH, WHD) = ImageCore::GetInst()->GetResolution5();
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-
-  if (num_frames != static_cast<int>(fnames.size()))
-  {
-    ShowMsgDlg_OK("strange frame count", "caution");
-    return;
-  }
-
-  // 1. MHA ファイルをメモリ上（一時バッファ）に読み込み
-  std::vector<std::unique_ptr<byte[]>> masks;
-  for (const auto& f : fnames)
-  {
-    EVec3f pitch;
-    EVec3i reso;
-    std::unique_ptr<byte[]> data_b;
-    std::unique_ptr<short[]> data_s;
-
-    if (!ReadMha3d(f, reso, pitch, data_b, data_s) || data_b == nullptr)
-    {
-      std::cout << "Fail to read mha files\n";
-      return;
-    }
-    if (reso[0] != W || reso[1] != H || reso[2] != D)
-    {
-      ShowMsgDlg_OK("strange resolution", "caution");
-      return;
-    }
-    masks.push_back(std::move(data_b));
-  }
-  ModeRefCurveDeform::GetInst()->LoadMha(masks);
-}
 
 

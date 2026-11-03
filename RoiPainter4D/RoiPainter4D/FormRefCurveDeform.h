@@ -73,6 +73,8 @@ namespace RoiPainter4D {
   private: System::Windows::Forms::Label^ label7;
   private: System::Windows::Forms::Button^ m_btn_export_config;
   private: System::Windows::Forms::Button^ m_btn_load_mha;
+  private: System::Windows::Forms::Button^ m_btn_drawnormal;
+
 
 
 
@@ -113,6 +115,7 @@ namespace RoiPainter4D {
       this->m_btn_cancel = (gcnew System::Windows::Forms::Button());
       this->m_btn_finish = (gcnew System::Windows::Forms::Button());
       this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+      this->m_btn_drawnormal = (gcnew System::Windows::Forms::Button());
       this->label7 = (gcnew System::Windows::Forms::Label());
       this->label6 = (gcnew System::Windows::Forms::Label());
       this->m_btn_export_config = (gcnew System::Windows::Forms::Button());
@@ -298,11 +301,11 @@ namespace RoiPainter4D {
       // 
       // m_btn_flipnormal
       // 
-      this->m_btn_flipnormal->Location = System::Drawing::Point(6, 137);
+      this->m_btn_flipnormal->Location = System::Drawing::Point(145, 137);
       this->m_btn_flipnormal->Name = L"m_btn_flipnormal";
       this->m_btn_flipnormal->Size = System::Drawing::Size(138, 36);
       this->m_btn_flipnormal->TabIndex = 30;
-      this->m_btn_flipnormal->Text = L"flip normals";
+      this->m_btn_flipnormal->Text = L"Flip normals";
       this->m_btn_flipnormal->UseVisualStyleBackColor = true;
       this->m_btn_flipnormal->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_flipnormal_Click);
       // 
@@ -338,6 +341,7 @@ namespace RoiPainter4D {
       // 
       // groupBox1
       // 
+      this->groupBox1->Controls->Add(this->m_btn_drawnormal);
       this->groupBox1->Controls->Add(this->label7);
       this->groupBox1->Controls->Add(this->label6);
       this->groupBox1->Controls->Add(this->m_btn_sharestroke);
@@ -353,6 +357,16 @@ namespace RoiPainter4D {
       this->groupBox1->TabIndex = 34;
       this->groupBox1->TabStop = false;
       this->groupBox1->Text = L"Stroke ＆ Deformation";
+      // 
+      // m_btn_drawnormal
+      // 
+      this->m_btn_drawnormal->Location = System::Drawing::Point(6, 137);
+      this->m_btn_drawnormal->Name = L"m_btn_drawnormal";
+      this->m_btn_drawnormal->Size = System::Drawing::Size(138, 36);
+      this->m_btn_drawnormal->TabIndex = 34;
+      this->m_btn_drawnormal->Text = L"Draw normals";
+      this->m_btn_drawnormal->UseVisualStyleBackColor = true;
+      this->m_btn_drawnormal->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_drawnormal_Click);
       // 
       // label7
       // 
@@ -444,6 +458,7 @@ namespace RoiPainter4D {
 	  System::Void m_btn_savestate_Click  (System::Object^ sender, System::EventArgs^ e);
 	  System::Void m_btn_undo_Click       (System::Object^ sender, System::EventArgs^ e);
 	  System::Void m_btn_flipnormal_Click (System::Object^ sender, System::EventArgs^ e);
+      System::Void m_btn_drawnormal_Click (System::Object^ sender, System::EventArgs^ e);
 	  System::Void m_btn_copy_from_preframe_Click(System::Object^ sender, System::EventArgs^ e);
 	  System::Void m_btn_copy_to_allframe_Click(System::Object^ sender, System::EventArgs^ e);
 	  System::Void m_btn_sharestroke_Click(System::Object^ sender, System::EventArgs^ e);
