@@ -49,6 +49,7 @@ class ModeRefCurveDeform : public ModeInterface
   std::vector<std::vector<EVec3f>> m_debug_matched_trgtpos;
 
   bool m_b_modified;
+  bool m_meshes_imported = false;
 
   ModeRefCurveDeform();
 
@@ -97,11 +98,14 @@ public:
 
   void SaveState(const std::string& fname);
   void LoadState(const std::string& fname);
-  void SaveYaml(const std::string& fpath, const std::string& input_dir, const std::string& output_dir);
-  void LoadMha(std::vector<std::unique_ptr<byte[]>>& masks);
+  // File paths use UTF-16; folder strings in the YAML document use UTF-8.
+  bool ExportDeformationConfig(const std::wstring& config_path,
+      const std::string& input_dir, const std::string& output_dir, std::string& error) const;
+  // One mask per frame, sorted by numeric file name; meshes are replaced only on success.
+  bool ImportMeshSequenceFromMha(std::vector<std::wstring> file_paths, std::string& error);
 
-  void FlipSelectedStrokeNormalSide();
-  void DrawSelectedStrokeNormals();
+  void FlipSelectedCurveNormals();
+  void ToggleSelectedCurveNormals();
   void MakeSelectedStroke_Shared();
   void MakeSelectedStroke_Unshared();
   //void LockSelectedStroke();
@@ -109,6 +113,7 @@ public:
 
 private:
   void ValidateSelectionForFrame(int frame_idx);
+  void RebuildMeshSequence(const std::vector<const byte*>& masks, bool imported);
   void _Deform(const int);
   //void FindClosestPointFromStroke(const int, std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
 

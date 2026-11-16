@@ -212,6 +212,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\3rdParty\dcmtk\tdcmtk.h" />
     <ClInclude Include="..\..\COMMON\DeformationStrokes.h" />
+    <ClInclude Include="..\..\COMMON\MhaReader.h" />
     <ClInclude Include="..\..\COMMON\deform_by_stroke.h" />
     <ClInclude Include="..\..\COMMON\HarmCoord3D.h" />
     <ClInclude Include="..\..\COMMON\kcurves.h" />
@@ -295,6 +296,7 @@
     <ClInclude Include="Mode\GlslShader.h" />
     <ClInclude Include="Mode\ModeCommonTools.h" />
     <ClInclude Include="Mode\ModeRefCurveDeform.h" />
+    <ClInclude Include="Mode\RefCurveDeformData.h" />
     <ClInclude Include="Mode\ModeInterface.h" />
     <ClInclude Include="Mode\ModePlaceCPs.h" />
     <ClInclude Include="Mode\ModeRefStrokeTrim.h" />

@@ -13,6 +13,12 @@ bool ReadMha3d(
   std::unique_ptr<short[]>& volume_s
 );
 
+// Native Windows paths, including characters outside the ANSI code page.
+bool ReadMha3d(
+  const std::wstring& fname,
+  EVec3i& reso, EVec3f& pitch,
+  std::unique_ptr<byte[]>& volume_b, std::unique_ptr<short[]>& volume_s);
+
 bool WriteMha3d(
   const std::string &fname,
   const EVec3i& reso,

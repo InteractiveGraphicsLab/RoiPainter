@@ -21,6 +21,11 @@
 #pragma unmanaged
 
 #include "tmarchingcubes.h"
+#include "tvolumelader.h"
+#include "RefCurveDeformData.h"
+#include <algorithm>
+#include <exception>
+#include <sstream>
 
 using namespace RoiPainter4D;
 using namespace System::IO;
@@ -46,6 +51,7 @@ bool ModeRefCurveDeform::CanEndMode()
 void ModeRefCurveDeform::StartMode()
 {
   m_b_modified = false;
+  m_meshes_imported = false;
 
   std::cout << "ModeRefCurveDeform...startMode----------\n";
 
@@ -72,6 +78,8 @@ void ModeRefCurveDeform::StartMode()
   
   m_cp_rate = cuboid[0] * 0.0006f;
   m_shared_curves.clear();
+  m_meshes_orig.clear();
+  m_meshes_def.clear();
   m_curves = std::vector<std::vector<PlanarCurve>>(num_frame);
   m_select_info.Clear();
   m_current_frame_idx = formVisParam_getframeI();
@@ -125,6 +133,7 @@ void ModeRefCurveDeform::ValidateSelectionForFrame(int frame_idx)
   if (m_select_info.is_shared)
   {
     if (curve_idx >= (int)m_shared_curves.size() ||
+        frame_idx >= m_shared_curves[curve_idx].GetNumFrames() ||
         cp_idx >= m_shared_curves[curve_idx].GetCurve(frame_idx).GetNumCPs())
       m_select_info.Clear();
   }
@@ -446,7 +455,7 @@ void ModeRefCurveDeform::DrawScene(
     m_curves[frame_idx], m_shared_curves);
 
 
-  if (IsSpaceKeyOn())
+  if (IsSpaceKeyOn() && 0 <= frame_idx && frame_idx < (int)m_meshes_orig.size())
   {
     const TMesh &m = m_meshes_orig[frame_idx];
     const std::vector<int>    &vids = m_debug_matched_vids[frame_idx];
@@ -504,63 +513,70 @@ void ModeRefCurveDeform::Undo_LoadSnapShot()
 
 
 
-void ModeRefCurveDeform::ConvertMaskToMesh()
+void ModeRefCurveDeform::RebuildMeshSequence(
+    const std::vector<const byte*>& masks, bool imported)
 {
-  const int stride = FormRefCurveDeform_GetMcStride();
-  const int scale_num = (int)pow(stride, 3);
-  const std::vector<MaskData>& mask_data = ImageCore::GetInst()->GetMaskData();
-  if (m_target_mask_id <= 0 || mask_data.size() <= m_target_mask_id) return;
-
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
-  const int num_voxels = ImageCore::GetInst()->GetNumVoxels();
-  const EVec3i reso    = ImageCore::GetInst()->GetReso();
-  const EVec3f pitch   = ImageCore::GetInst()->GetPitch();
+  const EVec3i reso = ImageCore::GetInst()->GetReso();
+  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
+  const int stride = FormRefCurveDeform_GetMcStride();
+  if (num_frames <= 0 || masks.size() != num_frames ||
+      m_target_mask_id <= 0 || m_target_mask_id > 255 ||
+      stride <= 0 || reso.minCoeff() < stride)
+    throw std::invalid_argument("Invalid frame count, target label or mesh sampling stride.");
 
-  const int w = reso[0] / stride;
-  const int h = reso[1] / stride;
-  const int d = reso[2] / stride;
-  std::cout << "m_num_voxels: " << num_voxels << " m_reso: " << reso << "\n";
-
-  m_meshes_orig = std::vector<TMesh>(num_frames);
-  m_meshes_def  = std::vector<TMesh>(num_frames);
-
+  // Keep the current meshes until every frame has been generated successfully.
+  std::vector<TMesh> original(num_frames);
+  std::exception_ptr failure;
 #pragma omp parallel for
-  for (int frame_idx = 0; frame_idx < num_frames; ++frame_idx)
+  for (int fi = 0; fi < num_frames; ++fi)
   {
-    const byte* mask = ImageCore::GetInst()->m_mask4d[frame_idx];
-    std::unique_ptr<short[]> v = std::make_unique<short[]>(num_voxels / scale_num);
-    for (int z = 0; z < d; ++z) {
-      for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-
-          float ave = 0;
-          for (int c = 0; c < stride; ++c) {
-            for (int b = 0; b < stride; ++b) {
-              for (int a = 0; a < stride; ++a) {
-                const int idx = ((z * stride + c) * reso[1] * reso[0]) + ((y * stride + b) * reso[0]) + (x * stride + a);
-                ave += (mask[idx] == m_target_mask_id) ? 1.0f : 0.0f;
-              }
-            }
-          }
-          ave /= powf(static_cast<float>(stride), 3.0f);
-          v[z * h * w + y * w + x] = ave >= 0.49f ? 255 : 0;
-        }
+    try
+    {
+      auto sampled = RefCurveDeformData::DownsampleMask(masks[fi], reso, stride, (byte)m_target_mask_id);
+      TMesh& mesh = original[fi];
+      marchingcubes::MarchingCubes(reso / stride, pitch, sampled.data(), 128, 0, 0, mesh);
+      mesh.Scale(static_cast<float>(stride));
+      mesh.Smoothing(3);
+    }
+    catch (...)
+    {
+#pragma omp critical(refcurve_mesh_failure)
+      {
+        if (!failure) failure = std::current_exception();
       }
     }
-
-    TMesh mesh;
-    marchingcubes::MarchingCubes(reso / stride, pitch, v.get(), 128, 0, 0, mesh);
-    mesh.Scale(static_cast<float>(stride));
-    mesh.Smoothing(3);
-    m_meshes_orig[frame_idx] = mesh;
-    m_meshes_def[frame_idx] = mesh;
-    v.reset();
   }
+  if (failure) std::rethrow_exception(failure);
+  std::vector<TMesh> deformed = original;
+  std::vector<std::vector<int>> matched_vids(num_frames);
+  std::vector<std::vector<EVec3f>> matched_targets(num_frames);
+  m_meshes_orig.swap(original);
+  m_meshes_def.swap(deformed);
+  m_debug_matched_vids.swap(matched_vids);
+  m_debug_matched_trgtpos.swap(matched_targets);
+  m_meshes_imported = imported;
+  m_b_modified = imported;
+}
 
+
+void ModeRefCurveDeform::ConvertMaskToMesh()
+{
+  const auto& mask_data = ImageCore::GetInst()->GetMaskData();
+  if (m_target_mask_id <= 0 || m_target_mask_id >= (int)mask_data.size()) return;
+  const auto& masks = ImageCore::GetInst()->m_mask4d;
+  try
+  {
+    RebuildMeshSequence(std::vector<const byte*>(masks.begin(), masks.end()), false);
+  }
+  catch (const std::exception& error)
+  {
+    ShowMsgDlg_OK(error.what(), "Create mesh models");
+    return;
+  }
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
-
 
 void ModeRefCurveDeform::CancelSegmentation()
 {
@@ -600,7 +616,7 @@ void ModeRefCurveDeform::FinishSegmentation()
 #pragma omp parallel for
   for (int fi = 0; fi < num_frames; ++fi)
   {
-    if (m_curves[fi].size() + m_shared_curves.size() == 0) continue; //変化無し
+    if (!m_meshes_imported && m_curves[fi].empty() && m_shared_curves.empty()) continue; //変化無し
 
     byte* mask = ImageCore::GetInst()->m_mask4d[fi];
 
@@ -625,9 +641,9 @@ void ModeRefCurveDeform::FinishSegmentation()
 
 void ModeRefCurveDeform::ReloadOrigMeshCurrentFrame()
 {
-  if (m_meshes_orig.size() == 0 || m_meshes_orig.front().m_vSize == 0) return;
-
   const int frame_idx = formVisParam_getframeI();
+  if (frame_idx < 0 || frame_idx >= (int)m_meshes_orig.size() ||
+      frame_idx >= (int)m_meshes_def.size()) return;
   m_meshes_def[frame_idx] = m_meshes_orig[frame_idx];
 
   formMain_RedrawMainPanel();
@@ -722,7 +738,6 @@ static void FindPullOrientation(
       shared_curves[crv_i - num_curves].GetCurve(_frame_idx);
 
     const auto&  points        = c.GetCurve();
-    const bool   normal_side   = c.GetNormalSide();
     const EVec3f crssec_normal = c.GetCrssecNorm();
 
     for (int idx = 1; idx < (int)points.size() - 1; ++idx)
@@ -731,8 +746,8 @@ static void FindPullOrientation(
       if (curve_tangent.norm() < 0.0001f) continue;
       curve_tangent.normalize();
 
-      EVec3f curve_normal = crssec_normal.cross(curve_tangent).normalized();
-      curve_normal *= (normal_side ? 1.0f : -1.0f);
+      EVec3f curve_normal;
+      if (!c.GetCurveNormal(idx, curve_normal)) continue;
 
       // get nearest vertex idx
       float min_dist = FLT_MAX;
@@ -766,7 +781,9 @@ static void FindPullOrientation(
 
 void ModeRefCurveDeform::_Deform(const int _frame_idx)
 {
-  if (m_meshes_orig.size() == 0 || m_meshes_orig.front().m_vSize == 0) return;
+  if (_frame_idx < 0 || _frame_idx >= (int)m_meshes_orig.size() ||
+      _frame_idx >= (int)m_meshes_def.size() ||
+      m_meshes_orig[_frame_idx].m_vSize == 0) return;
   if (m_curves[_frame_idx].size() + m_shared_curves.size() == 0) return;
 
   std::cout << "_Deform : " << _frame_idx << "\n";
@@ -790,7 +807,10 @@ void ModeRefCurveDeform::_Deform(const int _frame_idx)
   // Deform
   LaplacianDeformer deformer;
   deformer.Deform(m_meshes_def[_frame_idx], const_vids, const_trgtpos);
-  m_b_modified = true;
+#pragma omp critical(refcurve_modified)
+  {
+    m_b_modified = true;
+  }
 }
 
 
@@ -816,45 +836,34 @@ void ModeRefCurveDeform::DeformAllFrame()
 
 
 
-void ModeRefCurveDeform::FlipSelectedStrokeNormalSide()
+void ModeRefCurveDeform::FlipSelectedCurveNormals()
 {
   const int frame_idx = formVisParam_getframeI();
   ValidateSelectionForFrame(frame_idx);
-  const int cidx = m_select_info.curve_idx;
+  if (!m_select_info.selected) return;
 
-  if (m_select_info.selected && m_select_info.is_shared && cidx != -1)
-  {
-    m_shared_curves[cidx].FlipNormal();
-  }
-  if (m_select_info.selected && !m_select_info.is_shared && cidx != -1)
-  {
-    m_curves[frame_idx][cidx].FlipNormal();
-  }
+  // Normal direction changes the deformation constraints and must be undoable.
+  Do_RecordSnapShot();
+  const int curve_idx = m_select_info.curve_idx;
+  if (m_select_info.is_shared) m_shared_curves[curve_idx].FlipNormal();
+  else m_curves[frame_idx][curve_idx].FlipNormal();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
 
 
-
-void ModeRefCurveDeform::DrawSelectedStrokeNormals()
+void ModeRefCurveDeform::ToggleSelectedCurveNormals()
 {
   const int frame_idx = formVisParam_getframeI();
   ValidateSelectionForFrame(frame_idx);
-  const int cidx = m_select_info.curve_idx;
+  if (!m_select_info.selected) return;
 
-  if (m_select_info.selected && m_select_info.is_shared && cidx != -1)
-  {
-    m_shared_curves[cidx].DrawNormal();
-  }
-  if (m_select_info.selected && !m_select_info.is_shared && cidx != -1)
-  {
-    m_curves[frame_idx][cidx].DrawNormal();
-  }
+  const int curve_idx = m_select_info.curve_idx;
+  if (m_select_info.is_shared) m_shared_curves[curve_idx].ToggleNormalVisibility();
+  else m_curves[frame_idx][curve_idx].ToggleNormalVisibility();
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
-
-
 
 void ModeRefCurveDeform::MakeSelectedStroke_Shared()
 {
@@ -1014,119 +1023,114 @@ void ModeRefCurveDeform::LoadState(const std::string& _fpath)
 
 }
 
-void ModeRefCurveDeform::SaveYaml(const std::string& fpath, const std::string& input_dir, const std::string& output_dir)
+bool ModeRefCurveDeform::ExportDeformationConfig(
+    const std::wstring& config_path, const std::string& input_dir,
+    const std::string& output_dir, std::string& error) const
 {
-  std::ofstream file(fpath);
+  // Validate and serialize first, so invalid data cannot truncate an existing file.
+  std::ostringstream contents;
+  if (!RefCurveDeformData::WriteConfig(contents, input_dir, output_dir,
+      m_target_mask_id, m_curves, m_shared_curves, error)) return false;
+  std::ofstream file(config_path.c_str(), std::ios::binary);
   if (!file)
   {
-    std::cout << "Failed to save state.\n";
-    return;
+    error = "Cannot open the YAML configuration file for writing.";
+    return false;
   }
-
-  // ヘッダー部の出力
-  file << "data: {input_dir: '" << input_dir << "', output_dir: '" << output_dir << "', target_id: " << m_target_mask_id << "}\n";
-  file << "volume: {num_input_frames: null, num_output_frames: null}\n";
-  file << "curves:\n";
-
-  const int num_frames = ImageCore::GetInst()->GetNumFrames();
-
-  // 単一の PlanarCurve を YAML 形式で書き出すヘルパー関数
-  auto writeCurveYaml = [&file](const PlanarCurve& curve, int frame_idx) {
-    int num_cps = curve.GetNumCPs();
-    if (num_cps == 0) return;
-
-    for (int i = 0; i < num_cps; ++i)
-    {
-      const auto& pt = curve.GetCP(i);
-
-      if (i == 0)
-      {
-        file << "- - [" << pt[0] << ", " << pt[1] << ", " << pt[2] << ", " << frame_idx << "]\n";
-      }
-      else
-      {
-        file << "  - [" << pt[0] << ", " << pt[1] << ", " << pt[2] << ", " << frame_idx << "]\n";
-      }
-    }
-    };
-
-  // 1. 各フレームの通常曲線 (m_curves) を出力
-  for (int fi = 0; fi < num_frames; ++fi)
-  {
-    for (const auto& curve : m_curves[fi])
-    {
-      writeCurveYaml(curve, fi);
-    }
-  }
-
+  file << contents.str();
   file.close();
-  std::cout << "YAML exported to: " << fpath << "\n";
+  if (!file)
+  {
+    error = "Failed to write the complete YAML configuration file.";
+    return false;
+  }
+  return true;
 }
 
-void ModeRefCurveDeform::LoadMha(std::vector<std::unique_ptr<byte[]>>& masks)
+
+bool ModeRefCurveDeform::ImportMeshSequenceFromMha(
+    std::vector<std::wstring> file_paths, std::string& error)
 {
-  int W, H, D, WH, WHD;
-  std::tie(W, H, D, WH, WHD) = ImageCore::GetInst()->GetResolution5();
-  const int num_frames = static_cast<int>(masks.size());
-
-  // 2. メッシュ生成 (Marching Cubes)
-  const int stride = FormRefCurveDeform_GetMcStride();
-  const int scale_num = static_cast<int>(pow(stride, 3));
+  error.clear();
+  const int num_frames = ImageCore::GetInst()->GetNumFrames();
   const int num_voxels = ImageCore::GetInst()->GetNumVoxels();
-  const EVec3i reso = ImageCore::GetInst()->GetReso();
-  const EVec3f pitch = ImageCore::GetInst()->GetPitch();
-
-  const int w = reso[0] / stride;
-  const int h = reso[1] / stride;
-  const int d = reso[2] / stride;
-
-  m_meshes_orig = std::vector<TMesh>(num_frames);
-  m_meshes_def = std::vector<TMesh>(num_frames);
-
-  const int target_id = (m_target_mask_id > 0) ? m_target_mask_id : 1;
-
-#pragma omp parallel for
-  for (int frame_idx = 0; frame_idx < num_frames; ++frame_idx)
+  const EVec3i expected_reso = ImageCore::GetInst()->GetReso();
+  const EVec3f expected_pitch = ImageCore::GetInst()->GetPitch();
+  if (num_frames <= 0 || file_paths.size() != num_frames || num_voxels <= 0 ||
+      m_target_mask_id <= 0 || m_target_mask_id > 255)
   {
-    const byte* mask = masks[frame_idx].get();
-    std::unique_ptr<short[]> v = std::make_unique<short[]>(num_voxels / scale_num);
-
-    for (int z = 0; z < d; ++z) {
-      for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-
-          float ave = 0.0f;
-          for (int c = 0; c < stride; ++c) {
-            for (int b = 0; b < stride; ++b) {
-              for (int a = 0; a < stride; ++a) {
-                const int idx = ((z * stride + c) * reso[1] * reso[0])
-                  + ((y * stride + b) * reso[0])
-                  + (x * stride + a);
-                ave += (mask[idx] == target_id) ? 1.0f : 0.0f;
-              }
-            }
+    error = "Select one MHA mask for each image frame and a valid target mask.";
+    return false;
+  }
+  std::sort(file_paths.begin(), file_paths.end(), RefCurveDeformData::FrameFileNameLess);
+  try
+  {
+    std::vector<std::unique_ptr<byte[]>> masks;
+    bool labels[256] = {};
+    for (int fi = 0; fi < num_frames; ++fi)
+    {
+      EVec3i reso;
+      EVec3f pitch;
+      std::unique_ptr<byte[]> bytes;
+      std::unique_ptr<short[]> shorts;
+      const std::string frame = "Frame " + std::to_string(fi) + ": ";
+      if (!ReadMha3d(file_paths[fi], reso, pitch, bytes, shorts))
+      {
+        error = frame + "Cannot read the MHA mask. Use a complete, local, little-endian MET_UCHAR or MET_SHORT volume.";
+        return false;
+      }
+      if (reso != expected_reso ||
+          (pitch - expected_pitch).cwiseAbs().maxCoeff() >
+              0.0001f * std::max(1.0f, expected_pitch.cwiseAbs().maxCoeff()))
+      {
+        error = frame + "Mask dimensions or voxel spacing do not match the loaded image.";
+        return false;
+      }
+      if (shorts)
+      {
+        bytes = std::make_unique<byte[]>(num_voxels);
+        for (int i = 0; i < num_voxels; ++i)
+        {
+          if (shorts[i] < 0 || shorts[i] > 255)
+          {
+            error = frame + "Mask labels must be between 0 and 255.";
+            return false;
           }
-          ave /= powf(static_cast<float>(stride), 3.0f);
-          v[z * h * w + y * w + x] = (ave >= 0.49f) ? 255 : 0;
+          bytes[i] = static_cast<byte>(shorts[i]);
         }
       }
+      for (int i = 0; i < num_voxels; ++i) labels[bytes[i]] = true;
+      masks.push_back(std::move(bytes));
     }
 
-    TMesh mesh;
-    marchingcubes::MarchingCubes(reso / stride, pitch, v.get(), 128, 0, 0, mesh);
-    mesh.Scale(static_cast<float>(stride));
-    mesh.Smoothing(3);
-
-    m_meshes_orig[frame_idx] = mesh;
-    m_meshes_def[frame_idx] = mesh;
+    // Accept conventional binary masks as well as masks carrying the target ID.
+    int foreground_label = 0, foreground_labels = 0;
+    for (int label = 1; label < 256; ++label)
+      if (labels[label]) { foreground_label = label; ++foreground_labels; }
+    if (!labels[m_target_mask_id] && foreground_labels > 0)
+    {
+      if (foreground_labels != 1 || (foreground_label != 1 && foreground_label != 255))
+      {
+        error = "The MHA masks do not contain the selected target label. Binary masks must use 1 or 255 for foreground.";
+        return false;
+      }
+      for (auto& mask : masks)
+        for (int i = 0; i < num_voxels; ++i)
+          if (mask[i] != 0) mask[i] = static_cast<byte>(m_target_mask_id);
+    }
+    std::vector<const byte*> mask_data;
+    for (const auto& mask : masks) mask_data.push_back(mask.get());
+    RebuildMeshSequence(mask_data, true);
   }
-
+  catch (const std::exception& exception)
+  {
+    error = std::string("Cannot import the mesh sequence: ") + exception.what();
+    return false;
+  }
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
-  m_b_modified = true;
+  return true;
 }
-
-
 
 void ModeRefCurveDeform::KeyDown(int nChar)
 {
@@ -1135,6 +1139,7 @@ void ModeRefCurveDeform::KeyDown(int nChar)
 
   if (nChar == VK_F1)
   {
+    if (frame_idx < 0 || frame_idx >= (int)m_meshes_orig.size()) return;
     std::cout << "COMPUTE Matching\n";
     const TMesh& mesh = m_meshes_orig[frame_idx];
     m_debug_matched_vids   [frame_idx].clear();
@@ -1159,7 +1164,7 @@ void ModeRefCurveDeform::KeyDown(int nChar)
   }
   else if (nChar == VK_F3)
   {
-    for (int i = 0; i < num_frames; ++i)
+    for (int i = 0; i < (int)m_meshes_orig.size(); ++i)
     {
       m_meshes_def[i] = m_meshes_orig[i];
     }

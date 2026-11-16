@@ -56,7 +56,7 @@ namespace RoiPainter4D {
   private: System::Windows::Forms::Button^ m_btn_sharestroke;
   private: System::Windows::Forms::Button^ m_btn_loadstate;
   private: System::Windows::Forms::Button^ m_btn_savestate;
-  private: System::Windows::Forms::Button^ m_btn_flipnormal;
+  private: System::Windows::Forms::Button^ m_btn_flip_curve_normals;
   private: System::Windows::Forms::Button^ m_btn_genmesh;
   private: System::Windows::Forms::Button^ m_btn_deform;
   private: System::Windows::Forms::Button^ m_btn_undo;
@@ -71,9 +71,9 @@ namespace RoiPainter4D {
   private: System::Windows::Forms::GroupBox^ groupBox1;
   private: System::Windows::Forms::Label^ label6;
   private: System::Windows::Forms::Label^ label7;
-  private: System::Windows::Forms::Button^ m_btn_export_config;
-  private: System::Windows::Forms::Button^ m_btn_load_mha;
-  private: System::Windows::Forms::Button^ m_btn_drawnormal;
+  private: System::Windows::Forms::Button^ m_btn_export_yaml_config;
+  private: System::Windows::Forms::Button^ m_btn_import_mha_meshes;
+  private: System::Windows::Forms::Button^ m_btn_toggle_curve_normals;
 
 
 
@@ -110,16 +110,16 @@ namespace RoiPainter4D {
       this->m_btn_sharestroke = (gcnew System::Windows::Forms::Button());
       this->m_btn_loadstate = (gcnew System::Windows::Forms::Button());
       this->m_btn_savestate = (gcnew System::Windows::Forms::Button());
-      this->m_btn_flipnormal = (gcnew System::Windows::Forms::Button());
+      this->m_btn_flip_curve_normals = (gcnew System::Windows::Forms::Button());
       this->m_btn_deform_all = (gcnew System::Windows::Forms::Button());
       this->m_btn_cancel = (gcnew System::Windows::Forms::Button());
       this->m_btn_finish = (gcnew System::Windows::Forms::Button());
       this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
-      this->m_btn_drawnormal = (gcnew System::Windows::Forms::Button());
+      this->m_btn_toggle_curve_normals = (gcnew System::Windows::Forms::Button());
       this->label7 = (gcnew System::Windows::Forms::Label());
       this->label6 = (gcnew System::Windows::Forms::Label());
-      this->m_btn_export_config = (gcnew System::Windows::Forms::Button());
-      this->m_btn_load_mha = (gcnew System::Windows::Forms::Button());
+      this->m_btn_export_yaml_config = (gcnew System::Windows::Forms::Button());
+      this->m_btn_import_mha_meshes = (gcnew System::Windows::Forms::Button());
       (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_numbox_cpsize))->BeginInit();
       (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->m_trackbar_mcstride))->BeginInit();
       this->groupBox1->SuspendLayout();
@@ -299,15 +299,15 @@ namespace RoiPainter4D {
       this->m_btn_savestate->UseVisualStyleBackColor = true;
       this->m_btn_savestate->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_savestate_Click);
       // 
-      // m_btn_flipnormal
+      // m_btn_flip_curve_normals
       // 
-      this->m_btn_flipnormal->Location = System::Drawing::Point(145, 137);
-      this->m_btn_flipnormal->Name = L"m_btn_flipnormal";
-      this->m_btn_flipnormal->Size = System::Drawing::Size(138, 36);
-      this->m_btn_flipnormal->TabIndex = 30;
-      this->m_btn_flipnormal->Text = L"Flip normals";
-      this->m_btn_flipnormal->UseVisualStyleBackColor = true;
-      this->m_btn_flipnormal->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_flipnormal_Click);
+      this->m_btn_flip_curve_normals->Location = System::Drawing::Point(145, 137);
+      this->m_btn_flip_curve_normals->Name = L"m_btn_flip_curve_normals";
+      this->m_btn_flip_curve_normals->Size = System::Drawing::Size(138, 36);
+      this->m_btn_flip_curve_normals->TabIndex = 30;
+      this->m_btn_flip_curve_normals->Text = L"Flip curve normals";
+      this->m_btn_flip_curve_normals->UseVisualStyleBackColor = true;
+      this->m_btn_flip_curve_normals->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_flip_curve_normals_Click);
       // 
       // m_btn_deform_all
       // 
@@ -341,12 +341,12 @@ namespace RoiPainter4D {
       // 
       // groupBox1
       // 
-      this->groupBox1->Controls->Add(this->m_btn_drawnormal);
+      this->groupBox1->Controls->Add(this->m_btn_toggle_curve_normals);
       this->groupBox1->Controls->Add(this->label7);
       this->groupBox1->Controls->Add(this->label6);
       this->groupBox1->Controls->Add(this->m_btn_sharestroke);
       this->groupBox1->Controls->Add(this->m_btn_copy_from_preframe);
-      this->groupBox1->Controls->Add(this->m_btn_flipnormal);
+      this->groupBox1->Controls->Add(this->m_btn_flip_curve_normals);
       this->groupBox1->Controls->Add(this->m_btn_deform_all);
       this->groupBox1->Controls->Add(this->m_btn_deform);
       this->groupBox1->Controls->Add(this->m_cb_only_select_curve);
@@ -358,15 +358,15 @@ namespace RoiPainter4D {
       this->groupBox1->TabStop = false;
       this->groupBox1->Text = L"Stroke ＆ Deformation";
       // 
-      // m_btn_drawnormal
+      // m_btn_toggle_curve_normals
       // 
-      this->m_btn_drawnormal->Location = System::Drawing::Point(6, 137);
-      this->m_btn_drawnormal->Name = L"m_btn_drawnormal";
-      this->m_btn_drawnormal->Size = System::Drawing::Size(138, 36);
-      this->m_btn_drawnormal->TabIndex = 34;
-      this->m_btn_drawnormal->Text = L"Draw normals";
-      this->m_btn_drawnormal->UseVisualStyleBackColor = true;
-      this->m_btn_drawnormal->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_drawnormal_Click);
+      this->m_btn_toggle_curve_normals->Location = System::Drawing::Point(6, 137);
+      this->m_btn_toggle_curve_normals->Name = L"m_btn_toggle_curve_normals";
+      this->m_btn_toggle_curve_normals->Size = System::Drawing::Size(138, 36);
+      this->m_btn_toggle_curve_normals->TabIndex = 34;
+      this->m_btn_toggle_curve_normals->Text = L"Toggle curve normals";
+      this->m_btn_toggle_curve_normals->UseVisualStyleBackColor = true;
+      this->m_btn_toggle_curve_normals->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_toggle_curve_normals_Click);
       // 
       // label7
       // 
@@ -392,33 +392,33 @@ namespace RoiPainter4D {
       this->label6->Text = L"　 赤: 選択中のcurve\r\n　 黄: 未選択のcurve\r\n緑/青: all frame curve\r\n";
       this->label6->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::label6_Click);
       // 
-      // m_btn_export_config
+      // m_btn_export_yaml_config
       // 
-      this->m_btn_export_config->Location = System::Drawing::Point(8, 392);
-      this->m_btn_export_config->Name = L"m_btn_export_config";
-      this->m_btn_export_config->Size = System::Drawing::Size(137, 23);
-      this->m_btn_export_config->TabIndex = 35;
-      this->m_btn_export_config->Text = L"Export config";
-      this->m_btn_export_config->UseVisualStyleBackColor = true;
-      this->m_btn_export_config->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_export_config_Click);
+      this->m_btn_export_yaml_config->Location = System::Drawing::Point(8, 392);
+      this->m_btn_export_yaml_config->Name = L"m_btn_export_yaml_config";
+      this->m_btn_export_yaml_config->Size = System::Drawing::Size(137, 23);
+      this->m_btn_export_yaml_config->TabIndex = 35;
+      this->m_btn_export_yaml_config->Text = L"Export YAML config...";
+      this->m_btn_export_yaml_config->UseVisualStyleBackColor = true;
+      this->m_btn_export_yaml_config->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_export_yaml_config_Click);
       // 
-      // m_btn_load_mha
+      // m_btn_import_mha_meshes
       // 
-      this->m_btn_load_mha->Location = System::Drawing::Point(156, 392);
-      this->m_btn_load_mha->Name = L"m_btn_load_mha";
-      this->m_btn_load_mha->Size = System::Drawing::Size(137, 23);
-      this->m_btn_load_mha->TabIndex = 34;
-      this->m_btn_load_mha->Text = L"Load MHA";
-      this->m_btn_load_mha->UseVisualStyleBackColor = true;
-      this->m_btn_load_mha->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_load_mha_Click);
+      this->m_btn_import_mha_meshes->Location = System::Drawing::Point(156, 392);
+      this->m_btn_import_mha_meshes->Name = L"m_btn_import_mha_meshes";
+      this->m_btn_import_mha_meshes->Size = System::Drawing::Size(137, 23);
+      this->m_btn_import_mha_meshes->TabIndex = 34;
+      this->m_btn_import_mha_meshes->Text = L"Import MHA meshes...";
+      this->m_btn_import_mha_meshes->UseVisualStyleBackColor = true;
+      this->m_btn_import_mha_meshes->Click += gcnew System::EventHandler(this, &FormRefCurveDeform::m_btn_import_mha_meshes_Click);
       // 
       // FormRefCurveDeform
       // 
       this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
       this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
       this->ClientSize = System::Drawing::Size(300, 513);
-      this->Controls->Add(this->m_btn_load_mha);
-      this->Controls->Add(this->m_btn_export_config);
+      this->Controls->Add(this->m_btn_import_mha_meshes);
+      this->Controls->Add(this->m_btn_export_yaml_config);
       this->Controls->Add(this->groupBox1);
       this->Controls->Add(this->m_btn_finish);
       this->Controls->Add(this->m_btn_undo);
@@ -457,8 +457,8 @@ namespace RoiPainter4D {
 	  System::Void m_btn_loadstate_Click  (System::Object^ sender, System::EventArgs^ e);
 	  System::Void m_btn_savestate_Click  (System::Object^ sender, System::EventArgs^ e);
 	  System::Void m_btn_undo_Click       (System::Object^ sender, System::EventArgs^ e);
-	  System::Void m_btn_flipnormal_Click (System::Object^ sender, System::EventArgs^ e);
-      System::Void m_btn_drawnormal_Click (System::Object^ sender, System::EventArgs^ e);
+	  System::Void m_btn_flip_curve_normals_Click (System::Object^ sender, System::EventArgs^ e);
+      System::Void m_btn_toggle_curve_normals_Click (System::Object^ sender, System::EventArgs^ e);
 	  System::Void m_btn_copy_from_preframe_Click(System::Object^ sender, System::EventArgs^ e);
 	  System::Void m_btn_copy_to_allframe_Click(System::Object^ sender, System::EventArgs^ e);
 	  System::Void m_btn_sharestroke_Click(System::Object^ sender, System::EventArgs^ e);
@@ -475,8 +475,8 @@ private: System::Void label7_Click(System::Object^ sender, System::EventArgs^ e)
 }
 private: System::Void FormRefCurveDeform_Load(System::Object^ sender, System::EventArgs^ e) {
 }
-private: System::Void m_btn_export_config_Click(System::Object^ sender, System::EventArgs^ e);
-private: System::Void m_btn_load_mha_Click(System::Object^ sender, System::EventArgs^ e);
+private: System::Void m_btn_export_yaml_config_Click(System::Object^ sender, System::EventArgs^ e);
+private: System::Void m_btn_import_mha_meshes_Click(System::Object^ sender, System::EventArgs^ e);
 };
 
 	inline void FormRefCurveDeform_Show() { FormRefCurveDeform::GetInst()->Show(); }

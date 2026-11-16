@@ -365,6 +365,12 @@
     <ClInclude Include="Mode\ModeRefCurveDeform.h">
       <Filter>Mode</Filter>
     </ClInclude>
+    <ClInclude Include="Mode\RefCurveDeformData.h">
+      <Filter>Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMMON\MhaReader.h">
+      <Filter>COMMON</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\COMMON\LaplacianSurfaceEditing.h">
       <Filter>COMMON</Filter>
     </ClInclude>
