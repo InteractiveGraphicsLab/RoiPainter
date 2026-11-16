@@ -12,6 +12,7 @@
 #include <string>
 #include "ImageCore.h"
 #include "ModeCore.h"
+#include "Mode/ModeRefCurveDeform.h"
 #pragma managed
 
 using namespace RoiPainter4D;
@@ -284,6 +285,9 @@ void FormVisParam::ChangeFrameI(int ofst)
     timeLabel->Text = timeSlider->Value.ToString();
   }
   //TODO 本来は ModeCore経由で通知したい(大幅なrefactoringが必用)
+  if (ModeCore::GetInst()->getCurrentMode() == MODE_REF_CURVEDEFORM)
+    ModeRefCurveDeform::GetInst()->OnFrameChanged(timeSlider->Value);
+
   if ( ModeCore::GetInst()->getCurrentMode() == MODE_SEG_LCLRGROW )
     FormSegLocalRGrow_FrameIdxChanged();
 

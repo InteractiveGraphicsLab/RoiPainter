@@ -39,6 +39,7 @@ class ModeRefCurveDeform : public ModeInterface
 
 
   PlanarCurveSelectionInfo m_select_info;
+  int m_current_frame_idx = -1;
   float m_cp_rate;
   int m_target_mask_id;
   std::vector<TMesh> m_meshes_def ;
@@ -60,7 +61,7 @@ public:
   }
 
   // overload functions ---------------------------------------------
-  MODE_ID GetModeID() { return MODE_VIS_NORMAL; }
+  MODE_ID GetModeID() { return MODE_REF_CURVEDEFORM; }
   void LBtnUp(const EVec2i& p, OglForCLI* ogl);
   void RBtnUp(const EVec2i& p, OglForCLI* ogl);
   void MBtnUp(const EVec2i& p, OglForCLI* ogl);
@@ -76,6 +77,7 @@ public:
   void KeyUp(int nChar);
   bool CanEndMode();
   void StartMode();
+  void OnFrameChanged(int frame_idx);
   void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt);
   // -----------------------------------------------------------------
   
@@ -106,6 +108,7 @@ public:
   //void UnlockSelectedStroke();
 
 private:
+  void ValidateSelectionForFrame(int frame_idx);
   void _Deform(const int);
   //void FindClosestPointFromStroke(const int, std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
 

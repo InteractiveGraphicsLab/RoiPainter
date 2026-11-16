@@ -73,6 +73,8 @@ void ModeRefCurveDeform::StartMode()
   m_cp_rate = cuboid[0] * 0.0006f;
   m_shared_curves.clear();
   m_curves = std::vector<std::vector<PlanarCurve>>(num_frame);
+  m_select_info.Clear();
+  m_current_frame_idx = formVisParam_getframeI();
 
   m_history = std::stack<SnapShot>();
 
@@ -88,11 +90,58 @@ void ModeRefCurveDeform::StartMode()
 }
 
 
+void ModeRefCurveDeform::OnFrameChanged(int frame_idx)
+{
+  if (m_current_frame_idx == frame_idx) return;
+
+  // Finish a shared-curve drag before discarding its selection.
+  const int curve_idx = m_select_info.curve_idx;
+  if (m_bL && m_select_info.selected && m_select_info.is_shared &&
+      0 <= curve_idx && curve_idx < (int)m_shared_curves.size())
+    m_shared_curves[curve_idx].UpdateNonManipCurves();
+
+  // Standard curve indices belong to one frame, even when another frame
+  // happens to contain a curve with the same index.
+  m_select_info.Clear();
+  m_bL = false;
+  m_current_frame_idx = frame_idx;
+}
+
+
+void ModeRefCurveDeform::ValidateSelectionForFrame(int frame_idx)
+{
+  OnFrameChanged(frame_idx);
+  if (!m_select_info.selected) return;
+
+  const int curve_idx = m_select_info.curve_idx;
+  const int cp_idx = m_select_info.cp_idx;
+  if (frame_idx < 0 || frame_idx >= (int)m_curves.size() ||
+      curve_idx < 0 || cp_idx < 0)
+  {
+    m_select_info.Clear();
+    return;
+  }
+
+  if (m_select_info.is_shared)
+  {
+    if (curve_idx >= (int)m_shared_curves.size() ||
+        cp_idx >= m_shared_curves[curve_idx].GetCurve(frame_idx).GetNumCPs())
+      m_select_info.Clear();
+  }
+  else if (curve_idx >= (int)m_curves[frame_idx].size() ||
+           cp_idx >= m_curves[frame_idx][curve_idx].GetNumCPs())
+  {
+    m_select_info.Clear();
+  }
+}
+
+
 PlanarCurveSelectionInfo ModeRefCurveDeform::PickCpAtCurrentFrame(
     const EVec3f& ray_pos, 
     const EVec3f& ray_dir)
 {
   const int frame_idx = formVisParam_getframeI();
+  ValidateSelectionForFrame(frame_idx);
   const float CP_RAD = m_cp_rate * FormRefCurveDeform_GetCpSize();
   const bool  ONLY_SELECTED = FormRefCurveDeform_VisOnlySelCurve();
 
@@ -129,8 +178,9 @@ PlanarCurveSelectionInfo ModeRefCurveDeform::PickCpAtCurrentFrame(
 
 void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
 {
-  m_bL = true;
   const int frame_idx = formVisParam_getframeI();
+  ValidateSelectionForFrame(frame_idx);
+  m_bL = true;
   const EVec3f cuboid = ImageCore::GetInst()->GetCuboidF();
 
   EVec3f ray_pos, ray_dir, pos;
@@ -198,8 +248,9 @@ void ModeRefCurveDeform::LBtnDown(const EVec2i& p, OglForCLI* ogl)
 
 void ModeRefCurveDeform::LBtnUp(const EVec2i& p, OglForCLI* ogl)
 {
-  m_bL = false;
   const int frame_idx = formVisParam_getframeI();
+  ValidateSelectionForFrame(frame_idx);
+  m_bL = false;
 
   if (m_select_info.selected && m_select_info.is_shared )
   {
@@ -230,6 +281,7 @@ void ModeRefCurveDeform::RBtnDown(const EVec2i& p, OglForCLI* ogl)
       if (ShowMsgDlgYesNo("All-frame曲線を解除しますか？\n（自動補間された曲線は削除されます）", "Unlock?"))
       {
         Do_RecordSnapShot();
+        m_select_info = info;
         MakeSelectedStroke_Unshared();
         m_select_info.Clear();
       }
@@ -289,9 +341,10 @@ void ModeRefCurveDeform::MBtnUp(const EVec2i& p, OglForCLI* ogl)
 
 void ModeRefCurveDeform::MouseMove(const EVec2i& p, OglForCLI* ogl)
 {
+  const int frame_idx = formVisParam_getframeI();
+  ValidateSelectionForFrame(frame_idx);
   if (!m_bL && !m_bR && !m_bM) return;
 
-  const int frame_idx = formVisParam_getframeI();
   EVec3f ray_pos, ray_dir, pos;
   ogl->GetCursorRay(p, ray_pos, ray_dir);
 
@@ -356,6 +409,7 @@ void ModeRefCurveDeform::DrawScene(
 
   const float CP_RAD  = m_cp_rate * (float) FormRefCurveDeform_GetCpSize();
   const int frame_idx = formVisParam_getframeI();
+  ValidateSelectionForFrame(frame_idx);
   //ImageCore::GetInst()->UpdateImgMaskColor();
 
   ImageCore::GetInst()->BindAllVolumes();
@@ -441,6 +495,8 @@ void ModeRefCurveDeform::Undo_LoadSnapShot()
   m_history.pop();
   m_curves = snap.curves;
   m_shared_curves = snap.shared_curves;
+  m_select_info.Clear();
+  m_bL = false;
 
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
@@ -589,6 +645,8 @@ void ModeRefCurveDeform::CopyFromPrevFrame()
   Do_RecordSnapShot();
   std::cout << "Copy from previous frame.\n";
   m_curves[frame_idx] = m_curves[frame_idx - 1];
+  m_select_info.Clear();
+  m_bL = false;
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
@@ -761,6 +819,7 @@ void ModeRefCurveDeform::DeformAllFrame()
 void ModeRefCurveDeform::FlipSelectedStrokeNormalSide()
 {
   const int frame_idx = formVisParam_getframeI();
+  ValidateSelectionForFrame(frame_idx);
   const int cidx = m_select_info.curve_idx;
 
   if (m_select_info.selected && m_select_info.is_shared && cidx != -1)
@@ -780,6 +839,7 @@ void ModeRefCurveDeform::FlipSelectedStrokeNormalSide()
 void ModeRefCurveDeform::DrawSelectedStrokeNormals()
 {
   const int frame_idx = formVisParam_getframeI();
+  ValidateSelectionForFrame(frame_idx);
   const int cidx = m_select_info.curve_idx;
 
   if (m_select_info.selected && m_select_info.is_shared && cidx != -1)
@@ -799,6 +859,7 @@ void ModeRefCurveDeform::DrawSelectedStrokeNormals()
 void ModeRefCurveDeform::MakeSelectedStroke_Shared()
 {
   const int frame_idx = formVisParam_getframeI();
+  ValidateSelectionForFrame(frame_idx);
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
 
   bool tf = !m_select_info.selected      || 
@@ -811,6 +872,8 @@ void ModeRefCurveDeform::MakeSelectedStroke_Shared()
   PlanarCurve src = curves[m_select_info.curve_idx];
   curves.erase(curves.begin() + m_select_info.curve_idx);
   m_shared_curves.push_back(SharedCurves(num_frames, frame_idx, src));
+  m_select_info.is_shared = true;
+  m_select_info.curve_idx = (int)m_shared_curves.size() - 1;
 
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
@@ -821,12 +884,14 @@ void ModeRefCurveDeform::MakeSelectedStroke_Shared()
 void ModeRefCurveDeform::MakeSelectedStroke_Unshared()
 {
   const int frame_idx = formVisParam_getframeI();
+  ValidateSelectionForFrame(frame_idx);
   const int num_frames = ImageCore::GetInst()->GetNumFrames();
 
   bool tf = !m_select_info.selected  || 
             !m_select_info.is_shared ||
              m_select_info.curve_idx < 0 ||
              m_shared_curves.size() <= m_select_info.curve_idx;
+  if (tf) return;
   
   for( int fi = 0; fi < num_frames; ++fi )
   {
@@ -838,6 +903,8 @@ void ModeRefCurveDeform::MakeSelectedStroke_Unshared()
   }
 
   m_shared_curves.erase(m_shared_curves.begin() + m_select_info.curve_idx);
+  m_select_info.Clear();
+  m_bL = false;
   formMain_RedrawMainPanel();
   formMain_ActivateMainForm();
 }
@@ -902,6 +969,10 @@ void ModeRefCurveDeform::LoadState(const std::string& _fpath)
   std::cout << key << _num_frames << "\n";
   
   if(_num_frames != num_frames) return;
+
+  // The loaded curves replace the objects referenced by the old selection.
+  m_select_info.Clear();
+  m_bL = false;
 
   //normal curves 
   for (int fi = 0; fi < num_frames; ++fi)
