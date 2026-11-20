@@ -39,6 +39,7 @@ class ModeRefCurveDeform : public ModeInterface
 
 
   PlanarCurveSelectionInfo m_select_info;
+  int m_current_frame_idx = -1;
   float m_cp_rate;
   int m_target_mask_id;
   std::vector<TMesh> m_meshes_def ;
@@ -48,6 +49,7 @@ class ModeRefCurveDeform : public ModeInterface
   std::vector<std::vector<EVec3f>> m_debug_matched_trgtpos;
 
   bool m_b_modified;
+  bool m_meshes_imported = false;
 
   ModeRefCurveDeform();
 
@@ -60,7 +62,7 @@ public:
   }
 
   // overload functions ---------------------------------------------
-  MODE_ID GetModeID() { return MODE_VIS_NORMAL; }
+  MODE_ID GetModeID() { return MODE_REF_CURVEDEFORM; }
   void LBtnUp(const EVec2i& p, OglForCLI* ogl);
   void RBtnUp(const EVec2i& p, OglForCLI* ogl);
   void MBtnUp(const EVec2i& p, OglForCLI* ogl);
@@ -76,6 +78,7 @@ public:
   void KeyUp(int nChar);
   bool CanEndMode();
   void StartMode();
+  void OnFrameChanged(int frame_idx);
   void DrawScene(const EVec3f& cam_pos, const EVec3f& cam_cnt);
   // -----------------------------------------------------------------
   
@@ -95,17 +98,22 @@ public:
 
   void SaveState(const std::string& fname);
   void LoadState(const std::string& fname);
-  void SaveYaml(const std::string& fpath, const std::string& input_dir, const std::string& output_dir);
-  void LoadMha(std::vector<std::unique_ptr<byte[]>>& masks);
+  // File paths use UTF-16; folder strings in the YAML document use UTF-8.
+  bool ExportDeformationConfig(const std::wstring& config_path,
+      const std::string& input_dir, const std::string& output_dir, std::string& error) const;
+  // One mask per frame, sorted by numeric file name; meshes are replaced only on success.
+  bool ImportMeshSequenceFromMha(std::vector<std::wstring> file_paths, std::string& error);
 
-  void FlipSelectedStrokeNormalSide();
-  void DrawSelectedStrokeNormals();
+  void FlipSelectedCurveNormals();
+  void ToggleSelectedCurveNormals();
   void MakeSelectedStroke_Shared();
   void MakeSelectedStroke_Unshared();
   //void LockSelectedStroke();
   //void UnlockSelectedStroke();
 
 private:
+  void ValidateSelectionForFrame(int frame_idx);
+  void RebuildMeshSequence(const std::vector<const byte*>& masks, bool imported);
   void _Deform(const int);
   //void FindClosestPointFromStroke(const int, std::vector<int>&, std::vector<EVec3f>&, std::vector<EVec3f>&);
 

@@ -2,7 +2,7 @@
 
 #include "tvolumelader.h"
 #include "../tdcmtk.h"
-#include <zlib.h>
+#include "MhaReader.h"
 
 
 //mha header
@@ -20,85 +20,21 @@
 //ElementType = MET_UCHAR
 //ElementDataFile = LOCAL
 bool ReadMha3d(
-    const std::string &fname,
-    EVec3i& reso,
-    EVec3f& pitch,
-    std::unique_ptr<byte[]>& volume_b,
-    std::unique_ptr<short[]>& volume_s
-)
+    const std::string& fname, EVec3i& reso, EVec3f& pitch,
+    std::unique_ptr<byte[]>& volume_b, std::unique_ptr<short[]>& volume_s)
 {
-  std::ifstream ifs(fname, std::ios_base::binary);
-  if (!ifs)
-  {
-    std::cout << "can't open mha file " << fname << "\n";
-    return false;
-  }
-
-  int dim = 0;
-  std::string line;
-  std::string elementType;
-  bool isCompressed = false;
-
-  while (std::getline(ifs, line))
-  {
-    std::istringstream iss(line);
-    std::string key, equal;
-    iss >> key >> equal;
-
-    if (key == "DimSize") {
-      iss >> reso[0] >> reso[1] >> reso[2];
-    }
-    else if (key == "ElementType") {
-      iss >> elementType;
-    }
-    else if (key == "ElementSpacing") {
-      iss >> pitch[0] >> pitch[1] >> pitch[2];
-    }
-    else if (key == "NDims") {
-      iss >> dim;
-      if (dim != 3) {
-        std::cout << "ERROR this is not 3D volume data\n";
-        ifs.close();
-        return false;
-      }
-    }
-    else if (line.find("ElementDataFile = LOCAL") != std::string::npos) {
-      break;
-    }
-    else if (line.find("CompressedData = True") != std::string::npos) {
-      isCompressed = true;
-    }
-  }
-
-  const int WHD = reso[0] * reso[1] * reso[2];
-  bool tf = false;
-
-  if (isCompressed) {
-    std::cout << "Compressed Mha.\n";
-    std::vector<byte> compressedData;
-    std::copy(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>(), std::back_inserter(compressedData));
-
-    uLongf uncompressedSize = WHD * sizeof(byte);
-    volume_b.reset(new byte[WHD]);
-
-    int result = uncompress(volume_b.get(), &uncompressedSize, compressedData.data(), static_cast<uLong>(compressedData.size()));
-    tf = (result == Z_OK);
-  }
-  else
-  {
-    if (elementType == "MET_UCHAR") {
-      volume_b.reset(new byte[WHD]);
-      tf = static_cast<bool>(ifs.read(reinterpret_cast<char*>(volume_b.get()), sizeof(byte) * WHD));
-    }
-    else if (elementType == "MET_SHORT") {
-      volume_s.reset(new short[WHD]);
-      tf = static_cast<bool>(ifs.read(reinterpret_cast<char*>(volume_s.get()), sizeof(short) * WHD));
-    }
-  }
-  ifs.close();
-  return tf;
+  std::ifstream file(fname, std::ios::binary);
+  return MhaReader::ReadVolume(file, reso, pitch, volume_b, volume_s);
 }
 
+
+bool ReadMha3d(
+    const std::wstring& fname, EVec3i& reso, EVec3f& pitch,
+    std::unique_ptr<byte[]>& volume_b, std::unique_ptr<short[]>& volume_s)
+{
+  std::ifstream file(fname.c_str(), std::ios::binary);
+  return MhaReader::ReadVolume(file, reso, pitch, volume_b, volume_s);
+}
 
 bool WriteMha3d(
     const std::string &fname,

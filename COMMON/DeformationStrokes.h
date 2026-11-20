@@ -18,7 +18,7 @@ private:
   std::vector<EVec3f> m_curve = {};
   std::vector<EVec3f> m_cps   = {};
   bool m_normal_side = true;
-  bool m_normal_draw = true;
+  bool m_show_normals = true;
 
 public:
   PlanarCurve(CRSSEC_ID id, float crssec_pos, const EVec3f first_cp) : 
@@ -50,7 +50,9 @@ public:
 
   inline bool GetNormalSide() const { return m_normal_side; }
   inline void FlipNormal() { m_normal_side = !m_normal_side; }
-  inline void DrawNormal() { m_normal_draw = !m_normal_draw; }
+  inline bool AreNormalsVisible() const { return m_show_normals; }
+  inline void ToggleNormalVisibility() { m_show_normals = !m_show_normals; }
+  bool GetCurveNormal(int point_idx, EVec3f& normal) const;
   void AlignNormalWithMesh(const EVec3f& mesh_normal);
 
   //CP manipulation
@@ -121,7 +123,9 @@ public:
     return m_curves[0].GetCrssecPos();
   }
   
-  const PlanarCurve GetCurve(const int frame_idx) const 
+  int GetNumFrames() const { return static_cast<int>(m_curves.size()); }
+
+  const PlanarCurve& GetCurve(const int frame_idx) const
   {
     if (frame_idx < 0 || m_curves.size() <= frame_idx) 
       throw std::out_of_range("SharedCurves::GetCurve invalid frame_idx");
@@ -139,9 +143,9 @@ public:
     for (size_t i = 0; i < m_curves.size(); ++i) m_curves[i].FlipNormal();
   }
 
-  void DrawNormal()
+  void ToggleNormalVisibility()
   {
-    for (size_t i = 0; i < m_curves.size(); ++i) m_curves[i].DrawNormal();
+    for (auto& curve : m_curves) curve.ToggleNormalVisibility();
   }
 
 
